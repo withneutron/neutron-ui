@@ -1,0 +1,38 @@
+{
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./app/*"],
+      "~components/*": ["./app/components/*"],
+      "~routes/*": ["./app/routes/*"],
+      "~utils/*": ["./app/shared/utils/*"],
+      "~ui": ["./app/config/ui"]
+    },
+    "target": "esnext",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2016.array.include",
+      "es2017.object",
+      "es2017.intl",
+      "es2019.array",
+      "esnext"
+    ],
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": "./",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "**/*.e2e.ts", "cypress"]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "neutron-ui",
+  "version": "0.1.0",
+  "description": "A highly accessible and easily customizable UI library.",
+  "main": "index.js",
+  "repository": "https://github.com/withneutron/neutron-ui.git",
+  "author": "Lucas Castro <lucas.castro@gmail.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": false,
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@storybook/addon-actions": "^6.5.0-alpha.49",
+    "@storybook/addon-essentials": "^6.5.0-alpha.49",
+    "@storybook/addon-interactions": "^6.5.0-alpha.49",
+    "@storybook/addon-links": "^6.5.0-alpha.49",
+    "@storybook/react": "^6.5.0-alpha.49",
+    "@storybook/testing-library": "^0.0.9",
+    "@types/react": "^17.0.2",
+    "babel-loader": "^8.2.4",
+    "lerna": "^4.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "storybook-builder-vite": "^0.1.21",
+    "vite": "^2.8.6",
+    "vite-dts": "^1.0.4",
+    "eslint-config-prettier": "8.5.0",
+    "patch-package": "6.4.7",
+    "postinstall-postinstall": "2.1.0"
+  },
+  "resolutions": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "dependencies": {},
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "dev": "FORCE_COLOR=1 lerna run dev --stream",
+    "build": "FORCE_COLOR=1 lerna run build --stream",
+    "build:lib": "FORCE_COLOR=1 lerna run build:lib --stream",
+    "build:watch": "FORCE_COLOR=1 lerna run build:watch --stream",
+    "postinstall": "patch-package"
+  }
+}
