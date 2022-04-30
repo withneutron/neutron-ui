@@ -525,7 +525,7 @@ export const breakpoints = {
 }
 export const BREAKPOINT_KEYS = Object.keys(breakpoints)
 
-export type Breakpoints = keyof typeof breakpoints | `<${keyof typeof breakpoints}`
+export type Breakpoints = keyof typeof breakpoints
 
 export const RADIUS_KEYS = ["px", "base", "none", "round", "pill", "field", "button"]
 

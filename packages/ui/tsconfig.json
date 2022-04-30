@@ -33,7 +33,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "strict": true,
+    "skipLibCheck": true,
   },
-  "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*"],
+  "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.d.ts"],
   "include": ["manualTypes.d.ts", "**/*.ts", "**/*.tsx"]
 }

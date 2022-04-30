@@ -30,8 +30,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && pretty-quick --staged",
-      "pre-push": "tsc && yarn lint && yarn test"
+      "pre-commit": "lint-staged && pretty-quick --staged"
     }
   },
   "bugs": {
