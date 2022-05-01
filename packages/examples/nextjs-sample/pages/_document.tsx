@@ -1,5 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document"
-import { globalStyles, appGlobalStyles, appFontLinks, getCssText } from "../config/ui"
+import { appFontLinks, appGlobalStyles, getCssText, globalStyles } from "../config/ui"
 
 export default function Document() {
   // Global styles
@@ -9,11 +9,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <title>Next.js + Neutron UI</title>
-        <meta name="description" content="Sample Next.js app, using NeutronUI" />
         <link rel="icon" href="/favicon.ico" />
-        <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
-
         {appFontLinks.map((font, index) => (
           <link
             key={index}
@@ -23,6 +19,7 @@ export default function Document() {
             as={font.as}
           />
         ))}
+        <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
       </Head>
       <body>
         <Main />

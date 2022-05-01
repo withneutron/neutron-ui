@@ -8,7 +8,7 @@ export interface UIComponent {
 }
 
 export type PolyUIComponent<T = unknown> = HTMLAttributes<HTMLElement> & {
-  as?: ForwardRefExoticComponent<T & RefAttributes<any>>
+  as?: ForwardRefExoticComponent<T & RefAttributes<any>> | keyof JSX.IntrinsicElements
   to?: string
   hasError?: boolean
   hasGuide?: boolean

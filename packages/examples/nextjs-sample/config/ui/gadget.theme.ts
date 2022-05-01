@@ -18,14 +18,14 @@ const CUSTOM_STYLES = {
   //   base: "1rem",
   // },
   fontSizes: {
-    base: "16rem",
-    h1: "$10",
-    h2: "$8",
-    h3: "$7",
-    h4: "$6",
-    h5: "$5",
-    h6: "$4",
-    button: "calc($3 * 1.075)",
+    // base: "16rem",
+    // h1: "$10",
+    // h2: "$8",
+    // h3: "$7",
+    // h4: "$6",
+    // h5: "$5",
+    // h6: "$4",
+    // button: "calc($3 * 1.075)",
     field: "$2",
   },
   fonts,
@@ -56,7 +56,7 @@ const customDarkPalette: SemanticColors = {
 export const customThemeValues = {
   ...CUSTOM_STYLES,
   colors: {
-    ...generateThemeColors(customPalette, "light"),
+    ...generateThemeColors(customPalette, "light", true),
     defaultHeading: "$neutralMax",
   },
 }
@@ -64,7 +64,7 @@ export const customTheme = createTheme("custom-theme", customThemeValues)
 export const customDarkThemeValues = {
   ...CUSTOM_STYLES,
   colors: {
-    ...generateThemeColors(customDarkPalette, "dark"),
+    ...generateThemeColors(customDarkPalette, "dark", true),
     defaultHeading: "$neutralMax",
   },
 }

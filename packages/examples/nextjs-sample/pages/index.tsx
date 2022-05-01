@@ -1,24 +1,8 @@
 import type { NextPage } from "next"
-import {
-  Grid,
-  Column,
-  Heading,
-  List,
-  ListItem,
-  Text,
-  Anchor,
-  Box,
-  useColors,
-  IconButton,
-  Row,
-  IconName,
-  useColor,
-} from "../config/ui"
 import Link from "next/link"
+import { Grid, Column, Heading, List, ListItem, Text, Anchor, Box, useColor } from "../config/ui"
 
 const Home: NextPage = () => {
-  const { toggleColorMode, isDark } = useColors()
-
   return (
     <>
       <Grid
@@ -33,16 +17,6 @@ const Home: NextPage = () => {
         }}
       >
         <Column.article>
-          <Row.header>
-            <IconButton
-              square
-              variant="subtle"
-              size="small"
-              onPress={toggleColorMode}
-              iconName={isDark ? IconName.sun : IconName.moon}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            />
-          </Row.header>
           <Heading>Build and scale ecommerce apps in hours, not weeks.</Heading>
           <Text>Lorem ipsum dolor sit amet &quot;consectetur&quot;.</Text>
           <Text>
@@ -174,7 +148,9 @@ const Home: NextPage = () => {
           <Heading.h2>Demos In This App</Heading.h2>
           <List gap="4">
             <ListItem>
-              <Anchor href="/sample">Sample</Anchor>
+              <Link href="/sample">
+                <Anchor href="#">Sample</Anchor>
+              </Link>
             </ListItem>
           </List>
           <Heading.h2>Resources</Heading.h2>

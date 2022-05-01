@@ -38,7 +38,7 @@
     "dev": "FORCE_COLOR=1 lerna run dev --stream",
     "build": "FORCE_COLOR=1 lerna run build --stream",
     "build:lib": "FORCE_COLOR=1 lerna run build:lib --stream",
-    "build:watch": "FORCE_COLOR=1 lerna run build:watch --stream",
+    "watch:lib": "FORCE_COLOR=1 lerna run watch:lib --stream",
     "postinstall": "patch-package"
   }
 }
