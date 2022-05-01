@@ -1,14 +1,5 @@
 import * as React from "react"
-import {
-  Button,
-  Column,
-  Grid,
-  Heading,
-  NumberField,
-  Row,
-  TextField,
-  useTheme,
-} from "../../config/ui"
+import { Button, Column, Grid, Heading, NumberField, Row, TextField, useTheme } from "@/ui"
 
 export function Inputs(): React.ReactElement {
   const { darkTheme } = useTheme()

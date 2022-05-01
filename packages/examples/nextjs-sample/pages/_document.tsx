@@ -1,13 +1,30 @@
-import { Html, Head, Main, NextScript } from "next/document"
-import { appFontLinks, appGlobalStyles, getCssText, globalStyles } from "../config/ui"
+import NextDoc, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+  DocumentProps,
+} from "next/document"
+import {
+  appFontLinks,
+  appGlobalStyles,
+  getCssText,
+  globalStyles,
+  appTheme,
+  appDarkTheme,
+  getInitialProps,
+  InitialProps,
+  getHtmlProps,
+} from "@/ui"
 
-export default function Document() {
+function Document(props: DocumentProps & { initialProps: InitialProps }) {
   // Global styles
   globalStyles()
   appGlobalStyles()
 
   return (
-    <Html>
+    <Html {...getHtmlProps(props.initialProps, appTheme, appDarkTheme)}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         {appFontLinks.map((font, index) => (
@@ -28,3 +45,14 @@ export default function Document() {
     </Html>
   )
 }
+
+Document.getInitialProps = async (ctx: DocumentContext) => {
+  const docProps = await NextDoc.getInitialProps(ctx)
+  const initialProps = getInitialProps(ctx)
+  return {
+    ...docProps,
+    initialProps,
+  }
+}
+
+export default Document

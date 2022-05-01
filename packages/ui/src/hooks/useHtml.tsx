@@ -12,14 +12,12 @@ export function useHtml() {
   const output = {
     lang: locale,
     dir: direction,
-    id: "html",
     className: String(activeTheme),
   }
 
   if (!isSSR && document?.documentElement) {
     document.documentElement.setAttribute("lang", output.lang)
     document.documentElement.setAttribute("dir", output.dir)
-    document.documentElement.setAttribute("id", output.id)
     document.documentElement.classList.remove(String(inactiveTheme))
     document.documentElement.classList.add(output.className)
   }

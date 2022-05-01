@@ -10,7 +10,7 @@ import {
   capitalizeFirstLetter,
   TextColorNameKeys,
   BGColorNameKeys,
-} from "../../config/ui"
+} from "@/ui"
 
 const TagBox = styled(
   Column,

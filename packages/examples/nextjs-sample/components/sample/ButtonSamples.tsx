@@ -8,7 +8,7 @@ import {
   IconName,
   Row,
   RowItem,
-} from "../../config/ui"
+} from "@/ui"
 
 export function ButtonSamples(): React.ReactElement {
   const getButtons = React.useCallback(

@@ -1,4 +1,5 @@
 import chroma, { Color } from "chroma-js"
+import { Theme } from "config"
 import { IncomingMessage } from "http"
 import { Locale } from "locale-enum"
 import {
@@ -23,6 +24,7 @@ import {
   DEFAULT_SOURCE_COLORS,
   FG_COLOR_INDEX,
   FlavorColorName,
+  InitialProps,
   LIGHT_ALPHA_COLOR_VALUES,
   LIGHT_CHROMA_OPTIONS,
   LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS,
@@ -490,7 +492,7 @@ function isRequest(req: IncomingMessage | Request): req is Request {
 
 /** Helper function to get the user's prefered color mode from headers */
 export function getColorModeFromHeaders(req: IncomingMessage | Request): ColorMode {
-  const key = "Sec-CH-Prefers-Color-Scheme"
+  const key = "sec-ch-prefers-color-scheme"
   let colorMode: ColorMode = "light"
   if (isRequest(req)) {
     colorMode = req.headers.get(key) as ColorMode
@@ -502,7 +504,7 @@ export function getColorModeFromHeaders(req: IncomingMessage | Request): ColorMo
 
 /** Helper function to get the user's device type (mobile or not) from headers */
 export function getIsMobileFromHeaders(req: IncomingMessage | Request): boolean {
-  const key = "Sec-CH-UA-Mobile"
+  const key = "sec-ch-ua-mobile"
   if (isRequest(req)) {
     return String(req.headers.get(key)).includes("?1")
   } else {
@@ -532,4 +534,30 @@ export function getLanguageFromHeaders(req: IncomingMessage | Request): Locale[]
     result.push(locale)
   }
   return result
+}
+
+/** Get initial props for Next.js */
+export function getInitialProps<
+  T extends { req?: IncomingMessage; defaultLocale?: string },
+  O extends Record<any, any>
+>(ctx: T, props: O | Record<string, unknown> = {}): InitialProps {
+  const { req, defaultLocale } = ctx
+  const colorMode = !req ? undefined : getColorModeFromHeaders(req)
+  const isMobile = !req ? undefined : getIsMobileFromHeaders(req)
+  const locale = !req
+    ? (defaultLocale as Locale)
+    : getLanguageFromHeaders(req)[0] || (defaultLocale as Locale)
+
+  return { ...props, colorMode, isMobile, locale }
+}
+
+/** Get HTML props for Next.js */
+export function getHtmlProps(initialProps: InitialProps, appTheme: Theme, appDarkTheme: Theme) {
+  const colorMode = initialProps.colorMode ?? DEFAULT_COLOR_MODE
+  return {
+    dir: "ltr",
+    id: "html",
+    lang: initialProps.locale ?? Locale.en_US,
+    className: colorMode === "dark" ? String(appDarkTheme) : String(appTheme),
+  }
 }

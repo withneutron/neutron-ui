@@ -1,4 +1,5 @@
 import { Color } from "chroma-js"
+import { Locale } from "locale-enum"
 import { enumValues } from "../utils"
 
 export const BASE_STYLE_SIZE = 4
@@ -1051,4 +1052,10 @@ export interface ThemeFonts {
 export interface GetThemeFonts<T = ThemeFonts> {
   fonts: T
   links: HtmlHeadLink[]
+}
+
+export interface InitialProps {
+  colorMode?: ColorMode
+  isMobile?: boolean
+  locale?: Locale
 }

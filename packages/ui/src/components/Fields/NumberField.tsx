@@ -5,6 +5,7 @@ import { useNumberFieldState } from "@react-stately/numberfield"
 import { useLocale } from "@react-aria/i18n"
 import { useNumberField } from "@react-aria/numberfield"
 import { mergeProps } from "@react-aria/utils"
+import { PressEvent } from "@react-types/shared"
 import { styled, VariantProps, CSS } from "../../config/stitches.config"
 import { IconName, IconType } from "../../shared/models"
 import { Column, Text } from "../../primitives"
@@ -22,7 +23,6 @@ import {
 } from "./NumberField.styles"
 import { useField } from "./shared/useField"
 import { getIconButton } from ".."
-import { PressEvent } from "@react-types/shared"
 import { omitProps } from "../../shared/utils"
 import { InputFieldOverrides, InputFieldProps } from "./TextField.models"
 import { UIContext } from "../../providers/UIProvider"
@@ -139,6 +139,15 @@ export function getNumberField(styleOverrides?: CSS | InputFieldOverrides, name 
       errorMessageProps,
     } = useNumberField(fieldHookProps, state, innerRef)
 
+    console.log({
+      state,
+      inputProps,
+      value: inputProps.value,
+      numberValue: state.numberValue,
+      incrementButtonProps,
+      decrementButtonProps,
+    })
+
     // Translations
     const {
       translations: { incrementNumberField, decrementNumberField, maximumReached, minimumReached },
@@ -158,14 +167,19 @@ export function getNumberField(styleOverrides?: CSS | InputFieldOverrides, name 
     const { variant, size, contrast } = numberFieldProps
 
     // Number shifters
-    function getShifterProps(props: typeof incrementButtonProps, tip: string) {
+    function getShifterProps(
+      props: typeof incrementButtonProps | typeof decrementButtonProps,
+      tip: string
+    ) {
       return {
         disabled: !!props.isDisabled || isDisabled,
         excludeFromTabOrder: true,
         onPress: (event: PressEvent) => {
-          props.onPressStart?.(event)
+          console.warn("PRESS", event)
+          console.log("props.onPress", props.onPress)
+          // props.onPressStart?.(event)
           props.onPressEnd?.(event)
-          props.onPress?.(event)
+          // props.onPress?.(event)
         },
         onBlur: props.onBlur,
         onFocus: props.onFocus,

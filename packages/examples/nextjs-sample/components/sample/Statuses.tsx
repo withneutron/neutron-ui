@@ -1,15 +1,5 @@
 import * as React from "react"
-import {
-  animate,
-  Grid,
-  Heading,
-  Icon,
-  IconName,
-  IconType,
-  Row,
-  styled,
-  Text,
-} from "../../config/ui"
+import { animate, Grid, Heading, Icon, IconName, IconType, Row, styled, Text } from "@/ui"
 
 const StatusRow = styled(
   Grid,
