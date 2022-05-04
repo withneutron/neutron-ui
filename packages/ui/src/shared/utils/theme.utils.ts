@@ -24,6 +24,7 @@ import {
   DEFAULT_SOURCE_COLORS,
   FG_COLOR_INDEX,
   FlavorColorName,
+  HIGH_CONTRAST_INDEX,
   InitialProps,
   LIGHT_ALPHA_COLOR_VALUES,
   LIGHT_CHROMA_OPTIONS,
@@ -91,7 +92,7 @@ const generateCssColors = (
     }
     const adjusted = src.set("hsv.s", src.get("hsv.s") * adjustment).set("hsl.h", src.get("hsl.h"))
     const max = isDark ? 1 : 0
-    const highContrastValue = index > FG_COLOR_INDEX ? max : value
+    const highContrastValue = index >= HIGH_CONTRAST_INDEX ? max : value
     const actualValue = isHighContrastNeutral ? highContrastValue : value
     const scaled =
       method === "alpha" ? adjusted.alpha(actualValue) : adjusted.luminance(actualValue)

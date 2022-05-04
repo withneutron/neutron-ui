@@ -172,6 +172,7 @@ export interface ChromaOptions {
 }
 
 export const FG_COLOR_INDEX = 8
+export const HIGH_CONTRAST_INDEX = 10
 export const DARK_ALPHA_COLOR_VALUES = [
   0.02, 0.07, 0.12, 0.17, 0.25, 0.37, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98,
 ]
