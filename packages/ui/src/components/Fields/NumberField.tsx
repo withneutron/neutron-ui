@@ -139,15 +139,6 @@ export function getNumberField(styleOverrides?: CSS | InputFieldOverrides, name 
       errorMessageProps,
     } = useNumberField(fieldHookProps, state, innerRef)
 
-    console.log({
-      state,
-      inputProps,
-      value: inputProps.value,
-      numberValue: state.numberValue,
-      incrementButtonProps,
-      decrementButtonProps,
-    })
-
     // Translations
     const {
       translations: { incrementNumberField, decrementNumberField, maximumReached, minimumReached },
@@ -175,11 +166,9 @@ export function getNumberField(styleOverrides?: CSS | InputFieldOverrides, name 
         disabled: !!props.isDisabled || isDisabled,
         excludeFromTabOrder: true,
         onPress: (event: PressEvent) => {
-          console.warn("PRESS", event)
-          console.log("props.onPress", props.onPress)
-          // props.onPressStart?.(event)
+          props.onPressStart?.(event)
           props.onPressEnd?.(event)
-          // props.onPress?.(event)
+          props.onPress?.(event)
         },
         onBlur: props.onBlur,
         onFocus: props.onFocus,
