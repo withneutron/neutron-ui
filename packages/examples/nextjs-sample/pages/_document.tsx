@@ -16,6 +16,7 @@ import {
   getInitialProps,
   InitialProps,
   getHtmlProps,
+  FontLinks,
 } from "@/ui"
 
 function Document(props: DocumentProps & { initialProps: InitialProps }) {
@@ -27,15 +28,7 @@ function Document(props: DocumentProps & { initialProps: InitialProps }) {
     <Html {...getHtmlProps(props.initialProps, appTheme, appDarkTheme)}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        {appFontLinks.map((font, index) => (
-          <link
-            key={index}
-            href={font.href}
-            rel={font.rel}
-            crossOrigin={font.crossOrigin}
-            as={font.as}
-          />
-        ))}
+        <FontLinks links={appFontLinks} />
         <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
       </Head>
       <body>
