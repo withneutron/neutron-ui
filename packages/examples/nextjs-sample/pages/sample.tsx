@@ -9,9 +9,9 @@ import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 
 const Sample: NextPage = () => {
-  const showColorPalette = false
-  const showTypography = false
-  const showButtons = false
+  const showColorPalette = true
+  const showTypography = true
+  const showButtons = true
   const showInputs = true
   const showTags = true
   const showStatuses = true
