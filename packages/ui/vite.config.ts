@@ -2,9 +2,9 @@ import path from "path"
 import { defineConfig } from "vite"
 import dts from "vite-dts"
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin"
-import pkg from "./package.json"
+// import pkg from "./package.json"
 
-// const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id)
+const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id)
 
 export default defineConfig(() => ({
   esbuild: {
@@ -19,8 +19,8 @@ export default defineConfig(() => ({
     outDir: path.resolve(__dirname, "./dist"),
     emptyOutDir: false,
     rollupOptions: {
-      // external: isExternal,
-      external: Object.keys(pkg.peerDependencies),
+      external: isExternal,
+      // external: Object.keys(pkg.peerDependencies),
     },
   },
   optimizeDeps: {
@@ -31,8 +31,8 @@ export default defineConfig(() => ({
   ssr: {
     noExternal: true,
   },
-  plugins: [dts(), vanillaExtractPlugin({ identifiers: "short" })],
   // plugins: [vanillaExtractPlugin()],
+  plugins: [dts(), vanillaExtractPlugin({ identifiers: "short" })],
   // resolve: {
   //   alias: {
   //     "@polaris/tokens": path.resolve(__dirname, "../tokens/src/index.ts"),

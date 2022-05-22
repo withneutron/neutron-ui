@@ -20,5 +20,6 @@ module.exports = {
   ignorePatterns: [".eslintrc.js", "jest.config.js", "**/vendor/*.js"],
   rules: {
     "react/prop-types": [0, {}],
+    "react/react-in-jsx-scope": "off",
   },
 }

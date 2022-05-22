@@ -15,7 +15,6 @@ import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.mo
 import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
 import "../config/styles.css"
-import { exampleClass, themeClass } from "../config/styles.css"
 
 // NESTABLE NEUTRON THEME PROVIDER ////////////////////////////////////////////
 export interface ThemeContextProps {
@@ -57,7 +56,7 @@ export function UITheme({
     >
       {isRoot && children}
       {!isRoot && (
-        <section className={`${className} ${themeClass} ${exampleClass} TESTING123`} ref={ref}>
+        <section className={className} ref={ref}>
           <>{children}</>
         </section>
       )}
