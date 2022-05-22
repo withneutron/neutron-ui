@@ -27,7 +27,7 @@ export * from "@withneutron/ui"
 // } from "./earthy.theme"
 
 // CUSTOM APP THEME //
-export const useDefaultTheme = true
+export const useDefaultTheme = false
 export const simulateRTL = false
 
 // Export app theme

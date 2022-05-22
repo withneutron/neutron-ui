@@ -6,7 +6,11 @@
   "repository": "https://github.com/withneutron/neutron-ui.git",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "private": false,
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@storybook/addon-actions": "^6.5.0-alpha.49",
@@ -33,12 +37,21 @@
   },
   "dependencies": {},
   "scripts": {
+    "dev": "yarn workspace nextjs-sample dev",
+    "build": "yarn workspaces run build",
+    "build:lib": "yarn workspaces run build:lib",
+    "watch:lib": "yarn workspaces run watch:lib",
+    "lint": "eslint '**/*.{js,ts,tsx}'",
+    "tsc": "tsc --noEmit",
+    "test": "vite-jest",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cypress": "start-server-and-test 'yarn run dev' http-get://localhost:3000 'yarn run cy:run'",
+    "version": "changeset version && yarn",
+    "release": "yarn build && changeset publish",
+    "size": "yarn build && size-limit",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "dev": "FORCE_COLOR=1 lerna run dev --stream",
-    "build": "FORCE_COLOR=1 lerna run build --stream",
-    "build:lib": "FORCE_COLOR=1 lerna run build:lib --stream",
-    "watch:lib": "FORCE_COLOR=1 lerna run watch:lib --stream",
+    "build:storybook": "build-storybook",
     "postinstall": "patch-package"
   }
 }

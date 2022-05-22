@@ -1,6 +1,6 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme } from "@/ui"
+import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme, exampleClass } from "@/ui"
 import { Cards } from "@/components/sample/Cards"
 import { Tags } from "@/components/sample/Tags"
 import { ButtonSamples } from "@/components/sample/ButtonSamples"
@@ -15,7 +15,7 @@ const Sample: NextPage = () => {
   const showInputs = true
   const showTags = true
   const showStatuses = true
-  const showSampleBox = false
+  const showSampleBox = true
 
   const sampleControls = (
     <>
@@ -54,6 +54,7 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <Box
+          className={exampleClass}
           css={{
             bg: "$neutral10",
             color: "$textNeutral10",

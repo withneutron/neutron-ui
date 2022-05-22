@@ -1,17 +1,37 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "target": "esnext",
+    "module": "esnext",
     "jsx": "react-jsx",
     "lib": ["dom", "esnext", "dom.iterable"],
-    "module": "esnext",
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "strict": true,
-    "target": "esnext",
-    "allowSyntheticDefaultImports": true
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@withneutron/ui": ["packages/ui/src/index.ts"]
+    }
   },
-  "include": ["./packages", "*.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "manualTypes.d.ts",
+    "./jest.setup.ts",
+    "packages/**/*",
+    "examples/**/*",
+    "storybook/**/*",
+  ],
+  "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.d.ts"]
 }
