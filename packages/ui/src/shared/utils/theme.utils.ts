@@ -1,7 +1,7 @@
 import chroma, { Color } from "chroma-js"
-import { Theme } from "config"
 import { IncomingMessage } from "http"
 import { Locale } from "locale-enum"
+import { Theme } from "../../config"
 import {
   AlphaColorName,
   ALPHA_COLOR_VALUES,
@@ -498,7 +498,11 @@ export function getColorModeFromHeaders(req: IncomingMessage | Request): ColorMo
   if (isRequest(req)) {
     colorMode = req.headers.get(key) as ColorMode
   } else {
-    colorMode = (req.headers[key] ?? req.rawHeaders[key]) as ColorMode
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      console.log("2 req.headers", headers[key] as ColorMode)
+      colorMode = headers[key as keyof typeof headers] as ColorMode
+    }
   }
   return colorMode || DEFAULT_COLOR_MODE
 }
@@ -509,8 +513,12 @@ export function getIsMobileFromHeaders(req: IncomingMessage | Request): boolean 
   if (isRequest(req)) {
     return String(req.headers.get(key)).includes("?1")
   } else {
-    return String(req.headers[key] ?? req.rawHeaders[key]).includes("?1")
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      return String(headers[key]).includes("?1")
+    }
   }
+  return false
 }
 
 /** Parse HTTP accept-language header of the user browser */
@@ -522,7 +530,10 @@ export function getLanguageFromHeaders(req: IncomingMessage | Request): Locale[]
   if (isRequest(req)) {
     acceptLangs = req.headers.get(key)
   } else {
-    acceptLangs = req.headers[key] ?? req.rawHeaders[key]
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      acceptLangs = headers[key]
+    }
   }
 
   if (!acceptLangs) {

@@ -48,6 +48,7 @@ import {
 import { AutoReload } from "~components/AutoReload"
 
 export const loader: LoaderFunction = async ({ request }) => {
+  console.log("!!! request.headers", request.headers)
   const colorMode = getColorModeFromHeaders(request.headers)
   const isMobile = getIsMobileFromHeaders(request.headers)
   const locale = getLanguageFromHeaders(request.headers)[0]
@@ -60,7 +61,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   })
 }
 
-export const links: LinksFunction = () => appFontLinks
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: "/build/_assets/style-HFXO2GJM.css" }, appFontLinks]
+}
 
 export const meta: MetaFunction = () => {
   const description = "Neutron app development platform."

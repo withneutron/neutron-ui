@@ -3,8 +3,6 @@ import Head from "next/head"
 import Layout from "@/components/layout/Layout"
 import { Locale, UIProvider, simulateRTL, appTheme, appDarkTheme, getInitialProps } from "@/ui"
 import App from "next/app"
-// import "@/ui/styles.css"
-// import "@/ui/style.css"
 import "@withneutron/ui/styles"
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -15,7 +15,7 @@ const Sample: NextPage = () => {
   const showInputs = true
   const showTags = true
   const showStatuses = true
-  const showSampleBox = true
+  const showSampleBox = false
 
   const sampleControls = (
     <>
@@ -54,7 +54,7 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <Box
-          className={exampleClass}
+          className={`debug ${exampleClass}`}
           css={{
             bg: "$neutral10",
             color: "$textNeutral10",
