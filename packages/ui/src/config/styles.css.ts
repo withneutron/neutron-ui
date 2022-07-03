@@ -1,5 +1,25 @@
 import { createGlobalTheme, createTheme, style, createGlobalThemeContract, globalStyle } from "@vanilla-extract/css"
 import { calc } from "@vanilla-extract/css-utils"
+import { CharHash } from "./CharHash"
+import {
+  getSize,
+  getSpace,
+  getRadius,
+  getColumn,
+  getRow,
+  getZIndex,
+  getLineHeight,
+  getTypeSpace,
+  getTextDecoration,
+  getShadow,
+  getFontSize,
+  getFontWeight,
+  getFontFamily,
+  getFont,
+  getColor,
+  getBorder,
+  getOutline,
+} from "./scales"
 
 /////////////////
 // Methodology //
@@ -128,3 +148,42 @@ function generateStyles() {
   })
   return { exampleClass, themeClass, vars }
 }
+
+///////
+const hash = new CharHash()
+
+const { scale: color } = getColor(hash)
+const { scale: size } = getSize(hash)
+const { scale: space } = getSpace(hash, size)
+const { scale: radius } = getRadius(hash)
+const { scale: column } = getColumn(hash, size)
+const { scale: row } = getRow(hash, column)
+const { scale: zIndex } = getZIndex(hash)
+const { scale: lineHeight } = getLineHeight(hash, size)
+const { scale: typeSpace } = getTypeSpace(hash)
+const { scale: textDecoration } = getTextDecoration(hash, color)
+const { scale: shadow } = getShadow(hash, color)
+const { scale: fontSize } = getFontSize(hash)
+const { scale: fontWeight } = getFontWeight(hash)
+const { scale: fontFamily } = getFontFamily(hash)
+const { scale: font } = getFont(hash, fontSize, fontWeight, fontFamily)
+const { scale: border } = getBorder(hash, color)
+const { scale: outline } = getOutline(hash, color)
+
+console.log("color", color)
+console.log("size", size)
+console.log("space", space)
+console.log("radius", radius)
+console.log("column", column)
+console.log("row", row)
+console.log("zIndex", zIndex)
+console.log("lineHeight", lineHeight)
+console.log("typeSpace", typeSpace)
+console.log("textDecoration", textDecoration)
+console.log("shadow", shadow)
+console.log("fontSize", fontSize)
+console.log("fontWeight", fontWeight)
+console.log("fontFamily", fontFamily)
+console.log("font", font)
+console.log("border", border)
+console.log("outline", outline)

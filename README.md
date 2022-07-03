@@ -1,37 +1,41 @@
 # neutron-ui
 A highly accessible and easily customizable UI library.
 
-## BREAKPOINTS
+## CONDITIONS
 
-PHONE === Default
+// We default to desktop-first, because most web apps still neglect responsive early on
+DESKTOP === Default
+
+// Switch to tshirt sizing, to keep data-X debug attributes short
 
 ```
-const breakpoints = {
-  phone: {}, // Below 396px
-  phablet: { '@media': 'screen and (min-width: 396px)' },
-  <tablet: { '@media': 'screen and (max-width: 659.99px)' },
-  tablet: { '@media': 'screen and (min-width: 660px)' },
-  <laptop: { '@media': 'screen and (max-width: 899.99px)' },
-  laptop: { '@media': 'screen and (min-width: 900px)' },
-  desktop: { '@media': 'screen and (min-width: 1200px)' },
-}
+const conditions = {
+  s: { '@media': 'screen and (max-width: 395.9987654321px)' },   // Phone
+  m: { '@media': 'screen and (max-width: 659.9987654321px)' },    // Phablet
+  l: { '@media': 'screen and (max-width: 899.9987654321px)' },    // Tablet
+  xl: { '@media': 'screen and (max-width: 1199.9987654321px)' },   // Laptop
 
-const directionalBreakpoints = {
-  phone: { selector: "[dir='ltr']" }, // Below 396px
-  phablet: { '@media': 'screen and (min-width: 396px)', selector: "[dir='ltr']" },
-  <tablet: { '@media': 'screen and (max-width: 659.99px)', selector: "[dir='ltr']" },
-  tablet: { '@media': 'screen and (min-width: 660px)', selector: "[dir='ltr']" },
-  <laptop: { '@media': 'screen and (max-width: 899.99px)', selector: "[dir='ltr']" },
-  laptop: { '@media': 'screen and (min-width: 900px)', selector: "[dir='ltr']" },
-  desktop: { '@media': 'screen and (min-width: 1200px)', selector: "[dir='ltr']" },
+  >s: { '@media': 'screen and (min-width: 395.9987654321px)' },
+  >m: { '@media': 'screen and (min-width: 659.9987654321px)' },
+  >l: { '@media': 'screen and (min-width: 899.9987654321px)' },
+  >xl: { '@media': 'screen and (min-width: 1199.9987654321px)' },
 
-  phoneRTL: { selector: "[dir='rtl']" }, // Below 396px
-  phabletRTL: { '@media': 'screen and (min-width: 396px)', selector: "[dir='rtl']" },
-  <tabletRTL: { '@media': 'screen and (max-width: 659.99px)', selector: "[dir='rtl']" },
-  tabletRTL: { '@media': 'screen and (min-width: 660px)', selector: "[dir='rtl']" },
-  <laptopRTL: { '@media': 'screen and (max-width: 899.99px)', selector: "[dir='rtl']" },
-  laptopRTL: { '@media': 'screen and (min-width: 900px)', selector: "[dir='rtl']" },
-  desktopRTL: { '@media': 'screen and (min-width: 1200px)', selector: "[dir='rtl']" },
+  hc: { '@media': '(prefers-contrast: more)' }, // highContrast
+  rm: { '@media': '(prefers-reduced-motion)' }, // reducedMotion
+  rd: { '@media': '(prefers-reduced-data)' }, // reducedData
+  touch: { '@media': '(hover: none)' }, // touch
+  pointer: { '@media': '(hover: hover) and (pointer: fine)' }, // pointer
+  tv: { '@media': '(hover: hover) and (pointer: coarse)' }, // tv
+
+  !hc: !hc,
+  !rm: !rm,
+  !rd: !rd,
+  !touch: !touch,
+  !pointer: !pointer,
+  !tv: !tv,
+
+  light: // Check color mode state (DEFAULT)
+  dark: // Check color mode state
 }
 ```
 

@@ -502,3 +502,18 @@ const props = [
 ];
 
 ```
+----
+
+
+# GRID TEMPLATE
+- Look at what Tailwind does for grid cols, and provide some predefined classes like that as well: https://tailwindcss.com/docs/grid-template-columns
+- Not sure if the rows one is that helpful, though; I wonder if anyone ever uses it: https://tailwindcss.com/docs/grid-template-rows
+- Hmmm... need to think about how we would handle states like hover, focus, focus-within, active, and disabled.
+
+---
+
+# SCALES
+
+- The `scale` we export now should be internal, for customization.
+- We should also export `themeProps`, which could contain combos that need to be SPREAD onto a CSS object. E.g.: { outline: ABC, outlineOffset: XYZ }.
+- That means the `cssValueMap` object should not contain any combos, only class-worthy properties from the scale.

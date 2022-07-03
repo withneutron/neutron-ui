@@ -61,9 +61,9 @@ export enum SemanticStaticColorName {
 }
 
 export enum SemanticColorName {
+  neutral = "neutral",
   primary = "primary",
   secondary = "secondary",
-  neutral = "neutral",
 }
 export enum SemanticTextColorName {
   primary = "textPrimary",
@@ -173,15 +173,9 @@ export interface ChromaOptions {
 
 export const FG_COLOR_INDEX = 8
 export const HIGH_CONTRAST_INDEX = 10
-export const DARK_ALPHA_COLOR_VALUES = [
-  0.02, 0.07, 0.12, 0.17, 0.25, 0.37, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98,
-]
-export const LIGHT_ALPHA_COLOR_VALUES = [
-  0.018, 0.06, 0.11, 0.15, 0.23, 0.34, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98,
-]
-export const ALPHA_COLOR_VALUES = [
-  0.018, 0.06, 0.11, 0.15, 0.23, 0.34, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98,
-]
+export const DARK_ALPHA_COLOR_VALUES = [0.02, 0.07, 0.12, 0.17, 0.25, 0.37, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98]
+export const LIGHT_ALPHA_COLOR_VALUES = [0.018, 0.06, 0.11, 0.15, 0.23, 0.34, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98]
+export const ALPHA_COLOR_VALUES = [0.018, 0.06, 0.11, 0.15, 0.23, 0.34, 0.45, 0.6, 0.9, 0.92, 0.95, 0.98]
 export const NEUTRAL_ALPHA_COLOR_VALUES = {
   darkBg: {
     darkFg: [0.003, 0.015, 0.04, 0.07, 0.11, 0.15, 0.21, 0.3, 0.53, 0.61, 0.725, 0.84],
@@ -198,12 +192,8 @@ export const NEUTRAL_DARK_LUMINANCE_VALUES = [
 export const NEUTRAL_LIGHT_LUMINANCE_VALUES = [
   0.95, 0.93, 0.88, 0.835, 0.755, 0.675, 0.56, 0.435, 0.165, 0.115, 0.06, 0.02,
 ]
-export const DARK_LUMINANCE_VALUES = [
-  0.015, 0.025, 0.044, 0.063, 0.085, 0.105, 0.125, 0.155, 0.3, 0.475, 0.6, 0.885,
-]
-export const LIGHT_LUMINANCE_VALUES = [
-  0.95, 0.93, 0.88, 0.83, 0.74, 0.675, 0.56, 0.435, 0.165, 0.115, 0.06, 0.02,
-]
+export const DARK_LUMINANCE_VALUES = [0.015, 0.025, 0.044, 0.063, 0.085, 0.105, 0.125, 0.155, 0.3, 0.475, 0.6, 0.885]
+export const LIGHT_LUMINANCE_VALUES = [0.95, 0.93, 0.88, 0.83, 0.74, 0.675, 0.56, 0.435, 0.165, 0.115, 0.06, 0.02]
 export const DARK_STATUS_LUMINANCE_VALUES = [0.025, 0.3, 0.8]
 export const LIGHT_STATUS_LUMINANCE_VALUES = [0.85, 0.14, 0.04]
 export const DARK_STATUS_INVERTED_LUMINANCE_VALUES = [0.03, 0.5, 0.9]
@@ -215,37 +205,37 @@ export const LIGHT_STATUS_TEXT_MAX_LUMINANCE = 0.095
 export const LUMINANCE_CUTOFF = 0.5
 export const LUMINANCE_DARK_LIMIT = 0.4
 export const LUMINANCE_LIGHT_LIMIT = 0.6
-export const STATUS_COLOR_POINTERS: Record<number, string> = {
+export const STATUS_COLOR_POINTERS = {
   0: "Min",
   1: "",
   2: "Max",
-}
-export const DARK_STATUS_INFO_COLOR_POINTERS: Record<number, number> = {
+} as const
+export const DARK_STATUS_INFO_COLOR_POINTERS = {
   0: 4,
   1: 10,
   2: 12,
-}
-export const LIGHT_STATUS_INFO_COLOR_POINTERS: Record<number, number> = {
+} as const
+export const LIGHT_STATUS_INFO_COLOR_POINTERS = {
   0: 4,
   1: 9,
   2: 12,
-}
-export const STATUS_TEXT_COLOR_TARGETS: Record<number, string | null> = {
+} as const
+export const STATUS_TEXT_COLOR_TARGETS = {
   0: "Max",
   1: null,
   2: "Min",
-}
-export const DARK_INFO_STATUS_TEXT_COLOR_TARGETS: Record<number, string | number> = {
+} as const
+export const DARK_INFO_STATUS_TEXT_COLOR_TARGETS = {
   0: 12,
   1: "Min",
   2: 2,
-}
-export const LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS: Record<number, string | number> = {
+} as const
+export const LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS = {
   0: 12,
   1: "Max",
   2: 4,
-}
-export const TEXT_COLOR_TARGETS: Record<number, number | null> = {
+} as const
+export const TEXT_COLOR_TARGETS = {
   1: 10,
   2: 11,
   3: 11,
@@ -258,7 +248,7 @@ export const TEXT_COLOR_TARGETS: Record<number, number | null> = {
   10: null,
   11: 3,
   12: 5,
-}
+} as const
 export const DARK_CHROMA_OPTIONS: ChromaOptions = {
   mainBgLum: 0.875,
   altBgLum: 0.125,
@@ -371,9 +361,7 @@ export type ThemeColor =
   | `${SemanticTextColorName}${ColorNumberKey}`
   | `${FlavorColorName}${ColorNumberKey}`
   | `${FlavorTextColorName}${ColorNumberKey}`
-  | `${StatusColorName}`
-  | `${StatusColorName}Max`
-  | `${StatusColorName}Min`
+  | `${SemanticStaticColorName}`
 
 export type ColorPalette = {
   [key in ThemeColor]: string
@@ -393,9 +381,7 @@ export type ColorKeys<T extends string> =
   | `${T}11`
   | `${T}12`
 
-export type BGWithTextColorNameKeys =
-  | `${SemanticColorName}${ColorNumberKey}`
-  | `${FlavorColorName}${ColorNumberKey}`
+export type BGWithTextColorNameKeys = `${SemanticColorName}${ColorNumberKey}` | `${FlavorColorName}${ColorNumberKey}`
 export type BGColorNameKeys =
   | "transparent"
   | "alphaPattern"
@@ -642,28 +628,25 @@ export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 
 export enum SystemFontFamily {
   sansSerif = `-apple-system,BlinkMacSystemFont,
-  "Segoe UI",
-  Roboto,
-  Oxygen-Sans,Ubuntu,Cantarell,
-  "Helvetica Neue",Helvetica,Arial,sans-serif,
-  "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
+"Segoe UI",
+Roboto,
+Oxygen-Sans,Ubuntu,Cantarell,
+"Helvetica Neue",Helvetica,Arial,sans-serif,
+"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
   serif = `Iowan Old Style,Apple Garamond,
-  Baskerville,Source Serif Pro,Droid Serif,
-  Times New Roman,Times,serif,
-  "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
+Baskerville,Source Serif Pro,Droid Serif,
+Times New Roman,Times,serif,
+"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
   monospace = `SFMono-Regular,Menlo,Monaco,
-  Consolas,"Liberation Mono",
-  "Courier New",monospace,
-  "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
+Consolas,"Liberation Mono",
+"Courier New",monospace,
+"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
 }
 
 export type SystemFontFallbackToken = "systemSans" | "systemSerif" | "systemMono"
 
 export interface Font<
-  T extends BodyFontFamily | HeadingFontFamily | CodeFontFamily =
-    | BodyFontFamily
-    | HeadingFontFamily
-    | CodeFontFamily
+  T extends BodyFontFamily | HeadingFontFamily | CodeFontFamily = BodyFontFamily | HeadingFontFamily | CodeFontFamily
 > {
   source: FontSource
   family: T
@@ -988,10 +971,7 @@ export const codeFonts: Record<keyof typeof CodeFontFamily, Font<CodeFontFamily>
   },
 }
 
-export type FontFamilyKey =
-  | keyof typeof BodyFontFamily
-  | keyof typeof HeadingFontFamily
-  | keyof typeof CodeFontFamily
+export type FontFamilyKey = keyof typeof BodyFontFamily | keyof typeof HeadingFontFamily | keyof typeof CodeFontFamily
 
 export interface FontFamilySpec {
   body?: keyof typeof BodyFontFamily
