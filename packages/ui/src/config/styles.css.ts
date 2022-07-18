@@ -21,32 +21,6 @@ import {
   getOutline,
 } from "./scales"
 
-/////////////////
-// Methodology //
-/////////////////
-/**
- * Create a utility class for every value in every condition.
- * Create a custom value class (and var) for each condition, using an emoji prefix (♾).
- * The resolver function would default to utility classes, unless the value is custom.
- * The resolver outputs both `className` and `style`, including merging with external values for those props.
- * The resolver accepts both direct styling props, and via the `css` prop.
- */
-
-/////////////////
-// This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-type CssString = string & { trim?: () => string }
-type Test = "a" | "b" | "c" | CssString
-
-type TestObj = {
-  test: Test
-}
-
-const test: TestObj = {
-  test: "a",
-}
-
-const value: Test = ""
-
 // Export the theme
 export const { exampleClass, themeClass, vars } = generateStyles()
 
@@ -152,23 +126,23 @@ function generateStyles() {
 ///////
 const hash = new CharHash()
 
-const { scale: color } = getColor(hash)
-const { scale: size } = getSize(hash)
-const { scale: space } = getSpace(hash, size)
-const { scale: radius } = getRadius(hash)
-const { scale: column } = getColumn(hash, size)
-const { scale: row } = getRow(hash, column)
-const { scale: zIndex } = getZIndex(hash)
-const { scale: lineHeight } = getLineHeight(hash, size)
-const { scale: typeSpace } = getTypeSpace(hash)
-const { scale: textDecoration } = getTextDecoration(hash, color)
-const { scale: shadow } = getShadow(hash, color)
-const { scale: fontSize } = getFontSize(hash)
-const { scale: fontWeight } = getFontWeight(hash)
-const { scale: fontFamily } = getFontFamily(hash)
-const { scale: font } = getFont(hash, fontSize, fontWeight, fontFamily)
-const { scale: border } = getBorder(hash, color)
-const { scale: outline } = getOutline(hash, color)
+const { vars: color } = getColor(hash)
+const { vars: size } = getSize(hash)
+const { vars: space } = getSpace(hash, size)
+const { vars: radius } = getRadius(hash)
+const { vars: column } = getColumn(hash, size)
+const { vars: row } = getRow(hash, column)
+const { vars: zIndex } = getZIndex(hash)
+const { vars: lineHeight } = getLineHeight(hash, size)
+const { vars: typeSpace } = getTypeSpace(hash)
+const { vars: textDecoration } = getTextDecoration(hash, color)
+const { vars: shadow } = getShadow(hash, color)
+const { vars: fontSize } = getFontSize(hash)
+const { vars: fontWeight } = getFontWeight(hash)
+const { vars: fontFamily } = getFontFamily(hash)
+const { vars: font } = getFont(hash, fontSize, fontWeight, fontFamily)
+const { vars: border } = getBorder(hash, color)
+const { vars: outline } = getOutline(hash, color)
 
 console.log("color", color)
 console.log("size", size)

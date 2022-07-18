@@ -635,8 +635,10 @@ export const globalStyles = globalCss({
       color: "$textNeutral9",
     },
     "@reducedMotion": {
-      animation: "$none !important",
-      transition: "$none !important",
+      transitionDuration: "0 !important",
+      animationDuration: "0.001ms !important",
+      animationIterationCount: "1 !important",
+      scrollBehavior: "auto !important",
     },
   },
   "body, a, p, li, strong, em, b, i, button": {

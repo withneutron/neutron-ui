@@ -3765,8 +3765,8 @@ export interface VarData {
 /** Generates single or double character hashes, with 14M permutations */
 export class CharHash {
   private count = 0
-  /** We only ever need 1-2 keys, because that still creates 14M possible hashes */
-  key: [number] | [number, number] = [0]
+  /** We only ever need 1-2 keys (i.e. chars), because that still creates 14M possible hashes */
+  private key: [number] | [number, number] = [0]
 
   /** Determine the base list of chars to use */
   private getBase(index: number) {
@@ -3802,7 +3802,7 @@ export class CharHash {
     }
   }
 
-  /** Get the current hash name */
+  /** Get a generated hash name */
   get name(): string {
     const val = this.key.reduce((out: string, k: number, index: number) => {
       const base = this.getBase(index)
@@ -3814,7 +3814,7 @@ export class CharHash {
     return val
   }
 
-  /** Get a CSS custom property name and reference string */
+  /** Get a generated, hashed CSS var name and reference string */
   get var(): VarData {
     const hash = this.name
     return {

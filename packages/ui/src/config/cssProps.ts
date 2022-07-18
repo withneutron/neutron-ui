@@ -5,7 +5,7 @@
  *
  * Create a global style for `[dir]` that sets the `direction: ___;` css property
  *
- * Convert padding, marging, and other 4-directional props (border, etc) to their
+ * Convert padding, marging, and other shorthand props (border, etc) to their
  * 4 directional counterparts, in the resolver, to reduce number of classes we generate.
  *
  * Make sure `unset`, `initial`, `revert`, and `inherit` values are available to any props that
@@ -54,16 +54,16 @@ export const customVarProps = {
   transform: true,
   transformOrigin: true,
 
-  transition: true,
-
   animation: true,
+
+  transition: true,
 
   opacity: true,
 } as const
 
 // These props use predefined scales
 export const scaledProps = {
-  outline: true, // outline (combos)
+  outline: true, // outline (combos) // Spreads into multiple CSS properties
   outlineWidth: true, // outline (widths)
   outlineColor: true, // outline (colors)
   outlineOffset: true, // outline (offsets)
@@ -109,16 +109,6 @@ export const scaledProps = {
   paddingInlineStart: true, // space // LEFT
   paddingInlineEnd: true, // space // RIGHT
 
-  scrollMarginBlockStart: true, // space // TOP
-  scrollMarginBlockEnd: true, // space // BOTTOM
-  scrollMarginInlineStart: true, // space // LEFT
-  scrollMarginInlineEnd: true, // space // RIGHT
-
-  scrollPaddingBlockStart: true, // space // TOP
-  scrollPaddingBlockEnd: true, // space // BOTTOM
-  scrollPaddingInlineStart: true, // space // LEFT
-  scrollPaddingInlineEnd: true, // space // RIGHT
-
   insetBlockStart: true, // space // TOP
   insetBlockEnd: true, // space // BOTTOM
   insetInlineStart: true, // space // LEFT
@@ -153,12 +143,24 @@ export const scaledProps = {
   zIndex: true, // zIndex
 
   boxShadow: true, // shadow
+
+  animation: true, // animation (combos) // Spreads into multiple CSS properties
 } as const
 
 export const staticProps = {
   all: true,
 
+  position: true,
+  display: true,
+  visibility: true,
   opacity: true, // 2 common values: [0, 1]
+
+  cursor: true,
+  pointerEvents: true,
+
+  boxSizing: true,
+
+  resize: true,
 
   outlineStyle: true,
 
@@ -169,6 +171,9 @@ export const staticProps = {
 
   borderCollapse: true,
 
+  flexDirection: true,
+  flexFlow: true,
+  flexWrap: true,
   flexGrow: true, // Static low values (0 – 6)
   flexShrink: true, // Static low values (0 – 6)
 
@@ -196,14 +201,98 @@ export const staticProps = {
 
   wordBreak: true,
   overflowWrap: true,
+
+  textAlign: true,
+  verticalAlign: true,
+
+  listStyle: true,
+  listStyleImage: true,
+  listStylePosition: true,
+  listStyleType: true,
+
+  filter: true,
+
+  scrollSnapAlign: true,
+  scrollSnapType: true,
+} as const
+
+export const mappedProps = {
+  height: true,
+  width: true,
+  minHeight: true,
+  minWidth: true,
+  maxHeight: true,
+  maxWidth: true,
+
+  margin: true,
+  marginBottom: true,
+  marginLeft: true,
+  marginRight: true,
+  marginTop: true,
+
+  padding: true,
+  paddingBottom: true,
+  paddingLeft: true,
+  paddingRight: true,
+  paddingTop: true,
+
+  bottom: true,
+  top: true,
+  left: true,
+  right: true,
+
+  border: true,
+  borderColor: true,
+  borderStyle: true,
+  borderWidth: true,
+
+  borderBlock: true,
+  borderBlockColor: true,
+  borderBlockStyle: true,
+  borderBlockWidth: true,
+
+  borderInline: true,
+  borderInlineColor: true,
+  borderInlineStyle: true,
+  borderInlineWidth: true,
+
+  borderTop: true,
+  borderTopColor: true,
+  borderTopStyle: true,
+  borderTopWidth: true,
+
+  borderBottom: true,
+  borderBottomColor: true,
+  borderBottomStyle: true,
+  borderBottomWidth: true,
+
+  borderLeft: true,
+  borderLeftColor: true,
+  borderLeftStyle: true,
+  borderLeftWidth: true,
+
+  borderRight: true,
+  borderRightColor: true,
+  borderRightStyle: true,
+  borderRightWidth: true,
+
+  borderRadius: true,
+  borderTopLeftRadius: true,
+  borderTopRightRadius: true,
+  borderBottomLeftRadius: true,
+  borderBottomRightRadius: true,
+
+  gap: true,
+
+  wordWrap: true,
 }
 
 // Only these props should have interactive state classes/vars generated for them
-// :hover         // hover
-// :focus         // focus
-// :focusWithin   // focus-within
-// :focusVisible  // focus-visible
-// :active        // active/.active,
+// :hover
+// :focus
+// :focus-within
+// :focus-visible
+// :active
 // 26
 export const actionStateProps = {
   animation: true,
@@ -254,19 +343,22 @@ export const disabledStateProps = {
 }
 
 // Only these props should have structural pseudo-classes
-// :odd     // nth-child(odd),
-// :first   // first-of-type,
-// :last    // last-of-type,
-// MABYE: first-child, (can probably just do "of-type" in most cases)
-// MABYE: last-child, (can probably just do "of-type" in most cases)
+// :odd           // nth-child(odd),
+// :first         // first-child,
+// :last          // last-child,
+// :first-of-type // first-of-type,
+// :last-of-type  // last-of-type,
 // MAYBE nth-child(even) (can treat default as even, and override ONLY odds)
 // MAYBE: only-child, only-of-type (achievable with first + last combined)
 // MAYBE: empty (probably best handled in JS)
 // MAYBE: nth-child, nth-last-child, nth-of-type, nth-last-of-type (API??)
 // MAYBE: target, target-within, visited
-// + 38
+// + 41
 export const structuralClassProps = {
   ...actionStateProps,
+  display: true,
+  visibility: true,
+
   borderStartStartRadius: true,
   borderStartEndRadius: true,
   borderEndEndRadius: true,
@@ -312,12 +404,12 @@ export const structuralClassProps = {
   overflowY: true,
   overflowX: true,
 
+  verticalAlign: true,
   textAlign: true,
   textOverflow: true,
 }
 
 // NOTE: If you add a prop here, remember to add it to `directionalProps` too, if it's LTR/RTL directional
-// NOTE: Ignore defauts?? Maybe not: the issue would be if someone globally changes the default, and wants to override it in specific cases.
 export const props = [
   // ORDERED //
   "display",
@@ -325,283 +417,320 @@ export const props = [
   "height",
   "width",
 
+  "inlineSize",
+  "minInlineSize",
+  "maxInlineSize",
+  "blockSize",
+  "minBlockSize",
+  "maxBlockSize",
+
   "margin",
-  "margin-bottom",
-  "margin-left",
-  "margin-right",
-  "margin-top",
+  "marginBottom",
+  "marginLeft",
+  "marginRight",
+  "marginTop",
+  "marginBlockStart",
+  "marginBlockEnd",
+  "marginInlineStart",
+  "marginInlineEnd",
 
   "padding",
-  "padding-bottom",
-  "padding-left",
-  "padding-right",
-  "padding-top",
+  "paddingBottom",
+  "paddingLeft",
+  "paddingRight",
+  "paddingTop",
+  "paddingBlockStart",
+  "paddingBlockEnd",
+  "paddingInlineStart",
+  "paddingInlineEnd",
 
   "position",
 
-  "background-color",
+  "backgroundColor",
   "background",
 
-  "min-height",
-  "min-width",
-  "max-height",
-  "max-width",
+  "minHeight",
+  "minWidth",
+  "maxHeight",
+  "maxWidth",
 
   "bottom",
   "top",
   "left",
   "right",
+  "insetBlockStart",
+  "insetBlockEnd",
+  "insetInlineStart",
+  "insetInlineEnd",
 
   "color",
 
   "font",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
+  "fontFamily",
+  "fontSize",
+  "fontWeight",
+  "fontStyle",
 
   "border",
-  "border-color",
-  "border-style",
-  "border-width",
+  "borderColor",
+  "borderStyle",
+  "borderWidth",
 
-  "border-block",
-  "border-block-color",
-  "border-block-style",
-  "border-block-width",
-  "border-inline",
-  "border-inline-color",
-  "border-inline-style",
-  "border-inline-width",
+  "borderBlock",
+  "borderBlockColor",
+  "borderBlockStyle",
+  "borderBlockWidth",
+  "borderInline",
+  "borderInlineColor",
+  "borderInlineStyle",
+  "borderInlineWidth",
 
-  "border-top",
-  "border-top-color",
-  "border-top-style",
-  "border-top-width",
-  "border-block-start",
-  "border-block-start-color",
-  "border-block-start-style",
-  "border-block-start-width",
+  "borderTop",
+  "borderTopColor",
+  "borderTopStyle",
+  "borderTopWidth",
+  "borderBlockStart",
+  "borderBlockStartColor",
+  "borderBlockStartStyle",
+  "borderBlockStartWidth",
 
-  "border-bottom",
-  "border-bottom-color",
-  "border-bottom-style",
-  "border-bottom-width",
-  "border-block-end",
-  "border-block-end-color",
-  "border-block-end-style",
-  "border-block-end-width",
+  "borderBottom",
+  "borderBottomColor",
+  "borderBottomStyle",
+  "borderBottomWidth",
+  "borderBlockEnd",
+  "borderBlockEndColor",
+  "borderBlockEndStyle",
+  "borderBlockEndWidth",
 
-  "border-left",
-  "border-left-color",
-  "border-left-style",
-  "border-left-width",
-  "border-inline-start",
-  "border-inline-start-color",
-  "border-inline-start-style",
-  "border-inline-start-width",
+  "borderLeft",
+  "borderLeftColor",
+  "borderLeftStyle",
+  "borderLeftWidth",
+  "borderInlineStart",
+  "borderInlineStartColor",
+  "borderInlineStartStyle",
+  "borderInlineStartWidth",
 
-  "border-right",
-  "border-right-color",
-  "border-right-style",
-  "border-right-width",
-  "border-inline-end",
-  "border-inline-end-color",
-  "border-inline-end-style",
-  "border-inline-end-width",
+  "borderRight",
+  "borderRightColor",
+  "borderRightStyle",
+  "borderRightWidth",
+  "borderInlineEnd",
+  "borderInlineEndColor",
+  "borderInlineEndStyle",
+  "borderInlineEndWidth",
 
-  "border-radius",
-  "border-top-left-radius",
-  "border-top-right-radius",
-  "border-bottom-left-radius",
-  "border-bottom-right-radius",
-  "border-start-start-radius",
-  "border-start-end-radius",
-  "border-end-end-radius",
-  "border-end-start-radius",
+  "borderRadius",
+  "borderTopLeftRadius",
+  "borderTopRightRadius",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius",
+  "borderStartStartRadius",
+  "borderStartEndRadius",
+  "borderEndEndRadius",
+  "borderEndStartRadius",
 
   "opacity",
   "visibility",
 
   "overflow",
-  "overflow-x",
-  "overflow-y",
+  "overflowX",
+  "overflowY",
 
   "outline",
-  "outline-color",
-  "outline-offset",
-  "outline-style",
-  "outline-width",
+  "outlineColor",
+  "outlineOffset",
+  "outlineStyle",
+  "outlineWidth",
 
-  "z-index",
+  "zIndex",
 
   "transition",
 
   "transform",
 
-  "text-align",
-  "vertical-align",
+  "textAlign",
+  "verticalAlign",
 
-  "align-items",
-  "justify-content",
+  "alignItems",
+  "justifyContent",
 
-  "box-shadow",
+  "boxShadow",
 
   "cursor",
 
   "flex",
-  "flex-basis",
-  "flex-direction",
-  "flex-flow",
-  "flex-grow",
-  "flex-shrink",
-  "flex-wrap",
+  "flexBasis",
+  "flexDirection",
+  "flexFlow",
+  "flexGrow",
+  "flexShrink",
+  "flexWrap",
 
   "gap", // SPREAD into row gap & column gap
-  "row-gap",
-  "column-gap",
+  "rowGap",
+  "columnGap",
 
-  "grid-area",
-  "grid-auto-rows",
-  "grid-auto-columns",
-  "grid-auto-flow",
-  "grid-row",
-  "grid-column",
-  "grid-template", // UTIL: gt // Check for line-breaks; throw error if they're found (only row/col syntax supported)
+  "gridArea",
+  "gridAutoRows",
+  "gridAutoColumns",
+  "gridAutoFlow",
+  "gridRow",
+  "gridColumn",
+  "gridTemplate", // UTIL: gt // Check for line-breaks; throw error if they're found (only row/col syntax supported)
   // NOTE: Only join if BOTH are set, below, because it's inefficient to set `none/{COLS}` for just columns
-  "grid-template-rows", // UTIL: gtRows // If BOTH rows + cols are set, then JOIN into gt
-  "grid-template-columns", // UTIL: gtColumns // If BOTH rows + cols are set, then JOIN into gt
-  "grid-template-areas", // UTIL: gtAreas
+  "gridTemplateRows", // UTIL: gtRows // If BOTH rows + cols are set, then JOIN into gt
+  "gridTemplateColumns", // UTIL: gtColumns // If BOTH rows + cols are set, then JOIN into gt
+  "gridTemplateAreas", // UTIL: gtAreas
 
-  "white-space",
+  "whiteSpace",
 
-  "pointer-events",
+  "pointerEvents",
 
   "animation",
 
-  "line-height",
+  "lineHeight",
 
-  "align-self",
-  "justify-self",
-  "align-content",
-  "justify-items",
+  "alignSelf",
+  "justifySelf",
+  "alignContent",
+  "justifyItems",
 
-  "list-style",
-  "list-style-image",
-  "list-style-position",
-  "list-style-type",
+  "listStyle",
+  "listStyleImage",
+  "listStylePosition",
+  "listStyleType",
 
   "resize",
 
-  "text-overflow",
-  "text-transform",
-  "text-decoration",
-  "text-underline-offset",
+  "textOverflow",
+  "textTransform",
+  "textDecoration",
+  "textUnderlineOffset",
 
-  "letter-spacing",
-  "word-spacing",
-  "word-break",
-  "overflow-wrap",
-  "word-wrap", // Alias for "overflow-wrap"
+  "letterSpacing",
+  "wordSpacing",
+  "wordBreak",
+  "overflowWrap",
+  "wordWrap", // Alias for "overflowWrap"
 
-  "transform-origin",
+  "fill",
+  "stroke",
 
-  "border-collapse",
-  "border-spacing",
+  "transformOrigin",
+
+  "borderCollapse",
+  "borderSpacing",
 
   "filter",
 
-  "text-shadow",
+  "textShadow",
 
   "all",
 
-  "background-blend-mode",
+  "backgroundBlendMode",
 
-  "box-sizing",
+  "boxSizing",
 
+  "borderBlockStartImage",
+  "borderBlockEndImage",
+  "borderInlineStartImage",
+  "borderInlineEndImage",
+
+  "caretColor",
+  "columnRuleColor",
+
+  "scrollSnapAlign",
+  "scrollSnapType",
+
+  "writingMode",
+
+  // FOR FUTURE CONSIDERATION
   // "quotes",
 
-  // "transition-delay",
-  // "transition-duration",
-  // "transition-property",
-  // "transition-timing-function",
+  // "transitionDelay",
+  // "transitionDuration",
+  // "transitionProperty",
+  // "transitionTimingFunction",
 
-  // "transform-style",
+  // "transformStyle",
 
-  // "text-decoration-color",
-  // "text-decoration-line",
-  // "text-decoration-style",
-  // "text-decoration-thickness",
-  // "text-emphasis",
-  // "text-indent",
-  // "text-orientation",
+  // "textDecorationColor",
+  // "textDecorationLine",
+  // "textDecorationStyle",
+  // "textDecorationThickness",
+  // "textEmphasis",
+  // "textIndent",
+  // "textOrientation",
 
   // "grid", // UNSUPPORTED
-  // "grid-column-end", // Skip
-  // "grid-column-start", // Skip
-  // "grid-row-end", // Skip
-  // "grid-row-start", // Skip
+  // "gridColumnEnd", // Skip
+  // "gridColumnStart", // Skip
+  // "gridRowEnd", // Skip
+  // "gridRowStart", // Skip
 
   // "offset", // NICE-TO-HAVE
-  // "offset-anchor", // EXPERIMENTAL
-  // "offset-position", // EXPERIMENTAL
-  // "text-justify",
-  // "text-underline-position",
+  // "offsetAnchor", // EXPERIMENTAL
+  // "offsetPosition", // EXPERIMENTAL
+  // "textJustify",
+  // "textUnderlinePosition",
 ]
 
 // IDEA: When these directional values get processed, maybe cache values that have been processed already (per property), to avoid having to recalculate them. Those values should be the same universally, so no need for React-centric memo overhead: just store them in an object.
 // NOTE: A lot of these should just get converted into INLINE (and BLOCK, for consistency)
 // props instead; that way, we actually don't even need any additional RTL breakpoints for them.
 export const directionalProps = {
-  // "margin-left": true, // INLINE
-  // "margin-right": true, // INLINE
-  // "padding-left": true, // INLINE
-  // "padding-right": true, // INLINE
+  //// simpleDirectionalShorthands
+  float: true,
+  justifyContent: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  justifyItems: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  justifySelf: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  textAlign: true, // Don't include `left`/`right` in type def; convert to `start`/`end`.
 
-  // "border-bottom-left-radius": true, // INLINE
-  // "border-bottom-right-radius": true, // INLINE
-  // "border-left": true, // INLINE
-  // "border-right": true, // INLINE
-  // "border-left-color": true, // INLINE
-  // "border-right-color": true, // INLINE
-  // "border-left-style": true, // INLINE
-  // "border-right-style": true, // INLINE
-  // "border-left-width": true, // INLINE
-  // "border-right-width": true, // INLINE
-  // "border-top-left-radius": true, // INLINE
-  // "border-top-right-radius": true, // INLINE
+  //// backgroundShorthand
+  background: true,
+
+  //// positionOffsetShorthands
+  backgroundPosition: true,
+  // offsetAnchor: true,
+  // offsetPosition: true,
+
+  // DEPRECATED //
+  // marginLeft: true, // INLINE
+  // marginRight: true, // INLINE
+  // paddingLeft: true, // INLINE
+  // paddingRight: true, // INLINE
+
+  // borderBottomLeftRadius: true, // INLINE
+  // borderBottomRightRadius: true, // INLINE
+  // borderLeft: true, // INLINE
+  // borderRight: true, // INLINE
+  // borderLeftColor: true, // INLINE
+  // borderRightColor: true, // INLINE
+  // borderLeftStyle: true, // INLINE
+  // borderRightStyle: true, // INLINE
+  // borderLeftWidth: true, // INLINE
+  // borderRightWidth: true, // INLINE
+  // borderTopLeftRadius: true, // INLINE
+  // borderTopRightRadius: true, // INLINE
   // left: true, // INLINE
   // right: true, // INLINE
 
   //// quadOrthogonalShorthands
   // padding: true, // INLINE
   // margin: true, // INLINE
-  // "border-style": true, // INLINE + SPREAD
-  // "border-width": true, // INLINE + SPREAD
-  // "border-color": true, // INLINE + SPREAD
+  // borderStyle: true, // INLINE + SPREAD
+  // borderWidth: true, // INLINE + SPREAD
+  // borderColor: true, // INLINE + SPREAD
   //// quadDiagonalShorthands
-  // "border-radius": true, // INLINE + SPREAD
-
-  //// simpleDirectionalShorthands
-  float: true,
-  "justify-content": true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  "justify-items": true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  "justify-self": true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  "text-align": true, // Don't include `left`/`right` in type def; convert to `start`/`end`.
-
-  //// backgroundShorthand
-  background: true,
-
-  //// positionOffsetShorthands
-  "background-position": true,
-  // "offset-anchor": true,
-  // "offset-position": true,
+  // borderRadius: true, // INLINE + SPREAD
 
   //// animationOffsetShorthands
   // offset: true, // NICE-TO-HAVE
 
   //// OTHER
-  // "grid-template-columns": true, // Browser auto converts this for RTL!
+  // gridTemplateColumns: true, // Browser auto converts this for RTL!
 }
 
 export const conditionNames = ["phone", "phablet", "<tablet", "tablet", "<laptop", "laptop", "desktop"]
