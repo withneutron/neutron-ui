@@ -1,6 +1,6 @@
-import { CharHash } from "../CharHash"
-import { ColorVars, ThemeScale } from "./models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ColorVars, ThemeScale } from "./scales.models"
+import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `outline` theme scale */
 export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {

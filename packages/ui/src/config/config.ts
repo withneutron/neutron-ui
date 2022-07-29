@@ -1,4 +1,4 @@
-import { CharHash } from "packages/ui/src/config/CharHash"
+import { CharHash } from "./utils"
 import { scaledProps, props, directionalProps, conditionNames } from "./cssProps"
 
 export function createCSS() {

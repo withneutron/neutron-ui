@@ -1,19 +1,19 @@
-import { CharHash } from "../CharHash"
-import { ThemeScale } from "./models"
-import { getCssMapFromVars, getPropsFromAliasMap, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ThemeScale } from "./scales.models"
+import { getCssMapFromVars, getPropsFromAliasMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `fontWeight` theme scale */
 export function getFontWeight(hash: CharHash) {
   const baseVars = {
-    "100": { ...hash.var, value: "100" },
-    "200": { ...hash.var, value: "200" },
-    "300": { ...hash.var, value: "300" },
-    "400": { ...hash.var, value: "400" },
-    "500": { ...hash.var, value: "500" },
-    "600": { ...hash.var, value: "600" },
-    "700": { ...hash.var, value: "700" },
-    "800": { ...hash.var, value: "800" },
-    "900": { ...hash.var, value: "900" },
+    100: { ...hash.var, value: "100" },
+    200: { ...hash.var, value: "200" },
+    300: { ...hash.var, value: "300" },
+    400: { ...hash.var, value: "400" },
+    500: { ...hash.var, value: "500" },
+    600: { ...hash.var, value: "600" },
+    700: { ...hash.var, value: "700" },
+    800: { ...hash.var, value: "800" },
+    900: { ...hash.var, value: "900" },
   } as const
 
   const p = { ...hash.var, value: baseVars[300].ref } as const
@@ -35,15 +35,15 @@ export function getFontWeight(hash: CharHash) {
   const vars = sharedVars
   const cssValueMap = { ...getCssMapFromVars(sharedVars) } as const
   const cssAliasMap = {
-    thin: "100",
-    extraLight: "200",
-    light: "300",
-    regular: "400",
-    medium: "500",
-    semiBold: "600",
-    bold: "700",
-    extraBold: "800",
-    black: "900",
+    thin: { var: baseVars[100].ref, target: 100 },
+    extraLight: { var: baseVars[200].ref, target: 200 },
+    light: { var: baseVars[300].ref, target: 300 },
+    regular: { var: baseVars[400].ref, target: 400 },
+    medium: { var: baseVars[500].ref, target: 500 },
+    semiBold: { var: baseVars[600].ref, target: 600 },
+    bold: { var: baseVars[700].ref, target: 700 },
+    extraBold: { var: baseVars[800].ref, target: 800 },
+    black: { var: baseVars[900].ref, target: 900 },
   } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap), ...getPropsFromAliasMap(cssAliasMap) } as const
 

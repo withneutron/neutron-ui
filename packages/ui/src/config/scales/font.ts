@@ -1,6 +1,6 @@
-import { CharHash } from "../CharHash"
-import { FontFamily, FontSize, FontWeight, ThemeScale } from "./models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { FontFamily, FontSize, FontWeight, ThemeScale } from "./scales.models"
+import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `font` theme scale */
 export function getFont<S extends FontSize, W extends FontWeight, F extends FontFamily>(

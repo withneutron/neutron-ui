@@ -20,16 +20,16 @@ const conditions = {
   >l: { '@media': 'screen and (min-width: 899.9987654321px)' },
   >xl: { '@media': 'screen and (min-width: 1199.9987654321px)' },
 
-  hc: { '@media': '(prefers-contrast: more)' }, // highContrast
-  rm: { '@media': '(prefers-reduced-motion)' }, // reducedMotion
-  rd: { '@media': '(prefers-reduced-data)' }, // reducedData
+  highContrast: { '@media': '(prefers-contrast: more)' }, // highContrast
+  reducedMotion: { '@media': '(prefers-reduced-motion)' }, // reducedMotion
+  reducedData: { '@media': '(prefers-reduced-data)' }, // reducedData
   touch: { '@media': '(hover: none)' }, // touch
   pointer: { '@media': '(hover: hover) and (pointer: fine)' }, // pointer
   tv: { '@media': '(hover: hover) and (pointer: coarse)' }, // tv
 
-  !hc: !hc,
-  !rm: !rm,
-  !rd: !rd,
+  !highContrast: !highContrast,
+  !reducedMotion: !reducedMotion,
+  !reducedData: !reducedData,
   !touch: !touch,
   !pointer: !pointer,
   !tv: !tv,

@@ -6,9 +6,9 @@ import {
   CodeFontFamily,
 } from "../../shared/models"
 import { enumKeys } from "packages/ui/src/shared/utils"
-import { CharHash } from "../CharHash"
-import { ScaleEntry, ThemeScale } from "./models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ScaleEntry, ThemeScale } from "./scales.models"
+import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 // Font definition
 export const DEFAULT_FONTS: Required<FontFamilySpec> = {

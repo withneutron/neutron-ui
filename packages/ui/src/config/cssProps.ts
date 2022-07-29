@@ -17,6 +17,15 @@ export const customVarProps = {
   background: true, // Scaled color values get routed to `backgroundColor` instead
   backgroundColor: true,
   backgroundBlendMode: true,
+  backgroundPosition: true,
+  backgroundImage: true,
+  // These are technically remapped, but we want the inline var assignment to only need to
+  // include the actual gradient, not the type. This will keep those assignments shorter!
+  linearGradient: true, // backgroundImage: `linear-gradient(${v})`
+  radialGradient: true, // backgroundImage: `radial-gradient(${v})`
+  conicGradient: true, // backgroundImage: `conic-gradient(${v})`
+
+  mask: true,
 
   borderBlockStartImage: true,
   borderBlockEndImage: true,
@@ -148,6 +157,10 @@ export const scaledProps = {
 } as const
 
 export const staticProps = {
+  appearance: true,
+
+  userSelect: true,
+
   all: true,
 
   position: true,
@@ -216,7 +229,301 @@ export const staticProps = {
   scrollSnapType: true,
 } as const
 
+type PropValue = string | number
+
+/** Map CSS value to one or more keys */
+function mapValue(value: PropValue, keys: Array<keyof typeof sourceProps>) {
+  return keys.reduce((output, key) => {
+    output[key] = value
+    return output
+  }, {} as Record<string, PropValue>)
+}
+
+/** Maps a value to one or more CSS props, possibly changing the value as well */
+function getPropMapper(keys: Array<keyof typeof sourceProps>, getValueTemplate: (v: PropValue) => PropValue = v => v) {
+  return (value: PropValue) => mapValue(getValueTemplate(value), keys)
+}
+
 export const mappedProps = {
+  // UTILS
+  p: getPropMapper(["padding"]),
+  pt: getPropMapper(["paddingTop"]),
+  pr: getPropMapper(["paddingRight"]),
+  pb: getPropMapper(["paddingBottom"]),
+  pl: getPropMapper(["paddingLeft"]),
+  px: getPropMapper(["paddingLeft", "paddingRight"]),
+  paddingX: getPropMapper(["paddingLeft", "paddingRight"]),
+  py: getPropMapper(["paddingTop", "paddingBottom"]),
+  paddingY: getPropMapper(["paddingTop", "paddingBottom"]),
+
+  m: getPropMapper(["margin"]),
+  mt: getPropMapper(["marginTop"]),
+  mr: getPropMapper(["marginRight"]),
+  mb: getPropMapper(["marginBottom"]),
+  ml: getPropMapper(["marginLeft"]),
+  mx: getPropMapper(["marginLeft", "marginRight"]),
+  marginX: getPropMapper(["marginLeft", "marginRight"]),
+  my: getPropMapper(["marginTop", "marginBottom"]),
+  marginY: getPropMapper(["marginTop", "marginBottom"]),
+
+  bg: getPropMapper(["background"]),
+
+  borderX: getPropMapper(["borderInline"]),
+  borderY: getPropMapper(["borderBlock"]),
+
+  radius: getPropMapper(["borderRadius"]),
+  radiusTop: getPropMapper(["borderStartStartRadius", "borderStartEndRadius"]),
+  radiusBottom: getPropMapper(["borderEndEndRadius", "borderEndStartRadius"]),
+  radiusLeft: getPropMapper(["borderStartStartRadius", "borderEndStartRadius"]),
+  radiusRight: getPropMapper(["borderStartEndRadius", "borderEndEndRadius"]),
+
+  z: getPropMapper(["zIndex"]),
+
+  h: getPropMapper(["height"]),
+  w: getPropMapper(["width"]),
+  size: getPropMapper(["height", "width"]),
+
+  // These will have custom classes that use --var just like these string templates.
+  // linearGradient: getPropMapper(["backgroundImage"], v => `linear-gradient(${v})`),
+  // radialGradient: getPropMapper(["backgroundImage"], v => `radial-gradient(${v})`),
+  // conicGradient: getPropMapper(["backgroundImage"], v => `conic-gradient(${v})`),
+
+  // Remapped CSS Props
+  height: getPropMapper(["blockSize"]),
+  width: getPropMapper(["inlineSize"]),
+  minHeight: getPropMapper(["minBlockSize"]),
+  minWidth: getPropMapper(["minInlineSize"]),
+  maxHeight: getPropMapper(["maxBlockSize"]),
+  maxWidth: getPropMapper(["maxInlineSize"]),
+
+  margin: getPropMapper(["marginBlockStart", "marginBlockEnd", "marginInlineStart", "marginInlineEnd"]),
+  marginBottom: getPropMapper(["marginBlockEnd"]),
+  marginLeft: getPropMapper(["marginInlineStart"]),
+  marginRight: getPropMapper(["marginInlineEnd"]),
+  marginTop: getPropMapper(["marginBlockStart"]),
+
+  padding: getPropMapper(["paddingBlockStart", "paddingBlockEnd", "paddingInlineStart", "paddingInlineEnd"]),
+  paddingBottom: getPropMapper(["paddingBlockEnd"]),
+  paddingLeft: getPropMapper(["paddingInlineStart"]),
+  paddingRight: getPropMapper(["paddingInlineEnd"]),
+  paddingTop: getPropMapper(["paddingBlockStart"]),
+
+  bottom: getPropMapper(["insetBlockEnd"]),
+  top: getPropMapper(["insetBlockStart"]),
+  left: getPropMapper(["insetInlineStart"]),
+  right: getPropMapper(["insetInlineEnd"]),
+
+  border: true,
+  borderColor: true,
+  borderStyle: true,
+  borderWidth: true,
+
+  borderBlock: true,
+  borderBlockColor: true,
+  borderBlockStyle: true,
+  borderBlockWidth: true,
+
+  borderInline: true,
+  borderInlineColor: true,
+  borderInlineStyle: true,
+  borderInlineWidth: true,
+
+  borderTop: true,
+  borderTopColor: true,
+  borderTopStyle: true,
+  borderTopWidth: true,
+
+  borderBottom: true,
+  borderBottomColor: true,
+  borderBottomStyle: true,
+  borderBottomWidth: true,
+
+  borderLeft: true,
+  borderLeftColor: true,
+  borderLeftStyle: true,
+  borderLeftWidth: true,
+
+  borderRight: true,
+  borderRightColor: true,
+  borderRightStyle: true,
+  borderRightWidth: true,
+
+  borderRadius: true,
+  borderTopLeftRadius: true,
+  borderTopRightRadius: true,
+  borderBottomLeftRadius: true,
+  borderBottomRightRadius: true,
+
+  gap: true,
+
+  wordWrap: true,
+} as const
+
+// Only these props should have interactive state classes/vars generated for them
+// NOTE: We don't include :disabled, because logic for that exists in JS anyway
+// :hover
+// :focus
+// :focus-within
+// :focus-visible
+// :active
+// 26
+export const actionStateProps = {
+  animation: true,
+
+  boxShadow: true,
+
+  outline: true,
+  outlineColor: true,
+
+  borderBlockStart: true,
+  borderBlockEnd: true,
+  borderInlineStart: true,
+  borderInlineEnd: true,
+
+  borderBlockStartColor: true,
+  borderBlockEndColor: true,
+  borderInlineStartColor: true,
+  borderInlineEndColor: true,
+
+  background: true,
+  backgroundColor: true,
+  backgroundBlendMode: true,
+
+  color: true,
+  fill: true,
+  stroke: true,
+
+  caretColor: true,
+  columnRuleColor: true,
+
+  textDecoration: true,
+  textShadow: true,
+
+  transform: true,
+  transformOrigin: true,
+
+  transition: true,
+
+  opacity: true,
+} as const
+
+// Only these props should have structural pseudo-classes
+// :odd           // nth-child(odd),
+// :first         // first-child,
+// :last          // last-child,
+// :first-of-type // first-of-type,
+// :last-of-type  // last-of-type,
+// MAYBE nth-child(even) (can treat default as even, and override ONLY odds)
+// MAYBE: only-child, only-of-type (achievable with first + last combined)
+// MAYBE: empty (probably best handled in JS)
+// MAYBE: nth-child, nth-last-child, nth-of-type, nth-last-of-type (API??)
+// MAYBE: target, target-within, visited
+// + 41
+export const structuralClassProps = {
+  ...actionStateProps,
+  display: true,
+  visibility: true,
+
+  borderStartStartRadius: true,
+  borderStartEndRadius: true,
+  borderEndEndRadius: true,
+  borderEndStartRadius: true,
+
+  borderBlockStartWidth: true,
+  borderBlockEndWidth: true,
+  borderInlineStartWidth: true,
+  borderInlineEndWidth: true,
+
+  outlineWidth: true,
+
+  marginBlockStart: true,
+  marginBlockEnd: true,
+  marginInlineStart: true,
+  marginInlineEnd: true,
+
+  paddingBlockStart: true,
+  paddingBlockEnd: true,
+  paddingInlineStart: true,
+  paddingInlineEnd: true,
+
+  insetBlockStart: true,
+  insetBlockEnd: true,
+  insetInlineStart: true,
+  insetInlineEnd: true,
+
+  inlineSize: true,
+  minInlineSize: true,
+  maxInlineSize: true,
+  blockSize: true,
+  minBlockSize: true,
+  maxBlockSize: true,
+
+  alignContent: true,
+  alignItems: true,
+  alignSelf: true,
+  justifyContent: true,
+  justifyItems: true,
+  justifySelf: true,
+
+  overflow: true,
+  overflowY: true,
+  overflowX: true,
+
+  verticalAlign: true,
+  textAlign: true,
+  textOverflow: true,
+} as const
+
+/**
+ * NOTE: If you add a prop here, remember to add it to `directionalProps` too,
+ * if it needs special LTR/RTL (directional) processing.
+ *
+ * These props are ORDERED by how commonly used they are, to ensure that common
+ * props (and the classes we generate for them) get shorter hashes.
+ */
+export const sourceProps = {
+  ////////////////////
+  // Remapped Props // (Skip class creation for these)
+  ////////////////////
+  // Utils
+  p: true,
+  pt: true,
+  pr: true,
+  pb: true,
+  pl: true,
+  px: true,
+  paddingX: true,
+  py: true,
+  paddingY: true,
+
+  m: true,
+  mt: true,
+  mr: true,
+  mb: true,
+  ml: true,
+  mx: true,
+  marginX: true,
+  my: true,
+  marginY: true,
+
+  bg: true,
+
+  borderX: true,
+  borderY: true,
+
+  radius: true,
+  radiusTop: true,
+  radiusBottom: true,
+  radiusLeft: true,
+  radiusRight: true,
+
+  z: true,
+
+  h: true,
+  w: true,
+  size: true,
+
+  // Standard Props
   height: true,
   width: true,
   minHeight: true,
@@ -285,106 +592,14 @@ export const mappedProps = {
   gap: true,
 
   wordWrap: true,
-}
 
-// Only these props should have interactive state classes/vars generated for them
-// :hover
-// :focus
-// :focus-within
-// :focus-visible
-// :active
-// 26
-export const actionStateProps = {
-  animation: true,
-
-  boxShadow: true,
-
-  outline: true,
-  outlineColor: true,
-
-  borderBlockStart: true,
-  borderBlockEnd: true,
-  borderInlineStart: true,
-  borderInlineEnd: true,
-
-  borderBlockStartColor: true,
-  borderBlockEndColor: true,
-  borderInlineStartColor: true,
-  borderInlineEndColor: true,
-
-  background: true,
-  backgroundColor: true,
-  backgroundBlendMode: true,
-
-  color: true,
-  fill: true,
-  stroke: true,
-
-  caretColor: true,
-  columnRuleColor: true,
-
-  textDecoration: true,
-  textShadow: true,
-
-  transform: true,
-  transformOrigin: true,
-
-  transition: true,
-
-  opacity: true,
-}
-
-// Only these props should have disabled state classes/vars generated for them
-// :disabled  //.disabled/[disabled]
-// +1
-export const disabledStateProps = {
-  ...actionStateProps,
-  pointerEvents: true,
-}
-
-// Only these props should have structural pseudo-classes
-// :odd           // nth-child(odd),
-// :first         // first-child,
-// :last          // last-child,
-// :first-of-type // first-of-type,
-// :last-of-type  // last-of-type,
-// MAYBE nth-child(even) (can treat default as even, and override ONLY odds)
-// MAYBE: only-child, only-of-type (achievable with first + last combined)
-// MAYBE: empty (probably best handled in JS)
-// MAYBE: nth-child, nth-last-child, nth-of-type, nth-last-of-type (API??)
-// MAYBE: target, target-within, visited
-// + 41
-export const structuralClassProps = {
-  ...actionStateProps,
+  ///////////////////
+  // Classed Props //
+  ///////////////////
   display: true,
-  visibility: true,
 
-  borderStartStartRadius: true,
-  borderStartEndRadius: true,
-  borderEndEndRadius: true,
-  borderEndStartRadius: true,
-
-  borderBlockStartWidth: true,
-  borderBlockEndWidth: true,
-  borderInlineStartWidth: true,
-  borderInlineEndWidth: true,
-
-  outlineWidth: true,
-
-  marginBlockStart: true,
-  marginBlockEnd: true,
-  marginInlineStart: true,
-  marginInlineEnd: true,
-
-  paddingBlockStart: true,
-  paddingBlockEnd: true,
-  paddingInlineStart: true,
-  paddingInlineEnd: true,
-
-  insetBlockStart: true,
-  insetBlockEnd: true,
-  insetInlineStart: true,
-  insetInlineEnd: true,
+  // height: true,
+  // width: true,
 
   inlineSize: true,
   minInlineSize: true,
@@ -393,305 +608,289 @@ export const structuralClassProps = {
   minBlockSize: true,
   maxBlockSize: true,
 
-  alignContent: true,
-  alignItems: true,
-  alignSelf: true,
-  justifyContent: true,
-  justifyItems: true,
-  justifySelf: true,
+  // margin: true,
+  // marginBottom: true,
+  // marginLeft: true,
+  // marginRight: true,
+  // marginTop: true,
+  marginBlockStart: true,
+  marginBlockEnd: true,
+  marginInlineStart: true,
+  marginInlineEnd: true,
+
+  // padding: true,
+  // paddingBottom: true,
+  // paddingLeft: true,
+  // paddingRight: true,
+  // paddingTop: true,
+  paddingBlockStart: true,
+  paddingBlockEnd: true,
+  paddingInlineStart: true,
+  paddingInlineEnd: true,
+
+  position: true,
+
+  backgroundColor: true,
+  background: true,
+  backgroundImage: true,
+
+  // minHeight: true,
+  // minWidth: true,
+  // maxHeight: true,
+  // maxWidth: true,
+
+  // bottom: true,
+  // top: true,
+  // left: true,
+  // right: true,
+  insetBlockStart: true,
+  insetBlockEnd: true,
+  insetInlineStart: true,
+  insetInlineEnd: true,
+
+  color: true,
+
+  font: true,
+  fontFamily: true,
+  fontSize: true,
+  fontWeight: true,
+  fontStyle: true,
+
+  // border: true,
+  // borderColor: true,
+  // borderStyle: true,
+  // borderWidth: true,
+
+  // borderBlock: true,
+  // borderBlockColor: true,
+  // borderBlockStyle: true,
+  // borderBlockWidth: true,
+  // borderInline: true,
+  // borderInlineColor: true,
+  // borderInlineStyle: true,
+  // borderInlineWidth: true,
+
+  // borderTop: true,
+  // borderTopColor: true,
+  // borderTopStyle: true,
+  // borderTopWidth: true,
+
+  borderBlockStart: true,
+  borderBlockStartColor: true,
+  borderBlockStartStyle: true,
+  borderBlockStartWidth: true,
+
+  // borderBottom: true,
+  // borderBottomColor: true,
+  // borderBottomStyle: true,
+  // borderBottomWidth: true,
+  borderBlockEnd: true,
+  borderBlockEndColor: true,
+  borderBlockEndStyle: true,
+  borderBlockEndWidth: true,
+
+  // borderLeft: true,
+  // borderLeftColor: true,
+  // borderLeftStyle: true,
+  // borderLeftWidth: true,
+  borderInlineStart: true,
+  borderInlineStartColor: true,
+  borderInlineStartStyle: true,
+  borderInlineStartWidth: true,
+
+  // borderRight: true,
+  // borderRightColor: true,
+  // borderRightStyle: true,
+  // borderRightWidth: true,
+  borderInlineEnd: true,
+  borderInlineEndColor: true,
+  borderInlineEndStyle: true,
+  borderInlineEndWidth: true,
+
+  // borderRadius: true,
+  // borderTopLeftRadius: true,
+  // borderTopRightRadius: true,
+  // borderBottomLeftRadius: true,
+  // borderBottomRightRadius: true,
+  borderStartStartRadius: true,
+  borderStartEndRadius: true,
+  borderEndEndRadius: true,
+  borderEndStartRadius: true,
+
+  opacity: true,
+  visibility: true,
 
   overflow: true,
-  overflowY: true,
   overflowX: true,
+  overflowY: true,
 
-  verticalAlign: true,
+  outline: true,
+  outlineColor: true,
+  outlineOffset: true,
+  outlineStyle: true,
+  outlineWidth: true,
+
+  backgroundPosition: true,
+
+  zIndex: true,
+
+  transition: true,
+
+  transform: true,
+
   textAlign: true,
-  textOverflow: true,
-}
+  verticalAlign: true,
 
-// NOTE: If you add a prop here, remember to add it to `directionalProps` too, if it's LTR/RTL directional
-export const props = [
-  // ORDERED //
-  "display",
+  alignItems: true,
+  justifyContent: true,
 
-  "height",
-  "width",
+  boxShadow: true,
 
-  "inlineSize",
-  "minInlineSize",
-  "maxInlineSize",
-  "blockSize",
-  "minBlockSize",
-  "maxBlockSize",
+  cursor: true,
 
-  "margin",
-  "marginBottom",
-  "marginLeft",
-  "marginRight",
-  "marginTop",
-  "marginBlockStart",
-  "marginBlockEnd",
-  "marginInlineStart",
-  "marginInlineEnd",
+  flex: true,
+  flexBasis: true,
+  flexDirection: true,
+  flexFlow: true,
+  flexGrow: true,
+  flexShrink: true,
+  flexWrap: true,
 
-  "padding",
-  "paddingBottom",
-  "paddingLeft",
-  "paddingRight",
-  "paddingTop",
-  "paddingBlockStart",
-  "paddingBlockEnd",
-  "paddingInlineStart",
-  "paddingInlineEnd",
+  // gap: true, // SPREAD into row gap & column gap
+  rowGap: true,
+  columnGap: true,
 
-  "position",
-
-  "backgroundColor",
-  "background",
-
-  "minHeight",
-  "minWidth",
-  "maxHeight",
-  "maxWidth",
-
-  "bottom",
-  "top",
-  "left",
-  "right",
-  "insetBlockStart",
-  "insetBlockEnd",
-  "insetInlineStart",
-  "insetInlineEnd",
-
-  "color",
-
-  "font",
-  "fontFamily",
-  "fontSize",
-  "fontWeight",
-  "fontStyle",
-
-  "border",
-  "borderColor",
-  "borderStyle",
-  "borderWidth",
-
-  "borderBlock",
-  "borderBlockColor",
-  "borderBlockStyle",
-  "borderBlockWidth",
-  "borderInline",
-  "borderInlineColor",
-  "borderInlineStyle",
-  "borderInlineWidth",
-
-  "borderTop",
-  "borderTopColor",
-  "borderTopStyle",
-  "borderTopWidth",
-  "borderBlockStart",
-  "borderBlockStartColor",
-  "borderBlockStartStyle",
-  "borderBlockStartWidth",
-
-  "borderBottom",
-  "borderBottomColor",
-  "borderBottomStyle",
-  "borderBottomWidth",
-  "borderBlockEnd",
-  "borderBlockEndColor",
-  "borderBlockEndStyle",
-  "borderBlockEndWidth",
-
-  "borderLeft",
-  "borderLeftColor",
-  "borderLeftStyle",
-  "borderLeftWidth",
-  "borderInlineStart",
-  "borderInlineStartColor",
-  "borderInlineStartStyle",
-  "borderInlineStartWidth",
-
-  "borderRight",
-  "borderRightColor",
-  "borderRightStyle",
-  "borderRightWidth",
-  "borderInlineEnd",
-  "borderInlineEndColor",
-  "borderInlineEndStyle",
-  "borderInlineEndWidth",
-
-  "borderRadius",
-  "borderTopLeftRadius",
-  "borderTopRightRadius",
-  "borderBottomLeftRadius",
-  "borderBottomRightRadius",
-  "borderStartStartRadius",
-  "borderStartEndRadius",
-  "borderEndEndRadius",
-  "borderEndStartRadius",
-
-  "opacity",
-  "visibility",
-
-  "overflow",
-  "overflowX",
-  "overflowY",
-
-  "outline",
-  "outlineColor",
-  "outlineOffset",
-  "outlineStyle",
-  "outlineWidth",
-
-  "zIndex",
-
-  "transition",
-
-  "transform",
-
-  "textAlign",
-  "verticalAlign",
-
-  "alignItems",
-  "justifyContent",
-
-  "boxShadow",
-
-  "cursor",
-
-  "flex",
-  "flexBasis",
-  "flexDirection",
-  "flexFlow",
-  "flexGrow",
-  "flexShrink",
-  "flexWrap",
-
-  "gap", // SPREAD into row gap & column gap
-  "rowGap",
-  "columnGap",
-
-  "gridArea",
-  "gridAutoRows",
-  "gridAutoColumns",
-  "gridAutoFlow",
-  "gridRow",
-  "gridColumn",
-  "gridTemplate", // UTIL: gt // Check for line-breaks; throw error if they're found (only row/col syntax supported)
+  gridArea: true,
+  gridAutoRows: true,
+  gridAutoColumns: true,
+  gridAutoFlow: true,
+  gridRow: true,
+  gridColumn: true,
+  gridTemplate: true, // UTIL: gt // Check for line-breaks; throw error if they're found (only row/col syntax supported)
   // NOTE: Only join if BOTH are set, below, because it's inefficient to set `none/{COLS}` for just columns
-  "gridTemplateRows", // UTIL: gtRows // If BOTH rows + cols are set, then JOIN into gt
-  "gridTemplateColumns", // UTIL: gtColumns // If BOTH rows + cols are set, then JOIN into gt
-  "gridTemplateAreas", // UTIL: gtAreas
+  gridTemplateRows: true, // UTIL: gtRows // If BOTH rows + cols are set, then JOIN into gt
+  gridTemplateColumns: true, // UTIL: gtColumns // If BOTH rows + cols are set, then JOIN into gt
+  gridTemplateAreas: true, // UTIL: gtAreas
 
-  "whiteSpace",
+  linearGradient: true,
+  radialGradient: true,
+  conicGradient: true,
 
-  "pointerEvents",
+  whiteSpace: true,
 
-  "animation",
+  pointerEvents: true,
 
-  "lineHeight",
+  animation: true,
 
-  "alignSelf",
-  "justifySelf",
-  "alignContent",
-  "justifyItems",
+  lineHeight: true,
 
-  "listStyle",
-  "listStyleImage",
-  "listStylePosition",
-  "listStyleType",
+  alignSelf: true,
+  justifySelf: true,
+  alignContent: true,
+  justifyItems: true,
 
-  "resize",
+  listStyle: true,
+  listStyleImage: true,
+  listStylePosition: true,
+  listStyleType: true,
 
-  "textOverflow",
-  "textTransform",
-  "textDecoration",
-  "textUnderlineOffset",
+  resize: true,
 
-  "letterSpacing",
-  "wordSpacing",
-  "wordBreak",
-  "overflowWrap",
-  "wordWrap", // Alias for "overflowWrap"
+  textOverflow: true,
+  textTransform: true,
+  textDecoration: true,
+  textUnderlineOffset: true,
 
-  "fill",
-  "stroke",
+  letterSpacing: true,
+  wordSpacing: true,
+  wordBreak: true,
+  overflowWrap: true,
+  // wordWrap: true, // Alias for "overflowWrap"
 
-  "transformOrigin",
+  fill: true,
+  stroke: true,
 
-  "borderCollapse",
-  "borderSpacing",
+  mask: true,
 
-  "filter",
+  transformOrigin: true,
 
-  "textShadow",
+  borderCollapse: true,
+  borderSpacing: true,
 
-  "all",
+  appearance: true,
 
-  "backgroundBlendMode",
+  userSelect: true,
 
-  "boxSizing",
+  filter: true,
 
-  "borderBlockStartImage",
-  "borderBlockEndImage",
-  "borderInlineStartImage",
-  "borderInlineEndImage",
+  textShadow: true,
 
-  "caretColor",
-  "columnRuleColor",
+  all: true,
 
-  "scrollSnapAlign",
-  "scrollSnapType",
+  backgroundBlendMode: true,
 
-  "writingMode",
+  boxSizing: true,
+
+  borderBlockStartImage: true,
+  borderBlockEndImage: true,
+  borderInlineStartImage: true,
+  borderInlineEndImage: true,
+
+  caretColor: true,
+  columnRuleColor: true,
+
+  scrollSnapAlign: true,
+  scrollSnapType: true,
+
+  writingMode: true,
 
   // FOR FUTURE CONSIDERATION
-  // "quotes",
+  // "quotes": true,
 
-  // "transitionDelay",
-  // "transitionDuration",
-  // "transitionProperty",
-  // "transitionTimingFunction",
+  // "transitionDelay": true,
+  // "transitionDuration": true,
+  // "transitionProperty": true,
+  // "transitionTimingFunction": true,
 
-  // "transformStyle",
+  // "transformStyle": true,
 
-  // "textDecorationColor",
-  // "textDecorationLine",
-  // "textDecorationStyle",
-  // "textDecorationThickness",
-  // "textEmphasis",
-  // "textIndent",
-  // "textOrientation",
+  // "textDecorationColor": true,
+  // "textDecorationLine": true,
+  // "textDecorationStyle": true,
+  // "textDecorationThickness": true,
+  // "textEmphasis": true,
+  // "textIndent": true,
+  // "textOrientation": true,
 
-  // "grid", // UNSUPPORTED
-  // "gridColumnEnd", // Skip
-  // "gridColumnStart", // Skip
-  // "gridRowEnd", // Skip
-  // "gridRowStart", // Skip
+  // "grid": true, // UNSUPPORTED
+  // "gridColumnEnd": true, // Skip
+  // "gridColumnStart": true, // Skip
+  // "gridRowEnd": true, // Skip
+  // "gridRowStart": true, // Skip
 
-  // "offset", // NICE-TO-HAVE
-  // "offsetAnchor", // EXPERIMENTAL
-  // "offsetPosition", // EXPERIMENTAL
-  // "textJustify",
-  // "textUnderlinePosition",
-]
+  // "offset": true, // NICE-TO-HAVE
+  // "offsetAnchor": true, // EXPERIMENTAL
+  // "offsetPosition": true, // EXPERIMENTAL
+  // "textJustify": true,
+  // "textUnderlinePosition": true,
+} as const
+export const sourcePropsList = Object.keys(sourceProps)
 
 // IDEA: When these directional values get processed, maybe cache values that have been processed already (per property), to avoid having to recalculate them. Those values should be the same universally, so no need for React-centric memo overhead: just store them in an object.
 // NOTE: A lot of these should just get converted into INLINE (and BLOCK, for consistency)
 // props instead; that way, we actually don't even need any additional RTL breakpoints for them.
 export const directionalProps = {
-  //// simpleDirectionalShorthands
+  //// simpleDirectionalShorthands // JUST REMAP
   float: true,
   justifyContent: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
   justifyItems: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
   justifySelf: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
   textAlign: true, // Don't include `left`/`right` in type def; convert to `start`/`end`.
 
-  //// backgroundShorthand
+  //// backgroundShorthand // REQUIRES INTERPOLATION
   background: true,
 
-  //// positionOffsetShorthands
+  //// positionOffsetShorthands // REQUIRES INTERPOLATION
   backgroundPosition: true,
   // offsetAnchor: true,
   // offsetPosition: true,
@@ -731,6 +930,62 @@ export const directionalProps = {
 
   //// OTHER
   // gridTemplateColumns: true, // Browser auto converts this for RTL!
-}
+} as const
 
-export const conditionNames = ["phone", "phablet", "<tablet", "tablet", "<laptop", "laptop", "desktop"]
+export const conditions = {
+  ":hover": ":hover",
+  ":focus": ":focus",
+  ":focus-within": ":focus-within",
+  ":focus-visible": ":focus-visible",
+  ":active": ":active",
+  ":odd": ":nth-child(odd)", // Should we also do aliases for the full names?
+  ":first": ":first-child", //  Should we also do aliases for the full names?
+  ":last": ":last-child", //    Should we also do aliases for the full names?
+  ":first-of-type": ":first-of-type",
+  ":last-of-type": ":last-of-type",
+
+  /**
+   * For all conditions below, create a `ConditionsContext` at our base provider,
+   * which tracks all these conditions centrally. That avoids us repeating queries
+   * all over the place, at a component-level.
+   *
+   * Track via `window.matchMedia`, as it's much faster.
+   *
+   * We default to DESKTOP-FIRST, because mobile is commonly neglected in UI dev,
+   * so devs will often be coming to this from desktop styles being done (without
+   * conditions), and needing to style ONLY for smaller screens. This approach
+   * facilitates that, by not forcing them to touch existing styles,
+   * only add new ones.
+   */
+  "@s": "screen and (max-width: 395.9987654321px)",
+  "@m": "screen and (max-width: 659.9987654321px)",
+  "@l": "screen and (max-width: 899.9987654321px)",
+  "@xl": "screen and (max-width: 1199.9987654321px)",
+
+  ">s": !"@s",
+  ">m": !"@m",
+  ">l": !"@l",
+  ">xl": !"@xl",
+
+  "@highContrast": "(prefers-contrast: more)",
+  "@reducedMotion": "(prefers-reduced-motion)",
+  "@reducedData": "(prefers-reduced-data)",
+  "@touch": "(hover: none)",
+  "@pointer": "(hover: hover) and (pointer: fine)",
+  "@tv": "(hover: hover) and (pointer: coarse)",
+
+  "!highContrast": !"(prefers-contrast: more)",
+  "!reducedMotion": !"(prefers-reduced-motion)",
+  "!reducedData": !"(prefers-reduced-data)",
+  "!touch": !"(hover: none)",
+  "!pointer": !"(hover: hover) and (pointer: fine)",
+  "!tv": !"(hover: hover) and (pointer: coarse)",
+
+  "@light": "COLOR_MODE === light",
+  "@dark": "COLOR_MODE === dark",
+} as const
+
+// Do we want to add a global condition? How can we allow styling of html and body elements?
+// We could do it with predefined styles for all props in each of these, and use CSS vars to set those values.
+// BUT... is assigning those vars inline in <html> any easier/more effective than just styling that with classes,
+// like any other element? I.e., frameworks that make accessing <html> difficult will be problematic, either way.

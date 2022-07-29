@@ -1,3 +1,4 @@
+import { addPrefix } from "../utils"
 import {
   ColorKeys,
   ColorNumberKey,
@@ -47,9 +48,10 @@ import {
   ColorPalette,
   ColorSetter,
   BaseVars,
-  THEME_PREFIX,
   CssValueMap,
-} from "./models"
+  CssAliasMap,
+  CssAlias,
+} from "./scales.models"
 
 /** Converts a set of vars to CSS values (i.e., using the var set's `ref` as a value) */
 export function getCssMapFromVars<T extends BaseVars>(vars: T) {
@@ -69,15 +71,11 @@ export function getThemePropsFromCssMap<T extends CssValueMap>(vars: T) {
   }, {} as Record<keyof T, ThemePropValue>)
 }
 
-export function addPrefix(value: string) {
-  return `${THEME_PREFIX}${value}`
-}
-
 /** Converts a CSS Alias Map into theme props */
-export function getPropsFromAliasMap<T extends Record<string | number, string>>(map: T) {
-  return Object.entries(map).reduce((out: Record<keyof T, string>, [key, value]: [keyof T, string]) => {
-    // Add a prefix, to convert the value to a "themed value"
-    out[key] = addPrefix(value)
+export function getPropsFromAliasMap<T extends CssAliasMap>(map: T) {
+  return Object.entries(map).reduce((out: Record<keyof T, string>, [key, alias]: [keyof T, CssAlias]) => {
+    // Refer to the same CSS var as the target of the alias
+    out[key] = alias.var
     return out
   }, {} as Record<keyof T, string>)
 }

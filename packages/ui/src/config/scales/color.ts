@@ -1,7 +1,7 @@
 import { generatePaletteFromHue } from "../../shared/utils"
-import { CharHash } from "../CharHash"
-import { ColorPalette, ScaleEntry, ThemeScale } from "./models"
-import { generateThemeColors, getCssMapFromVars, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ColorPalette, ScaleEntry, ThemeScale } from "./scales.models"
+import { generateThemeColors, getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 // Default Palette
 export const DEFAULT_HUE = 174

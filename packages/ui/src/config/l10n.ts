@@ -226,15 +226,14 @@ function getShorthandRTLValue(rule: string, input: string | number) {
 // SHORTHAND VALUE HANDLERS ///////////////////////////////////////////////////
 function getBackgroundRTLValue(value: string) {
   const backgrounds = value.split(",").reduce((output, bg) => {
+    bg = bg.trim()
     const openP = bg.indexOf("(")
     const closeP = bg.indexOf(")")
     const url = openP > -1 ? bg.substring(openP, closeP) : ""
     const cleanBg = bg.replace(url, "‡‡‡")
     const hasLeft = cleanBg.includes("left")
     const hasRight = cleanBg.includes("right")
-    const firstNumber = (cleanBg.match(
-      /(\d*\.?\d+)\s?(px|em|rem|ex|ch|%|in|cn|mm|pt|pc|vw|vh|vmax|vmin+)/
-    ) || [])[0]
+    const firstNumber = (cleanBg.match(/(\d*\.?\d+)\s?(px|em|rem|ex|ch|%|in|cn|mm|pt|pc|vw|vh|vmax|vmin+)/) || [])[0]
     let outStr = cleanBg
 
     if (hasLeft) {
@@ -328,7 +327,15 @@ function getAnimationOffsetRTLValue(value: string) {
   return out.join(" / ")
 }
 
-function getPositionOffsetRTLValue(value: string) {
+function getPositionOffsetRTLValue(sourceValue: string) {
+  const outputValues = sourceValue.split(",").reduce((output, value) => {
+    output.push(convertPositionOffsetRTLValue(value.trim()))
+    return output
+  }, [] as string[])
+  return outputValues.join(", ")
+}
+
+function convertPositionOffsetRTLValue(value: string) {
   if (["left", "right"].includes(value)) {
     return switchDirectionalRTLValue(value)
   }

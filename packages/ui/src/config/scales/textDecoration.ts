@@ -1,6 +1,6 @@
-import { CharHash } from "../CharHash"
-import { ColorVars, ThemeScale } from "./models"
-import { getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ColorVars, ThemeScale } from "./scales.models"
+import { getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `textDecoration` theme scale */
 export function getTextDecoration<T extends ColorVars>(hash: CharHash, color: T) {

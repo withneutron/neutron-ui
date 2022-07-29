@@ -1,6 +1,6 @@
 import { createGlobalTheme, createTheme, style, createGlobalThemeContract, globalStyle } from "@vanilla-extract/css"
 import { calc } from "@vanilla-extract/css-utils"
-import { CharHash } from "./CharHash"
+import { CharHash } from "./utils"
 import {
   getSize,
   getSpace,

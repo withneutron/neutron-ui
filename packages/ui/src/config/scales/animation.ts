@@ -1,6 +1,6 @@
-import { CharHash } from "../CharHash"
-import { ThemeScale, Keyframes } from "./models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./utils"
+import { CharHash } from "../utils"
+import { ThemeScale, Keyframes } from "./scales.models"
+import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `animation` theme scale */
 export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
@@ -118,7 +118,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
   } as const
 
   const transition = `opacity ${vars.defaultDuration}, transform ${vars.defaultDuration}` as const
-  const slideOn = { transition } as const
+  const baseIn = { transition } as const
   const hidden = {
     opacity: "0",
     pointerEvents: "none",
@@ -154,58 +154,39 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
       transformOrigin: "right center",
     },
     // Animated Transitions
-    slideTopOn: slideOn,
-    slideTopOff: {
-      pointerEvents: "none",
-      transform: slideTop,
-      transition,
-    },
-    slideRightOn: slideOn,
-    slideRightOff: {
-      pointerEvents: "none",
-      transform: slideRight,
-      transition,
-    },
-    slideBottomOn: slideOn,
-    slideBottomOff: {
-      pointerEvents: "none",
-      transform: slideBottom,
-      transition,
-    },
-    slideLeftOn: slideOn,
-    slideLeftOff: {
-      pointerEvents: "none",
-      transform: slideLeft,
-      transition,
-    },
-
-    fadeTopOn: slideOn,
-    fadeTopOff: {
+    slideInTop: baseIn,
+    slideOutTop: {
       ...hidden,
       transform: slideTop,
       transition,
     },
-    fadeRightOn: slideOn,
-    fadeRightOff: {
+    slideInRight: baseIn,
+    slideOutRight: {
       ...hidden,
       transform: slideRight,
       transition,
     },
-    fadeBottomOn: slideOn,
-    fadeBottomOff: {
+    slideInBottom: baseIn,
+    slideOutBottom: {
       ...hidden,
       transform: slideBottom,
       transition,
     },
-    fadeLeftOn: slideOn,
-    fadeLeftOff: {
+    slideInLeft: baseIn,
+    slideOutLeft: {
       ...hidden,
       transform: slideLeft,
       transition,
     },
 
-    fadeCenterOn: slideOn,
-    fadeCenterOff: {
+    fadeIn: baseIn,
+    fadeOut: {
+      ...hidden,
+      transition,
+    },
+
+    zoomIn: baseIn,
+    zoomOut: {
       ...hidden,
       transform: "scale3d(.5,.5,1)",
       transition,

@@ -1,17 +1,20 @@
-import { VarData } from "packages/ui/src/config/CharHash"
+import { VarData } from "packages/ui/src/config/utils"
 import { BodyFontFamily, HeadingFontFamily, CodeFontFamily, ThemeColor } from "packages/ui/src/shared/models"
-
-export const THEME_PREFIX = "$"
 
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
 export type CssValue = string | Record<string, string | number>
+export type CssAlias<T extends string | number = string | number> = {
+  var: string
+  target: T
+}
 export type ScaleEntry = VarData & {
   value: CssValue
 }
-export type ThemeProps<T extends string | number | symbol = string> = Record<T, ThemePropValue>
-export type CssValueMap<T extends string | number | symbol = string> = Record<T, CssValue>
-export type BaseVars<T extends string | number | symbol = string | number | symbol> = Record<T, ScaleEntry>
+export type ThemeProps = Record<string | number, ThemePropValue>
+export type CssValueMap = Record<string | number, CssValue>
+export type CssAliasMap<C extends CssValueMap = CssValueMap> = Record<string | number, CssAlias<keyof Omit<C, symbol>>>
+export type BaseVars<T extends string | number = string | number> = Record<T, ScaleEntry>
 
 export type FontSize = BaseVars<
   | 14
@@ -98,7 +101,7 @@ export interface ThemeScale<
   S extends BaseVars,
   T extends ThemeProps,
   C extends CssValueMap,
-  A extends Record<string | number, keyof C> = Record<string, keyof C>,
+  A extends CssAliasMap<C> = CssAliasMap<C>,
   K extends Keyframes = Keyframes
 > {
   /** Used for theme definition and customization */
