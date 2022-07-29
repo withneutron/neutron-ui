@@ -6,6 +6,7 @@ import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
   const spin = keyframeHash.name
   const spinAndPause = keyframeHash.name
+  const flashSize = keyframeHash.name
   const bounceTop = keyframeHash.name
   const bounceRight = keyframeHash.name
   const bounceBottom = keyframeHash.name
@@ -20,6 +21,10 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
       "0%, 25.1%": { transform: "rotate(0deg)" },
       "10%, 40%": { transform: "rotate(180deg)" },
       "25%, 50%, to": { transform: "rotate(360deg)" },
+    },
+    [flashSize]: {
+      "0%, to": { transform: "scale3d(1, 1, 1)" },
+      "50%": { transform: "scale3d(1.12, 1.12, 1)" },
     },
     [bounceTop]: {
       "0%, 10%, 26.5%, 50%, to": {
@@ -114,6 +119,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     defaultDuration: { ...hash.var, value: fastDuration.ref },
     spinDuration: { ...hash.var, value: "1.25s" },
     spinAndPauseDuration: { ...hash.var, value: "1.75s" },
+    flashSizeDuration: { ...hash.var, value: ".5s" },
     bounceDuration: { ...hash.var, value: "2.5s" },
   } as const
 
@@ -132,25 +138,28 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     ...getCssMapFromVars(vars),
     // Animations
     spin: {
-      animation: `${spin} ${vars.spinDuration.ref} infinite linear`,
+      animation: `${spin} ${vars.spinDuration.ref} infinite ease-in-out both`,
     },
     spinAndPause: {
-      animation: `${spin} ${vars.spinAndPauseDuration.ref} infinite linear`,
+      animation: `${spin} ${vars.spinAndPauseDuration.ref} infinite ease-in-out both`,
+    },
+    flashSize: {
+      animation: `${spin} ${vars.flashSizeDuration.ref} 2 ease-in-out both`,
     },
     bounceTop: {
-      animation: `${bounceTop} ${vars.bounceDuration.ref} infinite linear`,
+      animation: `${bounceTop} ${vars.bounceDuration.ref} infinite ease-in-out both`,
       transformOrigin: "center bottom",
     },
     bounceRight: {
-      animation: `${bounceRight} ${vars.bounceDuration.ref} infinite linear`,
+      animation: `${bounceRight} ${vars.bounceDuration.ref} infinite ease-in-out both`,
       transformOrigin: "left center",
     },
     bounceBottom: {
-      animation: `${bounceBottom} ${vars.bounceDuration.ref} infinite linear`,
+      animation: `${bounceBottom} ${vars.bounceDuration.ref} infinite ease-in-out both`,
       transformOrigin: "center top",
     },
     bounceLeft: {
-      animation: `${bounceLeft} ${vars.bounceDuration.ref} infinite linear`,
+      animation: `${bounceLeft} ${vars.bounceDuration.ref} infinite ease-in-out both`,
       transformOrigin: "right center",
     },
     // Animated Transitions

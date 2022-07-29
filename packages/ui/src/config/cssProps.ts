@@ -64,6 +64,7 @@ export const customVarProps = {
   transformOrigin: true,
 
   animation: true,
+  animationIterationCount: true, // infinite
 
   transition: true,
 
@@ -158,6 +159,8 @@ export const scaledProps = {
 
 export const staticProps = {
   appearance: true,
+
+  animationIterationCount: true, // infinite
 
   userSelect: true,
 
