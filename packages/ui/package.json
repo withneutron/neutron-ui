@@ -20,17 +20,18 @@
       "types": "./dist/neutron-ui.d.ts"
     },
     "./styles": {
-      "import": "./dist/style.css",
-      "require": "./dist/style.css"
+      "import": "./dist/neutron-ui.css",
+      "require": "./dist/neutron-ui.css"
     }
   },
   "scripts": {
-    "build": "yarn build:js && yarn build:types",
     "build:js": "vite build",
     "build:types": "tsc --declaration --declarationDir dist/types",
-    "build:lib": "yarn build",
+    "build": "yarn build:js && yarn build:types",
     "watch": "vite build --watch",
-    "watch:lib": "yarn watch",
+    "minify": "sass --style=compressed --watch dist/style.css:dist/neutron-ui.css",
+    "build:lib": "yarn build && yarn minify",
+    "watch:lib": "yarn watch && yarn minify",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "echo \"Error: run tests from root\" && exit 1",
     "postinstall": "patch-package"
@@ -72,10 +73,6 @@
     "@react-stately/searchfield": "^3.1.7",
     "@react-types/shared": "3.12.0",
     "@stitches/react": "https://gitpkg.now.sh/withneutron/stitches/packages/react?with-name-plus-preprocessor-v1.2.7",
-    "@vanilla-extract/css": "^1.7.0",
-    "@vanilla-extract/css-utils": "^0.1.2",
-    "@vanilla-extract/sprinkles": "^1.4.1",
-    "@vanilla-extract/vite-plugin": "^3.1.5",
     "chroma-js": "^2.1.2",
     "locale-enum": "^1.1.1",
     "react": "17.0.2",
@@ -98,6 +95,8 @@
     "@types/react": "17.0.2",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",
+    "@vanilla-extract/css": "^1.7.2",
+    "@vanilla-extract/vite-plugin": "^3.2.1",
     "eslint": "8.14.0",
     "eslint-config-prettier": "8.x",
     "eslint-plugin-react": "7.x",
@@ -107,7 +106,9 @@
     "postinstall-postinstall": "^2.1.0",
     "prettier": "2.x",
     "pretty-quick": "3.x",
-    "vite": "^2.9.6",
+    "sass": "^1.54.0",
+    "typescript": "^4.1.2",
+    "vite": "^3.0.4",
     "vite-dts": "^1.0.4"
   }
 }

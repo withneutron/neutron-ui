@@ -51,7 +51,7 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     defaultOffset,
     defaultOffsetMin: { ...hash.var, value: defaultOffset.ref },
     defaultOffsetMax: { ...hash.var, value: defaultOffset.ref },
-    // Composition Combos
+    // Composition combos, for var generation
     primary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorBase.ref}` },
     primaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMin.ref}` },
     primaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMax.ref}` },
@@ -66,6 +66,7 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
   // These keys will get mapped into classes with multiple CSS properties
   const cssValueMap = {
     ...getCssMapFromVars(sharedVars),
+    // Composition combos, for class generation
     primary: { outline: vars.primary.ref, outlineOffset: vars.defaultOffset.ref },
     primaryMin: { outline: vars.primaryMin.ref, outlineOffset: vars.defaultOffsetMin.ref },
     primaryMax: { outline: vars.primaryMax.ref, outlineOffset: vars.defaultOffsetMax.ref },
@@ -84,3 +85,43 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     cssValueMap,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
+
+export const outlineWidths = {
+  widthBase: true,
+  widthMin: true,
+  widthMax: true,
+  defaultWidth: true,
+} as const
+
+export const outlineColors = {
+  primaryColorBase: true,
+  primaryColorMin: true,
+  primaryColorMax: true,
+  secondaryColorBase: true,
+  secondaryColorMin: true,
+  secondaryColorMax: true,
+  neutralColorBase: true,
+  neutralColorMin: true,
+  neutralColorMax: true,
+} as const
+
+export const outlineOffsets = {
+  offsetBase: true,
+  offsetMin: true,
+  offsetMax: true,
+  defaultOffset: true,
+  defaultOffsetMin: true,
+  defaultOffsetMax: true,
+} as const
+
+export const outlineCombos = {
+  primary: true,
+  primaryMin: true,
+  primaryMax: true,
+  secondary: true,
+  secondaryMin: true,
+  secondaryMax: true,
+  neutral: true,
+  neutralMin: true,
+  neutralMax: true,
+} as const

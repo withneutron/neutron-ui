@@ -1,3 +1,7 @@
+export * from "./scales.models"
+export * from "./scales.utils"
+
+// SCALES //
 export * from "./animation"
 export * from "./border"
 export * from "./color"
@@ -10,8 +14,6 @@ export * from "./lineHeight"
 export * from "./outline"
 export * from "./radius"
 export * from "./row"
-export * from "./scales.models"
-export * from "./scales.utils"
 export * from "./shadow"
 export * from "./size"
 export * from "./space"

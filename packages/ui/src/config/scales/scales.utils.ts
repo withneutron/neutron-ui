@@ -1,4 +1,4 @@
-import { addPrefix } from "../utils"
+import { addPrefix, THEME_PREFIX } from "../utils"
 import {
   ColorKeys,
   ColorNumberKey,
@@ -62,13 +62,16 @@ export function getCssMapFromVars<T extends BaseVars>(vars: T) {
   }, {} as Record<keyof T, string>)
 }
 
-/** Converts a set of vars to CSS values (i.e., using the var set's `ref` as a value) */
+type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${keyof Omit<T, symbol>}`
+
+/** Converts a CSS map to theme tokens */
 export function getThemePropsFromCssMap<T extends CssValueMap>(vars: T) {
-  const entries: [keyof T, CssValue][] = Object.entries(vars)
-  return entries.reduce((out: Record<keyof T, ThemePropValue>, [key, value]: [keyof T, CssValue]) => {
-    out[key] = typeof value === "string" ? value : addPrefix(String(key))
+  const keys = Object.keys(vars)
+  return keys.reduce((out, key) => {
+    key = addPrefix(String(key))
+    out[key as keyof typeof out] = key
     return out
-  }, {} as Record<keyof T, ThemePropValue>)
+  }, {} as Record<PrefixedKey<T>, ThemePropValue>)
 }
 
 /** Converts a CSS Alias Map into theme props */

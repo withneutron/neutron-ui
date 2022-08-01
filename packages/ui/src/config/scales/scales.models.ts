@@ -98,17 +98,17 @@ export type KeyframeObject = Record<string, Record<string, string>>
 export type Keyframes = Record<string, KeyframeObject>
 
 export interface ThemeScale<
-  S extends BaseVars,
-  T extends ThemeProps,
-  C extends CssValueMap,
-  A extends CssAliasMap<C> = CssAliasMap<C>,
-  K extends Keyframes = Keyframes
+  S extends BaseVars = BaseVars,
+  T extends ThemeProps = ThemeProps,
+  C extends CssValueMap = CssValueMap,
+  A extends CssAliasMap<C> | Record<any, any> = Record<any, any>,
+  K extends Keyframes | Record<any, any> = Keyframes
 > {
   /** Used for theme definition and customization */
   vars: S
   /** For color scales, the default set of vars is `light`, so they may also return a `dark` set */
   darkVars?: Record<keyof S, ScaleEntry>
-  /** Used for building a consumable, typed $theme object, with CSS var references and spreadable combo props */
+  /** Used for building a consumable, typed $theme object, with CSS var references and aliases for prop combos */
   themeProps: T
   /** Used to generate static CSS classes, and the prop values that reference them */
   cssValueMap: C
@@ -116,4 +116,29 @@ export interface ThemeScale<
   cssAliasMap?: A
   /** Used for building keyframe-based animations */
   keyframes?: K
+}
+
+export enum Scale {
+  animation = "animation",
+  border = "border",
+  color = "color",
+  column = "column",
+  font = "font",
+  fontFamily = "fontFamily",
+  fontSize = "fontSize",
+  fontWeight = "fontWeight",
+  lineHeight = "lineHeight",
+  outline = "outline",
+  radius = "radius",
+  row = "row",
+  shadow = "shadow",
+  size = "size",
+  space = "space",
+  textDecoration = "textDecoration",
+  typeSpace = "typeSpace",
+  zIndex = "zIndex",
+}
+
+export type Scales = {
+  [key in Scale]: ThemeScale
 }

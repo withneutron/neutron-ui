@@ -1,20 +1,11 @@
 import type { ReactElement, ReactNode, RefObject } from "react"
-import {
-  createRef,
-  createContext,
-  useContext,
-  useRef,
-  useCallback,
-  useEffect,
-  useState,
-} from "react"
+import { createRef, createContext, useContext, useRef, useCallback, useEffect, useState } from "react"
 import { SSRProvider } from "@react-aria/ssr"
 import { useLocale, I18nProvider } from "@react-aria/i18n"
 import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
 import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
-import "../config/styles.css"
 
 // NESTABLE NEUTRON THEME PROVIDER ////////////////////////////////////////////
 export interface ThemeContextProps {
@@ -36,12 +27,7 @@ interface UIThemeProps extends Omit<ThemeContextProps, "isDark" | "ref"> {
   isRoot?: boolean
 }
 
-export function UITheme({
-  theme,
-  darkTheme = baseDarkTheme,
-  children,
-  isRoot = false,
-}: UIThemeProps): ReactElement {
+export function UITheme({ theme, darkTheme = baseDarkTheme, children, isRoot = false }: UIThemeProps): ReactElement {
   const { isDark = DEFAULT_COLOR_MODE === "dark" } = useContext(UIContext)
   const ref = useRef<ClientElement>(null)
   const className = isDark ? String(darkTheme) : String(theme)
@@ -129,17 +115,11 @@ export function UIProvider(props: UIProviderProps): ReactElement {
     constants = {} as UIConstants,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
-  const systemColorMode = useMediaQuery<ColorMode>(
-    "(prefers-color-scheme: dark)",
-    "dark",
-    "light",
-    defaultColorMode
-  )
+  const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", "dark", "light", defaultColorMode)
   const isTouchDevice = useMediaQuery("(hover: none)", isMobile)
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
   const { locale: systemLocale } = useLocale()
-  const activeLocale =
-    locale || Locale[systemLocale.replace("-", "_") as keyof typeof Locale] || Locale.en_US
+  const activeLocale = locale || Locale[systemLocale.replace("-", "_") as keyof typeof Locale] || Locale.en_US
   const mergedConstants = Object.assign(
     {
       notificationRevealDelay: DELAYS.notificationReveal,

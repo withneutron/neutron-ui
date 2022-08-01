@@ -1,6 +1,28 @@
-import { CharHash } from "./utils"
-import { scaledProps, props, directionalProps, conditionNames } from "./cssProps"
+/**
+ * NOTES:
+ * Use `InlineStart` as left, and `InlineEnd` as right, instead of RTL "magic"
+ * Use `border-start-start-radius` (etc) for radii
+ *
+ * Create a global style for `[dir]` that sets the `direction: ___;` css property
+ *
+ * Convert padding, marging, and other shorthand props (border, etc) to their
+ * 4 directional counterparts, in the resolver, to reduce number of classes we generate.
+ *
+ * Make sure `unset`, `initial`, `revert`, and `inherit` values are available to any props that
+ * can use them; they could be used to emulate inverted breakpoints.
+ */
 
+/** PREFIX LEGEND *********************************************************************************
+ * $  -> Theme object OR theme token OR compound theme value.
+ * :  -> CSS pseudo-classes for interaction state OR for structural targeting.
+ * @  -> Breakpoint (desktop-first) OR other media query OR light/dark color mode.
+ * !  -> Inverted breakpoint (mobile-first) OR inverted media query.
+ *       E.g. `!reducedMotion` matches when the user agent does NOT request reduced motion.
+ *************************************************************************************************/
+
+import { CharHash } from "./utils"
+
+/*
 export function createCSS() {
   const hasName: Record<string, boolean> = {}
   const styles: Record<string, any> = {}
@@ -74,3 +96,4 @@ export function createCSS() {
 }
 
 console.log(createCSS())
+*/

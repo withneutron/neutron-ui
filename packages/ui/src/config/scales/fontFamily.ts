@@ -5,7 +5,7 @@ import {
   HeadingFontFamily,
   CodeFontFamily,
 } from "../../shared/models"
-import { enumKeys } from "packages/ui/src/shared/utils"
+import { enumKeys } from "../../shared/utils"
 import { CharHash } from "../utils"
 import { ScaleEntry, ThemeScale } from "./scales.models"
 import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"

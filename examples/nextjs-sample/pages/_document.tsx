@@ -1,11 +1,4 @@
-import NextDoc, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-  DocumentProps,
-} from "next/document"
+import NextDoc, { Html, Head, Main, NextScript, DocumentContext, DocumentProps } from "next/document"
 import {
   appFontLinks,
   appGlobalStyles,
@@ -30,6 +23,7 @@ function Document(props: DocumentProps & { initialProps: InitialProps }) {
         <link rel="icon" href="/favicon.ico" />
         <FontLinks links={appFontLinks} />
         <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
+        <meta charSet="utf-8" />
       </Head>
       <body>
         <Main />

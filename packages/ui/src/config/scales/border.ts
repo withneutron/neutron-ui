@@ -33,7 +33,7 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     neutralColorBase,
     neutralColorMin,
     neutralColorMax,
-    // Composition Combos
+    // Composition combos
     primary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorBase.ref}` },
     primaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMin.ref}` },
     primaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMax.ref}` },
@@ -57,3 +57,34 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     cssValueMap,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
+
+export const borderWidths = {
+  widthBase: true,
+  widthMin: true,
+  widthMax: true,
+  defaultWidth: true,
+} as const
+
+export const borderColors = {
+  primaryColorBase: true,
+  primaryColorMin: true,
+  primaryColorMax: true,
+  secondaryColorBase: true,
+  secondaryColorMin: true,
+  secondaryColorMax: true,
+  neutralColorBase: true,
+  neutralColorMin: true,
+  neutralColorMax: true,
+} as const
+
+export const borderCombos = {
+  primary: true,
+  primaryMin: true,
+  primaryMax: true,
+  secondary: true,
+  secondaryMin: true,
+  secondaryMax: true,
+  neutral: true,
+  neutralMin: true,
+  neutralMax: true,
+} as const

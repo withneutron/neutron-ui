@@ -123,7 +123,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     bounceDuration: { ...hash.var, value: "2.5s" },
   } as const
 
-  const transition = `opacity ${vars.defaultDuration}, transform ${vars.defaultDuration}` as const
+  const transition = `opacity ${vars.defaultDuration.ref}, transform ${vars.defaultDuration.ref}` as const
   const baseIn = { transition } as const
   const hidden = {
     opacity: "0",
@@ -209,5 +209,37 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     themeProps,
     cssValueMap,
     keyframes,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, Record<any, any>, typeof keyframes>
 }
+
+export const animationDurations = {
+  fastDuration: true,
+  slowDuration: true,
+  defaultDuration: true,
+  spinDuration: true,
+  spinAndPauseDuration: true,
+  flashSizeDuration: true,
+  bounceDuration: true,
+} as const
+
+export const animationCombos = {
+  spin: true,
+  spinAndPause: true,
+  flashSize: true,
+  bounceTop: true,
+  bounceRight: true,
+  bounceBottom: true,
+  bounceLeft: true,
+  slideInTop: true,
+  slideOutTop: true,
+  slideInRight: true,
+  slideOutRight: true,
+  slideInBottom: true,
+  slideOutBottom: true,
+  slideInLeft: true,
+  slideOutLeft: true,
+  fadeIn: true,
+  fadeOut: true,
+  zoomIn: true,
+  zoomOut: true,
+} as const
