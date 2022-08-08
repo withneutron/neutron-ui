@@ -18,7 +18,7 @@ import { CssPropKey, CssRule, KeysFromScale } from "./props.models"
 
 type CssValueClassMap<M extends CssValueMap> = Record<KeysFromScale<M>, string>
 
-function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, boolean>) {
+function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, unknown>) {
   const output: Pick<T, keyof typeof keys> = { ...map }
   Object.keys(map).forEach((key: keyof T) => {
     if (!keys[key]) {
@@ -29,10 +29,10 @@ function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, boolean>
 }
 
 /** Util to extract the CSS value map from a scale object */
-function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Record<string, boolean>) {
+function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Record<string, unknown>) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
-    return filterMap(map, keys as Record<keyof typeof map, boolean>)
+    return filterMap(map, keys as Record<keyof typeof map, unknown>)
   }
   return map
 }
@@ -42,7 +42,7 @@ function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Reco
  * Returns an object containing props with values matching
  * a Record<ScaleKey, CssClassForThatKey> signature.
  */
-export function generateScaledPropsCss<S extends Scales, K extends Record<CssPropKey, boolean>>(
+export function generateScaledPropsCss<S extends Scales, K extends Partial<Record<CssPropKey, unknown>>>(
   scales: S,
   generateClass: (value: CssRule) => string,
   keys?: K
@@ -153,6 +153,8 @@ export function generateScaledPropsCss<S extends Scales, K extends Record<CssPro
         delete props[prop as keyof typeof props]
       }
     })
+    type PickKeys = Extract<keyof typeof props, keyof typeof keys>
+    return props as Pick<typeof props, PickKeys>
   }
   return props
 }
