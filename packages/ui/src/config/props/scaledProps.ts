@@ -14,10 +14,9 @@ import {
   animationDurations,
   colorCore,
 } from "../scales"
-import { CssClassDef, CssPropKey } from "./props.models"
-import { CharHash } from "../utils"
+import { CssPropKey, CssRule, KeysFromScale } from "./props.models"
 
-type MapRule<M extends CssValueMap> = Record<keyof M, CssClassDef>
+type CssValueClassMap<M extends CssValueMap> = Record<KeysFromScale<M>, string>
 
 function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, boolean>) {
   const output: Pick<T, keyof typeof keys> = { ...map }
@@ -29,6 +28,7 @@ function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, boolean>
   return output
 }
 
+/** Util to extract the CSS value map from a scale object */
 function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Record<string, boolean>) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
@@ -37,149 +37,122 @@ function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Reco
   return map
 }
 
-function getReducer<M extends CssValueMap>(prop: CssPropKey, hash: CharHash) {
-  return (output: Record<keyof M, CssClassDef>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
-    const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
-    output[scaleKey] = { [hash.name]: value }
-    return output
+/**
+ * Used to generate CSS classes for various CSS props, based on scaled values.
+ * Returns an object containing props with values matching
+ * a Record<ScaleKey, CssClassForThatKey> signature.
+ */
+export function generateScaledPropsCss<S extends Scales, K extends Record<CssPropKey, boolean>>(
+  scales: S,
+  generateClass: (value: CssRule) => string,
+  keys?: K
+) {
+  function entries<M extends CssValueMap>(prop: CssPropKey, map: M) {
+    return Object.entries(map).reduce(
+      (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
+        const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
+        const className = generateClass(value)
+        const key = `$${scaleKey}` as KeysFromScale<M>
+        output[key] = className
+        return output
+      },
+      {} as CssValueClassMap<typeof map>
+    )
   }
+
+  const props = {
+    outline: entries("outline", map(scales, Scale.outline, outlineCombos)),
+    outlineWidth: entries("outlineWidth", map(scales, Scale.outline, outlineWidths)),
+    outlineColor: entries("outlineColor", map(scales, Scale.outline, outlineColors)),
+    outlineOffset: entries("outlineOffset", map(scales, Scale.outline, outlineOffsets)),
+
+    borderBlockStart: entries("borderBlockStart", map(scales, Scale.border, borderCombos)),
+    borderBlockEnd: entries("borderBlockEnd", map(scales, Scale.border, borderCombos)),
+    borderInlineStart: entries("borderInlineStart", map(scales, Scale.border, borderCombos)),
+    borderInlineEnd: entries("borderInlineEnd", map(scales, Scale.border, borderCombos)),
+
+    borderBlockStartColor: entries("borderBlockStartColor", map(scales, Scale.border, borderColors)),
+    borderBlockEndColor: entries("borderBlockEndColor", map(scales, Scale.border, borderColors)),
+    borderInlineStartColor: entries("borderInlineStartColor", map(scales, Scale.border, borderColors)),
+    borderInlineEndColor: entries("borderInlineEndColor", map(scales, Scale.border, borderColors)),
+
+    borderBlockStartWidth: entries("borderBlockStartWidth", map(scales, Scale.border, borderWidths)),
+    borderBlockEndWidth: entries("borderBlockEndWidth", map(scales, Scale.border, borderWidths)),
+    borderInlineStartWidth: entries("borderInlineStartWidth", map(scales, Scale.border, borderWidths)),
+    borderInlineEndWidth: entries("borderInlineEndWidth", map(scales, Scale.border, borderWidths)),
+
+    flexBasis: entries("flexBasis", map(scales, Scale.size)),
+
+    inlineSize: entries("inlineSize", map(scales, Scale.size)),
+    minInlineSize: entries("minInlineSize", map(scales, Scale.size)),
+    maxInlineSize: entries("maxInlineSize", map(scales, Scale.size)),
+    blockSize: entries("blockSize", map(scales, Scale.size)),
+    minBlockSize: entries("minBlockSize", map(scales, Scale.size)),
+    maxBlockSize: entries("maxBlockSize", map(scales, Scale.size)),
+
+    // gridTemplateRows is probably not useful enough. Instead, use...
+    gridAutoRows: entries("gridAutoRows", map(scales, Scale.row)),
+    gridTemplateColumns: entries("gridTemplateColumns", map(scales, Scale.column)),
+
+    columnGap: entries("columnGap", map(scales, Scale.space)),
+    rowGap: entries("rowGap", map(scales, Scale.space)),
+
+    marginBlockStart: entries("marginBlockStart", map(scales, Scale.space)),
+    marginBlockEnd: entries("marginBlockEnd", map(scales, Scale.space)),
+    marginInlineStart: entries("marginInlineStart", map(scales, Scale.space)),
+    marginInlineEnd: entries("marginInlineEnd", map(scales, Scale.space)),
+
+    paddingBlockStart: entries("paddingBlockStart", map(scales, Scale.space)),
+    paddingBlockEnd: entries("paddingBlockEnd", map(scales, Scale.space)),
+    paddingInlineStart: entries("paddingInlineStart", map(scales, Scale.space)),
+    paddingInlineEnd: entries("paddingInlineEnd", map(scales, Scale.space)),
+
+    insetBlockStart: entries("insetBlockStart", map(scales, Scale.space)),
+    insetBlockEnd: entries("insetBlockEnd", map(scales, Scale.space)),
+    insetInlineStart: entries("insetInlineStart", map(scales, Scale.space)),
+    insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space)),
+
+    borderStartStartRadius: entries("borderStartStartRadius", map(scales, Scale.radius)),
+    borderStartEndRadius: entries("borderStartEndRadius", map(scales, Scale.radius)),
+    borderEndStartRadius: entries("borderEndStartRadius", map(scales, Scale.radius)),
+    borderEndEndRadius: entries("borderEndEndRadius", map(scales, Scale.radius)),
+
+    // Scaled color values from `background` get routed to this instead
+    backgroundColor: entries("backgroundColor", map(scales, Scale.color, colorCore)),
+
+    color: entries("color", map(scales, Scale.color, colorCore)),
+    fill: entries("fill", map(scales, Scale.color, colorCore)),
+    stroke: entries("stroke", map(scales, Scale.color, colorCore)),
+
+    caretColor: entries("caretColor", map(scales, Scale.color, colorCore)),
+    columnRuleColor: entries("columnRuleColor", map(scales, Scale.color, colorCore)),
+
+    font: entries("font", map(scales, Scale.font)),
+    fontFamily: entries("fontFamily", map(scales, Scale.fontFamily)),
+    fontSize: entries("fontSize", map(scales, Scale.fontSize)),
+    fontWeight: entries("fontWeight", map(scales, Scale.fontWeight)),
+
+    textDecoration: entries("textDecoration", map(scales, Scale.textDecoration)),
+
+    lineHeight: entries("lineHeight", map(scales, Scale.lineHeight)),
+    letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace)),
+    wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace)),
+    textUnderlineOffset: entries("textUnderlineOffset", map(scales, Scale.typeSpace)),
+
+    zIndex: entries("zIndex", map(scales, Scale.zIndex)),
+
+    boxShadow: entries("boxShadow", map(scales, Scale.shadow)),
+
+    animation: entries("animation", map(scales, Scale.animation, animationCombos)),
+    animationDuration: entries("animationDuration", map(scales, Scale.animation, animationDurations)),
+  } as const
+
+  if (keys) {
+    Object.keys(props).forEach(prop => {
+      if (!keys[prop as CssPropKey]) {
+        delete props[prop as keyof typeof props]
+      }
+    })
+  }
+  return props
 }
-
-function entries<M extends CssValueMap>(prop: CssPropKey, map: M, hash: CharHash) {
-  return Object.entries(map).reduce(getReducer<typeof map>(prop, hash), {} as MapRule<typeof map>)
-}
-
-/** Props that use predefined scales */
-export const scaledProps = {
-  outline: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("outline", map(scales, Scale.outline, outlineCombos), hash),
-  outlineWidth: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("outlineWidth", map(scales, Scale.outline, outlineWidths), hash),
-  outlineColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("outlineColor", map(scales, Scale.outline, outlineColors), hash),
-  outlineOffset: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("outlineOffset", map(scales, Scale.outline, outlineOffsets), hash),
-
-  borderBlockStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockStart", map(scales, Scale.border, borderCombos), hash),
-  borderBlockEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockEnd", map(scales, Scale.border, borderCombos), hash),
-  borderInlineStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineStart", map(scales, Scale.border, borderCombos), hash),
-  borderInlineEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineEnd", map(scales, Scale.border, borderCombos), hash),
-
-  borderBlockStartColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockStartColor", map(scales, Scale.border, borderColors), hash),
-  borderBlockEndColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockEndColor", map(scales, Scale.border, borderColors), hash),
-  borderInlineStartColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineStartColor", map(scales, Scale.border, borderColors), hash),
-  borderInlineEndColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineEndColor", map(scales, Scale.border, borderColors), hash),
-
-  borderBlockStartWidth: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockStartWidth", map(scales, Scale.border, borderWidths), hash),
-  borderBlockEndWidth: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderBlockEndWidth", map(scales, Scale.border, borderWidths), hash),
-  borderInlineStartWidth: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineStartWidth", map(scales, Scale.border, borderWidths), hash),
-  borderInlineEndWidth: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderInlineEndWidth", map(scales, Scale.border, borderWidths), hash),
-
-  flexBasis: <S extends Scales>(scales: S, hash: CharHash) => entries("flexBasis", map(scales, Scale.size), hash),
-
-  inlineSize: <S extends Scales>(scales: S, hash: CharHash) => entries("inlineSize", map(scales, Scale.size), hash),
-  minInlineSize: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("minInlineSize", map(scales, Scale.size), hash),
-  maxInlineSize: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("maxInlineSize", map(scales, Scale.size), hash),
-  blockSize: <S extends Scales>(scales: S, hash: CharHash) => entries("blockSize", map(scales, Scale.size), hash),
-  minBlockSize: <S extends Scales>(scales: S, hash: CharHash) => entries("minBlockSize", map(scales, Scale.size), hash),
-  maxBlockSize: <S extends Scales>(scales: S, hash: CharHash) => entries("maxBlockSize", map(scales, Scale.size), hash),
-
-  // gridTemplateRows is probably not useful enough. Instead, use...
-  gridAutoRows: <S extends Scales>(scales: S, hash: CharHash) => entries("gridAutoRows", map(scales, Scale.row), hash),
-  gridTemplateColumns: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("gridTemplateColumns", map(scales, Scale.column), hash),
-
-  columnGap: <S extends Scales>(scales: S, hash: CharHash) => entries("columnGap", map(scales, Scale.space), hash),
-  rowGap: <S extends Scales>(scales: S, hash: CharHash) => entries("rowGap", map(scales, Scale.space), hash),
-
-  marginBlockStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("marginBlockStart", map(scales, Scale.space), hash),
-  marginBlockEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("marginBlockEnd", map(scales, Scale.space), hash),
-  marginInlineStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("marginInlineStart", map(scales, Scale.space), hash),
-  marginInlineEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("marginInlineEnd", map(scales, Scale.space), hash),
-
-  paddingBlockStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("paddingBlockStart", map(scales, Scale.space), hash),
-  paddingBlockEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("paddingBlockEnd", map(scales, Scale.space), hash),
-  paddingInlineStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("paddingInlineStart", map(scales, Scale.space), hash),
-  paddingInlineEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("paddingInlineEnd", map(scales, Scale.space), hash),
-
-  insetBlockStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("insetBlockStart", map(scales, Scale.space), hash),
-  insetBlockEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("insetBlockEnd", map(scales, Scale.space), hash),
-  insetInlineStart: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("insetInlineStart", map(scales, Scale.space), hash),
-  insetInlineEnd: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("insetInlineEnd", map(scales, Scale.space), hash),
-
-  borderStartStartRadius: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderStartStartRadius", map(scales, Scale.radius), hash),
-  borderStartEndRadius: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderStartEndRadius", map(scales, Scale.radius), hash),
-  borderEndStartRadius: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderEndStartRadius", map(scales, Scale.radius), hash),
-  borderEndEndRadius: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("borderEndEndRadius", map(scales, Scale.radius), hash),
-
-  // Scaled color values from `background` get routed to this instead
-  backgroundColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("backgroundColor", map(scales, Scale.color, colorCore), hash),
-
-  color: <S extends Scales>(scales: S, hash: CharHash) => entries("color", map(scales, Scale.color, colorCore), hash),
-  fill: <S extends Scales>(scales: S, hash: CharHash) => entries("fill", map(scales, Scale.color, colorCore), hash),
-  stroke: <S extends Scales>(scales: S, hash: CharHash) => entries("stroke", map(scales, Scale.color, colorCore), hash),
-
-  caretColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("caretColor", map(scales, Scale.color, colorCore), hash),
-  columnRuleColor: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("columnRuleColor", map(scales, Scale.color, colorCore), hash),
-
-  font: <S extends Scales>(scales: S, hash: CharHash) => entries("font", map(scales, Scale.font), hash),
-  fontFamily: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("fontFamily", map(scales, Scale.fontFamily), hash),
-  fontSize: <S extends Scales>(scales: S, hash: CharHash) => entries("fontSize", map(scales, Scale.fontSize), hash),
-  fontWeight: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("fontWeight", map(scales, Scale.fontWeight), hash),
-
-  textDecoration: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("textDecoration", map(scales, Scale.textDecoration), hash),
-
-  lineHeight: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("lineHeight", map(scales, Scale.lineHeight), hash),
-  letterSpacing: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("letterSpacing", map(scales, Scale.typeSpace), hash),
-  wordSpacing: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("wordSpacing", map(scales, Scale.typeSpace), hash),
-  textUnderlineOffset: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("textUnderlineOffset", map(scales, Scale.typeSpace), hash),
-
-  zIndex: <S extends Scales>(scales: S, hash: CharHash) => entries("zIndex", map(scales, Scale.zIndex), hash),
-
-  boxShadow: <S extends Scales>(scales: S, hash: CharHash) => entries("boxShadow", map(scales, Scale.shadow), hash),
-
-  animation: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("animation", map(scales, Scale.animation, animationCombos), hash),
-  animationDuration: <S extends Scales>(scales: S, hash: CharHash) =>
-    entries("animationDuration", map(scales, Scale.animation, animationDurations), hash),
-} as const

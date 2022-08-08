@@ -19,12 +19,8 @@ import {
   getBorder,
   getOutline,
   getAnimation,
-  CssValueMap,
-  CssValue,
-  // Scales,
 } from "./scales"
-import { CssClassDef, CssValueRules, scaledProps } from "./props"
-// import { getScaledProps } from "./props"
+import { CssRule, generateScaledPropsCss } from "./props"
 
 // Export the theme
 export const { exampleClass, themeClass, vars } = generateStyles()
@@ -173,28 +169,10 @@ const scales = {
   zIndex,
 } as const
 
-Object.keys(scaledProps).forEach(prop => {
-  Object.values(scaledProps[prop as keyof typeof scaledProps](scales, classHash)).forEach(classDef => {
-    Object.entries(classDef).forEach(([className, cssRule]) => {
-      globalStyle(`.${className}`, cssRule)
-    })
-  })
+const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
+  const className = classHash.name
+  globalStyle(`.${className}`, value)
+  return className
 })
 
-// console.log("color", color)
-// console.log("size", size)
-// console.log("space", space)
-// console.log("radius", radius)
-// console.log("column", column)
-// console.log("row", row)
-// console.log("zIndex", zIndex)
-// console.log("lineHeight", lineHeight)
-// console.log("typeSpace", typeSpace)
-// console.log("textDecoration", textDecoration)
-// console.log("shadow", shadow)
-// console.log("fontSize", fontSize)
-// console.log("fontWeight", fontWeight)
-// console.log("fontFamily", fontFamily)
-// console.log("font", font)
-// console.log("border", border)
-// console.log("outline", outline)
+console.log("scaledProps.blockSize", scaledProps.blockSize)
