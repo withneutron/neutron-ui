@@ -13,6 +13,7 @@ import {
   animationCombos,
   animationDurations,
   colorCore,
+  colorText,
 } from "../scales"
 import { CssPropKey, CssRule, KeysFromScale } from "./props.models"
 
@@ -120,11 +121,11 @@ export function generateScaledPropsCss<S extends Scales, K extends Partial<Recor
     // Scaled color values from `background` get routed to this instead
     backgroundColor: entries("backgroundColor", map(scales, Scale.color, colorCore)),
 
-    color: entries("color", map(scales, Scale.color, colorCore)),
+    color: entries("color", map(scales, Scale.color, colorText)),
     fill: entries("fill", map(scales, Scale.color, colorCore)),
     stroke: entries("stroke", map(scales, Scale.color, colorCore)),
 
-    caretColor: entries("caretColor", map(scales, Scale.color, colorCore)),
+    caretColor: entries("caretColor", map(scales, Scale.color, colorText)),
     columnRuleColor: entries("columnRuleColor", map(scales, Scale.color, colorCore)),
 
     font: entries("font", map(scales, Scale.font)),
