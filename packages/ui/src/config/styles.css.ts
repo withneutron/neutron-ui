@@ -20,7 +20,13 @@ import {
   getOutline,
   getAnimation,
 } from "./scales"
-import { CssRule, FilterKeys, generateInteractivePseudoClassCss, generateScaledPropsCss } from "./props"
+import {
+  CssRule,
+  FilterKeys,
+  generateInteractivePseudoClassCss,
+  generateScaledPropsCss,
+  InteractivePseudoClassesWithAliases,
+} from "./props"
 
 // Export the theme
 export const { exampleClass, themeClass } = generateStyles()
@@ -83,15 +89,15 @@ const scales = {
   zIndex,
 } as const
 
-// Generate CSS props that are based on scales
-const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
+/** Generate CSS props that are based on scales */
+export const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   const className = classHash.name
   globalStyle(`.${className}`, value)
   return className
 })
 
-// Generate CSS props that are _conditional_, and based on scales
-const conditionalScaledProps = generateInteractivePseudoClassCss<typeof scaledProps>(
+/** Generate CSS props that are _conditional_, and based on scales */
+export const conditionalScaledProps = generateInteractivePseudoClassCss<typeof scaledProps>(
   (condition: string, keys: FilterKeys) =>
     generateScaledPropsCss(
       scales,
@@ -103,3 +109,12 @@ const conditionalScaledProps = generateInteractivePseudoClassCss<typeof scaledPr
       keys
     )
 )
+
+/** Type of all scaled props */
+export type ScaledProps = Partial<typeof scaledProps> &
+  InteractivePseudoClassesWithAliases<typeof conditionalScaledProps>
+
+export const allScaledProps: ScaledProps = {
+  ...scaledProps,
+  ...conditionalScaledProps,
+}

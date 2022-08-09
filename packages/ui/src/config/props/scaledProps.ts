@@ -31,7 +31,11 @@ function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map
 }
 
 /** Util to extract the CSS value map from a scale object */
-function map<S extends Scales, V extends Scale, K extends Record<string, unknown>>(scales: S, scale: V, keys?: K) {
+function map<
+  S extends Scales,
+  V extends Scale,
+  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
+>(scales: S, scale: V, keys?: K) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
     return filterMap(map, keys)
