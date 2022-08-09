@@ -20,108 +20,21 @@ import {
   getOutline,
   getAnimation,
 } from "./scales"
-import { CssRule, generateScaledPropsCss } from "./props"
+import { CssRule, generateScaledPropsCss, interactivePseudoClasses } from "./props"
 
 // Export the theme
-export const { exampleClass, themeClass, vars } = generateStyles()
+export const { exampleClass, themeClass } = generateStyles()
 
 // Function that generates the styles
 function generateStyles() {
-  const space = {
-    none: null,
-    base: null,
-    xs: null,
-    s: null,
-    m: null,
-    l: null,
-    xl: null,
-  } as const
-
-  const size = space
-
-  const $theme = createGlobalThemeContract(
-    {
-      color: {
-        brand: null,
-      },
-      font: {
-        body: null,
-      },
-      size,
-      space,
-    },
-    (_value, path) => `nui-${path.join("-")}`
-  )
-
-  createGlobalTheme(":root", $theme, {
-    color: {
-      brand: "blue",
-    },
-    font: {
-      body: "arial",
-    },
-    size: {
-      none: "0px",
-      base: "4px",
-      xs: $theme.space.base,
-      s: "8px",
-      m: "16px",
-      l: "24px",
-      xl: "36px",
-    },
-    space: {
-      none: "0px",
-      base: $theme.size.base,
-      xs: $theme.space.base,
-      s: "8px",
-      m: "16px",
-      l: "24px",
-      xl: "36px",
-    },
-  })
-
-  const [themeClass, vars] = createTheme(
-    {
-      color: {
-        brand: "blue",
-      },
-      font: {
-        body: "arial",
-      },
-      size: {
-        none: "0px",
-        base: "4px",
-        xs: $theme.space.base,
-        s: "8px",
-        m: "16px",
-        l: "24px",
-        xl: "36px",
-      },
-      space: {
-        none: "0px",
-        base: $theme.size.base,
-        xs: $theme.space.base,
-        s: "8px",
-        m: "16px",
-        l: "24px",
-        xl: "36px",
-      },
-    },
-    "neutron-theme-light"
-  )
-
-  const exampleClass = style({
-    backgroundColor: $theme.color.brand,
-    fontFamily: $theme.font.body,
-    color: "white",
-    padding: 1,
-  })
-
   globalStyle("html, body", {
-    margin: $theme.space.none,
-    padding: $theme.size.xs,
+    margin: 0,
+    padding: 0,
   })
-  return { exampleClass, themeClass, vars }
+  return {
+    exampleClass: "",
+    themeClass: "",
+  }
 }
 
 ///////
@@ -176,3 +89,24 @@ const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
 })
 
 console.log("scaledProps.blockSize", scaledProps.blockSize)
+
+let conditionalScaledProps = {} as Record<keyof typeof interactivePseudoClasses, Partial<typeof scaledProps>>
+Object.entries(interactivePseudoClasses).forEach(([condition, keys]) => {
+  const props = generateScaledPropsCss(
+    scales,
+    (value: CssRule) => {
+      const className = classHash.name
+      globalStyle(`.${className}${condition}`, value)
+      return className
+    },
+    keys
+  )
+  conditionalScaledProps = {
+    ...conditionalScaledProps,
+    [condition as keyof typeof interactivePseudoClasses]: props as typeof props,
+  } as const
+})
+
+console.log("classHash COUNT", classHash.count)
+console.log("varHash COUNT", varHash.count)
+console.log("keyframeHash COUNT", keyframeHash.count)

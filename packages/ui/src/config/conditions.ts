@@ -1,8 +1,8 @@
-import { pseudoClasses } from "./props/pseudoClassProps"
+import { pseudoClassAliases, pseudoClasses } from "./props/pseudoClassProps"
 
 export const conditions = {
   ...pseudoClasses,
-
+  ...pseudoClassAliases,
   /**
    * For all conditions below, create a `ConditionsContext` at our base provider,
    * which tracks all these conditions centrally. That avoids us repeating queries

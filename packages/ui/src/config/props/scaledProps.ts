@@ -125,9 +125,6 @@ export function generateScaledPropsCss<S extends Scales, K extends Partial<Recor
     fill: entries("fill", map(scales, Scale.color, colorCore)),
     stroke: entries("stroke", map(scales, Scale.color, colorCore)),
 
-    caretColor: entries("caretColor", map(scales, Scale.color, colorText)),
-    columnRuleColor: entries("columnRuleColor", map(scales, Scale.color, colorCore)),
-
     font: entries("font", map(scales, Scale.font)),
     fontFamily: entries("fontFamily", map(scales, Scale.fontFamily)),
     fontSize: entries("fontSize", map(scales, Scale.fontSize)),
