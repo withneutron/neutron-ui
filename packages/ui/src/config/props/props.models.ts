@@ -17,6 +17,8 @@ export type CssValueRules<S extends Record<string | number, CssValue>> = Record<
 
 export type CssPropKey = keyof typeof sourceProps
 
+export type FilterKeys = Partial<Record<CssPropKey, unknown>>
+
 /** SCALE KEY EXAMPLE **
 const size = {
   1: "var(--1)",

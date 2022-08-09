@@ -20,7 +20,7 @@ import {
   getOutline,
   getAnimation,
 } from "./scales"
-import { CssRule, generateScaledPropsCss, interactivePseudoClasses } from "./props"
+import { CssRule, FilterKeys, generateInteractivePseudoClassCss, generateScaledPropsCss } from "./props"
 
 // Export the theme
 export const { exampleClass, themeClass } = generateStyles()
@@ -42,6 +42,7 @@ const varHash = new CharHash()
 const keyframeHash = new CharHash()
 const classHash = new CharHash()
 
+// Generate theme scales
 const animation = getAnimation(varHash, keyframeHash)
 const color = getColor(varHash)
 const size = getSize(varHash)
@@ -82,31 +83,23 @@ const scales = {
   zIndex,
 } as const
 
+// Generate CSS props that are based on scales
 const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   const className = classHash.name
   globalStyle(`.${className}`, value)
   return className
 })
 
-console.log("scaledProps.blockSize", scaledProps.blockSize)
-
-let conditionalScaledProps = {} as Record<keyof typeof interactivePseudoClasses, Partial<typeof scaledProps>>
-Object.entries(interactivePseudoClasses).forEach(([condition, keys]) => {
-  const props = generateScaledPropsCss(
-    scales,
-    (value: CssRule) => {
-      const className = classHash.name
-      globalStyle(`.${className}${condition}`, value)
-      return className
-    },
-    keys
-  )
-  conditionalScaledProps = {
-    ...conditionalScaledProps,
-    [condition as keyof typeof interactivePseudoClasses]: props as typeof props,
-  } as const
-})
-
-console.log("classHash COUNT", classHash.count)
-console.log("varHash COUNT", varHash.count)
-console.log("keyframeHash COUNT", keyframeHash.count)
+// Generate CSS props that are _conditional_, and based on scales
+const conditionalScaledProps = generateInteractivePseudoClassCss<typeof scaledProps>(
+  (condition: string, keys: FilterKeys) =>
+    generateScaledPropsCss(
+      scales,
+      (value: CssRule) => {
+        const className = classHash.name
+        globalStyle(`.${className}${condition}`, value)
+        return className
+      },
+      keys
+    )
+)

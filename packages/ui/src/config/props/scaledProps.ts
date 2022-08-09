@@ -15,25 +15,26 @@ import {
   colorCore,
   colorText,
 } from "../scales"
-import { CssPropKey, CssRule, KeysFromScale } from "./props.models"
+import { CssPropKey, CssRule, FilterKeys, KeysFromScale } from "./props.models"
 
 type CssValueClassMap<M extends CssValueMap> = Record<KeysFromScale<M>, string>
 
-function filterMap<T extends CssValueMap>(map: T, keys: Record<keyof T, unknown>) {
-  const output: Pick<T, keyof typeof keys> = { ...map }
-  Object.keys(map).forEach((key: keyof T) => {
-    if (!keys[key]) {
-      delete output[key]
+function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
+  type PickKeys = Extract<keyof M, keyof typeof keys>
+  const output: Pick<M, PickKeys> = { ...map }
+  Object.keys(map).forEach((key: keyof M) => {
+    if (!keys[key as keyof typeof keys]) {
+      delete output[key as keyof typeof output]
     }
   })
   return output
 }
 
 /** Util to extract the CSS value map from a scale object */
-function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Record<string, unknown>) {
+function map<S extends Scales, V extends Scale, K extends Record<string, unknown>>(scales: S, scale: V, keys?: K) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
-    return filterMap(map, keys as Record<keyof typeof map, unknown>)
+    return filterMap(map, keys)
   }
   return map
 }
@@ -43,7 +44,7 @@ function map<S extends Scales, V extends Scale>(scales: S, scale: V, keys?: Reco
  * Returns an object containing props with values matching
  * a Record<ScaleKey, CssClassForThatKey> signature.
  */
-export function generateScaledPropsCss<S extends Scales, K extends Partial<Record<CssPropKey, unknown>>>(
+export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   scales: S,
   generateClass: (value: CssRule) => string,
   keys?: K

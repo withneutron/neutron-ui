@@ -1,3 +1,5 @@
+import { FilterKeys } from "./props.models"
+
 // Only these props should have interactive state classes/vars generated for them
 // 20
 export const interactiveClassProps = {
@@ -98,13 +100,22 @@ export const structuralClassProps = {
   textOverflow: true,
 } as const
 
-export const interactivePseudoClasses = {
-  // NOTE: We don't include :disabled, because logic for that exists in JS anyway
-  ":hover": interactiveClassProps,
-  // ":focus": interactiveClassProps, // REMOVED because :focus-visible is just better
-  ":focus-visible": interactiveClassProps,
-  ":active": interactiveClassProps,
-} as const
+export function generateInteractivePseudoClassCss<O extends Record<string, unknown>>(
+  generateClass: (condition: string, keys: FilterKeys) => O
+) {
+  const hoverProps = generateClass(":hover", interactiveClassProps)
+  // type FilteredProps = Extract<keyof O, keyof typeof interactiveClassProps>
+  type FilteredProps = Pick<O, keyof typeof interactiveClassProps>
+  const focusProps = generateClass(":focus-visible", interactiveClassProps)
+  const activeProps = generateClass(":active", interactiveClassProps)
+  return {
+    // NOTE: We don't include :disabled, because logic for that exists in JS anyway
+    // ":focus": interactiveClassProps, // REMOVED because :focus-visible is just better
+    ":hover": hoverProps as FilteredProps,
+    ":focus-visible": focusProps as FilteredProps,
+    ":active": activeProps as FilteredProps,
+  } as const
+}
 
 export const bonusInteractivePseudoClasses = {
   ":focus-within": interactiveClassProps,
@@ -134,7 +145,7 @@ export const pseudoClassAliases = {
 } as const
 
 export const pseudoClasses = {
-  ...interactivePseudoClasses,
+  // ...interactivePseudoClasses,
   ...bonusInteractivePseudoClasses,
   ...structuralPseudoClasses,
 } as const
