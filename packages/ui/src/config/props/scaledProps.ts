@@ -54,6 +54,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   keys?: K
 ) {
   function entries<M extends CssValueMap>(prop: CssPropKey, map: M) {
+    if (keys && !keys[prop]) return
     return Object.entries(map).reduce(
       (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
         const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue

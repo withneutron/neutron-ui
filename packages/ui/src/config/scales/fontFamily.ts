@@ -52,7 +52,6 @@ export function getFontFamily(hash: CharHash) {
   } as const
 
   const sharedVars = {
-    ...baseVars,
     heading,
     body: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.body].ref}, ${baseVars.systemSans.ref}` },
     button: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.button].ref}, ${baseVars.systemSans.ref}` },
@@ -60,7 +59,7 @@ export function getFontFamily(hash: CharHash) {
     quote: { ...hash.var, value: `${heading.ref}, ${baseVars.systemSerif.ref}` },
   } as const
 
-  const vars = sharedVars
+  const vars = { ...baseVars, ...sharedVars }
   const cssValueMap = { ...getCssMapFromVars(sharedVars) } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
 

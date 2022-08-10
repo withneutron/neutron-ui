@@ -118,3 +118,8 @@ export const allScaledProps: ScaledProps = {
   ...scaledProps,
   ...conditionalScaledProps,
 }
+
+console.log("---- Generated CSS ----")
+console.log(String(classHash.count).padStart(4, " "), "classes")
+console.log(String(varHash.count).padStart(4, " "), "variables")
+console.log(String(keyframeHash.count).padStart(4, " "), "keyframe animations")
