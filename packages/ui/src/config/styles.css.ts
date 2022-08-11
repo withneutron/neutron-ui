@@ -30,6 +30,7 @@ import {
   generateScaledPropsCss,
   InteractivePseudoClassesWithAliases,
 } from "./props"
+import { getSelector } from "./styles.utils"
 
 // Export the theme
 export const { exampleClass, themeClass } = generateStyles()
@@ -96,7 +97,7 @@ const scales = {
 /** Generate CSS props that are based on scales */
 export const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   const className = classHash.name
-  globalStyle(`.${className}`, value)
+  globalStyle(getSelector(className), value)
   return className
 })
 
@@ -107,7 +108,7 @@ export const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledPro
       scales,
       (value: CssRule) => {
         const className = classHash.name
-        globalStyle(`.${className}${condition}`, value)
+        globalStyle(getSelector(className, condition), value)
         return className
       },
       keys
@@ -128,7 +129,7 @@ export const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, templ
   const cssVar = varHash.var
   const className = classHash.name
   template = template ?? ((v: string) => v)
-  globalStyle(`.${className}`, {
+  globalStyle(getSelector(className), {
     [prop]: template(cssVar.ref),
   })
   return { varName: cssVar.name, className }
@@ -140,7 +141,7 @@ const conditionalCustomVarPropGenerator = (condition: string, keys: FilterKeys) 
     const cssVar = varHash.var
     const className = classHash.name
     template = template ?? ((v: string) => v)
-    globalStyle(`.${className}${condition}`, {
+    globalStyle(getSelector(className, condition), {
       [prop]: template(cssVar.ref),
     })
     return { varName: cssVar.name, className }
