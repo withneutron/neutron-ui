@@ -1,58 +1,81 @@
-// These props have CSS vars for allowing infinite possible values
-export const customVarProps = {
-  background: true, // Scaled color values get routed to `backgroundColor` instead
-  backgroundColor: true,
-  backgroundBlendMode: true,
-  backgroundPosition: true,
-  backgroundImage: true,
-  // These are technically remapped, but we want the inline var assignment to only need to
-  // include the actual gradient, not the type. This will keep those assignments shorter!
-  linearGradient: true, // backgroundImage: `linear-gradient(${v})`
-  radialGradient: true, // backgroundImage: `radial-gradient(${v})`
-  conicGradient: true, // backgroundImage: `conic-gradient(${v})`
+import { FilterKeys, CssPropKey } from "./props.models"
 
-  mask: true,
+/**
+ * Used to generate CSS classes for custom values (via a combo of className + CSS var).
+ * Returns an object containing props with values matching a signature of:
+ * `{ varName: string; className: string }`
+ */
+export function generateCustomVarPropsCss<K extends FilterKeys>(
+  generateCss: (prop: CssPropKey, template?: (value: string) => string) => { varName: string; className: string },
+  keys?: K
+) {
+  function value(prop: CssPropKey, template?: (value: string) => string) {
+    if (keys && !keys[prop]) return
+    return generateCss(prop, template)
+  }
 
-  borderBlockStartImage: true,
-  borderBlockEndImage: true,
-  borderInlineStartImage: true,
-  borderInlineEndImage: true,
+  const props = {
+    background: value("background"), // Scaled color values get routed to `backgroundColor` instead
+    backgroundColor: value("backgroundColor"),
+    backgroundBlendMode: value("backgroundBlendMode"),
+    backgroundPosition: value("backgroundPosition"),
+    backgroundImage: value("backgroundImage"),
+    // These are technically remapped, but we want the inline var assignment to only need to
+    // include the actual gradient, not the type. This will keep those assignments shorter!
+    linearGradient: value("backgroundImage", v => `linear-gradient(${v})`),
+    radialGradient: value("backgroundImage", v => `radial-gradient(${v})`),
+    conicGradient: value("backgroundImage", v => `conic-gradient(${v})`),
 
-  borderSpacing: true,
+    mask: value("mask"),
 
-  color: true,
-  fill: true,
-  stroke: true,
+    borderImage: value("borderImage"),
+    borderSpacing: value("borderSpacing"),
 
-  caretColor: true,
-  columnRuleColor: true,
+    color: value("color"),
+    fill: value("fill"),
+    stroke: value("stroke"),
 
-  font: true,
-  textDecoration: true,
-  textShadow: true,
+    caretColor: value("caretColor"),
+    columnRuleColor: value("columnRuleColor"),
 
-  flex: true,
-  flexGrow: true,
-  flexShrink: true,
-  flexBasis: true,
+    font: value("font"),
+    textDecoration: value("textDecoration"),
+    textShadow: value("textShadow"),
 
-  gridTemplate: true,
-  gridTemplateRows: true,
-  gridTemplateColumns: true,
-  gridTemplateAreas: true,
-  gridArea: true,
-  gridRow: true,
-  gridColumn: true,
-  gridAutoRows: true,
-  gridAutoColumns: true,
+    flex: value("flex"),
+    flexGrow: value("flexGrow"),
+    flexShrink: value("flexShrink"),
+    flexBasis: value("flexBasis"),
 
-  transform: true,
-  transformOrigin: true,
+    gridTemplate: value("gridTemplate"),
+    gridTemplateRows: value("gridTemplateRows"),
+    gridTemplateColumns: value("gridTemplateColumns"),
+    gridTemplateAreas: value("gridTemplateAreas"),
+    gridArea: value("gridArea"),
+    gridRow: value("gridRow"),
+    gridColumn: value("gridColumn"),
+    gridAutoRows: value("gridAutoRows"),
+    gridAutoColumns: value("gridAutoColumns"),
 
-  animation: true,
-  animationIterationCount: true,
+    transform: value("transform"),
+    transformOrigin: value("transformOrigin"),
 
-  transition: true,
+    animation: value("animation"),
+    animationIterationCount: value("animationIterationCount"),
 
-  opacity: true,
-} as const
+    transition: value("transition"),
+
+    opacity: value("opacity"),
+  } as const
+
+  if (keys) {
+    Object.keys(props).forEach(prop => {
+      if (!keys[prop as CssPropKey]) {
+        delete props[prop as keyof typeof props]
+      }
+    })
+    type PickKeys = Extract<keyof typeof props, keyof typeof keys>
+    return props as Pick<typeof props, PickKeys>
+  }
+  return props
+}

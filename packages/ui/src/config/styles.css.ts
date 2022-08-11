@@ -21,9 +21,12 @@ import {
   getAnimation,
 } from "./scales"
 import {
+  CssPropKey,
   CssRule,
   FilterKeys,
+  generateCustomVarPropsCss,
   generateInteractivePseudoClassCss,
+  generateStructuralPseudoClassCss,
   generateScaledPropsCss,
   InteractivePseudoClassesWithAliases,
 } from "./props"
@@ -38,8 +41,8 @@ function generateStyles() {
     padding: 0,
   })
   return {
-    exampleClass: "",
-    themeClass: "",
+    exampleClass: "example-class",
+    themeClass: "nui-theme",
   }
 }
 
@@ -89,6 +92,7 @@ const scales = {
   zIndex,
 } as const
 
+// SCALED PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
 export const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   const className = classHash.name
@@ -97,7 +101,7 @@ export const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
 })
 
 /** Generate CSS props that are _conditional_, and based on scales */
-export const conditionalScaledProps = generateInteractivePseudoClassCss<typeof scaledProps>(
+export const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>(
   (condition: string, keys: FilterKeys) =>
     generateScaledPropsCss(
       scales,
@@ -111,15 +115,46 @@ export const conditionalScaledProps = generateInteractivePseudoClassCss<typeof s
 )
 
 /** Type of all scaled props */
-export type ScaledProps = Partial<typeof scaledProps> &
-  InteractivePseudoClassesWithAliases<typeof conditionalScaledProps>
+export type ScaledProps = Partial<typeof scaledProps> & InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>
 
 export const allScaledProps: ScaledProps = {
   ...scaledProps,
-  ...conditionalScaledProps,
+  ...scaledPropsIPC,
 }
 
+// CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
+/** Generate vars and classes for custom props */
+export const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
+  const cssVar = varHash.var
+  const className = classHash.name
+  template = template ?? ((v: string) => v)
+  globalStyle(`.${className}`, {
+    [prop]: template(cssVar.ref),
+  })
+  return { varName: cssVar.name, className }
+})
+
+/** Generate CSS props that are _conditional_, for custom var props */
+const conditionalCustomVarPropGenerator = (condition: string, keys: FilterKeys) =>
+  generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
+    const cssVar = varHash.var
+    const className = classHash.name
+    template = template ?? ((v: string) => v)
+    globalStyle(`.${className}${condition}`, {
+      [prop]: template(cssVar.ref),
+    })
+    return { varName: cssVar.name, className }
+  }, keys)
+
+export const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(
+  conditionalCustomVarPropGenerator
+)
+export const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(
+  conditionalCustomVarPropGenerator
+)
+
+// OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
 console.log("---- Generated CSS ----")
-console.log(String(classHash.count).padStart(4, " "), "classes")
-console.log(String(varHash.count).padStart(4, " "), "variables")
-console.log(String(keyframeHash.count).padStart(4, " "), "keyframe animations")
+console.log(String(classHash.count).padStart(5, " "), "classes.")
+console.log(String(varHash.count).padStart(5, " "), "variables.")
+console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")

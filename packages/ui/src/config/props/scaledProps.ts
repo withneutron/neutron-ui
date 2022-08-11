@@ -45,8 +45,8 @@ function map<
 
 /**
  * Used to generate CSS classes for various CSS props, based on scaled values.
- * Returns an object containing props with values matching
- * a Record<ScaleKey, CssClassForThatKey> signature.
+ * Returns an object containing props with values matching a signature of:
+ * `Record<ScaleKey, CssClassForThatKey>`
  */
 export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   scales: S,

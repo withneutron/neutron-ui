@@ -6,7 +6,7 @@
  * props (and the classes we generate for them) get shorter hashes.
  */
 
-/** Full list of supported CSS props (189 props + 35 utility props) */
+/** Full list of supported CSS props (186 props + 35 utility props) */
 export const sourceProps = {
   ////////////////////
   // Remapped Props // (Skip class creation for these)
@@ -303,10 +303,7 @@ export const sourceProps = {
 
   boxSizing: true,
 
-  borderBlockStartImage: true,
-  borderBlockEndImage: true,
-  borderInlineStartImage: true,
-  borderInlineEndImage: true,
+  borderImage: true,
 
   caretColor: true,
   columnRuleColor: true,
