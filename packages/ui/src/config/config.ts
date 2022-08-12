@@ -8,8 +8,8 @@
  * Convert padding, marging, and other shorthand props (border, etc) to their
  * 4 directional counterparts, in the resolver, to reduce number of classes we generate.
  *
- * Make sure `unset`, `initial`, `revert`, and `inherit` values are available to any props that
- * can use them; they could be used to emulate inverted breakpoints.
+ * Make sure `initial` and (for inherited props) `inherit` values are available to
+ * any props that can use them; they could be used to emulate inverted breakpoints.
  */
 
 /** PREFIX LEGEND *********************************************************************************

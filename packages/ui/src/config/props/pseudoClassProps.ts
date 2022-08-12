@@ -44,6 +44,11 @@ export const interactiveClassProps = {
   // transformOrigin: true,
 } as const
 
+export const pointerClassProps = {
+  ...interactiveClassProps,
+  cursor: true,
+} as const
+
 // Only these props should have structural pseudo-classes
 // + 41
 export const structuralClassProps = {
@@ -92,10 +97,6 @@ export const structuralClassProps = {
   justifyItems: true,
   justifySelf: true,
 
-  overflow: true,
-  overflowY: true,
-  overflowX: true,
-
   verticalAlign: true,
   textAlign: true,
   textOverflow: true,
@@ -105,14 +106,15 @@ export function generateInteractivePseudoClassCss<O extends Record<string, unkno
   generateClass: (condition: string, keys: FilterKeys) => O
 ) {
   const focusVisibleProps = generateClass(":focus-visible", interactiveClassProps)
-  const hoverProps = generateClass(":hover", interactiveClassProps)
+  const hoverProps = generateClass(":hover", pointerClassProps)
   const activeProps = generateClass(":active", interactiveClassProps)
   type FilteredProps = Pick<O, keyof typeof interactiveClassProps>
+  type FilteredPointerProps = Pick<O, keyof typeof pointerClassProps>
   return {
     // NOTE: We don't include :disabled, because logic for that exists in JS anyway
     // ":focus": interactiveClassProps, // REMOVED because :focus-visible is just better
     ":focus-visible": focusVisibleProps as FilteredProps,
-    ":hover": hoverProps as FilteredProps,
+    ":hover": hoverProps as FilteredPointerProps,
     ":active": activeProps as FilteredProps,
   } as const
 }
@@ -135,7 +137,7 @@ export function generateStructuralPseudoClassCss<O extends Record<string, unknow
 export const interactivePseudoClasses = {
   // NOTE: We don't include :disabled, because logic for that exists in JS anyway
   ":focus-visible": interactiveClassProps,
-  ":hover": interactiveClassProps,
+  ":hover": pointerClassProps,
   ":active": interactiveClassProps,
 }
 

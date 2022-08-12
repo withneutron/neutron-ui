@@ -25,9 +25,10 @@ import {
   CssRule,
   FilterKeys,
   generateCustomVarPropsCss,
+  generateScaledPropsCss,
+  generateStaticPropsCss,
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
-  generateScaledPropsCss,
   InteractivePseudoClassesWithAliases,
 } from "./props"
 import { getSelector } from "./styles.utils"
@@ -152,6 +153,24 @@ export const customVarPropsIPC = generateInteractivePseudoClassCss<typeof custom
 )
 export const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(
   conditionalCustomVarPropGenerator
+)
+
+// STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
+/** Generate CSS props that are based on scales */
+export const staticProps = generateStaticPropsCss((value: CssRule) => {
+  const className = classHash.name
+  globalStyle(getSelector(className), value)
+  return className
+})
+
+/** Generate CSS props that are _conditional_, and based on scales */
+export const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>(
+  (condition: string, keys: FilterKeys) =>
+    generateStaticPropsCss((value: CssRule) => {
+      const className = classHash.name
+      globalStyle(getSelector(className, condition), value)
+      return className
+    }, keys)
 )
 
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
