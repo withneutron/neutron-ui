@@ -1,3 +1,25 @@
+/**
+ * NOTES:
+ * Use `InlineStart` as left, and `InlineEnd` as right, instead of RTL "magic"
+ * Use `border-start-start-radius` (etc) for radii
+ *
+ * Create a global style for `[dir]` that sets the `direction: ___;` css property
+ *
+ * Convert padding, marging, and other shorthand props (border, etc) to their
+ * 4 directional counterparts, in the resolver, to reduce number of classes we generate.
+ *
+ * Make sure `initial` and (for inherited props) `inherit` values are available to
+ * any props that can use them; they could be used to emulate inverted breakpoints.
+ */
+
+/** PREFIX LEGEND *********************************************************************************
+ * $  -> Theme object OR theme token OR compound theme value.
+ * :  -> CSS pseudo-classes for interaction state OR for structural targeting.
+ * @  -> Breakpoint (desktop-first) OR other media query OR light/dark color mode.
+ * !  -> Inverted breakpoint (mobile-first) OR inverted media query.
+ *       E.g. `!reducedMotion` matches when the user agent does NOT request reduced motion.
+ *************************************************************************************************/
+
 import { createGlobalTheme, createTheme, style, createGlobalThemeContract, globalStyle } from "@vanilla-extract/css"
 import { CharHash } from "./utils"
 import {
@@ -33,27 +55,26 @@ import {
 } from "./props"
 import { getSelector } from "./styles.utils"
 
+/*************************************************************************************************
+ * GLOBAL STYLES
+ *************************************************************************************************/
 // Export the theme
-export const { exampleClass, themeClass } = generateStyles()
+export const themeClass = "nui"
 
 // Function that generates the styles
-function generateStyles() {
-  globalStyle("html, body", {
-    margin: 0,
-    padding: 0,
-  })
-  return {
-    exampleClass: "example-class",
-    themeClass: "nui-theme",
-  }
-}
+globalStyle("html, body", {
+  margin: 0,
+  padding: 0,
+})
 
-///////
+/*************************************************************************************************
+ * STYLING SYSTEM GENERATION
+ *************************************************************************************************/
 const varHash = new CharHash()
 const keyframeHash = new CharHash()
 const classHash = new CharHash()
 
-// Generate theme scales
+// GENERATE THEME SCALES //////////////////////////////////////////////////////////////////////////
 const animation = getAnimation(varHash, keyframeHash)
 const color = getColor(varHash)
 const size = getSize(varHash)
@@ -116,14 +137,6 @@ export const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledPro
     )
 )
 
-/** Type of all scaled props */
-export type ScaledProps = Partial<typeof scaledProps> & InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>
-
-export const allScaledProps: ScaledProps = {
-  ...scaledProps,
-  ...scaledPropsIPC,
-}
-
 // CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
 /** Generate vars and classes for custom props */
 export const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
@@ -178,3 +191,29 @@ console.log("---- Generated CSS ----")
 console.log(String(classHash.count).padStart(5, " "), "classes.")
 console.log(String(varHash.count).padStart(5, " "), "variables.")
 console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
+
+/*************************************************************************************************
+ * TYPE GENERATION
+ *************************************************************************************************/
+export type MapObject = {
+  [key: string]: { [k: string | number]: any }
+}
+export type CssFromMap<M extends MapObject> = {
+  [key in keyof M]?: keyof M[key]
+}
+
+// Type of all scaled props
+export type ScaledProps = CssFromMap<typeof scaledProps> &
+  CssFromMap<InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>>
+
+// export const allScaledProps: ScaledProps = {
+//   ...scaledProps,
+//   ...scaledPropsIPC,
+// }
+
+const props: ScaledProps = {
+  maxBlockSize: "$0",
+  animationDuration: "$bounceDuration",
+  inlineSize: "$buttonTactileHighlight",
+  borderBlockStart: "$primaryMax",
+}

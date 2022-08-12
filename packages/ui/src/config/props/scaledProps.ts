@@ -16,9 +16,7 @@ import {
   colorCore,
   colorText,
 } from "../scales"
-import { CssPropKey, CssRule, FilterKeys, KeysFromScale } from "./props.models"
-
-type CssValueClassMap<M extends CssValueMap> = Record<KeysFromScale<M>, string>
+import { CssPropKey, CssRule, CssValueClassMap, FilterKeys, KeysFromScale } from "./props.models"
 
 function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
   type PickKeys = Extract<keyof M, keyof typeof keys>
@@ -55,7 +53,6 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   keys?: K
 ) {
   function entries<M extends CssValueMap>(prop: CssPropKey, map: M) {
-    if (keys && !keys[prop]) return
     return Object.entries(map).reduce(
       (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
         const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue

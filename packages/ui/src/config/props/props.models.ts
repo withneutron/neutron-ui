@@ -5,13 +5,13 @@ import { THEME_PREFIX } from "../utils/style.utils"
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
 export type CustomString = string & { trim?: () => string }
 
-export type KeysFromScale<T extends CssValueMap> = `${typeof THEME_PREFIX}${keyof Omit<T, symbol>}`
+export type KeysFromScale<T extends CssValueMap> = `${typeof THEME_PREFIX}${Exclude<keyof T, symbol>}`
 
 export type PseudoClass = Record<string, string | string[]>
 
 export type CssRule = Record<string, string | number>
 export type CssClassDef = { [classHash: string]: CssRule }
-// export type CssValueClassMap = { [classHash: string]: CssRule }
+export type CssValueClassMap<M extends CssValueMap> = Record<KeysFromScale<M>, string>
 
 export type CssValueRules<S extends Record<string | number, CssValue>> = Record<keyof S, CssClassDef>
 

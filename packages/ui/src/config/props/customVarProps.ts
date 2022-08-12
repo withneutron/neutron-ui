@@ -11,7 +11,6 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
   keys?: K
 ) {
   function value(prop: CssPropKey, template?: (value: string) => string) {
-    if (keys && !keys[prop]) return
     return generateCss(prop, template)
   }
 

@@ -51,8 +51,6 @@ type Placeholder = { fakeProp: true }
 export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (value: CssRule) => string, keys?: K) {
   // Value getter
   function values<P extends CssPropKey, V extends { [k: string]: unknown } = Placeholder>(prop: P, customValues?: V) {
-    if (keys && !keys[prop]) return
-
     const baseValues = inheritedProps[prop as keyof typeof inheritedProps] ?? DEFAULT_VALUES
     const valuesMap = { ...baseValues, ...(customValues ?? {}) }
 
