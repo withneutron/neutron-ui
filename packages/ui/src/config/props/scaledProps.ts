@@ -16,11 +16,10 @@ import {
   colorCore,
   colorText,
 } from "../scales"
-import { CssPropKey, CssRule, CssValueClassMap, FilterKeys, KeysFromScale } from "./props.models"
+import { CssPropKey, CssRule, CssValueClassMap, FilterKeys, KeysFromScale, PickKeys } from "./props.models"
 
 function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
-  type PickKeys = Extract<keyof M, keyof typeof keys>
-  const output: Pick<M, PickKeys> = { ...map }
+  const output: PickKeys<M, typeof keys> = { ...map }
   Object.keys(map).forEach((key: keyof M) => {
     if (!keys[key as keyof typeof keys]) {
       delete output[key as keyof typeof output]

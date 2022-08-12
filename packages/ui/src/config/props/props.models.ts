@@ -19,16 +19,7 @@ export type CssPropKey = keyof typeof sourceProps
 
 export type FilterKeys = Partial<Record<CssPropKey, unknown>>
 
-/** SCALE KEY EXAMPLE **
-const size = {
-  1: "var(--1)",
-  2: "var(--2)",
-  4: "var(--4)",
-  8: "var(--8)",
-  12: "var(--12)",
-} as const
-
-type Padding = KeysFromScale<typeof size>
-
-const p: Padding = "$12"
-/* */
+export type PickKeys<T extends Record<string, unknown>, K extends Record<string, unknown>> = Pick<
+  T,
+  Extract<keyof T, keyof K>
+>

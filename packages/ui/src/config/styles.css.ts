@@ -52,6 +52,8 @@ import {
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
   InteractivePseudoClassesWithAliases,
+  PseudoClassKeys,
+  interactiveClassProps,
 } from "./props"
 import { getSelector } from "./styles.utils"
 
@@ -196,15 +198,23 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
  * TYPE GENERATION
  *************************************************************************************************/
 export type MapObject = {
-  [key: string]: { [k: string | number]: any }
+  [key: string]: { [k: string | number]: unknown }
 }
 export type CssFromMap<M extends MapObject> = {
   [key in keyof M]?: keyof M[key]
 }
+type ConditionalMapObject = {
+  [key in PseudoClassKeys]?: MapObject
+}
+export type CssFromConditionalMap<M extends ConditionalMapObject> = {
+  [key in keyof M]?: {
+    [innerKey in keyof M[key]]?: keyof M[key][innerKey]
+  }
+}
 
 // Type of all scaled props
 export type ScaledProps = CssFromMap<typeof scaledProps> &
-  CssFromMap<InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>>
+  CssFromConditionalMap<InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>>
 
 // export const allScaledProps: ScaledProps = {
 //   ...scaledProps,
@@ -216,4 +226,15 @@ const props: ScaledProps = {
   animationDuration: "$bounceDuration",
   inlineSize: "$buttonTactileHighlight",
   borderBlockStart: "$primaryMax",
+  minBlockSize: "$0",
+  ":active": {
+    color: "$primary9",
+    backgroundColor: "$neutral1",
+  },
+  ":focus-visible": {
+    color: "$neutral10",
+  },
+  ":focus": {
+    backgroundColor: "$secondary9",
+  },
 }

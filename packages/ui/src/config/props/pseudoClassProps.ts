@@ -1,4 +1,4 @@
-import { FilterKeys } from "./props.models"
+import { FilterKeys, PickKeys } from "./props.models"
 
 // Only these props should have interactive state classes/vars generated for them
 // 20
@@ -103,13 +103,13 @@ export const structuralClassProps = {
 } as const
 
 export function generateInteractivePseudoClassCss<O extends Record<string, unknown>>(
-  generateClass: (condition: string, keys: FilterKeys) => O
+  generateClass: <K extends FilterKeys>(condition: string, keys: K) => O
 ) {
   const focusVisibleProps = generateClass(":focus-visible", interactiveClassProps)
   const hoverProps = generateClass(":hover", pointerClassProps)
   const activeProps = generateClass(":active", interactiveClassProps)
-  type FilteredProps = Pick<O, keyof typeof interactiveClassProps>
-  type FilteredPointerProps = Pick<O, keyof typeof pointerClassProps>
+  type FilteredProps = PickKeys<O, typeof interactiveClassProps>
+  type FilteredPointerProps = PickKeys<O, typeof pointerClassProps>
   return {
     // NOTE: We don't include :disabled, because logic for that exists in JS anyway
     // ":focus": interactiveClassProps, // REMOVED because :focus-visible is just better
@@ -125,7 +125,7 @@ export function generateStructuralPseudoClassCss<O extends Record<string, unknow
   const oddProps = generateClass(":nth-child(odd)", structuralClassProps)
   const firstChildProps = generateClass(":first-child", structuralClassProps)
   const lastChildProps = generateClass(":last-child", structuralClassProps)
-  type FilteredProps = Pick<O, keyof typeof structuralClassProps>
+  type FilteredProps = PickKeys<O, typeof structuralClassProps>
   return {
     ":nth-child(odd)": oddProps as FilteredProps,
     ":first-child": firstChildProps as FilteredProps,
@@ -172,19 +172,21 @@ export const pseudoClassAliases = {
   ":last": [":last-child"],
 } as const
 
-type PseudoClassKeys =
+export type PseudoClassKeys =
   | keyof ReturnType<typeof generateInteractivePseudoClassCss>
   | keyof ReturnType<typeof generateStructuralPseudoClassCss>
 
 type ConditionalPseudoClassObject = { readonly [k in PseudoClassKeys]?: unknown }
 
-export type InteractivePseudoClassesWithAliases<T extends ConditionalPseudoClassObject> = Partial<T> & {
-  ":focus"?: T[":focus-visible"]
-} & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } & {
-  ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"]
-} & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
+export type InteractivePseudoClassesWithAliases<T extends ConditionalPseudoClassObject> =
+  & T
+  & { ":focus"?: T[":focus-visible"] } 
+  & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
+  & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
+  & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
 
 export type AllPseudoClassesWithAliases<T extends ConditionalPseudoClassObject> =
-  InteractivePseudoClassesWithAliases<T> & { ":odd"?: T[":nth-child(odd)"] } & { ":first"?: T[":first-child"] } & {
-    ":last"?: T[":last-child"]
-  }
+  & InteractivePseudoClassesWithAliases<T> 
+  & { ":odd"?: T[":nth-child(odd)"] } 
+  & { ":first"?: T[":first-child"] } 
+  & { ":last"?: T[":last-child"] }
