@@ -1,3 +1,4 @@
+import { omitKeys } from "./props.utils"
 import {
   Scale,
   CssValueMap,
@@ -68,6 +69,28 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   }
 
   const props = {
+    inlineSize: entries("inlineSize", map(scales, Scale.size)),
+    minInlineSize: entries("minInlineSize", map(scales, Scale.size)),
+    maxInlineSize: entries("maxInlineSize", map(scales, Scale.size)),
+    blockSize: entries("blockSize", map(scales, Scale.size)),
+    minBlockSize: entries("minBlockSize", map(scales, Scale.size)),
+    maxBlockSize: entries("maxBlockSize", map(scales, Scale.size)),
+
+    marginBlockStart: entries("marginBlockStart", map(scales, Scale.space)),
+    marginBlockEnd: entries("marginBlockEnd", map(scales, Scale.space)),
+    marginInlineStart: entries("marginInlineStart", map(scales, Scale.space)),
+    marginInlineEnd: entries("marginInlineEnd", map(scales, Scale.space)),
+
+    paddingBlockStart: entries("paddingBlockStart", map(scales, Scale.space)),
+    paddingBlockEnd: entries("paddingBlockEnd", map(scales, Scale.space)),
+    paddingInlineStart: entries("paddingInlineStart", map(scales, Scale.space)),
+    paddingInlineEnd: entries("paddingInlineEnd", map(scales, Scale.space)),
+
+    insetBlockStart: entries("insetBlockStart", map(scales, Scale.space)),
+    insetBlockEnd: entries("insetBlockEnd", map(scales, Scale.space)),
+    insetInlineStart: entries("insetInlineStart", map(scales, Scale.space)),
+    insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space)),
+
     outline: entries("outline", map(scales, Scale.outline, outlineCombos)),
     outlineWidth: entries("outlineWidth", map(scales, Scale.outline, outlineWidths)),
     outlineColor: entries("outlineColor", map(scales, Scale.outline, outlineColors)),
@@ -90,34 +113,12 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
 
     flexBasis: entries("flexBasis", map(scales, Scale.size)),
 
-    inlineSize: entries("inlineSize", map(scales, Scale.size)),
-    minInlineSize: entries("minInlineSize", map(scales, Scale.size)),
-    maxInlineSize: entries("maxInlineSize", map(scales, Scale.size)),
-    blockSize: entries("blockSize", map(scales, Scale.size)),
-    minBlockSize: entries("minBlockSize", map(scales, Scale.size)),
-    maxBlockSize: entries("maxBlockSize", map(scales, Scale.size)),
-
     // gridTemplateRows is probably not useful enough. Instead, use...
     gridAutoRows: entries("gridAutoRows", map(scales, Scale.row)),
     gridTemplateColumns: entries("gridTemplateColumns", map(scales, Scale.column)),
 
     columnGap: entries("columnGap", map(scales, Scale.space)),
     rowGap: entries("rowGap", map(scales, Scale.space)),
-
-    marginBlockStart: entries("marginBlockStart", map(scales, Scale.space)),
-    marginBlockEnd: entries("marginBlockEnd", map(scales, Scale.space)),
-    marginInlineStart: entries("marginInlineStart", map(scales, Scale.space)),
-    marginInlineEnd: entries("marginInlineEnd", map(scales, Scale.space)),
-
-    paddingBlockStart: entries("paddingBlockStart", map(scales, Scale.space)),
-    paddingBlockEnd: entries("paddingBlockEnd", map(scales, Scale.space)),
-    paddingInlineStart: entries("paddingInlineStart", map(scales, Scale.space)),
-    paddingInlineEnd: entries("paddingInlineEnd", map(scales, Scale.space)),
-
-    insetBlockStart: entries("insetBlockStart", map(scales, Scale.space)),
-    insetBlockEnd: entries("insetBlockEnd", map(scales, Scale.space)),
-    insetInlineStart: entries("insetInlineStart", map(scales, Scale.space)),
-    insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space)),
 
     borderStartStartRadius: entries("borderStartStartRadius", map(scales, Scale.radius)),
     borderStartEndRadius: entries("borderStartEndRadius", map(scales, Scale.radius)),
@@ -152,13 +153,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   } as const
 
   if (keys) {
-    Object.keys(props).forEach(prop => {
-      if (!keys[prop as CssPropKey]) {
-        delete props[prop as keyof typeof props]
-      }
-    })
-    type PickKeys = Extract<keyof typeof props, keyof typeof keys>
-    return props as Pick<typeof props, PickKeys>
+    return omitKeys(props, keys)
   }
   return props
 }

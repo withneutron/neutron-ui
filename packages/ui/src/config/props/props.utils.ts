@@ -1,6 +1,12 @@
-export function varKeysFromScale<T extends Record<string | number, string>>(scale: T) {
-  return Object.entries(scale).reduce((output, [key, value]: [string | number, string]) => {
-    output[value] = String(key)
-    return output
-  }, {} as Record<string, string>)
+import { FilterKeys } from "./props.models"
+
+export function omitKeys<P extends Record<string | number, unknown>, K extends FilterKeys>(props: P, keys: K) {
+  type PickKeys = Extract<keyof P, keyof K>
+  const output: Pick<P, PickKeys> = { ...props }
+  Object.keys(props).forEach(prop => {
+    if (!keys[prop as keyof K]) {
+      delete output[prop as keyof typeof output]
+    }
+  })
+  return output
 }

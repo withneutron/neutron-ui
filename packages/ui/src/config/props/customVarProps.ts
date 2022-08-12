@@ -1,3 +1,4 @@
+import { omitKeys } from "./props.utils"
 import { FilterKeys, CssPropKey } from "./props.models"
 
 /**
@@ -66,16 +67,15 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     transition: value("transition"),
 
     opacity: value("opacity"),
+
+    listStyle: value("listStyle"),
+    listStyleImage: value("listStyleImage"),
+
+    filter: value("filter"),
   } as const
 
   if (keys) {
-    Object.keys(props).forEach(prop => {
-      if (!keys[prop as CssPropKey]) {
-        delete props[prop as keyof typeof props]
-      }
-    })
-    type PickKeys = Extract<keyof typeof props, keyof typeof keys>
-    return props as Pick<typeof props, PickKeys>
+    return omitKeys(props, keys)
   }
   return props
 }
