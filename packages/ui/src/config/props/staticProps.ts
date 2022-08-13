@@ -46,7 +46,7 @@ type Placeholder = { fakeProp: true }
 /**
  * Used to generate CSS classes for custom values (via a combo of className + CSS var).
  * Returns an object containing props with values matching a signature of:
- * `{ varName: string; className: string }`
+ * `Record<StaticValue, CssClassForThatValue>`
  */
 export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (value: CssRule) => string, keys?: K) {
   // Value getter

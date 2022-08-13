@@ -1,5 +1,5 @@
 import { omitKeys } from "./props.utils"
-import { FilterKeys, CssPropKey } from "./props.models"
+import { FilterKeys, CssPropKey, CustomVarPropValue } from "./props.models"
 
 /**
  * Used to generate CSS classes for custom values (via a combo of className + CSS var).
@@ -7,11 +7,11 @@ import { FilterKeys, CssPropKey } from "./props.models"
  * `{ varName: string; className: string }`
  */
 export function generateCustomVarPropsCss<K extends FilterKeys>(
-  generateCss: (prop: CssPropKey, template?: (value: string) => string) => { varName: string; className: string },
+  generateCss: (prop: CssPropKey, template?: (value: string) => string) => CustomVarPropValue,
   keys?: K
 ) {
-  function value(prop: CssPropKey, template?: (value: string) => string) {
-    return keys && !keys[prop] ? "" : generateCss(prop, template)
+  function value(prop: CssPropKey, template?: (value: string) => string): CustomVarPropValue {
+    return keys && !keys[prop] ? { varName: "", className: "" } : generateCss(prop, template)
   }
 
   const props = {

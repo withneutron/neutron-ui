@@ -2,9 +2,6 @@ import { sourceProps } from "./sourceProps"
 import { CssValue, CssValueMap } from "../scales"
 import { THEME_PREFIX } from "../utils/style.utils"
 
-// This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-export type CustomString = string & { trim?: () => string }
-
 export type KeysFromScale<T extends CssValueMap> = `${typeof THEME_PREFIX}${Exclude<keyof T, symbol>}`
 
 export type PseudoClass = Record<string, string | string[]>
@@ -23,3 +20,5 @@ export type PickKeys<T extends Record<string, unknown>, K extends Record<string,
   T,
   Extract<keyof T, keyof K>
 >
+
+export type CustomVarPropValue = { varName: string; className: string }

@@ -172,11 +172,14 @@ export const pseudoClassAliases = {
   ":last": [":last-child"],
 } as const
 
-export type PseudoClassKeys =
-  | keyof ReturnType<typeof generateInteractivePseudoClassCss>
-  | keyof ReturnType<typeof generateStructuralPseudoClassCss>
+export type InteractivePseudoClassKeys = keyof ReturnType<typeof generateInteractivePseudoClassCss>
+export type StructuralPseudoClassKeys = keyof ReturnType<typeof generateStructuralPseudoClassCss>
+export type PseudoClassKeys = InteractivePseudoClassKeys | StructuralPseudoClassKeys
 
-type ConditionalPseudoClassObject = { readonly [k in PseudoClassKeys]?: unknown }
+export type PseudoClassAliasKeys = keyof typeof pseudoClassAliases
+export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
+
+type ConditionalPseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
 export type InteractivePseudoClassesWithAliases<T extends ConditionalPseudoClassObject> =
   & T

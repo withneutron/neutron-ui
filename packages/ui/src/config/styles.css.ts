@@ -52,9 +52,20 @@ import {
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
   InteractivePseudoClassesWithAliases,
+  AllPseudoClassesWithAliases,
 } from "./props"
 import { getSelector } from "./styles.utils"
-import { CssFromMap, CssFromConditionalMap } from "./styles.models"
+import {
+  CssFromMap,
+  CssFromConditionalMap,
+  CssFromCustomVars,
+  MergeCssProps,
+  CssFromConditionalCustomVars,
+  Exclusive,
+  ExclusivelyShared,
+  MergeCssPropsPair,
+  NestedShared,
+} from "./styles.models"
 
 /*************************************************************************************************
  * GLOBAL STYLES
@@ -118,29 +129,28 @@ const scales = {
 
 // SCALED PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
-export const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
+const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   const className = classHash.name
   globalStyle(getSelector(className), value)
   return className
 })
 
 /** Generate CSS props that are _conditional_, and based on scales */
-export const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>(
-  (condition: string, keys: FilterKeys) =>
-    generateScaledPropsCss(
-      scales,
-      (value: CssRule) => {
-        const className = classHash.name
-        globalStyle(getSelector(className, condition), value)
-        return className
-      },
-      keys
-    )
+const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>((condition: string, keys: FilterKeys) =>
+  generateScaledPropsCss(
+    scales,
+    (value: CssRule) => {
+      const className = classHash.name
+      globalStyle(getSelector(className, condition), value)
+      return className
+    },
+    keys
+  )
 )
 
 // CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
 /** Generate vars and classes for custom props */
-export const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
+const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
   const cssVar = varHash.var
   const className = classHash.name
   template = template ?? ((v: string) => v)
@@ -162,29 +172,24 @@ const conditionalCustomVarPropGenerator = (condition: string, keys: FilterKeys) 
     return { varName: cssVar.name, className }
   }, keys)
 
-export const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(
-  conditionalCustomVarPropGenerator
-)
-export const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(
-  conditionalCustomVarPropGenerator
-)
+const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(conditionalCustomVarPropGenerator)
+const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(conditionalCustomVarPropGenerator)
 
 // STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
-export const staticProps = generateStaticPropsCss((value: CssRule) => {
+const staticProps = generateStaticPropsCss((value: CssRule) => {
   const className = classHash.name
   globalStyle(getSelector(className), value)
   return className
 })
 
 /** Generate CSS props that are _conditional_, and based on scales */
-export const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>(
-  (condition: string, keys: FilterKeys) =>
-    generateStaticPropsCss((value: CssRule) => {
-      const className = classHash.name
-      globalStyle(getSelector(className, condition), value)
-      return className
-    }, keys)
+const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((condition: string, keys: FilterKeys) =>
+  generateStaticPropsCss((value: CssRule) => {
+    const className = classHash.name
+    globalStyle(getSelector(className, condition), value)
+    return className
+  }, keys)
 )
 
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
@@ -196,13 +201,29 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
-// Type of all scaled props
-export type ScaledProps = CssFromMap<typeof scaledProps> &
-  CssFromConditionalMap<InteractivePseudoClassesWithAliases<typeof scaledPropsIPC>>
+type ScaledProps = CssFromMap<typeof scaledProps>
+type CustomVarProps = CssFromCustomVars<typeof customVarProps>
+type StaticProps = CssFromMap<typeof staticProps>
 
+type A = typeof scaledPropsIPC
+type B = typeof customVarPropsIPC & typeof customVarPropsSPC
+type C = typeof staticPropsIPC
+
+type MergeConditionalCssProps =
+  & { ":focus-visible"?: MergeCssProps<CssFromMap<A[":focus-visible"]>, CssFromCustomVars<B[":focus-visible"]>, CssFromMap<C[":focus-visible"]>> }
+  & { ":hover"?: MergeCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> }
+  & { ":active"?: MergeCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>> }
+  & { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> }
+  & { ":first-child"?: CssFromCustomVars<B[":first-child"]> }
+  & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
+
+
+export type CSS = MergeCssProps<ScaledProps, CustomVarProps, StaticProps> &
+  AllPseudoClassesWithAliases<MergeConditionalCssProps>
 // Sample to test types + auto-complete
-const props: ScaledProps = {
-  maxBlockSize: "$0",
+const props: CSS = {
+  backgroundColor: "unset",
+  maxBlockSize: "initial",
   animationDuration: "$bounceDuration",
   inlineSize: "$buttonTactileHighlight",
   borderBlockStart: "$primaryMax",
@@ -214,6 +235,8 @@ const props: ScaledProps = {
   },
   ":focus-visible": {
     color: "$neutral10",
+    borderBlockEnd: "initial",
+    background: "unset",
   },
   ":focus": {
     backgroundColor: "$secondary9",
