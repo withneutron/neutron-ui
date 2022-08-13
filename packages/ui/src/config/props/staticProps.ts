@@ -59,7 +59,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     return Object.keys(valuesMap).reduce((output: { [k in ValueKey]: string }, key: string) => {
       const value = { [prop]: key }
-      const className = generateClass(value)
+      const className = keys && !keys[prop] ? "" : generateClass(value)
       output[key as ValueKey] = className
       return output
     }, {} as { [k in ValueKey]: string })

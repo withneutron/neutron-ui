@@ -55,7 +55,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     return Object.entries(map).reduce(
       (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
         const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
-        const className = generateClass(value)
+        const className = keys && !keys[prop] ? "" : generateClass(value)
         const key = `$${scaleKey}` as KeysFromScale<M>
         output[key] = className
         return output
