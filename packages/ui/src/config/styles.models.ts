@@ -1,4 +1,4 @@
-import { CustomVarPropHints, CustomVarPropValue, PseudoClassKeys } from "./props"
+import { CustomVarPropHints, CustomVarPropValue } from "./props"
 
 type CustomVarHint = "__Enter any valid CSS__"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
@@ -12,32 +12,16 @@ type NotShared<A extends Record<string, any>, B extends Record<string, any>> = E
 type MapObject = {
   [key: string]: { [k: string | number]: unknown }
 }
-type ConditionalMapObject = {
-  [key in PseudoClassKeys]?: MapObject
-}
 type CustomVarObject = {
   [key: string]: CustomVarPropValue
-}
-type ConditionalCustomVarObject = {
-  [key in PseudoClassKeys]?: CustomVarObject
 }
 
 export type CssFromMap<M extends MapObject> = {
   [key in keyof M]?: keyof M[key]
 }
-export type CssFromConditionalMap<M extends ConditionalMapObject> = {
-  [key in keyof M]?: {
-    [innerKey in keyof M[key]]?: keyof M[key][innerKey]
-  }
-}
 export type CssFromCustomVars<M extends CustomVarObject> = 
   & { [key in Shared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[key] | CustomString }
   & { [key in NotShared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
-export type CssFromConditionalCustomVars<M extends ConditionalCustomVarObject> = {
-  [key in keyof M]?: 
-    & { [innerKey in Shared<M[key], CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[innerKey] | CustomString }
-    & { [innerKey in NotShared<M[key], CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
-}
 
 // Merge CSS //
 type MapProps = {
@@ -62,7 +46,7 @@ export type Exclusive<
   C extends Record<string, unknown>
 > = Extract<NotShared<A, B>, NotShared<A, C>>
 
-export type MergeCssProps<A extends MapProps, B extends MapProps, C extends MapProps> =
+export type MergedCssProps<A extends MapProps, B extends MapProps, C extends MapProps> =
   & { [prop in NestedShared<A, C, B>]?: A[prop] | C[prop] | B[prop] }
   & { [prop in NestedShared<C, A, B>]?: A[prop] | C[prop] | B[prop] }
   & { [prop in NestedShared<B, A, C>]?: A[prop] | C[prop] | B[prop] }
@@ -83,10 +67,3 @@ export type MergeCssProps<A extends MapProps, B extends MapProps, C extends MapP
   & { [prop in Exclusive<C, B, A>]?: C[prop] }
   & { [prop in Exclusive<B, C, A>]?: B[prop] }
   & { [prop in Exclusive<B, A, C>]?: B[prop] }
-
-export type MergeCssPropsPair<A extends MapProps, B extends MapProps> =
-  & { [prop in Shared<A, B>]?: A[prop] | B[prop] }
-  & { [prop in Shared<B, A>]?: A[prop] | B[prop] }
-  //
-  & { [prop in NotShared<A, B>]?: A[prop] }
-  & { [prop in NotShared<B, A>]?: B[prop] }

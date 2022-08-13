@@ -51,20 +51,13 @@ import {
   generateStaticPropsCss,
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
-  InteractivePseudoClassesWithAliases,
   AllPseudoClassesWithAliases,
 } from "./props"
 import { getSelector } from "./styles.utils"
 import {
   CssFromMap,
-  CssFromConditionalMap,
   CssFromCustomVars,
-  MergeCssProps,
-  CssFromConditionalCustomVars,
-  Exclusive,
-  ExclusivelyShared,
-  MergeCssPropsPair,
-  NestedShared,
+  MergedCssProps,
 } from "./styles.models"
 
 /*************************************************************************************************
@@ -135,13 +128,13 @@ const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
   return className
 })
 
-/** Generate CSS props that are _conditional_, and based on scales */
-const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>((condition: string, keys: FilterKeys) =>
+/** Generate CSS props that are _pseudo class based_, and based on scales */
+const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>((pseudoClass: string, keys: FilterKeys) =>
   generateScaledPropsCss(
     scales,
     (value: CssRule) => {
       const className = classHash.name
-      globalStyle(getSelector(className, condition), value)
+      globalStyle(getSelector(className, pseudoClass), value)
       return className
     },
     keys
@@ -160,20 +153,20 @@ const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (
   return { varName: cssVar.name, className }
 })
 
-/** Generate CSS props that are _conditional_, for custom var props */
-const conditionalCustomVarPropGenerator = (condition: string, keys: FilterKeys) =>
+/** Generate CSS props that are _pseudo class based_, for custom var props */
+const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys) =>
   generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
     const cssVar = varHash.var
     const className = classHash.name
     template = template ?? ((v: string) => v)
-    globalStyle(getSelector(className, condition), {
+    globalStyle(getSelector(className, pseudoClass), {
       [prop]: template(cssVar.ref),
     })
     return { varName: cssVar.name, className }
   }, keys)
 
-const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(conditionalCustomVarPropGenerator)
-const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(conditionalCustomVarPropGenerator)
+const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
+const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
 
 // STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
@@ -183,11 +176,11 @@ const staticProps = generateStaticPropsCss((value: CssRule) => {
   return className
 })
 
-/** Generate CSS props that are _conditional_, and based on scales */
-const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((condition: string, keys: FilterKeys) =>
+/** Generate CSS props that are _pseudo class based_, and based on scales */
+const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
   generateStaticPropsCss((value: CssRule) => {
     const className = classHash.name
-    globalStyle(getSelector(className, condition), value)
+    globalStyle(getSelector(className, pseudoClass), value)
     return className
   }, keys)
 )
@@ -209,17 +202,17 @@ type A = typeof scaledPropsIPC
 type B = typeof customVarPropsIPC & typeof customVarPropsSPC
 type C = typeof staticPropsIPC
 
-type MergeConditionalCssProps =
-  & { ":focus-visible"?: MergeCssProps<CssFromMap<A[":focus-visible"]>, CssFromCustomVars<B[":focus-visible"]>, CssFromMap<C[":focus-visible"]>> }
-  & { ":hover"?: MergeCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> }
-  & { ":active"?: MergeCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>> }
+type MergePCCssProps =
+  & { ":focus-visible"?: MergedCssProps<CssFromMap<A[":focus-visible"]>, CssFromCustomVars<B[":focus-visible"]>, CssFromMap<C[":focus-visible"]>> }
+  & { ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> }
+  & { ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>> }
   & { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> }
   & { ":first-child"?: CssFromCustomVars<B[":first-child"]> }
   & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
 
 
-export type CSS = MergeCssProps<ScaledProps, CustomVarProps, StaticProps> &
-  AllPseudoClassesWithAliases<MergeConditionalCssProps>
+export type CSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
+  AllPseudoClassesWithAliases<MergePCCssProps>
 // Sample to test types + auto-complete
 const props: CSS = {
   backgroundColor: "$amber10",

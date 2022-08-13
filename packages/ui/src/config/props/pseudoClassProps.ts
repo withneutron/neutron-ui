@@ -103,7 +103,7 @@ export const structuralClassProps = {
 } as const
 
 export function generateInteractivePseudoClassCss<O extends Record<string, unknown>>(
-  generateClass: <K extends FilterKeys>(condition: string, keys: K) => O
+  generateClass: <K extends FilterKeys>(pseudoClass: string, keys: K) => O
 ) {
   const focusVisibleProps = generateClass(":focus-visible", interactiveClassProps)
   const hoverProps = generateClass(":hover", pointerClassProps)
@@ -120,7 +120,7 @@ export function generateInteractivePseudoClassCss<O extends Record<string, unkno
 }
 
 export function generateStructuralPseudoClassCss<O extends Record<string, unknown>>(
-  generateClass: (condition: string, keys: FilterKeys) => O
+  generateClass: (pseudoClass: string, keys: FilterKeys) => O
 ) {
   const oddProps = generateClass(":nth-child(odd)", structuralClassProps)
   const firstChildProps = generateClass(":first-child", structuralClassProps)
@@ -179,16 +179,16 @@ export type PseudoClassKeys = InteractivePseudoClassKeys | StructuralPseudoClass
 export type PseudoClassAliasKeys = keyof typeof pseudoClassAliases
 export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
-type ConditionalPseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
+type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type InteractivePseudoClassesWithAliases<T extends ConditionalPseudoClassObject> =
+export type InteractivePseudoClassesWithAliases<T extends PseudoClassObject> =
   & T
   & { ":focus"?: T[":focus-visible"] } 
   & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
   & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
   & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
 
-export type AllPseudoClassesWithAliases<T extends ConditionalPseudoClassObject> =
+export type AllPseudoClassesWithAliases<T extends PseudoClassObject> =
   & InteractivePseudoClassesWithAliases<T> 
   & { ":odd"?: T[":nth-child(odd)"] } 
   & { ":first"?: T[":first-child"] } 
