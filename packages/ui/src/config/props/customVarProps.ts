@@ -1,5 +1,6 @@
 import { omitKeys } from "./props.utils"
-import { FilterKeys, CssPropKey, CustomVarPropValue } from "./props.models"
+import { FilterKeys, CssPropKey, CustomVarPropValue, KeysFromScale } from "./props.models"
+import { getColor } from "../scales"
 
 /**
  * Used to generate CSS classes for custom values (via a combo of className + CSS var).
@@ -77,4 +78,16 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     return omitKeys(props, keys)
   }
   return props
+}
+
+type Colors = KeysFromScale<ReturnType<typeof getColor>["cssValueMap"]>
+
+export type CustomVarPropHints = {
+  background: Colors
+  backgroundColor: Colors
+  color: Colors
+  fill: Colors
+  stroke: Colors
+  caretColor: Colors
+  columnRuleColor: Colors
 }

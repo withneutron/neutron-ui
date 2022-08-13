@@ -222,12 +222,13 @@ export type CSS = MergeCssProps<ScaledProps, CustomVarProps, StaticProps> &
   AllPseudoClassesWithAliases<MergeConditionalCssProps>
 // Sample to test types + auto-complete
 const props: CSS = {
-  backgroundColor: "unset",
+  backgroundColor: "$amber10",
   maxBlockSize: "initial",
   animationDuration: "$bounceDuration",
   inlineSize: "$buttonTactileHighlight",
   borderBlockStart: "$primaryMax",
   minBlockSize: "$0",
+  fill: "initial",
   ":active": {
     color: "$primary9",
     backgroundColor: "$neutral1",
@@ -236,7 +237,7 @@ const props: CSS = {
   ":focus-visible": {
     color: "$neutral10",
     borderBlockEnd: "initial",
-    background: "unset",
+    background: "$warningMin",
   },
   ":focus": {
     backgroundColor: "$secondary9",

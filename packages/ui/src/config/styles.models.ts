@@ -1,9 +1,13 @@
-import { CustomVarPropValue, PseudoClassKeys, PseudoClassKeysWithAliases } from "./props"
+import { CustomVarPropHints, CustomVarPropValue, PseudoClassKeys } from "./props"
 
+type CustomVarHint = "__Enter any valid CSS__"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
 
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-export type CustomString = string & { trim?: () => string }
+type CustomString = string & { trim?: () => string }
+
+type Shared<A extends Record<string, any>, B extends Record<string, any>> = Extract<keyof A, keyof B>
+type NotShared<A extends Record<string, any>, B extends Record<string, any>> = Exclude<keyof A, keyof B>
 
 type MapObject = {
   [key: string]: { [k: string | number]: unknown }
@@ -26,27 +30,19 @@ export type CssFromConditionalMap<M extends ConditionalMapObject> = {
     [innerKey in keyof M[key]]?: keyof M[key][innerKey]
   }
 }
-export type CssFromCustomVars<M extends CustomVarObject> = {
-  [key in keyof M]?: CustomString | CoreStaticKeys
-}
+export type CssFromCustomVars<M extends CustomVarObject> = 
+  & { [key in Shared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[key] | CustomString }
+  & { [key in NotShared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
 export type CssFromConditionalCustomVars<M extends ConditionalCustomVarObject> = {
-  [key in keyof M]?: {
-    [innerKey in keyof M[key]]?: CustomString | CoreStaticKeys
-  }
+  [key in keyof M]?: 
+    & { [innerKey in Shared<M[key], CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[innerKey] | CustomString }
+    & { [innerKey in NotShared<M[key], CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
 }
 
 // Merge CSS //
 type MapProps = {
   [key: string]: any
 }
-type ConditionalMapProps = {
-  [key in PseudoClassKeysWithAliases]?: MapProps
-}
-export type NestedMapKey<M extends MapProps> = M[keyof M]
-export type NestedConditionalMapKey<M extends ConditionalMapProps> = M[keyof M][keyof M[keyof M]]
-
-type Shared<A extends Record<string, unknown>, B extends Record<string, unknown>> = Extract<keyof A, keyof B>
-type NotShared<A extends Record<string, unknown>, B extends Record<string, unknown>> = Exclude<keyof A, keyof B>
 
 export type NestedShared<
   A extends Record<string, unknown>,
