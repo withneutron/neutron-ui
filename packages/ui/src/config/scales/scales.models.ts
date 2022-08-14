@@ -112,7 +112,11 @@ export interface ThemeScale<
   themeProps: T
   /** Used to generate static CSS classes, and the prop values that reference them */
   cssValueMap: C
-  /** Used to generate aliases for some CSS classes */
+  /**
+   * Used to generate aliases for some CSS classes
+   *
+   * NOTE: These keys must ALSO be added to `cssValueMap`, for the generated types to work properly.
+   */
   cssAliasMap?: A
   /** Used for building keyframe-based animations */
   keyframes?: K

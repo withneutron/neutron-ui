@@ -343,6 +343,7 @@ const props: CSS = {
   borderBlockStart: "$primaryMax",
   minBlockSize: "$0",
   fill: "initial",
+  fontWeight: "$semiBold",
   ":active": {
     color: "$primary9",
     bg: "$neutral1",

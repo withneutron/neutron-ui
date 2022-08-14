@@ -15,6 +15,7 @@ import {
   animationDurations,
   colorCore,
   colorText,
+  CssAliasMap,
 } from "../scales"
 import { CssPropKey, CssRule, CssValueClassMap, FilterKeys, KeysFromScale, PickKeys } from "./props.models"
 
@@ -51,13 +52,18 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   generateClass: (value: CssRule) => string,
   keys?: K
 ) {
-  function entries<M extends CssValueMap>(prop: CssPropKey, map: M) {
+  function entries<M extends CssValueMap, A extends CssAliasMap = CssAliasMap>(prop: CssPropKey, map: M, aliasMap?: A) {
     return Object.entries(map).reduce(
       (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
         const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
-        const className = keys && !keys[prop] ? "" : generateClass(value)
+
+        const isFilteredKey = keys && !keys[prop]
+        const isAliasKey = aliasMap?.[scaleKey as string]
+        const className = isFilteredKey || isAliasKey ? "" : generateClass(value)
+
         const key = `$${scaleKey}` as KeysFromScale<M>
         output[key] = className
+
         return output
       },
       {} as CssValueClassMap<typeof map>
@@ -131,7 +137,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     font: entries("font", map(scales, Scale.font)),
     fontFamily: entries("fontFamily", map(scales, Scale.fontFamily)),
     fontSize: entries("fontSize", map(scales, Scale.fontSize)),
-    fontWeight: entries("fontWeight", map(scales, Scale.fontWeight)),
+    fontWeight: entries("fontWeight", map(scales, Scale.fontWeight), scales[Scale.fontWeight].cssAliasMap),
 
     textDecoration: entries("textDecoration", map(scales, Scale.textDecoration)),
 

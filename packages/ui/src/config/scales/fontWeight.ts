@@ -33,7 +33,18 @@ export function getFontWeight(hash: CharHash) {
   } as const
 
   const vars = sharedVars
-  const cssValueMap = { ...getCssMapFromVars(sharedVars) } as const
+  const cssValueMap = {
+    ...getCssMapFromVars(sharedVars),
+    thin: "thin",
+    extraLight: "extraLight",
+    light: "light",
+    regular: "regular",
+    medium: "medium",
+    semiBold: "semiBold",
+    bold: "bold",
+    extraBold: "extraBold",
+    black: "black",
+  } as const
   const cssAliasMap = {
     thin: { var: baseVars[100].ref, target: 100 },
     extraLight: { var: baseVars[200].ref, target: 200 },
