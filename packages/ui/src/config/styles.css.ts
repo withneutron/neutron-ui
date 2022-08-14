@@ -58,6 +58,7 @@ import {
   CssFromMap,
   CssFromCustomVars,
   MergedCssProps,
+  Conditions,
 } from "./styles.models"
 
 /*************************************************************************************************
@@ -211,9 +212,13 @@ type MergePCCssProps =
   & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
 
 
-export type CSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
+type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
   AllPseudoClassesWithAliases<MergePCCssProps>
-// Sample to test types + auto-complete
+
+/** Full type of Neutron UI style objects, including pseudo-classes and conditions */
+export type CSS = BaseCSS & { [k in Conditions]?: BaseCSS }
+
+  // Sample to test types + auto-complete
 const props: CSS = {
   backgroundColor: "$amber10",
   maxBlockSize: "initial",
@@ -235,4 +240,10 @@ const props: CSS = {
   ":focus": {
     backgroundColor: "$secondary9",
   },
+  "@dark": {
+    outlineWidth: "$widthBase"
+  },
+  "@reducedMotion": {
+    animation: "none"
+  }
 }

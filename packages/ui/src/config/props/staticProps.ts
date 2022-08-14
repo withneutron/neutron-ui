@@ -68,6 +68,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
   const props = {
     appearance: values("appearance", noneAuto),
 
+    animation: values("animation", none),
     animationIterationCount: values("animationIterationCount", options("infinite", "1", "2")),
 
     userSelect: values("userSelect", options("none", "auto", "text", "contain", "all")),
