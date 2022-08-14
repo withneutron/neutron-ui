@@ -1,14 +1,10 @@
 import { useColors } from "@/ui"
 
 function Logo() {
-  const { isDark } = useColors()
-  const bgDark = "#00A69C"
-  const fgDark = "#04B7A6"
-  const bgLight = "#007267"
-  const fgLight = "#008275"
+  const { isDark, colors } = useColors()
   const base = {
-    bg: isDark ? bgDark : bgLight,
-    fg: isDark ? fgDark : fgLight,
+    bg: isDark ? colors.primary9 : colors.primary10,
+    fg: isDark ? colors.primary10 : colors.primary9,
   }
 
   return (

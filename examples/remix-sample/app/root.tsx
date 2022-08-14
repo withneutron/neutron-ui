@@ -145,15 +145,7 @@ interface DocumentProps {
   themeConfig?: ThemeConfig
   darkThemeConfig?: ThemeConfig
 }
-function Document({
-  children,
-  title,
-  colorMode,
-  isMobile,
-  locale,
-  themeConfig,
-  darkThemeConfig,
-}: DocumentProps) {
+function Document({ children, title, colorMode, isMobile, locale, themeConfig, darkThemeConfig }: DocumentProps) {
   // Global styles
   globalStyles()
   appGlobalStyles()
@@ -214,12 +206,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         >
           <AppLogo />
         </Heading.h1>
-        <Row.nav
-          alignItems="center"
-          gap="6"
-          w={{ "@<bp1": "full" }}
-          justifyContent={{ "@<bp1": "center" }}
-        >
+        <Row.nav alignItems="center" gap="6" w={{ "@<bp1": "full" }} justifyContent={{ "@<bp1": "center" }}>
           <Row aria-label="Main navigation" alignItems="center">
             <FlexList gap="2">
               <FlexListItem>
@@ -228,24 +215,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                 </Button>
               </FlexListItem>
               <FlexListItem>
-                <Button
-                  size="small"
-                  as={NavLink}
-                  prefetch="intent"
-                  to="/demos/sample"
-                  variant="ghost"
-                >
+                <Button size="small" as={NavLink} prefetch="intent" to="/demos/sample" variant="ghost">
                   Sample
                 </Button>
               </FlexListItem>
               <FlexListItem>
-                <Button
-                  size="small"
-                  as={NavLink}
-                  prefetch="intent"
-                  to="/demos/actions"
-                  variant="ghost"
-                >
+                <Button size="small" as={NavLink} prefetch="intent" to="/demos/actions" variant="ghost">
                   Actions
                 </Button>
               </FlexListItem>
@@ -272,14 +247,10 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function AppLogo() {
-  const { isDark } = useColors()
-  const bgDark = "#00A69C"
-  const fgDark = "#04B7A6"
-  const bgLight = "#007267"
-  const fgLight = "#008275"
+  const { isDark, colors } = useColors()
   const base = {
-    bg: isDark ? bgDark : bgLight,
-    fg: isDark ? fgDark : fgLight,
+    bg: isDark ? colors.primary9 : colors.primary10,
+    fg: isDark ? colors.primary10 : colors.primary9,
   }
 
   return (
