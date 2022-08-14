@@ -36,6 +36,7 @@ function options<T extends string>(...options: T[]) {
   return output
 }
 
+const transparent = options("transparent")
 const noneAuto = options("none", "auto")
 const none = options("none")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
@@ -70,6 +71,19 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     animation: values("animation", none),
     animationIterationCount: values("animationIterationCount", options("infinite", "1", "2")),
+
+    background: values("background", transparent),
+    backgroundColor: values("backgroundColor", transparent),
+    color: values("color", transparent),
+    outlineColor: values("outlineColor", transparent),
+    borderBlockStartColor: values("borderBlockStartColor", transparent),
+    borderBlockEndColor: values("borderBlockEndColor", transparent),
+    borderInlineStartColor: values("borderInlineStartColor", transparent),
+    borderInlineEndColor: values("borderInlineEndColor", transparent),
+    fill: values("fill", transparent),
+    stroke: values("stroke", transparent),
+    caretColor: values("caretColor", transparent),
+    columnRuleColor: values("columnRuleColor", transparent),
 
     userSelect: values("userSelect", options("none", "auto", "text", "contain", "all")),
 
@@ -288,23 +302,18 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     fontSize: values("fontSize"),
     fontWeight: values("fontWeight"),
     borderBlockStart: values("borderBlockStart"),
-    borderBlockStartColor: values("borderBlockStartColor"),
     borderBlockStartWidth: values("borderBlockStartWidth"),
     borderBlockEnd: values("borderBlockEnd"),
-    borderBlockEndColor: values("borderBlockEndColor"),
     borderBlockEndWidth: values("borderBlockEndWidth"),
     borderInlineStart: values("borderInlineStart"),
-    borderInlineStartColor: values("borderInlineStartColor"),
     borderInlineStartWidth: values("borderInlineStartWidth"),
     borderInlineEnd: values("borderInlineEnd"),
-    borderInlineEndColor: values("borderInlineEndColor"),
     borderInlineEndWidth: values("borderInlineEndWidth"),
     borderStartStartRadius: values("borderStartStartRadius"),
     borderStartEndRadius: values("borderStartEndRadius"),
     borderEndStartRadius: values("borderEndStartRadius"),
     borderEndEndRadius: values("borderEndEndRadius"),
     outline: values("outline"),
-    outlineColor: values("outlineColor"),
     outlineOffset: values("outlineOffset"),
     outlineWidth: values("outlineWidth"),
     zIndex: values("zIndex"),

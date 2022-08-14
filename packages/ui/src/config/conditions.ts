@@ -1,7 +1,8 @@
-const sm = "395.9987654321px"
-const md = "659.9987654321px"
-const lg = "999.9987654321px"
-const xl = "1299.9987654321px"
+const sm = "395.9987654321"
+const md = "659.9987654321"
+const lg = "999.9987654321"
+const xl = "1299.9987654321"
+const unit = "px"
 
 export const conditions = {
   /**
@@ -17,15 +18,15 @@ export const conditions = {
    * facilitates that, by not forcing them to touch existing styles,
    * only add new ones.
    */
-  "@sm": `screen and (max-width: ${sm})`,
-  "@md": `screen and (max-width: ${md})`,
-  "@lg": `screen and (max-width: ${lg})`,
-  "@xl": `screen and (max-width: ${xl})`,
+  "@sm": `screen and (max-width: ${sm}${unit})`,
+  "@md": `screen and (max-width: ${md}${unit})`,
+  "@lg": `screen and (max-width: ${lg}${unit})`,
+  "@xl": `screen and (max-width: ${xl}${unit})`,
 
-  "!sm": `screen and (min-width: ${sm})`,
-  "!md": `screen and (min-width: ${md})`,
-  "!lg": `screen and (min-width: ${lg})`,
-  "!xl": `screen and (min-width: ${xl})`,
+  "!sm": `screen and (min-width: ${sm}${unit})`,
+  "!md": `screen and (min-width: ${md}${unit})`,
+  "!lg": `screen and (min-width: ${lg}${unit})`,
+  "!xl": `screen and (min-width: ${xl}${unit})`,
 
   "@highContrast": "(prefers-contrast: more)",
   "@reducedMotion": "(prefers-reduced-motion)",

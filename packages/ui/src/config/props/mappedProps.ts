@@ -3,190 +3,198 @@ import { CssPropKey } from "./props.models"
 type PropValue = string | number
 
 /** Map CSS value to one or more keys */
-function mapValue(value: PropValue, keys: CssPropKey[]) {
+function mapValue<V extends PropValue, K extends CssPropKey>(value: V, keys: K[]) {
   return keys.reduce((output, key) => {
     output[key] = value
     return output
-  }, {} as Record<string, PropValue>)
+  }, {} as Record<K, V>)
 }
 
 /** Maps a value to one or more CSS props */
-function getPropMapper(keys: CssPropKey[]) {
-  return (value: PropValue) => mapValue(value, keys)
+function getPropMapper<K extends CssPropKey>(...keys: K[]) {
+  return <V extends PropValue>(value: V) => mapValue(value, keys)
 }
 
 export const mappedProps = {
   // UTILS
-  p: getPropMapper(["padding"]),
-  pt: getPropMapper(["paddingTop"]),
-  pr: getPropMapper(["paddingRight"]),
-  pb: getPropMapper(["paddingBottom"]),
-  pl: getPropMapper(["paddingLeft"]),
-  px: getPropMapper(["paddingLeft", "paddingRight"]),
-  paddingX: getPropMapper(["paddingLeft", "paddingRight"]),
-  py: getPropMapper(["paddingTop", "paddingBottom"]),
-  paddingY: getPropMapper(["paddingTop", "paddingBottom"]),
+  p: getPropMapper("paddingBlockStart", "paddingBlockEnd", "paddingInlineStart", "paddingInlineEnd"),
+  pt: getPropMapper("paddingBlockStart"),
+  pr: getPropMapper("paddingInlineEnd"),
+  pb: getPropMapper("paddingBlockEnd"),
+  pl: getPropMapper("paddingInlineStart"),
+  px: getPropMapper("paddingInlineStart", "paddingInlineEnd"),
+  paddingX: getPropMapper("paddingInlineStart", "paddingInlineEnd"),
+  py: getPropMapper("paddingBlockStart", "paddingBlockEnd"),
+  paddingY: getPropMapper("paddingBlockStart", "paddingBlockEnd"),
 
-  m: getPropMapper(["margin"]),
-  mt: getPropMapper(["marginTop"]),
-  mr: getPropMapper(["marginRight"]),
-  mb: getPropMapper(["marginBottom"]),
-  ml: getPropMapper(["marginLeft"]),
-  mx: getPropMapper(["marginLeft", "marginRight"]),
-  marginX: getPropMapper(["marginLeft", "marginRight"]),
-  my: getPropMapper(["marginTop", "marginBottom"]),
-  marginY: getPropMapper(["marginTop", "marginBottom"]),
+  m: getPropMapper("marginBlockStart", "marginBlockEnd", "marginInlineStart", "marginInlineEnd"),
+  mt: getPropMapper("marginBlockStart"),
+  mr: getPropMapper("marginInlineEnd"),
+  mb: getPropMapper("marginBlockEnd"),
+  ml: getPropMapper("marginInlineStart"),
+  mx: getPropMapper("marginInlineStart", "marginInlineEnd"),
+  marginX: getPropMapper("marginInlineStart", "marginInlineEnd"),
+  my: getPropMapper("marginBlockStart", "marginBlockEnd"),
+  marginY: getPropMapper("marginBlockStart", "marginBlockEnd"),
 
-  bg: getPropMapper(["background"]),
+  bg: getPropMapper("background"),
 
-  borderX: getPropMapper(["borderInline"]),
-  borderY: getPropMapper(["borderBlock"]),
+  borderX: getPropMapper("borderInline"),
+  borderY: getPropMapper("borderBlock"),
 
-  radius: getPropMapper(["borderRadius"]),
-  radiusTop: getPropMapper(["borderStartStartRadius", "borderStartEndRadius"]),
-  radiusBottom: getPropMapper(["borderEndEndRadius", "borderEndStartRadius"]),
-  radiusLeft: getPropMapper(["borderStartStartRadius", "borderEndStartRadius"]),
-  radiusRight: getPropMapper(["borderStartEndRadius", "borderEndEndRadius"]),
+  radius: getPropMapper("borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"),
+  radiusTop: getPropMapper("borderStartStartRadius", "borderStartEndRadius"),
+  radiusBottom: getPropMapper("borderEndEndRadius", "borderEndStartRadius"),
+  radiusLeft: getPropMapper("borderStartStartRadius", "borderEndStartRadius"),
+  radiusRight: getPropMapper("borderStartEndRadius", "borderEndEndRadius"),
 
-  z: getPropMapper(["zIndex"]),
+  z: getPropMapper("zIndex"),
 
-  h: getPropMapper(["height"]),
-  w: getPropMapper(["width"]),
-  size: getPropMapper(["height", "width"]),
+  h: getPropMapper("blockSize"),
+  w: getPropMapper("inlineSize"),
+  size: getPropMapper("blockSize", "inlineSize"),
 
-  gt: getPropMapper(["gridTemplate"]),
-  gtAreas: getPropMapper(["gridTemplateAreas"]),
-  autoRows: getPropMapper(["gridAutoRows"]),
-  gtRows: getPropMapper(["gridTemplateRows"]),
-  gtColumns: getPropMapper(["gridTemplateColumns"]),
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // THIS LOGIC SHOULD LIVE IN THE CSS PROCESSOR, not here, because it should also apply to the
-  // native prop, not just this util!
-  //
-  // gt: getPropMapper(["gridTemplate"], v => {
-  //   // Check for line-breaks; throw error if they're found (only row/col syntax supported)
-  //   const hasLineBreaks = (String(v).match(/\r|\n/) || []).length > 0
-  //   if (hasLineBreaks)
-  //     throw new Error("We do not currently support areas via this property; please use `gridArea` for that.")
-  //   return v
-  // }),
-  // gtRows: getPropMapper(
-  //   // If BOTH rows + cols are set, JOIN onto gridTemplate
-  //   (_v, p) => {
-  //     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-  //     return ["gridTemplateRows"]
-  //   },
-  //   (v, p) => {
-  //     const cols = p.gtRows || p.gridTemplateRows
-  //     if (cols) return `${v} / ${cols}`
-  //     return v
-  //   }
-  // ),
-  // gtColumns: getPropMapper(
-  //   // If BOTH rows + cols are set, JOIN onto gridTemplate
-  //   (_v, p) => {
-  //     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-  //     return ["gridTemplateColumns"]
-  //   },
-  //   (v, p) => {
-  //     const rows = p.gtRows || p.gridTemplateRows
-  //     if (rows) return `${rows} / ${v}`
-  //     return v
-  //   }
-  // ),
+  gt: getPropMapper("gridTemplate"),
+  gtAreas: getPropMapper("gridTemplateAreas"),
+  autoRows: getPropMapper("gridAutoRows"),
+  gtRows: getPropMapper("gridTemplateRows"),
+  gtColumns: getPropMapper("gridTemplateColumns"),
+  /** 
+   * THIS LOGIC SHOULD LIVE IN THE CSS PROCESSOR, not here, because it should also apply to the
+   * native prop, not just this util!
+   *
+   * gt: getPropMapper("gridTemplate"], v => {
+   *   // Check for line-breaks; throw error if they're found (only row/col syntax supported)
+   *   const hasLineBreaks = (String(v).match(/\r|\n/) || []).length > 0
+   *   if (hasLineBreaks)
+   *     throw new Error("We do not currently support areas via this property; please use `gridArea` for that.")
+   *   return v
+   * }),
+   * gtRows: getPropMapper(
+   *   // If BOTH rows + cols are set, JOIN onto gridTemplate
+   *   (_v, p) => {
+   *     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
+   *     return ["gridTemplateRows"]
+   *   },
+   *   (v, p) => {
+   *     const cols = p.gtRows || p.gridTemplateRows
+   *     if (cols) return `${v} / ${cols}`
+   *     return v
+   *   }
+   * ),
+   * gtColumns: getPropMapper(
+   *   // If BOTH rows + cols are set, JOIN onto gridTemplate
+   *   (_v, p) => {
+   *     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
+   *     return ["gridTemplateColumns"]
+   *   },
+   *   (v, p) => {
+   *     const rows = p.gtRows || p.gridTemplateRows
+   *     if (rows) return `${rows} / ${v}`
+   *     return v
+   *   }
+   * ),
 
-  // These have custom classes that use --var in a "template", just like these string templates
-  // linearGradient: getPropMapper(["backgroundImage"], v => `linear-gradient(${v})`),
-  // radialGradient: getPropMapper(["backgroundImage"], v => `radial-gradient(${v})`),
-  // conicGradient: getPropMapper(["backgroundImage"], v => `conic-gradient(${v})`),
+   * These have custom classes that use --var in a "template", just like these string templates
+   * linearGradient: getPropMapper("backgroundImage"], v => `linear-gradient(${v})`),
+   * radialGradient: getPropMapper("backgroundImage"], v => `radial-gradient(${v})`),
+   * conicGradient: getPropMapper("backgroundImage"], v => `conic-gradient(${v})`),
+   */
 
   // Remapped CSS Props
-  height: getPropMapper(["blockSize"]),
-  width: getPropMapper(["inlineSize"]),
-  minHeight: getPropMapper(["minBlockSize"]),
-  minWidth: getPropMapper(["minInlineSize"]),
-  maxHeight: getPropMapper(["maxBlockSize"]),
-  maxWidth: getPropMapper(["maxInlineSize"]),
+  height: getPropMapper("blockSize"),
+  width: getPropMapper("inlineSize"),
+  minHeight: getPropMapper("minBlockSize"),
+  minWidth: getPropMapper("minInlineSize"),
+  maxHeight: getPropMapper("maxBlockSize"),
+  maxWidth: getPropMapper("maxInlineSize"),
 
-  margin: getPropMapper(["marginBlockStart", "marginBlockEnd", "marginInlineStart", "marginInlineEnd"]),
-  marginBottom: getPropMapper(["marginBlockEnd"]),
-  marginLeft: getPropMapper(["marginInlineStart"]),
-  marginRight: getPropMapper(["marginInlineEnd"]),
-  marginTop: getPropMapper(["marginBlockStart"]),
+  margin: getPropMapper("marginBlockStart", "marginBlockEnd", "marginInlineStart", "marginInlineEnd"),
+  marginBottom: getPropMapper("marginBlockEnd"),
+  marginLeft: getPropMapper("marginInlineStart"),
+  marginRight: getPropMapper("marginInlineEnd"),
+  marginTop: getPropMapper("marginBlockStart"),
 
-  padding: getPropMapper(["paddingBlockStart", "paddingBlockEnd", "paddingInlineStart", "paddingInlineEnd"]),
-  paddingBottom: getPropMapper(["paddingBlockEnd"]),
-  paddingLeft: getPropMapper(["paddingInlineStart"]),
-  paddingRight: getPropMapper(["paddingInlineEnd"]),
-  paddingTop: getPropMapper(["paddingBlockStart"]),
+  padding: getPropMapper("paddingBlockStart", "paddingBlockEnd", "paddingInlineStart", "paddingInlineEnd"),
+  paddingBottom: getPropMapper("paddingBlockEnd"),
+  paddingLeft: getPropMapper("paddingInlineStart"),
+  paddingRight: getPropMapper("paddingInlineEnd"),
+  paddingTop: getPropMapper("paddingBlockStart"),
 
-  bottom: getPropMapper(["insetBlockEnd"]),
-  top: getPropMapper(["insetBlockStart"]),
-  left: getPropMapper(["insetInlineStart"]),
-  right: getPropMapper(["insetInlineEnd"]),
+  bottom: getPropMapper("insetBlockEnd"),
+  top: getPropMapper("insetBlockStart"),
+  left: getPropMapper("insetInlineStart"),
+  right: getPropMapper("insetInlineEnd"),
 
-  border: getPropMapper(["borderBlockStart", "borderBlockEnd", "borderInlineStart", "borderInlineEnd"]),
-  borderColor: getPropMapper([
+  border: getPropMapper("borderBlockStart", "borderBlockEnd", "borderInlineStart", "borderInlineEnd"),
+  borderColor: getPropMapper(
     "borderBlockStartColor",
     "borderBlockEndColor",
     "borderInlineStartColor",
-    "borderInlineEndColor",
-  ]),
-  borderStyle: getPropMapper([
+    "borderInlineEndColor"
+  ),
+  borderStyle: getPropMapper(
     "borderBlockStartStyle",
     "borderBlockEndStyle",
     "borderInlineStartStyle",
-    "borderInlineEndStyle",
-  ]),
-  borderWidth: getPropMapper([
+    "borderInlineEndStyle"
+  ),
+  borderWidth: getPropMapper(
     "borderBlockStartWidth",
     "borderBlockEndWidth",
     "borderInlineStartWidth",
-    "borderInlineEndWidth",
-  ]),
+    "borderInlineEndWidth"
+  ),
 
-  borderBlock: getPropMapper(["borderBlockStart", "borderBlockEnd"]),
-  borderBlockColor: getPropMapper(["borderBlockStartColor", "borderBlockEndColor"]),
-  borderBlockStyle: getPropMapper(["borderBlockStartStyle", "borderBlockEndStyle"]),
-  borderBlockWidth: getPropMapper(["borderBlockStartWidth", "borderBlockEndWidth"]),
+  borderBlock: getPropMapper("borderBlockStart", "borderBlockEnd"),
+  borderBlockColor: getPropMapper("borderBlockStartColor", "borderBlockEndColor"),
+  borderBlockStyle: getPropMapper("borderBlockStartStyle", "borderBlockEndStyle"),
+  borderBlockWidth: getPropMapper("borderBlockStartWidth", "borderBlockEndWidth"),
 
-  borderInline: getPropMapper(["borderInlineStart", "borderInlineEnd"]),
-  borderInlineColor: getPropMapper(["borderInlineStartColor", "borderInlineEndColor"]),
-  borderInlineStyle: getPropMapper(["borderInlineStartStyle", "borderInlineEndStyle"]),
-  borderInlineWidth: getPropMapper(["borderInlineStartWidth", "borderInlineEndWidth"]),
+  borderInline: getPropMapper("borderInlineStart", "borderInlineEnd"),
+  borderInlineColor: getPropMapper("borderInlineStartColor", "borderInlineEndColor"),
+  borderInlineStyle: getPropMapper("borderInlineStartStyle", "borderInlineEndStyle"),
+  borderInlineWidth: getPropMapper("borderInlineStartWidth", "borderInlineEndWidth"),
 
-  borderTop: getPropMapper(["borderBlockStart"]),
-  borderTopColor: getPropMapper(["borderBlockStartColor"]),
-  borderTopStyle: getPropMapper(["borderBlockStartStyle"]),
-  borderTopWidth: getPropMapper(["borderBlockStartWidth"]),
+  borderTop: getPropMapper("borderBlockStart"),
+  borderTopColor: getPropMapper("borderBlockStartColor"),
+  borderTopStyle: getPropMapper("borderBlockStartStyle"),
+  borderTopWidth: getPropMapper("borderBlockStartWidth"),
 
-  borderBottom: getPropMapper(["borderBlockEnd"]),
-  borderBottomColor: getPropMapper(["borderBlockEndColor"]),
-  borderBottomStyle: getPropMapper(["borderBlockEndStyle"]),
-  borderBottomWidth: getPropMapper(["borderBlockEndWidth"]),
+  borderBottom: getPropMapper("borderBlockEnd"),
+  borderBottomColor: getPropMapper("borderBlockEndColor"),
+  borderBottomStyle: getPropMapper("borderBlockEndStyle"),
+  borderBottomWidth: getPropMapper("borderBlockEndWidth"),
 
-  borderLeft: getPropMapper(["borderInlineStart"]),
-  borderLeftColor: getPropMapper(["borderInlineStartColor"]),
-  borderLeftStyle: getPropMapper(["borderInlineStartStyle"]),
-  borderLeftWidth: getPropMapper(["borderInlineStartWidth"]),
+  borderLeft: getPropMapper("borderInlineStart"),
+  borderLeftColor: getPropMapper("borderInlineStartColor"),
+  borderLeftStyle: getPropMapper("borderInlineStartStyle"),
+  borderLeftWidth: getPropMapper("borderInlineStartWidth"),
 
-  borderRight: getPropMapper(["borderInlineEnd"]),
-  borderRightColor: getPropMapper(["borderInlineEndColor"]),
-  borderRightStyle: getPropMapper(["borderInlineEndStyle"]),
-  borderRightWidth: getPropMapper(["borderInlineEndWidth"]),
+  borderRight: getPropMapper("borderInlineEnd"),
+  borderRightColor: getPropMapper("borderInlineEndColor"),
+  borderRightStyle: getPropMapper("borderInlineEndStyle"),
+  borderRightWidth: getPropMapper("borderInlineEndWidth"),
 
-  borderRadius: getPropMapper([
+  borderRadius: getPropMapper(
     "borderStartStartRadius",
     "borderStartEndRadius",
     "borderEndStartRadius",
-    "borderEndEndRadius",
-  ]),
-  borderTopLeftRadius: getPropMapper(["borderStartStartRadius"]),
-  borderTopRightRadius: getPropMapper(["borderStartEndRadius"]),
-  borderBottomLeftRadius: getPropMapper(["borderEndStartRadius"]),
-  borderBottomRightRadius: getPropMapper(["borderEndEndRadius"]),
+    "borderEndEndRadius"
+  ),
+  borderTopLeftRadius: getPropMapper("borderStartStartRadius"),
+  borderTopRightRadius: getPropMapper("borderStartEndRadius"),
+  borderBottomLeftRadius: getPropMapper("borderEndStartRadius"),
+  borderBottomRightRadius: getPropMapper("borderEndEndRadius"),
 
-  gap: getPropMapper(["rowGap", "columnGap"]),
+  gap: getPropMapper("rowGap", "columnGap"),
 
-  wordWrap: getPropMapper(["overflowWrap"]),
+  wordWrap: getPropMapper("overflowWrap"),
 } as const
+
+type MapKey = keyof typeof mappedProps
+type MappedProps<K extends MapKey> = keyof ReturnType<typeof mappedProps[K]>
+
+export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T & {
+  [key in MapKey]?: T[Extract<keyof T, MappedProps<key>>]
+}

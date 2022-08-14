@@ -1,5 +1,5 @@
 import { conditions } from "./conditions"
-import { CustomVarPropHints, CustomVarPropValue } from "./props"
+import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
 
 type CustomVarHint = "__Enter any valid CSS__"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
@@ -11,22 +11,24 @@ type Shared<A extends Record<string, any>, B extends Record<string, any>> = Extr
 type NotShared<A extends Record<string, any>, B extends Record<string, any>> = Exclude<keyof A, keyof B>
 
 type MapObject = {
-  [key: string]: { [k: string | number]: unknown }
+  [key in CssPropKey]?: { [k: string | number]: unknown }
 }
 type CustomVarObject = {
-  [key: string]: CustomVarPropValue
+  [key in CssPropKey]?: CustomVarPropValue
 }
 
-export type CssFromMap<M extends MapObject> = {
+export type CssFromMap<M extends MapObject> = WithMappedProps<{
   [key in keyof M]?: keyof M[key]
-}
-export type CssFromCustomVars<M extends CustomVarObject> = 
+}>
+
+export type CssFromCustomVars<M extends CustomVarObject> = WithMappedProps<
   & { [key in Shared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[key] | CustomString }
   & { [key in NotShared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
+>
 
 // Merge CSS //
 type MapProps = {
-  [key: string]: any
+  [key in CssPropKey]?: any
 }
 
 export type NestedShared<

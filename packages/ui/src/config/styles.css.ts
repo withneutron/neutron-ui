@@ -220,8 +220,12 @@ export type CSS = BaseCSS & { [k in Conditions]?: BaseCSS }
 
   // Sample to test types + auto-complete
 const props: CSS = {
-  backgroundColor: "$amber10",
   maxBlockSize: "initial",
+  blockSize: "$buttonTactileShadow",
+  h: "$120",
+  bg: "transparent",
+  color: "transparent",
+  px: "$buttonBasePx",
   animationDuration: "$bounceDuration",
   inlineSize: "$buttonTactileHighlight",
   borderBlockStart: "$primaryMax",
@@ -229,7 +233,7 @@ const props: CSS = {
   fill: "initial",
   ":active": {
     color: "$primary9",
-    backgroundColor: "$neutral1",
+    bg: "$neutral1",
     borderBlockEnd: "$secondaryMin",
   },
   ":focus-visible": {
@@ -238,7 +242,7 @@ const props: CSS = {
     background: "$warningMin",
   },
   ":focus": {
-    backgroundColor: "$secondary9",
+    bg: "$secondary9",
   },
   "@dark": {
     outlineWidth: "$widthBase"
