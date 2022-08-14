@@ -368,7 +368,7 @@ const props: CSS = {
  * THEME GENERATION
  *************************************************************************************************/
 export const varMap = {} as Record<string, string | number>
-export const darkColorMap = {} as Record<string, string | number>
+export const darkVarMap = {} as Record<string, string | number>
 
 function getVars<V extends BaseVars>(vars: V, map: typeof varMap = varMap) {
   return Object.entries(vars).reduce((output, [key, { ref, name, value }]) => {
@@ -401,6 +401,7 @@ export const vars = {
   zIndex: getVars(zIndex.vars),
 } as const
 
-export const darkColor = getVars(color.darkVars!, darkColorMap)
+export const darkColor = getVars(color.darkVars!, darkVarMap)
+export const darkShadow = getVars(shadow.darkVars!, darkVarMap)
 
 globalStyle(":root", varMap)
