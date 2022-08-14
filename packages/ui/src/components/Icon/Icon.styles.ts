@@ -1,30 +1,13 @@
 import { BASE_VARIANTS, COLOR_VARIANTS, generateVariantSequence, keyframes } from "../../config/stitches.config"
 
 const spin = keyframes({
-  "0%, 25.1%": { transform: "rotate(0deg)" },
-  "10%, 40%": { transform: "rotate(180deg)" },
-  "25%, 50%, to": { transform: "rotate(360deg)" },
-})
-const bounce = keyframes({
-  "0%, 10%, 26.5%, 50%, to": {
-    animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-    transform: "translate3d(0, 0, 0)",
-  },
-  "20%, 21.5%": {
-    animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
-    transform: "translate3d(-30px, 0, 0) scaleX(1.1)",
-  },
-  "35%": {
-    animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
-    transform: "translate3d(-15px, 0, 0) scaleX(1.05)",
-  },
-  "40%": {
-    transitionTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-    transform: "translate3d(0, 0, 0) scaleX(0.95)",
-  },
-  "45%": {
-    transform: "translate3d(-4px, 0, 0) scaleX(1.02)",
-  },
+  "0%": { transform: "rotate(0deg)" },
+  "15%": { transform: "rotate(180deg)" },
+  "30%": { transform: "rotate(360deg)" },
+  "30.1%": { transform: "rotate(0deg)" },
+  "45%": { transform: "rotate(180deg)" },
+  "60%": { transform: "rotate(360deg)" },
+  "100%": { transform: "rotate(360deg)" },
 })
 
 const heightVariants = generateVariantSequence(
@@ -122,11 +105,11 @@ export const iconStyles = {
       },
     },
     spin: {
-      faster: { animation: `${bounce} 2.5s infinite linear`, transformOrigin: "right center" },
-      fast: { animation: `${bounce} 2.5s infinite linear`, transformOrigin: "right center" },
-      slow: { animation: `${bounce} 2.5s infinite linear`, transformOrigin: "right center" },
-      slower: { animation: `${bounce} 2.5s infinite linear`, transformOrigin: "right center" },
-      slowest: { animation: `${bounce} 2.5s infinite linear`, transformOrigin: "right center" },
+      faster: { animation: `${spin} 1s infinite linear` },
+      fast: { animation: `${spin} 1s infinite linear` },
+      slow: { animation: `${spin} 1s infinite linear` },
+      slower: { animation: `${spin} 1s infinite linear` },
+      slowest: { animation: `${spin} 1s infinite linear` },
     },
     noPointerEvents: {
       true: { pointerEvents: "none" },
