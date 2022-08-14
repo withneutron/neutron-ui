@@ -18,6 +18,10 @@ export function getTypeSpace(hash: CharHash) {
     chBase,
     chMin: { ...hash.var, value: `calc(${chBase.ref} - 0.2ch)` },
     chMax: { ...hash.var, value: `calc(${chBase.ref} + 0.2ch)` },
+    tightest: { ...hash.var, value: `calc(${remBase.ref} - 1rem)` },
+    tight: { ...hash.var, value: `calc(${remBase.ref} - 0.25rem)` },
+    regular: { ...hash.var, value: remBase.ref },
+    loose: { ...hash.var, value: `calc(${remBase.ref} + 0.5rem)` },
   } as const
 
   const vars = sharedVars

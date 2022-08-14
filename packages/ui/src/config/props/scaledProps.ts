@@ -66,9 +66,9 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
 
   const props = {
     inlineSize: entries("inlineSize", map(scales, Scale.size)),
+    blockSize: entries("blockSize", map(scales, Scale.size)),
     minInlineSize: entries("minInlineSize", map(scales, Scale.size)),
     maxInlineSize: entries("maxInlineSize", map(scales, Scale.size)),
-    blockSize: entries("blockSize", map(scales, Scale.size)),
     minBlockSize: entries("minBlockSize", map(scales, Scale.size)),
     maxBlockSize: entries("maxBlockSize", map(scales, Scale.size)),
 

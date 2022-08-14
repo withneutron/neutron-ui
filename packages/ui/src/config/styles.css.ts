@@ -20,7 +20,7 @@
  *       E.g. `!reducedMotion` matches when the user agent does NOT request reduced motion.
  *************************************************************************************************/
 
-import { createGlobalTheme, createTheme, style, createGlobalThemeContract, globalStyle } from "@vanilla-extract/css"
+import { globalStyle, globalKeyframes } from "@vanilla-extract/css"
 import { CharHash } from "./utils"
 import {
   getSize,
@@ -54,24 +54,7 @@ import {
   AllPseudoClassesWithAliases,
 } from "./props"
 import { getSelector } from "./styles.utils"
-import {
-  CssFromMap,
-  CssFromCustomVars,
-  MergedCssProps,
-  Conditions,
-} from "./styles.models"
-
-/*************************************************************************************************
- * GLOBAL STYLES
- *************************************************************************************************/
-// Export the theme
-export const themeClass = "nui"
-
-// Function that generates the styles
-globalStyle("html, body", {
-  margin: 0,
-  padding: 0,
-})
+import { CssFromMap, CssFromCustomVars, MergedCssProps, Conditions } from "./styles.models"
 
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
@@ -81,24 +64,24 @@ const keyframeHash = new CharHash()
 const classHash = new CharHash()
 
 // GENERATE THEME SCALES //////////////////////////////////////////////////////////////////////////
-const animation = getAnimation(varHash, keyframeHash)
-const color = getColor(varHash)
 const size = getSize(varHash)
 const space = getSpace(varHash, size.vars)
-const radius = getRadius(varHash)
-const column = getColumn(varHash, size.vars)
-const row = getRow(varHash, column.vars)
-const zIndex = getZIndex(varHash)
-const lineHeight = getLineHeight(varHash, size.vars)
-const typeSpace = getTypeSpace(varHash)
-const textDecoration = getTextDecoration(varHash, color.vars)
-const shadow = getShadow(varHash, color.vars)
+const color = getColor(varHash)
 const fontSize = getFontSize(varHash)
 const fontWeight = getFontWeight(varHash)
 const fontFamily = getFontFamily(varHash)
 const font = getFont(varHash, fontSize.vars, fontWeight.vars, fontFamily.vars)
 const border = getBorder(varHash, color.vars)
 const outline = getOutline(varHash, color.vars)
+const radius = getRadius(varHash)
+const zIndex = getZIndex(varHash)
+const column = getColumn(varHash, size.vars)
+const row = getRow(varHash, column.vars)
+const lineHeight = getLineHeight(varHash, size.vars)
+const typeSpace = getTypeSpace(varHash)
+const textDecoration = getTextDecoration(varHash, color.vars)
+const shadow = getShadow(varHash, color.vars)
+const animation = getAnimation(varHash, keyframeHash)
 
 const scales = {
   animation,
@@ -120,6 +103,128 @@ const scales = {
   typeSpace,
   zIndex,
 } as const
+
+// GLOBAL STYLES //////////////////////////////////////////////////////////////////////////////////
+// Export the theme
+export const themeClass = "nui"
+
+// Function that generates the styles
+globalStyle("html, body", {
+  margin: 0,
+  padding: 0,
+})
+globalStyle("html", { fontSize: "6.25%" })
+globalStyle("body", {
+  background: color.vars.neutral2.ref,
+  color: color.vars.defaultBody.ref,
+  fontSize: "16em",
+  fontWeight: fontWeight.vars.p.ref,
+  lineHeight: lineHeight.vars.body.ref,
+})
+// Fix for Safari to properly set `rem` units
+globalStyle("html", {
+  "@media": {
+    "not all and (min-resolution:.001dpcm)": {
+      "@supports": {
+        "(-webkit-appearance:none)": {
+          fontSize: "1px",
+        },
+      },
+    },
+  },
+})
+globalStyle("*", {
+  WebkitFontSmoothing: "antialiased",
+  MozOsxFontSmoothing: "grayscale",
+  boxSizing: "border-box",
+})
+globalStyle("*::placeholder", {
+  color: color.vars.textNeutral9.ref,
+})
+globalStyle("body, a, p, li, strong, em, b, i, button", {
+  fontFamily: fontFamily.vars.body.ref,
+})
+globalStyle("button", {
+  fontFamily: fontFamily.vars.button.ref,
+})
+globalStyle("pre, code", {
+  fontFamily: fontFamily.vars.code.ref,
+})
+globalStyle("code", {
+  background: color.vars.neutralMaxA2.ref,
+  color: color.vars.neutralMax.ref,
+  fontWeight: fontWeight.vars.code.ref,
+})
+globalStyle("blockquote", {
+  fontFamily: fontFamily.vars.quote.ref,
+  fontSize: fontSize.vars.quote.ref,
+  lineHeight: lineHeight.vars.spaced.ref,
+  fontStyle: "italic",
+})
+globalStyle("ul", {
+  listStyleType: "circle",
+})
+globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
+  fontSize: fontSize.vars.p.ref,
+})
+globalStyle("a", {
+  color: color.vars.primary10.ref,
+  fontWeight: fontWeight.vars[600].ref,
+  borderRadius: radius.vars.field.ref,
+  textDecoration: "underline",
+})
+globalStyle("a:focus", {
+  outline: outline.vars.primaryMax.ref,
+})
+globalStyle("blockquote, pre", {
+  background: color.vars.neutral3.ref,
+  color: color.vars.textNeutral3.ref,
+  marginInline: 0,
+  paddingInline: space.vars[32].ref,
+  paddingBlock: space.vars[20].ref,
+  borderRadius: radius.vars.rounded.ref,
+})
+globalStyle("h1", {
+  fontSize: fontSize.vars.h1.ref,
+  fontWeight: fontWeight.vars.h1.ref,
+  letterSpacing: typeSpace.vars.tightest.ref,
+})
+globalStyle("h2", {
+  fontSize: fontSize.vars.h2.ref,
+  fontWeight: fontWeight.vars.h2.ref,
+})
+globalStyle("h3", {
+  fontSize: fontSize.vars.h3.ref,
+  fontWeight: fontWeight.vars.h3.ref,
+})
+globalStyle("h4", {
+  fontSize: fontSize.vars.h4.ref,
+  fontWeight: fontWeight.vars.h4.ref,
+})
+globalStyle("h5", {
+  fontSize: fontSize.vars.h5.ref,
+  fontWeight: fontWeight.vars.h5.ref,
+})
+globalStyle("h6", {
+  fontSize: fontSize.vars.h6.ref,
+  fontWeight: fontWeight.vars.h6.ref,
+})
+globalStyle("em", {
+  fontStyle: "normal",
+})
+globalStyle("strong", {
+  fontWeight: fontWeight.vars.p.ref,
+})
+globalStyle("::selection", {
+  background: color.vars.primary9.ref,
+  color: color.vars.textPrimary9.ref,
+})
+
+// Add keyframes to CSS
+animation.keyframes &&
+  Object.entries(animation.keyframes).forEach(([name, rule]) => {
+    globalKeyframes(name, rule)
+  })
 
 // SCALED PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
@@ -203,22 +308,24 @@ type A = typeof scaledPropsIPC
 type B = typeof customVarPropsIPC & typeof customVarPropsSPC
 type C = typeof staticPropsIPC
 
-type MergePCCssProps =
-  & { ":focus-visible"?: MergedCssProps<CssFromMap<A[":focus-visible"]>, CssFromCustomVars<B[":focus-visible"]>, CssFromMap<C[":focus-visible"]>> }
-  & { ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> }
-  & { ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>> }
-  & { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> }
-  & { ":first-child"?: CssFromCustomVars<B[":first-child"]> }
-  & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
+type MergePCCssProps = {
+  ":focus-visible"?: MergedCssProps<
+    CssFromMap<A[":focus-visible"]>,
+    CssFromCustomVars<B[":focus-visible"]>,
+    CssFromMap<C[":focus-visible"]>
+  >
+} & { ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> } & {
+  ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
+} & { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> } & {
+  ":first-child"?: CssFromCustomVars<B[":first-child"]>
+} & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
 
-
-type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
-  AllPseudoClassesWithAliases<MergePCCssProps>
+type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> & AllPseudoClassesWithAliases<MergePCCssProps>
 
 /** Full type of Neutron UI style objects, including pseudo-classes and conditions */
 export type CSS = BaseCSS & { [k in Conditions]?: BaseCSS }
 
-  // Sample to test types + auto-complete
+// Sample to test types + auto-complete
 const props: CSS = {
   maxBlockSize: "initial",
   blockSize: "$buttonTactileShadow",
@@ -245,9 +352,9 @@ const props: CSS = {
     bg: "$secondary9",
   },
   "@dark": {
-    outlineWidth: "$widthBase"
+    outlineWidth: "$widthBase",
   },
   "@reducedMotion": {
-    animation: "none"
-  }
+    animation: "none",
+  },
 }
