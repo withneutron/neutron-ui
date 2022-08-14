@@ -41,6 +41,8 @@ import {
   getBorder,
   getOutline,
   getAnimation,
+  BaseVars,
+  CssValue,
 } from "./scales"
 import {
   CssPropKey,
@@ -221,10 +223,11 @@ globalStyle("::selection", {
 })
 
 // Add keyframes to CSS
-animation.keyframes &&
+if (animation.keyframes) {
   Object.entries(animation.keyframes).forEach(([name, rule]) => {
     globalKeyframes(name, rule)
   })
+}
 
 // SCALED PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
@@ -300,6 +303,8 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
+type Scale = typeof scales
+type ScaleKey = keyof typeof scales
 type ScaledProps = CssFromMap<typeof scaledProps>
 type CustomVarProps = CssFromCustomVars<typeof customVarProps>
 type StaticProps = CssFromMap<typeof staticProps>
@@ -358,3 +363,44 @@ const props: CSS = {
     animation: "none",
   },
 }
+
+/*************************************************************************************************
+ * THEME GENERATION
+ *************************************************************************************************/
+export const varMap = {} as Record<string, string | number>
+export const darkColorMap = {} as Record<string, string | number>
+
+function getVars<V extends BaseVars>(vars: V, map: typeof varMap = varMap) {
+  return Object.entries(vars).reduce((output, [key, { ref, name, value }]) => {
+    output[key as keyof typeof output] = ref
+    if (typeof value === "string") {
+      map[name] = value
+    }
+    return output
+  }, {} as { [k in keyof V]: string })
+}
+
+export const vars = {
+  animation: getVars(animation.vars),
+  border: getVars(border.vars),
+  color: getVars(color.vars),
+  column: getVars(column.vars),
+  font: getVars(font.vars),
+  fontFamily: getVars(fontFamily.vars),
+  fontSize: getVars(fontSize.vars),
+  fontWeight: getVars(fontWeight.vars),
+  lineHeight: getVars(lineHeight.vars),
+  outline: getVars(outline.vars),
+  radius: getVars(radius.vars),
+  row: getVars(row.vars),
+  shadow: getVars(shadow.vars),
+  size: getVars(size.vars),
+  space: getVars(space.vars),
+  textDecoration: getVars(textDecoration.vars),
+  typeSpace: getVars(typeSpace.vars),
+  zIndex: getVars(zIndex.vars),
+} as const
+
+export const darkColor = getVars(color.darkVars!, darkColorMap)
+
+globalStyle(":root", varMap)

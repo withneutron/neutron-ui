@@ -19,12 +19,12 @@ export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
     32: { ...hash.var, value: `calc(${size[32].ref} + ${modifier.ref})` },
     40: { ...hash.var, value: `calc(${size[40].ref} + ${modifier.ref})` },
     min: { ...hash.var, value: "1px" },
-    spaced: { ...hash.var, value: `calc((${base.ref}) * 1.1) + ${modifier.ref}))` },
-    tight: { ...hash.var, value: `calc((${base.ref}) / 1.65) + ${modifier.ref}))` },
+    spaced: { ...hash.var, value: `calc((${base.ref} * 1.1) + ${modifier.ref})` },
+    tight: { ...hash.var, value: `calc((${base.ref} / 1.65) + ${modifier.ref})` },
     // Semantic
-    body: { ...hash.var, value: `calc(${base.ref}) + ${modifier.ref}))` },
-    heading: { ...hash.var, value: `calc((0.75 + (${base.ref}) * 0.3)) + ${modifier.ref}))` },
-    listItem: { ...hash.var, value: `calc((0.75 + (${base.ref}) * 0.3)) + ${modifier.ref}))` },
+    body: { ...hash.var, value: `calc(${base.ref} + ${modifier.ref})` },
+    heading: { ...hash.var, value: `calc((0.75 + (${base.ref} * 0.3)) + ${modifier.ref})` },
+    listItem: { ...hash.var, value: `calc((0.75 + (${base.ref} * 0.3)) + ${modifier.ref})` },
     // Components
     field,
     label: { ...hash.var, value: field.ref },

@@ -1,7 +1,7 @@
 import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
 import Layout from "@/components/layout/Layout"
-import { Locale, UIProvider, simulateRTL, appTheme, appDarkTheme, getInitialProps } from "@/ui"
+import { Locale, UIProvider, simulateRTL, appTheme, appDarkTheme, getInitialProps, Style } from "@/ui"
 import App from "next/app"
 import "@withneutron/ui/styles"
 
@@ -16,8 +16,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       defaultColorMode={colorMode}
       isMobile={isMobile}
     >
+      <Style />
       <Head>
-        <title>Next.js + Neutron UI</title>
+        <title>Next.js + Neutron UI +++</title>
         <meta name="description" content="Sample Next.js app, using NeutronUI" />
       </Head>
       <Layout>
