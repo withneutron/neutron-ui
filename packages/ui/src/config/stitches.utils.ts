@@ -1,4 +1,4 @@
-import { CSS, getCssText, globalStyles, Theme, ThemeValues, VariantType } from "./stitches.config"
+import { CSS, getCssText, Theme, ThemeValues, VariantType } from "./stitches.config"
 import {
   THEME_FULL_PROPS,
   THEME_PRIMITIVE_PROPS,
@@ -42,9 +42,6 @@ export const mergeCSS = (...cssObject: CSS[]): CSS => {
 
 /** Get the styled markup for SSR, based on a generator */
 export const getStyledMarkup = (generator: () => string): string => {
-  // Apply global styles
-  globalStyles()
-
   // Render the markup
   let markup = generator()
 
@@ -173,8 +170,7 @@ export function swapVariantValues<T extends VariantType = VariantType>(
     return variant
   }
   return Object.keys(variant).reduce((output: T, key: string): T => {
-    if (String(variant[key as keyof T]) === searchValue)
-      output[key as keyof T] = replaceValue as any
+    if (String(variant[key as keyof T]) === searchValue) output[key as keyof T] = replaceValue as any
     return output
   }, {} as T)
 }

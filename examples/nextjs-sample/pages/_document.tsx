@@ -3,7 +3,6 @@ import {
   appFontLinks,
   appGlobalStyles,
   getCssText,
-  globalStyles,
   appTheme,
   appDarkTheme,
   getInitialProps,
@@ -14,7 +13,6 @@ import {
 
 function Document(props: DocumentProps & { initialProps: InitialProps }) {
   // Global styles
-  globalStyles()
   appGlobalStyles()
 
   return (

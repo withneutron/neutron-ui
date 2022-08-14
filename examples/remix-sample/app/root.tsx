@@ -31,7 +31,6 @@ import {
   appTheme,
   appDarkTheme,
   Grid,
-  globalStyles,
   getColorModeFromHeaders,
   getLanguageFromHeaders,
   IconButton,
@@ -147,7 +146,6 @@ interface DocumentProps {
 }
 function Document({ children, title, colorMode, isMobile, locale, themeConfig, darkThemeConfig }: DocumentProps) {
   // Global styles
-  globalStyles()
   appGlobalStyles()
 
   // Themes
