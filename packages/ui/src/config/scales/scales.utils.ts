@@ -42,15 +42,13 @@ import {
   getAlphaColorAtIndex,
 } from "../../shared/utils"
 import {
-  CssValue,
   ThemePropValue,
   ScaleEntry,
   ColorPalette,
   ColorSetter,
   BaseVars,
   CssValueMap,
-  CssAliasMap,
-  CssAlias,
+  PrefixedKey,
 } from "./scales.models"
 
 /** Converts a set of vars to CSS values (i.e., using the var set's `ref` as a value) */
@@ -62,8 +60,6 @@ export function getCssMapFromVars<T extends BaseVars>(vars: T) {
   }, {} as Record<keyof T, string>)
 }
 
-type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${keyof Omit<T, symbol>}`
-
 /** Converts a CSS map to theme tokens */
 export function getThemePropsFromCssMap<T extends CssValueMap>(vars: T) {
   const keys = Object.keys(vars)
@@ -72,15 +68,6 @@ export function getThemePropsFromCssMap<T extends CssValueMap>(vars: T) {
     out[key as keyof typeof out] = key
     return out
   }, {} as Record<PrefixedKey<T>, ThemePropValue>)
-}
-
-/** Converts a CSS Alias Map into theme props */
-export function getPropsFromAliasMap<T extends CssAliasMap>(map: T) {
-  return Object.entries(map).reduce((out: Record<keyof T, string>, [key, alias]: [keyof T, CssAlias]) => {
-    // Refer to the same CSS var as the target of the alias
-    out[key] = alias.var
-    return out
-  }, {} as Record<keyof T, string>)
 }
 
 /** Generates a color object (w/ keys numbered 1-12), from a list of 12 values */

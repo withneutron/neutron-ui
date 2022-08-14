@@ -1,5 +1,5 @@
-import { VarData } from "packages/ui/src/config/utils"
-import { BodyFontFamily, HeadingFontFamily, CodeFontFamily, ThemeColor } from "packages/ui/src/shared/models"
+import { THEME_PREFIX, VarData } from "../utils"
+import { BodyFontFamily, HeadingFontFamily, CodeFontFamily, ThemeColor } from "../../shared/models"
 
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
@@ -146,3 +146,8 @@ export enum Scale {
 export type Scales = {
   [key in Scale]: ThemeScale
 }
+
+export type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${keyof Omit<
+  T,
+  symbol
+>}`

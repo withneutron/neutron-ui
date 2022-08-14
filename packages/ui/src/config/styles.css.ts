@@ -21,7 +21,7 @@
  *************************************************************************************************/
 
 import { globalStyle, globalKeyframes } from "@vanilla-extract/css"
-import { CharHash } from "./utils"
+import { addPrefix, CharHash } from "./utils"
 import {
   getSize,
   getSpace,
@@ -43,6 +43,8 @@ import {
   getAnimation,
   BaseVars,
   CssValue,
+  ThemeProps,
+  PrefixedKey,
 } from "./scales"
 import {
   CssPropKey,
@@ -371,14 +373,29 @@ const props: CSS = {
 export const varMap = {} as Record<string, string | number>
 export const darkVarMap = {} as Record<string, string | number>
 
-function getVars<V extends BaseVars>(vars: V, map: typeof varMap = varMap) {
-  return Object.entries(vars).reduce((output, [key, { ref, name, value }]) => {
-    output[key as keyof typeof output] = ref
+function getVars<V extends BaseVars>(vars: V, map = varMap) {
+  return Object.entries(vars).reduce((output, [key, { name, value }]) => {
+    output[key as keyof typeof output] = name
     if (typeof value === "string") {
       map[name] = value
     }
     return output
   }, {} as { [k in keyof V]: string })
+}
+
+function getTokenToVarsMap<V extends BaseVars>(vars: V) {
+  return Object.entries(vars).reduce((output, [key, { name }]) => {
+    const token = addPrefix(key)
+    output[token as keyof typeof output] = name
+    return output
+  }, {} as { [k in PrefixedKey<V>]: string })
+}
+
+function getThemeProps<T extends ThemeProps>(props: T) {
+  return Object.entries(props).reduce((output, [key, value]) => {
+    output[key as keyof typeof output] = value
+    return output
+  }, {} as { [k in keyof T]: string })
 }
 
 export const vars = {
@@ -400,6 +417,55 @@ export const vars = {
   textDecoration: getVars(textDecoration.vars),
   typeSpace: getVars(typeSpace.vars),
   zIndex: getVars(zIndex.vars),
+} as const
+
+export const theme = {
+  animation: getThemeProps(animation.themeProps),
+  border: getThemeProps(border.themeProps),
+  color: getThemeProps(color.themeProps),
+  column: getThemeProps(column.themeProps),
+  font: getThemeProps(font.themeProps),
+  fontFamily: getThemeProps(fontFamily.themeProps),
+  fontSize: getThemeProps(fontSize.themeProps),
+  fontWeight: getThemeProps(fontWeight.themeProps),
+  lineHeight: getThemeProps(lineHeight.themeProps),
+  outline: getThemeProps(outline.themeProps),
+  radius: getThemeProps(radius.themeProps),
+  row: getThemeProps(row.themeProps),
+  shadow: getThemeProps(shadow.themeProps),
+  size: getThemeProps(size.themeProps),
+  space: getThemeProps(space.themeProps),
+  textDecoration: getThemeProps(textDecoration.themeProps),
+  typeSpace: getThemeProps(typeSpace.themeProps),
+  zIndex: getThemeProps(zIndex.themeProps),
+} as const
+
+/**
+ * Can be used to convert a theme token value (e.g., `$primary9` color), to a CSS var.
+ *
+ * For instance, when generating styles for color, the generator could check `scaledProps.color` to
+ * see if a key exists there; if it doesn't, it could use this map to convert the value into a var
+ * instead, which will leverage our custom var system instead of a pre-generated CSS class.
+ */
+export const tokenToVarMap = {
+  animation: getTokenToVarsMap(animation.vars),
+  border: getTokenToVarsMap(border.vars),
+  color: getTokenToVarsMap(color.vars),
+  column: getTokenToVarsMap(column.vars),
+  font: getTokenToVarsMap(font.vars),
+  fontFamily: getTokenToVarsMap(fontFamily.vars),
+  fontSize: getTokenToVarsMap(fontSize.vars),
+  fontWeight: getTokenToVarsMap(fontWeight.vars),
+  lineHeight: getTokenToVarsMap(lineHeight.vars),
+  outline: getTokenToVarsMap(outline.vars),
+  radius: getTokenToVarsMap(radius.vars),
+  row: getTokenToVarsMap(row.vars),
+  shadow: getTokenToVarsMap(shadow.vars),
+  size: getTokenToVarsMap(size.vars),
+  space: getTokenToVarsMap(space.vars),
+  textDecoration: getTokenToVarsMap(textDecoration.vars),
+  typeSpace: getTokenToVarsMap(typeSpace.vars),
+  zIndex: getTokenToVarsMap(zIndex.vars),
 } as const
 
 export const darkColor = getVars(color.darkVars!, darkVarMap)
