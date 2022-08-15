@@ -17,7 +17,16 @@ import {
   colorText,
   CssAliasMap,
 } from "../scales"
-import { CssPropKey, CssRule, CssValueClassMap, FilterKeys, KeysFromScale, PickKeys } from "./props.models"
+import {
+  CssPropKey,
+  CssRule,
+  CssValueClassMap,
+  FilterKeys,
+  KeysFromScale,
+  PickKeys,
+  SCALED_VALUE,
+} from "./props.models"
+import { addPrefix } from "../utils"
 
 function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
   const output: PickKeys<M, typeof keys> = { ...map }
@@ -58,10 +67,11 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
         const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
 
         const isFilteredKey = keys && !keys[prop]
-        const isAliasKey = aliasMap?.[scaleKey as string]
-        const className = isFilteredKey || isAliasKey ? "" : generateClass(value)
+        const isAliasKey = aliasMap?.[addPrefix(String(scaleKey))]
+        const fallbackValue = isAliasKey ? SCALED_VALUE : ""
+        const className = isFilteredKey || isAliasKey ? fallbackValue : generateClass(value)
 
-        const key = `$${scaleKey}` as KeysFromScale<M>
+        const key = addPrefix(String(scaleKey)) as KeysFromScale<M>
         output[key] = className
 
         return output
@@ -69,6 +79,8 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
       {} as CssValueClassMap<typeof map>
     )
   }
+
+  const backgroundColor = entries("backgroundColor", map(scales, Scale.color, colorCore))
 
   const props = {
     inlineSize: entries("inlineSize", map(scales, Scale.size)),
@@ -128,7 +140,8 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     borderEndEndRadius: entries("borderEndEndRadius", map(scales, Scale.radius)),
 
     // Scaled color values from `background` get routed to this instead
-    backgroundColor: entries("backgroundColor", map(scales, Scale.color, colorCore)),
+    background: backgroundColor,
+    backgroundColor,
 
     color: entries("color", map(scales, Scale.color, colorText)),
     fill: entries("fill", map(scales, Scale.color, colorCore)),
@@ -159,3 +172,86 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
   }
   return props
 }
+
+export const scaledPropScale = {
+  inlineSize: Scale.size,
+  blockSize: Scale.size,
+  minInlineSize: Scale.size,
+  maxInlineSize: Scale.size,
+  minBlockSize: Scale.size,
+  maxBlockSize: Scale.size,
+
+  marginBlockStart: Scale.space,
+  marginBlockEnd: Scale.space,
+  marginInlineStart: Scale.space,
+  marginInlineEnd: Scale.space,
+
+  paddingBlockStart: Scale.space,
+  paddingBlockEnd: Scale.space,
+  paddingInlineStart: Scale.space,
+  paddingInlineEnd: Scale.space,
+
+  insetBlockStart: Scale.space,
+  insetBlockEnd: Scale.space,
+  insetInlineStart: Scale.space,
+  insetInlineEnd: Scale.space,
+
+  outline: Scale.outline,
+  outlineWidth: Scale.outline,
+  outlineColor: Scale.outline,
+  outlineOffset: Scale.outline,
+
+  borderBlockStart: Scale.border,
+  borderBlockEnd: Scale.border,
+  borderInlineStart: Scale.border,
+  borderInlineEnd: Scale.border,
+
+  borderBlockStartColor: Scale.border,
+  borderBlockEndColor: Scale.border,
+  borderInlineStartColor: Scale.border,
+  borderInlineEndColor: Scale.border,
+
+  borderBlockStartWidth: Scale.border,
+  borderBlockEndWidth: Scale.border,
+  borderInlineStartWidth: Scale.border,
+  borderInlineEndWidth: Scale.border,
+
+  flexBasis: Scale.size,
+
+  gridAutoRows: Scale.row,
+  gridTemplateColumns: Scale.column,
+
+  columnGap: Scale.space,
+  rowGap: Scale.space,
+
+  borderStartStartRadius: Scale.radius,
+  borderStartEndRadius: Scale.radius,
+  borderEndStartRadius: Scale.radius,
+  borderEndEndRadius: Scale.radius,
+
+  background: Scale.color,
+  backgroundColor: Scale.color,
+
+  color: Scale.color,
+  fill: Scale.color,
+  stroke: Scale.color,
+
+  font: Scale.font,
+  fontFamily: Scale.fontFamily,
+  fontSize: Scale.fontSize,
+  fontWeight: Scale.fontWeight,
+
+  textDecoration: Scale.textDecoration,
+
+  lineHeight: Scale.lineHeight,
+  letterSpacing: Scale.typeSpace,
+  wordSpacing: Scale.typeSpace,
+  textUnderlineOffset: Scale.typeSpace,
+
+  zIndex: Scale.zIndex,
+
+  boxShadow: Scale.shadow,
+
+  animation: Scale.animation,
+  animationDuration: Scale.animation,
+} as const

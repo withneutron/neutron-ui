@@ -56,9 +56,10 @@ import {
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
   AllPseudoClassesWithAliases,
+  scaledPropScale,
 } from "./props"
 import { getSelector } from "./styles.utils"
-import { CssFromMap, CssFromCustomVars, MergedCssProps, Conditions } from "./styles.models"
+import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey } from "./styles.models"
 
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
@@ -87,7 +88,7 @@ const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
 
-const scales = {
+export const scales = {
   animation,
   border,
   color,
@@ -296,6 +297,20 @@ const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((ps
   }, keys)
 )
 
+export const scaledPropMap = {
+  ...scaledPropsIPC,
+  base: scaledProps,
+}
+export const customVarPropMap = {
+  ...customVarPropsIPC,
+  ...customVarPropsSPC,
+  base: customVarProps,
+}
+export const staticPropMap = {
+  ...staticPropsIPC,
+  base: staticProps,
+}
+
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
 console.log("---- Generated CSS ----")
 console.log(String(classHash.count).padStart(5, " "), "classes.")
@@ -305,8 +320,6 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
-type Scale = typeof scales
-type ScaleKey = keyof typeof scales
 type ScaledProps = CssFromMap<typeof scaledProps>
 type CustomVarProps = CssFromCustomVars<typeof customVarProps>
 type StaticProps = CssFromMap<typeof staticProps>
@@ -327,45 +340,11 @@ type MergePCCssProps = {
   ":first-child"?: CssFromCustomVars<B[":first-child"]>
 } & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
 
-type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> & AllPseudoClassesWithAliases<MergePCCssProps>
+export type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
+  AllPseudoClassesWithAliases<MergePCCssProps>
 
 /** Full type of Neutron UI style objects, including pseudo-classes and conditions */
-export type CSS = BaseCSS & { [k in Conditions]?: BaseCSS }
-
-// Sample to test types + auto-complete
-const props: CSS = {
-  maxBlockSize: "initial",
-  blockSize: "$buttonTactileShadow",
-  h: "$120",
-  bg: "transparent",
-  color: "transparent",
-  px: "$buttonBasePx",
-  animationDuration: "$bounceDuration",
-  inlineSize: "$buttonTactileHighlight",
-  borderBlockStart: "$primaryMax",
-  minBlockSize: "$0",
-  fill: "initial",
-  fontWeight: "$semiBold",
-  ":active": {
-    color: "$primary9",
-    bg: "$neutral1",
-    borderBlockEnd: "$secondaryMin",
-  },
-  ":focus-visible": {
-    color: "$neutral10",
-    borderBlockEnd: "initial",
-    background: "$warningMin",
-  },
-  ":focus": {
-    bg: "$secondary9",
-  },
-  "@dark": {
-    outlineWidth: "$widthBase",
-  },
-  "@reducedMotion": {
-    animation: "none",
-  },
-}
+export type CSS = BaseCSS & { [k in ConditionKey]?: BaseCSS }
 
 /*************************************************************************************************
  * THEME GENERATION

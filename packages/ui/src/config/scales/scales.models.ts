@@ -6,7 +6,7 @@ export type ThemePropValue = string
 export type CssValue = string | Record<string, string | number>
 export type CssAlias<T extends string | number = string | number> = {
   var: string
-  target: T
+  target: `${typeof THEME_PREFIX}${T}`
 }
 export type ScaleEntry = VarData & {
   value: CssValue
@@ -108,7 +108,7 @@ export interface ThemeScale<
   vars: S
   /** For color scales, the default set of vars is `light`, so they may also return a `dark` set */
   darkVars?: Record<keyof S, ScaleEntry>
-  /** Used for building a consumable, typed $theme object, with CSS var references and aliases for prop combos */
+  /** Used for building a consumable, typed $theme object, with theme tokens */
   themeProps: T
   /** Used to generate static CSS classes, and the prop values that reference them */
   cssValueMap: C
@@ -116,6 +116,7 @@ export interface ThemeScale<
    * Used to generate aliases for some CSS classes
    *
    * NOTE: These keys must ALSO be added to `cssValueMap`, for the generated types to work properly.
+   * NOTE 2: Thes keys MUST have the THEME_PREFIX as a prefix
    */
   cssAliasMap?: A
   /** Used for building keyframe-based animations */

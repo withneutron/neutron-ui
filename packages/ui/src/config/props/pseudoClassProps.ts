@@ -154,11 +154,6 @@ export const structuralPseudoClasses = {
   // MAYBE: target, target-within, visited
 } as const
 
-export const pseudoClasses = {
-  ...interactivePseudoClasses,
-  ...structuralPseudoClasses,
-} as const
-
 // ALIASES ////////////////////////////////////////////////////////////////////
 export const pseudoClassAliases = {
   // Interactive Pseudo Classes
@@ -193,3 +188,10 @@ export type AllPseudoClassesWithAliases<T extends PseudoClassObject> =
   & { ":odd"?: T[":nth-child(odd)"] } 
   & { ":first"?: T[":first-child"] } 
   & { ":last"?: T[":last-child"] }
+
+// OUTPUT /////////////////////////////////////////////////////////////////////
+export const pseudoClasses = {
+  ...interactivePseudoClasses,
+  ...structuralPseudoClasses,
+  ...pseudoClassAliases,
+} as const

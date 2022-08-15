@@ -59,47 +59,6 @@ export const mappedProps = {
   autoRows: getPropMapper("gridAutoRows"),
   gtRows: getPropMapper("gridTemplateRows"),
   gtColumns: getPropMapper("gridTemplateColumns"),
-  /** 
-   * THIS LOGIC SHOULD LIVE IN THE CSS PROCESSOR, not here, because it should also apply to the
-   * native prop, not just this util!
-   *
-   * gt: getPropMapper("gridTemplate"], v => {
-   *   // Check for line-breaks; throw error if they're found (only row/col syntax supported)
-   *   const hasLineBreaks = (String(v).match(/\r|\n/) || []).length > 0
-   *   if (hasLineBreaks)
-   *     throw new Error("We do not currently support areas via this property; please use `gridArea` for that.")
-   *   return v
-   * }),
-   * gtRows: getPropMapper(
-   *   // If BOTH rows + cols are set, JOIN onto gridTemplate
-   *   (_v, p) => {
-   *     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-   *     return ["gridTemplateRows"]
-   *   },
-   *   (v, p) => {
-   *     const cols = p.gtRows || p.gridTemplateRows
-   *     if (cols) return `${v} / ${cols}`
-   *     return v
-   *   }
-   * ),
-   * gtColumns: getPropMapper(
-   *   // If BOTH rows + cols are set, JOIN onto gridTemplate
-   *   (_v, p) => {
-   *     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-   *     return ["gridTemplateColumns"]
-   *   },
-   *   (v, p) => {
-   *     const rows = p.gtRows || p.gridTemplateRows
-   *     if (rows) return `${rows} / ${v}`
-   *     return v
-   *   }
-   * ),
-
-   * These have custom classes that use --var in a "template", just like these string templates
-   * linearGradient: getPropMapper("backgroundImage"], v => `linear-gradient(${v})`),
-   * radialGradient: getPropMapper("backgroundImage"], v => `radial-gradient(${v})`),
-   * conicGradient: getPropMapper("backgroundImage"], v => `conic-gradient(${v})`),
-   */
 
   // Remapped CSS Props
   height: getPropMapper("blockSize"),
@@ -192,6 +151,59 @@ export const mappedProps = {
   wordWrap: getPropMapper("overflowWrap"),
 } as const
 
+/*************************************************************************************************
+ * VALUE MAPPERS
+ *************************************************************************************************/
+
+export const valueMappers = {
+  gridTemplate: (value: string) => {
+    // Check for line-breaks; throw error if they're found (only row/col syntax supported)
+    const hasLineBreaks = (String(value).match(/\r|\n/) || []).length > 0
+    if (hasLineBreaks)
+      throw new Error("We do not currently support areas via this property; please use `gridArea` for that.")
+    return value
+  },
+} as const
+/** 
+* THIS LOGIC SHOULD BE RUN IN THE CSS PROCESSOR, not here, because it should also apply to the
+* native prop, not just this util!
+*
+* gt: getPropMapper("gridTemplate"], v => {
+* }),
+* gtRows: getPropMapper(
+*   // If BOTH rows + cols are set, JOIN onto gridTemplate
+*   (_v, p) => {
+*     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
+*     return ["gridTemplateRows"]
+*   },
+*   (v, p) => {
+*     const cols = p.gtRows || p.gridTemplateRows
+*     if (cols) return `${v} / ${cols}`
+*     return v
+*   }
+* ),
+* gtColumns: getPropMapper(
+*   // If BOTH rows + cols are set, JOIN onto gridTemplate
+*   (_v, p) => {
+*     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
+*     return ["gridTemplateColumns"]
+*   },
+*   (v, p) => {
+*     const rows = p.gtRows || p.gridTemplateRows
+*     if (rows) return `${rows} / ${v}`
+*     return v
+*   }
+* ),
+
+* These have custom classes that use --var in a "template", just like these string templates
+* linearGradient: getPropMapper("backgroundImage"], v => `linear-gradient(${v})`),
+* radialGradient: getPropMapper("backgroundImage"], v => `radial-gradient(${v})`),
+* conicGradient: getPropMapper("backgroundImage"], v => `conic-gradient(${v})`),
+*/
+
+/*************************************************************************************************
+ * TYPES
+ *************************************************************************************************/
 type MapKey = keyof typeof mappedProps
 type MappedProps<K extends MapKey> = keyof ReturnType<typeof mappedProps[K]>
 

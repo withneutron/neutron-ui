@@ -4,7 +4,7 @@ const lg = "999.9987654321"
 const xl = "1299.9987654321"
 const unit = "px"
 
-export const conditions = {
+export const conditionsMap = {
   /**
    * For all conditions below, create a `ConditionsContext` at our base provider,
    * which tracks all these conditions centrally. That avoids us repeating queries

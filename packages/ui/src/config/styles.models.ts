@@ -1,4 +1,4 @@
-import { conditions } from "./conditions"
+import { conditionsMap } from "./conditions"
 import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
 
 type CustomVarHint = "__Enter any valid CSS__"
@@ -71,4 +71,4 @@ export type MergedCssProps<A extends MapProps, B extends MapProps, C extends Map
   & { [prop in Exclusive<B, C, A>]?: B[prop] }
   & { [prop in Exclusive<B, A, C>]?: B[prop] }
 
-export type Conditions = keyof typeof conditions
+export type ConditionKey = keyof typeof conditionsMap
