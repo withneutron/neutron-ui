@@ -6,7 +6,7 @@
  * props (and the classes we generate for them) get shorter hashes.
  */
 
-/** Full list of supported CSS props (186 props + 35 utility props) */
+/** Full list of supported CSS props (186 props + 39 utility props) */
 export const sourceProps = {
   ////////////////////
   // Remapped Props // (Skip class creation for these)
@@ -42,6 +42,10 @@ export const sourceProps = {
   radiusBottom: true,
   radiusLeft: true,
   radiusRight: true,
+  radiusTopLeft: true,
+  radiusTopRight: true,
+  radiusBottomLeft: true,
+  radiusBottomRight: true,
 
   z: true,
 
@@ -261,6 +265,8 @@ export const sourceProps = {
   justifySelf: true,
   alignContent: true,
   justifyItems: true,
+
+  float: true,
 
   listStyle: true,
   listStyleImage: true,

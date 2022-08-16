@@ -3,11 +3,13 @@
 // props instead; that way, we actually don't even need any additional RTL breakpoints for them.
 export const directionalProps = {
   //// simpleDirectionalShorthands // JUST REMAP
-  float: true,
-  justifyContent: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  justifyItems: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  justifySelf: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
-  textAlign: true, // Don't include `left`/`right` in type def; convert to `start`/`end`.
+  float: true, // Instead of anyting fancy, just generate class in 2 different conditions, one being LTR the other RTL
+
+  // Just don't support "bad" values 🤷🏻‍♂️
+  // justifyContent: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  // justifyItems: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  // justifySelf: true, // Don't include `left`/`right` in type def; convert to `start`/`end`; strip `flex-`.
+  // textAlign: true, // Don't include `left`/`right` in type def; convert to `start`/`end`.
 
   //// backgroundShorthand // REQUIRES INTERPOLATION
   background: true,

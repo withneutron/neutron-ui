@@ -47,6 +47,10 @@ export const mappedProps = {
   radiusBottom: getPropMapper("borderEndEndRadius", "borderEndStartRadius"),
   radiusLeft: getPropMapper("borderStartStartRadius", "borderEndStartRadius"),
   radiusRight: getPropMapper("borderStartEndRadius", "borderEndEndRadius"),
+  radiusTopLeft: getPropMapper("borderStartStartRadius"),
+  radiusTopRight: getPropMapper("borderStartEndRadius"),
+  radiusBottomLeft: getPropMapper("borderEndStartRadius"),
+  radiusBottomRight: getPropMapper("borderEndEndRadius"),
 
   z: getPropMapper("zIndex"),
 

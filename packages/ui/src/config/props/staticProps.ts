@@ -235,6 +235,8 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
       options("auto", "normal", "stretch", "center", "start", "end", "self-start", "self-end", "baseline")
     ),
 
+    float: values("float", options("left", "right")),
+
     writingMode: values("writingMode", options("horizontal-tb", "vertical-rl", "vertical-lr")),
 
     fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
