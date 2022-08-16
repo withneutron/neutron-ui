@@ -274,7 +274,7 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = PSEU
 }
 
 function getDebugVar(className: string) {
-  return `--_${className}`
+  return `--${className}`
 }
 
 let styleId = 0
