@@ -44,6 +44,8 @@ export const conditionsMap = {
 
   "@light": "COLOR_MODE === light",
   "@dark": "COLOR_MODE === dark",
+
+  debug: "debugmode",
 } as const
 
 /**

@@ -9,7 +9,18 @@ import {
   SCALED_VALUE,
 } from "./props"
 import { ColorMode } from "../shared/models"
-import { vars, darkVarMap, CSS, BaseCSS, customVarPropMap, scaledPropMap, staticPropMap, scales } from "./styles.css"
+import {
+  vars,
+  darkVarMap,
+  CSS,
+  BaseCSS,
+  customVarPropMap,
+  scaledPropMap,
+  staticPropMap,
+  scales,
+  PSEUDO_BASE,
+  tokenToVarMap,
+} from "./styles.css"
 import { ConditionKey } from "./styles.models"
 import { conditionsMap } from "./conditions"
 import { CssAlias } from "./scales/scales.models"
@@ -22,32 +33,31 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
   return overrides
 }
 
-/**
- * TODO:
- * Maybe switch to putting ALL vars in the markup, not just overrides
- * - Should still only happen once, in SPAs.
- * - Avoids duplicating many vars (e.g., colors and shadows in dark mode)
- * - Tradeoff is no caching of vars for cases with JS disabled on the frontend, but that's very few people
- * - Refreshes, revisits, etc would also be faster with caching, though... so maybe the CSS file size hit is worth it
- */
-
-export function style(css: CSS, conditions: Conditions) {
+/** Converts a CSS style object into a set of pre-generated CSS class names, and possibly a style object */
+export function style(css: CSS, conditions: Conditions, styleName?: string) {
   const classList: string[] = []
-  const classDict: Partial<Record<CssPropKey, number>> = {}
+  const classDict: ClassDict = { ...baseClassDict }
   const styleDict: Record<string, string> = {}
   const style: Style = {}
   let styleCount = 0
 
   /** Adds a class name, and optionally a CSS var assignment, to our data */
-  function addClass(prop: CssPropKey, className: string, varName?: string, value?: string) {
-    const isNew = classDict[prop] === undefined
-    const index = classDict[prop] ?? classList.length
+  function addClass(
+    prop: CssPropKey,
+    className: string,
+    pseudoClass: PseudoCategory = PSEUDO_BASE,
+    varName?: string,
+    value?: string
+  ) {
+    const isNew = classDict[pseudoClass][prop] === undefined
+    const index = classDict[pseudoClass][prop] ?? classList.length
     if (isNew) {
       classList.push(className)
-      classDict[prop] = index
+      classDict[pseudoClass][prop] = index
     } else {
       // Clear out old style that got overwritten, if need be
-      const oldStyleVar = styleDict[classList[index]]
+      const oldClass = classList[index]
+      const oldStyleVar = styleDict[oldClass]
       if (oldStyleVar) {
         delete style[oldStyleVar]
         styleCount--
@@ -64,9 +74,17 @@ export function style(css: CSS, conditions: Conditions) {
   processCss(css, addClass, conditions)
 
   // Compile our data into an output object
+  const outputClass = classList.join(" ")
   const output: { style?: Style; className: string } = {
-    className: classList.join(" "),
+    className: outputClass,
   }
+
+  // Handle debug
+  if (conditions.debug) {
+    styleCount++
+    style[getDebugVar(styleName ?? getStyleName())] = outputClass
+  }
+
   if (styleCount > 0) {
     output.style = style
   }
@@ -125,71 +143,76 @@ function processCssProp(prop: CssPropKey, value: string, addClass: AddClass, pse
 function addClassFromStyle(prop: CssPropKey, value: string, addClass: AddClass, pseudo?: PseudoClassKey) {
   const output = getStyle(prop, value, pseudo)
   if (output) {
-    addClass(prop, output.className, output.varName, output.value)
+    addClass(prop, output.className, pseudo ?? PSEUDO_BASE, output.varName, output.value)
   }
 }
 
 // Sample to test types + auto-complete
-const result = style(
-  {
-    maxBlockSize: "initial",
-    blockSize: "$buttonTactileShadow",
-    h: "$120",
-    bg: "transparent",
-    color: "transparent",
-    px: "$buttonBasePx",
-    animationDuration: "$bounceDuration",
-    inlineSize: "$buttonTactileHighlight",
-    borderBlockStart: "$primaryMax",
-    minBlockSize: "$0",
-    fill: "initial",
-    fontWeight: "$semiBold",
-    ":active": {
-      color: "$primary9",
-      bg: "$neutral1",
-      borderBlockEnd: "$secondaryMin",
-    },
-    ":focus-visible": {
-      color: "$neutral10",
-      borderBlockEnd: "initial",
-      background: "$warningMin",
-    },
-    ":focus": {
-      bg: "$secondary9",
-    },
-    "@dark": {
-      outlineWidth: "$widthBase",
-    },
-    "@reducedMotion": {
-      animation: "none",
-    },
+const css: CSS = {
+  bg: "$neutral10",
+  color: "$textNeutral10",
+  mt: "$8",
+  mb: "$20",
+  ml: "$16",
+  mr: "$12",
+  pl: "$16",
+  pr: "$32",
+  py: "$40",
+  radiusTopLeft: "$2",
+  radiusTopRight: "$12",
+  radiusBottomLeft: "$8",
+  radiusBottomRight: "$3",
+  float: "left",
+  maxWidth: "$320",
+  fontWeight: "$bold",
+  fontStyle: "italic",
+  ":active": {
+    color: "$primary9",
+    bg: "$successMax",
   },
-  {
-    "@sm": false,
-    "@md": false,
-    "@lg": false,
-    "@xl": false,
-    "!sm": false,
-    "!md": false,
-    "!lg": false,
-    "!xl": false,
-    "@highContrast": false,
-    "@reducedMotion": false,
-    "@reducedData": false,
-    "@touch": false,
-    "@pointer": false,
-    "@tv": false,
-    "!highContrast": false,
-    "!reducedMotion": false,
-    "!reducedData": false,
-    "!touch": false,
-    "!pointer": false,
-    "!tv": false,
-    "@light": false,
-    "@dark": false,
-  }
-)
-console.log("result", result)
+  ":focus-visible": {
+    color: "$neutral10",
+    bg: "$warningMin",
+  },
+  ":hover": {
+    bg: "$secondary9",
+  },
+  "@dark": {
+    outlineWidth: "$widthBase",
+  },
+  "@reducedMotion": {
+    animation: "none",
+  },
+}
+// const result = style(css,
+//   {
+//     "@sm": false,
+//     "@md": false,
+//     "@lg": false,
+//     "@xl": false,
+//     "!sm": false,
+//     "!md": false,
+//     "!lg": false,
+//     "!xl": false,
+//     "@highContrast": false,
+//     "@reducedMotion": false,
+//     "@reducedData": false,
+//     "@touch": false,
+//     "@pointer": false,
+//     "@tv": false,
+//     "!highContrast": false,
+//     "!reducedMotion": false,
+//     "!reducedData": false,
+//     "!touch": false,
+//     "!pointer": false,
+//     "!tv": false,
+//     "@light": false,
+//     "@dark": false,
+//     debug: true,
+//   }
+// )
+// console.log("className", { className: result.className })
+// console.log("style", result.style)
 
 /*************************************************************************************************
  * UTILS
@@ -206,7 +229,7 @@ function flattenOverrides(overrides?: ThemeOverrides) {
       }, {} as Record<string, string | number>)
 }
 
-function getStyle(prop: CssPropKey, value: string, pseudo: PseudoClassKey | "base" = "base") {
+function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = PSEUDO_BASE) {
   const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
   const staticProp = staticMap[prop as keyof typeof staticMap]
   const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
@@ -215,12 +238,14 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoClassKey | "bas
   const scaledProp = scaledMap[prop as keyof typeof scaledMap]
   let scaledValue = scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
 
+  const scaleKey = scaledPropScale[prop as ScaledKey]
+  const propScale = scales[scaleKey]
+
   if (staticValue) {
     return { className: staticValue }
   } else if (scaledValue) {
     // Check to see if this value is an alias
     if (scaledValue === SCALED_VALUE) {
-      const propScale = scales[scaledPropScale[prop as ScaledKey]]
       const propAliasMap = propScale.cssAliasMap
       type AliasKey = keyof typeof propAliasMap
       const alias = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
@@ -231,20 +256,48 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoClassKey | "bas
     }
     if (scaledValue) return { className: scaledValue }
   } else {
+    // If value is scaled, but we ended up, it could be filtered out of the scale (e.g., a non-core color)
+    if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
+      const tokenMap = tokenToVarMap[scaleKey]
+      const varFromToken = tokenMap[value as keyof typeof tokenMap]
+      if (varFromToken) {
+        value = varFromToken
+      }
+    }
+    // Get both the className and varName needed to set a custom value, if possible for this prop
     const customVarMap = customVarPropMap[pseudo as keyof typeof customVarPropMap]
     const customVarProp =
       prop in customVarMap ? (customVarMap[prop as keyof typeof customVarMap] as CustomVarPropValue) : undefined
     const { className, varName } = customVarProp ?? {}
-    console.log(pseudo, prop, className, varName, value)
     if (className && varName) return { className, varName, value }
   }
 }
+
+function getDebugVar(className: string) {
+  return `--_${className}`
+}
+
+let styleId = 0
+function getStyleName() {
+  styleId++
+  return `style-${styleId}`
+}
+
+const baseClassDict = Object.keys(pseudoClasses).reduce((output, key) => {
+  output[key as PseudoClassKey] = {}
+  return output
+}, {} as ClassDict)
+baseClassDict[PSEUDO_BASE] = {}
+Object.freeze(baseClassDict)
 
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
 type PseudoClassKey = keyof typeof pseudoClasses
-type ScaledKey = keyof typeof scaledPropMap["base"]
+type PseudoCategory = PseudoClassKey | typeof PSEUDO_BASE
+type ScaledKey = keyof typeof scaledPropMap[typeof PSEUDO_BASE]
+
+type ClassDict = { [p in PseudoCategory]: { [c in CssPropKey]?: number } }
 
 type Vars = typeof vars
 
@@ -256,6 +309,12 @@ export type ThemeOverrides = {
 
 type Style = Record<string, string>
 
-type AddClass = (prop: CssPropKey, className: string, varName?: string, value?: string) => void
+type AddClass = (
+  prop: CssPropKey,
+  className: string,
+  pseudoClass?: PseudoCategory,
+  varName?: string,
+  value?: string
+) => void
 
 type Conditions = Record<ConditionKey, boolean>

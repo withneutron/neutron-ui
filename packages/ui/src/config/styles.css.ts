@@ -297,18 +297,19 @@ const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((ps
   }, keys)
 )
 
+export const PSEUDO_BASE = "base"
 export const scaledPropMap = {
   ...scaledPropsIPC,
-  base: scaledProps,
+  [PSEUDO_BASE]: scaledProps,
 }
 export const customVarPropMap = {
   ...customVarPropsIPC,
   ...customVarPropsSPC,
-  base: customVarProps,
+  [PSEUDO_BASE]: customVarProps,
 }
 export const staticPropMap = {
   ...staticPropsIPC,
-  base: staticProps,
+  [PSEUDO_BASE]: staticProps,
 }
 
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
