@@ -141,10 +141,10 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
       animation: `${spin} ${vars.spinDuration.ref} infinite ease-in-out both`,
     },
     spinAndPause: {
-      animation: `${spin} ${vars.spinAndPauseDuration.ref} infinite ease-in-out both`,
+      animation: `${spinAndPause} ${vars.spinAndPauseDuration.ref} infinite ease-in-out both`,
     },
     flashSize: {
-      animation: `${spin} ${vars.flashSizeDuration.ref} 2 ease-in-out both`,
+      animation: `${flashSize} ${vars.flashSizeDuration.ref} 2 ease-in-out both`,
     },
     bounceTop: {
       animation: `${bounceTop} ${vars.bounceDuration.ref} infinite ease-in-out both`,
