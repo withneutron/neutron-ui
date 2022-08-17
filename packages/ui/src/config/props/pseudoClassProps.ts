@@ -134,14 +134,13 @@ export function generateStructuralPseudoClassCss<O extends Record<string, unknow
 }
 
 // PSEUDO CLASS OBJECTS ///////////////////////////////////////////////////////
+// NOTE: IF YOU ADD A PROP HERE, YOU MUST ALSO ADD IT IN `classDict` IN `styleGenerators.ts`
 export const interactivePseudoClasses = {
   // NOTE: We don't include :disabled, because logic for that exists in JS anyway
   ":focus-visible": interactiveClassProps,
   ":hover": pointerClassProps,
   ":active": interactiveClassProps,
 }
-
-// TODO: Could we maybe create a JS helper for this instead??
 export const structuralPseudoClasses = {
   ":nth-child(odd)": structuralClassProps,
   ":first-child": structuralClassProps,
@@ -176,22 +175,18 @@ export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
 type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type InteractivePseudoClassesWithAliases<T extends PseudoClassObject> =
-  & T
-  & { ":focus"?: T[":focus-visible"] } 
-  & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
+export type InteractivePseudoClassesWithAliases<T extends PseudoClassObject> = T & {
+  ":focus"?: T[":focus-visible"]
+} & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } & {
+  ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"]
+} & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
 
-export type AllPseudoClassesWithAliases<T extends PseudoClassObject> =
-  & InteractivePseudoClassesWithAliases<T> 
-  & { ":odd"?: T[":nth-child(odd)"] } 
-  & { ":first"?: T[":first-child"] } 
-  & { ":last"?: T[":last-child"] }
+export type AllPseudoClassesWithAliases<T extends PseudoClassObject> = InteractivePseudoClassesWithAliases<T> & {
+  ":odd"?: T[":nth-child(odd)"]
+} & { ":first"?: T[":first-child"] } & { ":last"?: T[":last-child"] }
 
 // OUTPUT /////////////////////////////////////////////////////////////////////
 export const pseudoClasses = {
   ...interactivePseudoClasses,
   ...structuralPseudoClasses,
-  ...pseudoClassAliases,
 } as const

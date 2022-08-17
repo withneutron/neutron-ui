@@ -564,7 +564,7 @@ const isNumber = (n: string | number) => !isNaN(+n)
 const getTime = (time: string | number): string => (isNumber(time) ? `${time}s` : String(time))
 
 export const animate = (
-  animation: Record<string, CSS>,
+  animation: Record<string, SCSS>,
   options: AnimationOptions = {} as AnimationOptions
 ): AnimationStyles => {
   const {
@@ -778,10 +778,10 @@ export type CompleteThemeValues = {
   transitions: Partial<typeof baseThemeValues.transitions> | null
   zIndices: Partial<typeof baseThemeValues.zIndices> | null
 }
-export type Theme = Partial<PartialTheme>
+export type STheme = Partial<PartialTheme>
 export type ThemeValues = Partial<CompleteThemeValues>
 export type ThemeConfig = Parameters<typeof createTheme>[1]
-export type CSS = S.CSS<typeof config>
+export type SCSS = S.CSS<typeof config>
 export type Polymorphic = string | React.ComponentType<unknown>
 
 export type VariantType = string | Record<MediaToken, string>
@@ -796,96 +796,96 @@ export type Space = Partial<typeof baseThemeValues.space>
 
 // Types of variant sequences
 export interface SizeVariantsHalf {
-  "0": CSS
-  "1": CSS
-  "2": CSS
-  "3": CSS
-  "4": CSS
-  "5": CSS
-  "6": CSS
-  "7": CSS
-  "8": CSS
-  "9": CSS
-  "10": CSS
-  "11": CSS
-  "12": CSS
+  "0": SCSS
+  "1": SCSS
+  "2": SCSS
+  "3": SCSS
+  "4": SCSS
+  "5": SCSS
+  "6": SCSS
+  "7": SCSS
+  "8": SCSS
+  "9": SCSS
+  "10": SCSS
+  "11": SCSS
+  "12": SCSS
 }
 export interface SignedSizeVariantsHalf extends SizeVariantsHalf {
-  minus12: CSS
-  minus11: CSS
-  minus10: CSS
-  minus9: CSS
-  minus8: CSS
-  minus7: CSS
-  minus6: CSS
-  minus5: CSS
-  minus4: CSS
-  minus3: CSS
-  minus2: CSS
-  minus1: CSS
+  minus12: SCSS
+  minus11: SCSS
+  minus10: SCSS
+  minus9: SCSS
+  minus8: SCSS
+  minus7: SCSS
+  minus6: SCSS
+  minus5: SCSS
+  minus4: SCSS
+  minus3: SCSS
+  minus2: SCSS
+  minus1: SCSS
 }
 export interface SizeVariantsFull {
-  "0": CSS
-  "1": CSS
-  "2": CSS
-  "3": CSS
-  "4": CSS
-  "5": CSS
-  "6": CSS
-  "7": CSS
-  "8": CSS
-  "9": CSS
-  "10": CSS
-  "11": CSS
-  "12": CSS
-  "13": CSS
-  "14": CSS
-  "15": CSS
-  "16": CSS
-  "17": CSS
-  "18": CSS
-  "19": CSS
-  "20": CSS
-  "21": CSS
-  "22": CSS
-  "23": CSS
-  "24": CSS
-  "25": CSS
-  "26": CSS
-  "27": CSS
-  "28": CSS
-  "29": CSS
+  "0": SCSS
+  "1": SCSS
+  "2": SCSS
+  "3": SCSS
+  "4": SCSS
+  "5": SCSS
+  "6": SCSS
+  "7": SCSS
+  "8": SCSS
+  "9": SCSS
+  "10": SCSS
+  "11": SCSS
+  "12": SCSS
+  "13": SCSS
+  "14": SCSS
+  "15": SCSS
+  "16": SCSS
+  "17": SCSS
+  "18": SCSS
+  "19": SCSS
+  "20": SCSS
+  "21": SCSS
+  "22": SCSS
+  "23": SCSS
+  "24": SCSS
+  "25": SCSS
+  "26": SCSS
+  "27": SCSS
+  "28": SCSS
+  "29": SCSS
 }
 export interface SignedSizeVariantsFull extends SizeVariantsFull {
-  minus29: CSS
-  minus28: CSS
-  minus27: CSS
-  minus26: CSS
-  minus25: CSS
-  minus24: CSS
-  minus23: CSS
-  minus22: CSS
-  minus21: CSS
-  minus20: CSS
-  minus19: CSS
-  minus18: CSS
-  minus17: CSS
-  minus16: CSS
-  minus15: CSS
-  minus14: CSS
-  minus13: CSS
-  minus12: CSS
-  minus11: CSS
-  minus10: CSS
-  minus9: CSS
-  minus8: CSS
-  minus7: CSS
-  minus6: CSS
-  minus5: CSS
-  minus4: CSS
-  minus3: CSS
-  minus2: CSS
-  minus1: CSS
+  minus29: SCSS
+  minus28: SCSS
+  minus27: SCSS
+  minus26: SCSS
+  minus25: SCSS
+  minus24: SCSS
+  minus23: SCSS
+  minus22: SCSS
+  minus21: SCSS
+  minus20: SCSS
+  minus19: SCSS
+  minus18: SCSS
+  minus17: SCSS
+  minus16: SCSS
+  minus15: SCSS
+  minus14: SCSS
+  minus13: SCSS
+  minus12: SCSS
+  minus11: SCSS
+  minus10: SCSS
+  minus9: SCSS
+  minus8: SCSS
+  minus7: SCSS
+  minus6: SCSS
+  minus5: SCSS
+  minus4: SCSS
+  minus3: SCSS
+  minus2: SCSS
+  minus1: SCSS
 }
 export type BorderWidthVariant = Omit<SizeVariantsHalf, "10" | "11" | "12">
 export type FontSizeVariant = Omit<SizeVariantsHalf, "0">
@@ -901,15 +901,15 @@ export type SignedzIndexVariant = Omit<SignedSizeVariantsHalf, "none">
 export type SignedPositionVariant = Omit<SignedSizeVariantsHalf, "none">
 
 type SemanticRadii = {
-  [key in "px" | "rem" | "base" | "none" | "round" | "pill" | "field" | "button"]: CSS
+  [key in "px" | "rem" | "base" | "none" | "round" | "pill" | "field" | "button"]: SCSS
 }
 //////
 
 type BGColorNames = {
-  [key in BGColorNameKeys]: CSS
+  [key in BGColorNameKeys]: SCSS
 }
 type TextColorNames = {
-  [key in TextColorNameKeys]: CSS
+  [key in TextColorNameKeys]: SCSS
 }
 
 export type Fonts = typeof baseThemeValues.fonts
@@ -917,7 +917,7 @@ export const FONT_PROPS = Object.keys(baseThemeValues.fonts) as (keyof Fonts)[]
 
 // DERIVED UTILS //////////////////////////////////////////////////////////////
 /** Find the root value of a theme variable */
-export function getRootValueFromTheme(theme: Theme, category: ThemeCategoryName, token: ThemeStyleTokenProps): string {
+export function getRootValueFromTheme(theme: STheme, category: ThemeCategoryName, token: ThemeStyleTokenProps): string {
   const categoryData = theme[category]
   if (categoryData) {
     const tokenData = categoryData[token as keyof typeof categoryData] as Token
@@ -1046,32 +1046,32 @@ export function getThemeFonts(fontFamilies: FontFamilySpec = DEFAULT_FONTS): Get
 /** Generates a numbered sequence of Stitches variant entries */
 export function generateVariantSequence<T extends Partial<SizeVariant | SignedSizeVariant> = SizeVariant>(
   entries: number,
-  contentGetter: (value: number) => CSS,
+  contentGetter: (value: number) => SCSS,
   shift = 1
 ): T {
   const out: T = Array(entries)
     .fill(0)
-    .reduce((output: Record<string | number, CSS>, x: number, index: number) => {
+    .reduce((output: Record<string | number, SCSS>, x: number, index: number) => {
       const key = index + shift
       const validKey = key < 0 ? `minus${Math.abs(key)}` : key
       output[validKey] = contentGetter(key)
       return output
-    }, {} as Record<string | number, CSS>)
+    }, {} as Record<string | number, SCSS>)
   return out as T
 }
 
-function getSignedContentGetter(prop: keyof CSS): (n: number) => CSS {
+function getSignedContentGetter(prop: keyof SCSS): (n: number) => SCSS {
   return (n: number) => {
     const val = Math.abs(n)
     return { [prop]: n < 0 ? `calc($${val} * -1)` : `$${val}` }
   }
 }
 
-function getSemanticSizes(prop: keyof CSS): Record<SemanticSizes, CSS> {
-  return enumKeys(SemanticSize).reduce((output: Record<SemanticSizes, CSS>, key: keyof typeof SemanticSize) => {
+function getSemanticSizes(prop: keyof SCSS): Record<SemanticSizes, SCSS> {
+  return enumKeys(SemanticSize).reduce((output: Record<SemanticSizes, SCSS>, key: keyof typeof SemanticSize) => {
     output[key] = { [prop]: `$${key}` }
     return output
-  }, {} as Record<SemanticSizes, CSS>)
+  }, {} as Record<SemanticSizes, SCSS>)
 }
 
 const heightVariants = {
@@ -1083,7 +1083,7 @@ const widthVariants = {
   ...generateVariantSequence(30, (n: number) => ({ w: `$${n}` }), 0),
 }
 
-function generateSemanticRadii(setter: (k: string) => CSS): SemanticRadii {
+function generateSemanticRadii(setter: (k: string) => SCSS): SemanticRadii {
   return RADIUS_KEYS.reduce((output: SemanticRadii, key: string) => {
     output[key as keyof SemanticRadii] = setter(key)
     return output
@@ -1097,7 +1097,7 @@ const getBgColorReducer =
     const isNeutral = name.includes("neutral")
     const isNeutralStatic = isNeutral && (name.includes("max") || name.includes("min"))
     const isStatus = !isNeutral && !!SemanticStaticColorName[bg as keyof typeof SemanticStaticColorName]
-    let style: CSS
+    let style: SCSS
     if (isNeutralStatic || isStatus) {
       style = { bg: `$${bg}` }
       output[bg as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
@@ -1125,7 +1125,7 @@ const getBorderColorReducer =
     const isNeutral = name.includes("neutral")
     const isNeutralStatic = isNeutral && (name.includes("max") || name.includes("min"))
     const isStatus = !isNeutral && !!SemanticStaticColorName[borderColor as keyof typeof SemanticStaticColorName]
-    let style: CSS
+    let style: SCSS
     if (isNeutralStatic || isStatus) {
       style = { borderColor: `$${borderColor}` }
       output[borderColor as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
@@ -1150,7 +1150,7 @@ const getTextColorReducer =
   (isFocusStyle = false) =>
   (output: TextColorNames, color: string) => {
     const isStatus = FULL_STATUS_COLOR_KEYS.includes(color as StatusTextColorName)
-    let style: CSS
+    let style: SCSS
     if (isStatus) {
       style = { color: `$${color}` }
       output[color as keyof TextColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
@@ -1172,7 +1172,7 @@ const borderColorReducer = getBorderColorReducer()
 const focusBorderReducer = getBorderColorReducer(true)
 const focusBgReducer = getBgColorReducer(true)
 const focusColorReducer = getTextColorReducer(true)
-const getHoverColorProps = (value: string): CSS => ({
+const getHoverColorProps = (value: string): SCSS => ({
   "&:focus, &:hover": {
     bg: value,
     color: `$text${capitalizeFirstLetter(value.replace("$", ""))}`,
@@ -1230,7 +1230,7 @@ export const COLOR_VARIANTS = {
   },
 }
 
-/** Base variants, including all the dimension CSS properties, for all sizes */
+/** Base variants, including all the dimension SCSS properties, for all sizes */
 export const BASE_VARIANTS = {
   shadow: {
     none: { boxShadow: "$none" },
@@ -1475,11 +1475,11 @@ export const TYPOGRAPHY_VARIANTS = {
     systemSerif: { fontFamily: "$systemSerif" },
     systemMono: { fontFamily: "$systemMono" },
     ...[...enumKeys(BodyFontFamily), ...enumKeys(HeadingFontFamily), ...enumKeys(CodeFontFamily)].reduce(
-      (output: Record<FontFamilyKey, CSS>, key: FontFamilyKey) => {
+      (output: Record<FontFamilyKey, SCSS>, key: FontFamilyKey) => {
         output[key] = { fontFamily: `$${key}"` }
         return output
       },
-      {} as Record<FontFamilyKey, CSS>
+      {} as Record<FontFamilyKey, SCSS>
     ),
   },
 }

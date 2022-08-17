@@ -36,7 +36,15 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
 /** Converts a CSS style object into a set of pre-generated CSS class names, and possibly a style object */
 export function style(css: CSS, conditions: Conditions, styleName?: string) {
   const classList: string[] = []
-  const classDict: ClassDict = { ...baseClassDict }
+  const classDict: ClassDict = {
+    base: {},
+    ":focus-visible": {},
+    ":hover": {},
+    ":active": {},
+    ":nth-child(odd)": {},
+    ":first-child": {},
+    ":last-child": {},
+  }
   const styleDict: Record<string, string> = {}
   const style: Style = {}
   let styleCount = 0
@@ -283,13 +291,6 @@ function getStyleName() {
   styleId++
   return `style-${styleId}`
 }
-
-const baseClassDict = Object.keys(pseudoClasses).reduce((output, key) => {
-  output[key as PseudoClassKey] = {}
-  return output
-}, {} as ClassDict)
-baseClassDict[PSEUDO_BASE] = {}
-Object.freeze(baseClassDict)
 
 /*************************************************************************************************
  * TYPE GENERATION

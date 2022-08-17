@@ -8,6 +8,75 @@ import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 
+const nuiProps = style(
+  {
+    bg: "$neutral3",
+    color: "$textNeutral3",
+    m: "$8",
+    mb: "$20",
+    ml: "$16",
+    mr: "$12",
+    p: "$32",
+    pl: "$16",
+    border: "$primaryMax",
+    // outline: "$primary",
+    // fontFamily: "$code",
+    radius: "$1",
+    radiusTopRight: "$8",
+    radiusBottomLeft: "$6",
+    radiusBottomRight: "$2",
+    float: "left",
+    maxWidth: "$480",
+    fontWeight: "$600",
+    fontSize: "$h3",
+    ":active": {
+      bg: "$primary10",
+      color: "$textPrimary10",
+    },
+    ":focus-visible": {
+      color: "$textNeutral10",
+      bg: "$warningMax",
+    },
+    ":hover": {
+      bg: "$primary9",
+      color: "$textPrimary9",
+    },
+    "@dark": {
+      outlineWidth: "$widthBase",
+    },
+    "@reducedMotion": {
+      animation: "none",
+    },
+  },
+  {
+    "@sm": false,
+    "@md": false,
+    "@lg": false,
+    "@xl": false,
+    "!sm": false,
+    "!md": false,
+    "!lg": false,
+    "!xl": false,
+    "@highContrast": false,
+    "@reducedMotion": false,
+    "@reducedData": false,
+    "@touch": false,
+    "@pointer": false,
+    "@tv": false,
+    "!highContrast": false,
+    "!reducedMotion": false,
+    "!reducedData": false,
+    "!touch": false,
+    "!pointer": false,
+    "!tv": false,
+    "@light": false,
+    "@dark": false,
+    debug: true,
+  },
+  "SampleBox"
+)
+console.log("nuiProps", nuiProps)
+
 const Sample: NextPage = () => {
   const showColorPalette = true
   const showTypography = true
@@ -16,92 +85,6 @@ const Sample: NextPage = () => {
   const showTags = true
   const showStatuses = true
   const showSampleBox = true
-
-  const nuiProps = style(
-    {
-      bg: "$neutral3",
-      color: "$textNeutral3",
-      m: "$8",
-      mb: "$20",
-      ml: "$16",
-      mr: "$12",
-      p: "$32",
-      pl: "$16",
-      border: "$primaryMax",
-      radius: "$1",
-      radiusTopRight: "$8",
-      radiusBottomLeft: "$6",
-      radiusBottomRight: "$2",
-      float: "left",
-      maxWidth: "$480",
-      fontWeight: "$600",
-      fontSize: "$h3",
-      // animation: "$spin",
-      // animation: "$spinAndPause",
-      // animation: "$flashSize",
-      // animation: "$bounceTop",
-      // animation: "$bounceRight",
-      // animation: "$bounceBottom",
-      // animation: "$bounceLeft",
-      // animation: "$slideInTop",
-      // animation: "$slideOutTop",
-      // animation: "$slideInRight",
-      // animation: "$slideOutRight",
-      // animation: "$slideInBottom",
-      // animation: "$slideOutBottom",
-      // animation: "$slideInLeft",
-      // animation: "$slideOutLeft",
-      // animation: "$fadeIn",
-      // animation: "$fadeOut",
-      // animation: "$zoomIn",
-      // animation: "$zoomOut",
-      ":active": {
-        bg: "$primary10",
-        color: "$textPrimary10",
-      },
-      ":focus-visible": {
-        color: "$textNeutral10",
-        bg: "$warningMax",
-      },
-      ":hover": {
-        bg: "$primary9",
-        color: "$textPrimary9",
-      },
-      "@dark": {
-        outlineWidth: "$widthBase",
-      },
-      "@reducedMotion": {
-        animation: "none",
-      },
-    },
-    {
-      "@sm": false,
-      "@md": false,
-      "@lg": false,
-      "@xl": false,
-      "!sm": false,
-      "!md": false,
-      "!lg": false,
-      "!xl": false,
-      "@highContrast": false,
-      "@reducedMotion": false,
-      "@reducedData": false,
-      "@touch": false,
-      "@pointer": false,
-      "@tv": false,
-      "!highContrast": false,
-      "!reducedMotion": false,
-      "!reducedData": false,
-      "!touch": false,
-      "!pointer": false,
-      "!tv": false,
-      "@light": false,
-      "@dark": false,
-      debug: true,
-    },
-    "SampleBox"
-  )
-  console.log("nuiProps", nuiProps)
 
   const sampleControls = (
     <>
