@@ -5,7 +5,7 @@
   "description": "A highly accessible and easily customizable UI library",
   "main": "dist/neutron-ui.cjs.js",
   "module": "dist/neutron-ui.es.js",
-  "types": "dist/neutron-ui.d.ts",
+  "types": "dist/neutron-ui.cjs.d.ts",
   "directories": {
     "dist": "dist",
     "test": "__tests__"
@@ -17,7 +17,7 @@
     ".": {
       "import": "./dist/neutron-ui.es.js",
       "require": "./dist/neutron-ui.cjs.js",
-      "types": "./dist/neutron-ui.d.ts"
+      "types": "./dist/neutron-ui.cjs.d.ts"
     },
     "./styles": {
       "import": "./dist/neutron-ui.css",

@@ -9,15 +9,15 @@ export default defineConfig({
     jsxInject: "import React from 'react'",
   },
   build: {
+    emptyOutDir: false,
     minify: false,
+    reportCompressedSize: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       formats: ["es", "cjs"],
       fileName: format => `neutron-ui.${format}.js`,
     },
     outDir: path.resolve(__dirname, "./dist"),
-    emptyOutDir: false,
-    reportCompressedSize: false,
     rollupOptions: {
       external: Object.keys(pkg.peerDependencies),
     },
