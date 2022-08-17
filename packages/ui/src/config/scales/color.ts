@@ -1,22 +1,16 @@
-import { generatePaletteFromHue } from "../../shared/utils"
 import { CharHash } from "../utils"
 import { ColorPalette, ScaleEntry, ThemeScale } from "./scales.models"
 import { generateThemeColors, getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
-// Default Palette
-export const DEFAULT_HUE = 174
-export const DEFAULT_PALETTE = 2
-// Alt1 Palette
-// export const DEFAULT_HUE = 217
-// export const DEFAULT_PALETTE = 3
-// Alt2 Palette
-// export const DEFAULT_HUE = 224
-// export const DEFAULT_PALETTE = 2
 /** Generator function for `color` theme scale */
 export function getColor(hash: CharHash) {
   const palette = {} as ColorPalette
   const lightPalette = generateThemeColors(
-    generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE),
+    {
+      neutral: "hsl(60,6.67%,94.12%)",
+      primary: "hsl(240,100%,54.31%)",
+      secondary: "hsl(90.93,100%,44.12%)",
+    },
     "light",
     (key: keyof ColorPalette, value?: string | ScaleEntry) => {
       if (value) {
@@ -56,7 +50,11 @@ export function getColor(hash: CharHash) {
     shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / 0.2)` },
     shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / 0.35)` },
     ...generateThemeColors(
-      generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE, 1, "dark"),
+      {
+        neutral: "hsl(60,6.67%,94.12%)",
+        primary: "hsl(240,100%,54.31%)",
+        secondary: "hsl(90.93,100%,44.12%)",
+      },
       "dark",
       (key: keyof ColorPalette, value?: string | ScaleEntry) => {
         if (value) {

@@ -19,19 +19,19 @@ const Sample: NextPage = () => {
 
   const nuiProps = style(
     {
-      bg: "$neutral10",
-      color: "$textNeutral10",
-      mt: "$8",
+      bg: "$neutral3",
+      color: "$textNeutral3",
+      m: "$8",
       mb: "$20",
       ml: "$16",
       mr: "$12",
+      p: "$32",
       pl: "$16",
-      pr: "$32",
-      py: "$32",
-      radiusTopLeft: "$2",
+      border: "$primaryMax",
+      radius: "$1",
       radiusTopRight: "$8",
       radiusBottomLeft: "$6",
-      radiusBottomRight: "$3",
+      radiusBottomRight: "$2",
       float: "left",
       maxWidth: "$480",
       fontWeight: "$600",
@@ -55,17 +55,18 @@ const Sample: NextPage = () => {
       // animation: "$fadeOut",
       // animation: "$zoomIn",
       // animation: "$zoomOut",
-      // ":active": {
-      //   color: "$textPrimary10",
-      //   bg: "$primary10",
-      // },
-      // ":focus-visible": {
-      //   color: "$textNeutral10",
-      //   bg: "$warningMax",
-      // },
-      // ":hover": {
-      //   bg: "$secondary9",
-      // },
+      ":active": {
+        bg: "$primary10",
+        color: "$textPrimary10",
+      },
+      ":focus-visible": {
+        color: "$textNeutral10",
+        bg: "$warningMax",
+      },
+      ":hover": {
+        bg: "$primary9",
+        color: "$textPrimary9",
+      },
       "@dark": {
         outlineWidth: "$widthBase",
       },
@@ -147,6 +148,7 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box>
+          <div {...nuiProps}>NUI-powered sample box</div>
           <div {...nuiProps}>NUI-powered sample box</div>
         </>
       )}

@@ -151,6 +151,7 @@ function addClassFromStyle(prop: CssPropKey, value: string, addClass: AddClass, 
 const css: CSS = {
   bg: "$neutral10",
   color: "$textNeutral10",
+  border: "$primary",
   mt: "$8",
   mb: "$20",
   ml: "$16",
