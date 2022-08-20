@@ -38,15 +38,15 @@ const nuiProps = style(
     fontWeight: "$600",
     fontSize: "$h3",
     ":active": {
-      // bg: "$primary10",
+      bg: "$primary10",
       color: "$textPrimary10",
     },
     ":focus-visible": {
       color: "$textNeutral10",
-      // bg: "$warningMax",
+      bg: "$warningMax",
     },
     ":hover": {
-      // bg: "$primary9",
+      bg: "$primary9",
       color: "$textPrimary9",
     },
     dark: {
@@ -59,8 +59,8 @@ const nuiProps = style(
   {
     // sm: true,
     // md: true,
-    // lg: true,
-    xl: true,
+    lg: true,
+    // xl: true,
     // "!sm": true,
     // "!md": true,
     // "!lg": true,
