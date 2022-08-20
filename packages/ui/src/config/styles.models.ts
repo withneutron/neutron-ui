@@ -1,6 +1,8 @@
 import { conditionsMap } from "./conditions"
 import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
 
+export const BASE = "base"
+
 type CustomVarHint = "__Enter any valid CSS__"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
 
@@ -72,3 +74,11 @@ export type MergedCssProps<A extends MapProps, B extends MapProps, C extends Map
   & { [prop in Exclusive<B, A, C>]?: B[prop] }
 
 export type ConditionKey = keyof typeof conditionsMap
+export type InlineConditionKey = ConditionKey | typeof BASE
+
+export type InlineCondition<T> = T | { [k in InlineConditionKey]?: T }
+export type InlineConditionValue = string | { [k in InlineConditionKey]?: string }
+
+export type InlineConditionCss<T> = {
+  [k in keyof T]: InlineCondition<T[k]>
+}

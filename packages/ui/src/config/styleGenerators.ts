@@ -18,11 +18,11 @@ import {
   scaledPropMap,
   staticPropMap,
   scales,
-  PSEUDO_BASE,
   tokenToVarMap,
+  ConditionalCSS,
 } from "./styles.css"
-import { ConditionKey } from "./styles.models"
-import { conditionsMap } from "./conditions"
+import { ConditionKey, BASE, InlineConditionValue } from "./styles.models"
+import { conditionsMap, responsiveConditions } from "./conditions"
 import { CssAlias } from "./scales/scales.models"
 
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
@@ -53,7 +53,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
   function addClass(
     prop: CssPropKey,
     className: string,
-    pseudoClass: PseudoCategory = PSEUDO_BASE,
+    pseudoClass: PseudoCategory = BASE,
     varName?: string,
     value?: string
   ) {
@@ -108,42 +108,60 @@ function processCss(css: CSS, addClass: AddClass, conditions: Conditions) {
     if (conditionsMap[propName as ConditionKey]) {
       // Skip if the condition is currently false
       if (!conditions[propName as ConditionKey]) continue
-      processCss(propValue, addClass, conditions)
+      processCss(propValue as ConditionalCSS, addClass, conditions)
     } else if (pseudoClasses[propName as PseudoClassKey]) {
       // If the prop is a pseudo-class, process its inner props
-      processBaseCss(propValue, addClass, propName as PseudoClassKey)
+      processBaseCss(propValue as BaseCSS, addClass, propName as PseudoClassKey, conditions)
     } else {
       // Else, process the prop's value
-      processCssProp(propName as CssPropKey, propValue, addClass)
+      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addClass, conditions)
     }
   }
 }
 
-function processBaseCss(baseCss: BaseCSS, addClass: AddClass, pseudo: PseudoClassKey) {
+function processBaseCss(baseCss: BaseCSS, addClass: AddClass, pseudo: PseudoClassKey, conditions: Conditions) {
   const props = Object.entries(baseCss)
   for (let index = 0; index < props.length; index++) {
     const [propName, propValue] = props[index]
-    processCssProp(propName as CssPropKey, propValue, addClass, pseudo)
+    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addClass, conditions, pseudo)
   }
 }
 
-function processCssProp(prop: CssPropKey, value: string, addClass: AddClass, pseudo?: PseudoClassKey) {
-  const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
-  // If it's a mapped prop, run its mapping func, and proceed with the result of that
-  if (mapper) {
-    const innerProps = Object.entries(mapper(value))
-    for (let index = 0; index < innerProps.length; index++) {
-      const [propName, propValue] = innerProps[index]
-      processCssProp(propName as CssPropKey, propValue, addClass, pseudo)
+function processCssProp(
+  prop: CssPropKey,
+  value: InlineConditionValue,
+  addClass: AddClass,
+  conditions: Conditions,
+  pseudo?: PseudoClassKey
+) {
+  if (typeof value === "object") {
+    // If no responsive condition is set, apply the base condition
+    if (value.base !== undefined && isBaseCondition(value, conditions)) {
+      processCssProp(prop, value.base, addClass, conditions, pseudo)
     }
+    Object.entries(value).forEach(([condition, innerValue]) => {
+      if (conditions[condition as keyof typeof conditions]) {
+        processCssProp(prop, innerValue, addClass, conditions, pseudo)
+      }
+    })
   } else {
-    value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
-    if (pseudo) {
-      const pseudos =
-        pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-      pseudos.forEach(pseudoKey => addClassFromStyle(prop, value, addClass, pseudoKey))
+    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
+    // If it's a mapped prop, run its mapping func, and proceed with the result of that
+    if (mapper) {
+      const innerProps = Object.entries(mapper(value))
+      for (let index = 0; index < innerProps.length; index++) {
+        const [propName, propValue] = innerProps[index]
+        processCssProp(propName as CssPropKey, propValue, addClass, conditions, pseudo)
+      }
     } else {
-      addClassFromStyle(prop, value, addClass)
+      value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
+      if (pseudo) {
+        const pseudos =
+          pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
+        pseudos.forEach(pseudoKey => addClassFromStyle(prop, value as string, addClass, pseudoKey))
+      } else {
+        addClassFromStyle(prop, value, addClass)
+      }
     }
   }
 }
@@ -151,7 +169,7 @@ function processCssProp(prop: CssPropKey, value: string, addClass: AddClass, pse
 function addClassFromStyle(prop: CssPropKey, value: string, addClass: AddClass, pseudo?: PseudoClassKey) {
   const output = getStyle(prop, value, pseudo)
   if (output) {
-    addClass(prop, output.className, pseudo ?? PSEUDO_BASE, output.varName, output.value)
+    addClass(prop, output.className, pseudo ?? BASE, output.varName, output.value)
   }
 }
 
@@ -166,7 +184,7 @@ const css: CSS = {
   mr: "$12",
   pl: "$16",
   pr: "$32",
-  py: "$40",
+  py: { sm: "$24", md: "$32", base: "$40" },
   radiusTopLeft: "$2",
   radiusTopRight: "$12",
   radiusBottomLeft: "$8",
@@ -186,11 +204,14 @@ const css: CSS = {
   ":hover": {
     bg: "$secondary9",
   },
-  "@dark": {
+  dark: {
     outlineWidth: "$widthBase",
   },
-  "@reducedMotion": {
+  motion: {
     animation: "none",
+  },
+  md: {
+    px: "$56",
   },
 }
 // const result = style(css,
@@ -238,7 +259,7 @@ function flattenOverrides(overrides?: ThemeOverrides) {
       }, {} as Record<string, string | number>)
 }
 
-function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = PSEUDO_BASE) {
+function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = BASE) {
   const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
   const staticProp = staticMap[prop as keyof typeof staticMap]
   const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
@@ -270,7 +291,7 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = PSEU
       const tokenMap = tokenToVarMap[scaleKey]
       const varFromToken = tokenMap[value as keyof typeof tokenMap]
       if (varFromToken) {
-        value = varFromToken
+        value = `var(${varFromToken})`
       }
     }
     // Get both the className and varName needed to set a custom value, if possible for this prop
@@ -280,6 +301,17 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = PSEU
     const { className, varName } = customVarProp ?? {}
     if (className && varName) return { className, varName, value }
   }
+}
+
+function isBaseCondition(values: Partial<Record<keyof Conditions, unknown>>, conditions: Conditions) {
+  for (let index = 0; index < responsiveConditions.length; index++) {
+    const condition = responsiveConditions[index]
+    if (conditions[condition] && values[condition] !== undefined) {
+      console.log("condition", condition, values, conditions)
+      return false
+    }
+  }
+  return true
 }
 
 function getDebugVar(className: string) {
@@ -296,8 +328,8 @@ function getStyleName() {
  * TYPE GENERATION
  *************************************************************************************************/
 type PseudoClassKey = keyof typeof pseudoClasses
-type PseudoCategory = PseudoClassKey | typeof PSEUDO_BASE
-type ScaledKey = keyof typeof scaledPropMap[typeof PSEUDO_BASE]
+type PseudoCategory = PseudoClassKey | typeof BASE
+type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
 type ClassDict = { [p in PseudoCategory]: { [c in CssPropKey]?: number } }
 
@@ -319,4 +351,4 @@ type AddClass = (
   value?: string
 ) => void
 
-type Conditions = Record<ConditionKey, boolean>
+type Conditions = Partial<Record<ConditionKey, boolean>>

@@ -15,7 +15,6 @@
 /** PREFIX LEGEND *********************************************************************************
  * $  -> Theme object OR theme token OR compound theme value.
  * :  -> CSS pseudo-classes for interaction state OR for structural targeting.
- * @  -> Breakpoint (desktop-first) OR other media query OR light/dark color mode.
  * !  -> Inverted breakpoint (mobile-first) OR inverted media query.
  *       E.g. `!reducedMotion` matches when the user agent does NOT request reduced motion.
  *************************************************************************************************/
@@ -42,7 +41,6 @@ import {
   getOutline,
   getAnimation,
   BaseVars,
-  CssValue,
   ThemeProps,
   PrefixedKey,
 } from "./scales"
@@ -56,10 +54,9 @@ import {
   generateInteractivePseudoClassCss,
   generateStructuralPseudoClassCss,
   AllPseudoClassesWithAliases,
-  scaledPropScale,
 } from "./props"
 import { getSelector } from "./styles.utils"
-import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey } from "./styles.models"
+import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
 
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
@@ -297,19 +294,18 @@ const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((ps
   }, keys)
 )
 
-export const PSEUDO_BASE = "base"
 export const scaledPropMap = {
   ...scaledPropsIPC,
-  [PSEUDO_BASE]: scaledProps,
+  [BASE]: scaledProps,
 }
 export const customVarPropMap = {
   ...customVarPropsIPC,
   ...customVarPropsSPC,
-  [PSEUDO_BASE]: customVarProps,
+  [BASE]: customVarProps,
 }
 export const staticPropMap = {
   ...staticPropsIPC,
-  [PSEUDO_BASE]: staticProps,
+  [BASE]: staticProps,
 }
 
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
@@ -321,31 +317,75 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
-type ScaledProps = CssFromMap<typeof scaledProps>
-type CustomVarProps = CssFromCustomVars<typeof customVarProps>
-type StaticProps = CssFromMap<typeof staticProps>
-
+// Pseudo-class types
 type A = typeof scaledPropsIPC
 type B = typeof customVarPropsIPC & typeof customVarPropsSPC
 type C = typeof staticPropsIPC
 
-type MergePCCssProps = {
+type FocusVisible = {
   ":focus-visible"?: MergedCssProps<
     CssFromMap<A[":focus-visible"]>,
     CssFromCustomVars<B[":focus-visible"]>,
     CssFromMap<C[":focus-visible"]>
   >
-} & { ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>> } & {
+}
+type Hover = {
+  ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>>
+}
+type Active = {
   ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
-} & { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> } & {
+}
+type Odd = { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> }
+type FirstChild = {
   ":first-child"?: CssFromCustomVars<B[":first-child"]>
-} & { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
+}
+type LastChild = { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
+type MergePCCssProps = FocusVisible & Hover & Active & Odd & FirstChild & LastChild
 
-export type BaseCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
+// Inline-conditional, pseudo-class types
+type ICFocusVisible = {
+  ":focus-visible"?: InlineConditionCss<
+    MergedCssProps<
+      CssFromMap<A[":focus-visible"]>,
+      CssFromCustomVars<B[":focus-visible"]>,
+      CssFromMap<C[":focus-visible"]>
+    >
+  >
+}
+type ICHover = {
+  ":hover"?: InlineConditionCss<
+    MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>>
+  >
+}
+type ICActive = {
+  ":active"?: InlineConditionCss<
+    MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
+  >
+}
+type ICOdd = { ":nth-child(odd)"?: InlineConditionCss<CssFromCustomVars<B[":nth-child(odd)"]>> }
+type ICFirstChild = {
+  ":first-child"?: InlineConditionCss<CssFromCustomVars<B[":first-child"]>>
+}
+type ICLastChild = { ":last-child"?: InlineConditionCss<CssFromCustomVars<B[":last-child"]>> }
+type ICMergePCCssProps = ICFocusVisible & ICHover & ICActive & ICOdd & ICFirstChild & ICLastChild
+
+// CSS types
+type ScaledProps = CssFromMap<typeof scaledProps>
+type CustomVarProps = CssFromCustomVars<typeof customVarProps>
+type StaticProps = CssFromMap<typeof staticProps>
+
+/** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
+export type BaseCSS = InlineConditionCss<MergedCssProps<ScaledProps, CustomVarProps, StaticProps>> &
+  AllPseudoClassesWithAliases<ICMergePCCssProps>
+
+type BaseConditionalCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
   AllPseudoClassesWithAliases<MergePCCssProps>
 
+/** Style object for root-level conditions, including pseudo-classes */
+export type ConditionalCSS = { [k in ConditionKey]?: BaseConditionalCSS }
+
 /** Full type of Neutron UI style objects, including pseudo-classes and conditions */
-export type CSS = BaseCSS & { [k in ConditionKey]?: BaseCSS }
+export type CSS = BaseCSS & ConditionalCSS
 
 /*************************************************************************************************
  * THEME GENERATION

@@ -4,6 +4,15 @@ const lg = "999.9987654321"
 const xl = "1299.9987654321"
 const unit = "px"
 
+const responsiveConditionsMap = {
+  sm: `screen and (max-width: ${sm}${unit})`,
+  md: `screen and (min-width: ${sm}${unit}) and (max-width: ${md}${unit})`,
+  lg: `screen and (min-width: ${md}${unit}) and (max-width: ${lg}${unit})`,
+  xl: `screen and (min-width: ${lg}${unit}) and (max-width: ${xl}${unit})`,
+} as const
+
+export const responsiveConditions = Object.keys(responsiveConditionsMap) as Array<keyof typeof responsiveConditionsMap>
+
 export const conditionsMap = {
   /**
    * For all conditions below, create a `ConditionsContext` at our base provider,
@@ -18,32 +27,24 @@ export const conditionsMap = {
    * facilitates that, by not forcing them to touch existing styles,
    * only add new ones.
    */
-  "@sm": `screen and (max-width: ${sm}${unit})`,
-  "@md": `screen and (max-width: ${md}${unit})`,
-  "@lg": `screen and (max-width: ${lg}${unit})`,
-  "@xl": `screen and (max-width: ${xl}${unit})`,
+  ...responsiveConditionsMap,
 
-  "!sm": `screen and (min-width: ${sm}${unit})`,
-  "!md": `screen and (min-width: ${md}${unit})`,
-  "!lg": `screen and (min-width: ${lg}${unit})`,
-  "!xl": `screen and (min-width: ${xl}${unit})`,
+  contrast: "(prefers-contrast: more)",
+  motion: "(prefers-reduced-motion)",
+  data: "(prefers-reduced-data)",
+  touch: "(hover: none)",
+  pointer: "(hover: hover) and (pointer: fine)",
+  tv: "(hover: hover) and (pointer: coarse)",
 
-  "@highContrast": "(prefers-contrast: more)",
-  "@reducedMotion": "(prefers-reduced-motion)",
-  "@reducedData": "(prefers-reduced-data)",
-  "@touch": "(hover: none)",
-  "@pointer": "(hover: hover) and (pointer: fine)",
-  "@tv": "(hover: hover) and (pointer: coarse)",
-
-  "!highContrast": !"(prefers-contrast: more)",
-  "!reducedMotion": !"(prefers-reduced-motion)",
-  "!reducedData": !"(prefers-reduced-data)",
+  "!contrast": !"(prefers-contrast: more)",
+  "!motion": !"(prefers-reduced-motion)",
+  "!data": !"(prefers-reduced-data)",
   "!touch": !"(hover: none)",
   "!pointer": !"(hover: hover) and (pointer: fine)",
   "!tv": !"(hover: hover) and (pointer: coarse)",
 
-  "@light": "COLOR_MODE === light",
-  "@dark": "COLOR_MODE === dark",
+  light: "COLOR_MODE === light",
+  dark: "COLOR_MODE === dark",
 
   debug: "debugmode",
 } as const
