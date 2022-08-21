@@ -91,7 +91,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
     },
   }
   const styleDict: Record<string, string> = {}
-  const style: Style = {}
+  const styleObj: Style = {}
   let styleCount = 0
 
   /** Adds a class name, and optionally a CSS var assignment, to our data */
@@ -122,7 +122,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
       const oldClass = classList[index]
       const oldStyleVar = styleDict[oldClass]
       if (oldStyleVar) {
-        delete style[oldStyleVar]
+        delete styleObj[oldStyleVar]
         styleCount--
       }
       classList[index] = className
@@ -130,7 +130,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
     if (varName && value) {
       styleCount++
       styleDict[className] = varName
-      style[varName] = value
+      styleObj[varName] = value
     }
   }
 
@@ -145,11 +145,11 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
   // Handle debug
   if (conditions.debug) {
     styleCount++
-    style[getDebugVar(styleName ?? getStyleName())] = outputClass
+    styleObj[getDebugVar(styleName ?? getStyleName())] = outputClass
   }
 
   if (styleCount > 0) {
-    output.style = style
+    output.style = styleObj
   }
   return output
 }

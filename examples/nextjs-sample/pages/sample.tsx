@@ -152,8 +152,12 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box>
-          <div {...nuiProps}>NUI-powered sample box</div>
-          <div {...nuiProps}>NUI-powered sample box</div>
+          <div tabIndex={0} {...nuiProps}>
+            NUI-powered sample box
+          </div>
+          <div tabIndex={0} {...nuiProps}>
+            NUI-powered sample box
+          </div>
         </>
       )}
       {!showSampleBox && sampleControls}
