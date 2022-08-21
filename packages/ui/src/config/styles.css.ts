@@ -51,9 +51,8 @@ import {
   generateCustomVarPropsCss,
   generateScaledPropsCss,
   generateStaticPropsCss,
-  generateInteractivePseudoClassCss,
-  generateStructuralPseudoClassCss,
-  AllPseudoClassesWithAliases,
+  generatePseudoClassCss,
+  PseudoClassesWithAliases,
 } from "./props"
 import { getSelector } from "./styles.utils"
 import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
@@ -238,7 +237,7 @@ const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
 })
 
 /** Generate CSS props that are _pseudo class based_, and based on scales */
-const scaledPropsIPC = generateInteractivePseudoClassCss<typeof scaledProps>((pseudoClass: string, keys: FilterKeys) =>
+const scaledPropsPC = generatePseudoClassCss<typeof scaledProps>((pseudoClass: string, keys: FilterKeys) =>
   generateScaledPropsCss(
     scales,
     (value: CssRule) => {
@@ -274,8 +273,7 @@ const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys
     return { varName: cssVar.name, className }
   }, keys)
 
-const customVarPropsIPC = generateInteractivePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
-const customVarPropsSPC = generateStructuralPseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
+const customVarPropsPC = generatePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
 
 // STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
@@ -286,7 +284,7 @@ const staticProps = generateStaticPropsCss((value: CssRule) => {
 })
 
 /** Generate CSS props that are _pseudo class based_, and based on scales */
-const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
+const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
   generateStaticPropsCss((value: CssRule) => {
     const className = classHash.name
     globalStyle(getSelector(className, pseudoClass), value)
@@ -295,16 +293,15 @@ const staticPropsIPC = generateInteractivePseudoClassCss<typeof staticProps>((ps
 )
 
 export const scaledPropMap = {
-  ...scaledPropsIPC,
+  ...scaledPropsPC,
   [BASE]: scaledProps,
 }
 export const customVarPropMap = {
-  ...customVarPropsIPC,
-  ...customVarPropsSPC,
+  ...customVarPropsPC,
   [BASE]: customVarProps,
 }
 export const staticPropMap = {
-  ...staticPropsIPC,
+  ...staticPropsPC,
   [BASE]: staticProps,
 }
 
@@ -318,9 +315,9 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
  * TYPE GENERATION
  *************************************************************************************************/
 // Pseudo-class types
-type A = typeof scaledPropsIPC
-type B = typeof customVarPropsIPC & typeof customVarPropsSPC
-type C = typeof staticPropsIPC
+type A = typeof scaledPropsPC
+type B = typeof customVarPropsPC
+type C = typeof staticPropsPC
 
 type FocusVisible = {
   ":focus-visible"?: MergedCssProps<
@@ -335,12 +332,7 @@ type Hover = {
 type Active = {
   ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
 }
-type Odd = { ":nth-child(odd)"?: CssFromCustomVars<B[":nth-child(odd)"]> }
-type FirstChild = {
-  ":first-child"?: CssFromCustomVars<B[":first-child"]>
-}
-type LastChild = { ":last-child"?: CssFromCustomVars<B[":last-child"]> }
-type MergePCCssProps = FocusVisible & Hover & Active & Odd & FirstChild & LastChild
+type MergePCCssProps = FocusVisible & Hover & Active
 
 // Inline-conditional, pseudo-class types
 type ICFocusVisible = {
@@ -362,12 +354,7 @@ type ICActive = {
     MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
   >
 }
-type ICOdd = { ":nth-child(odd)"?: InlineConditionCss<CssFromCustomVars<B[":nth-child(odd)"]>> }
-type ICFirstChild = {
-  ":first-child"?: InlineConditionCss<CssFromCustomVars<B[":first-child"]>>
-}
-type ICLastChild = { ":last-child"?: InlineConditionCss<CssFromCustomVars<B[":last-child"]>> }
-type ICMergePCCssProps = ICFocusVisible & ICHover & ICActive & ICOdd & ICFirstChild & ICLastChild
+type ICMergePCCssProps = ICFocusVisible & ICHover & ICActive
 
 // CSS types
 type ScaledProps = CssFromMap<typeof scaledProps>
@@ -376,10 +363,10 @@ type StaticProps = CssFromMap<typeof staticProps>
 
 /** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
 export type BaseCSS = InlineConditionCss<MergedCssProps<ScaledProps, CustomVarProps, StaticProps>> &
-  AllPseudoClassesWithAliases<ICMergePCCssProps>
+  PseudoClassesWithAliases<ICMergePCCssProps>
 
 type BaseConditionalCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
-  AllPseudoClassesWithAliases<MergePCCssProps>
+  PseudoClassesWithAliases<MergePCCssProps>
 
 /** Style object for root-level conditions, including pseudo-classes */
 export type ConditionalCSS = { [k in ConditionKey]?: BaseConditionalCSS }

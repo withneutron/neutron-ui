@@ -2,7 +2,7 @@ import { FilterKeys, PickKeys } from "./props.models"
 
 // Only these props should have interactive state classes/vars generated for them
 // 20
-export const interactiveClassProps = {
+export const pseudoClassProps = {
   animation: true,
 
   boxShadow: true,
@@ -45,148 +45,55 @@ export const interactiveClassProps = {
 } as const
 
 export const pointerClassProps = {
-  ...interactiveClassProps,
+  ...pseudoClassProps,
   cursor: true,
 } as const
 
-// Only these props should have structural pseudo-classes
-// + 41
-export const structuralClassProps = {
-  ...interactiveClassProps,
-  display: true,
-  visibility: true,
-
-  borderStartStartRadius: true,
-  borderStartEndRadius: true,
-  borderEndEndRadius: true,
-  borderEndStartRadius: true,
-
-  borderBlockStartWidth: true,
-  borderBlockEndWidth: true,
-  borderInlineStartWidth: true,
-  borderInlineEndWidth: true,
-
-  outlineWidth: true,
-
-  marginBlockStart: true,
-  marginBlockEnd: true,
-  marginInlineStart: true,
-  marginInlineEnd: true,
-
-  paddingBlockStart: true,
-  paddingBlockEnd: true,
-  paddingInlineStart: true,
-  paddingInlineEnd: true,
-
-  insetBlockStart: true,
-  insetBlockEnd: true,
-  insetInlineStart: true,
-  insetInlineEnd: true,
-
-  inlineSize: true,
-  minInlineSize: true,
-  maxInlineSize: true,
-  blockSize: true,
-  minBlockSize: true,
-  maxBlockSize: true,
-
-  alignContent: true,
-  alignItems: true,
-  alignSelf: true,
-  justifyContent: true,
-  justifyItems: true,
-  justifySelf: true,
-
-  verticalAlign: true,
-  textAlign: true,
-  textOverflow: true,
-} as const
-
-export function generateInteractivePseudoClassCss<O extends Record<string, unknown>>(
+export function generatePseudoClassCss<O extends Record<string, unknown>>(
   generateClass: <K extends FilterKeys>(pseudoClass: string, keys: K) => O
 ) {
-  const focusVisibleProps = generateClass(":focus-visible", interactiveClassProps)
+  const focusVisibleProps = generateClass(":focus-visible", pseudoClassProps)
   const hoverProps = generateClass(":hover", pointerClassProps)
-  const activeProps = generateClass(":active", interactiveClassProps)
-  type FilteredProps = PickKeys<O, typeof interactiveClassProps>
+  const activeProps = generateClass(":active", pseudoClassProps)
+  type FilteredProps = PickKeys<O, typeof pseudoClassProps>
   type FilteredPointerProps = PickKeys<O, typeof pointerClassProps>
   return {
     // NOTE: We don't include :disabled, because logic for that exists in JS anyway
-    // ":focus": interactiveClassProps, // REMOVED because :focus-visible is just better
+    // ":focus": pseudoClassProps, // REMOVED because :focus-visible is just better
     ":focus-visible": focusVisibleProps as FilteredProps,
     ":hover": hoverProps as FilteredPointerProps,
     ":active": activeProps as FilteredProps,
   } as const
 }
 
-export function generateStructuralPseudoClassCss<O extends Record<string, unknown>>(
-  generateClass: (pseudoClass: string, keys: FilterKeys) => O
-) {
-  const oddProps = generateClass(":nth-child(odd)", structuralClassProps)
-  const firstChildProps = generateClass(":first-child", structuralClassProps)
-  const lastChildProps = generateClass(":last-child", structuralClassProps)
-  type FilteredProps = PickKeys<O, typeof structuralClassProps>
-  return {
-    ":nth-child(odd)": oddProps as FilteredProps,
-    ":first-child": firstChildProps as FilteredProps,
-    ":last-child": lastChildProps as FilteredProps,
-  } as const
-}
-
-// PSEUDO CLASS OBJECTS ///////////////////////////////////////////////////////
+// PSEUDO CLASS OBJECTS ///////////////////////////////////////////////////////////////////////////
 // NOTE: IF YOU ADD A PROP HERE, YOU MUST ALSO ADD IT IN `classDict` IN `styleGenerators.ts`
-export const interactivePseudoClasses = {
+export const pseudoClasses = {
   // NOTE: We don't include :disabled, because logic for that exists in JS anyway
-  ":focus-visible": interactiveClassProps,
+  ":focus-visible": pseudoClassProps,
   ":hover": pointerClassProps,
-  ":active": interactiveClassProps,
+  ":active": pseudoClassProps,
 }
-export const structuralPseudoClasses = {
-  ":nth-child(odd)": structuralClassProps,
-  ":first-child": structuralClassProps,
-  ":last-child": structuralClassProps,
-  // MAYBE: ":first-of-type": structuralClassProps,
-  // MAYBE: ":last-of-type": structuralClassProps,
-  // MAYBE: nth-child(even) (can treat default as even, and override ONLY odds)
-  // MAYBE: only-child, only-of-type (achievable with first + last combined)
-  // MAYBE: nth-child, nth-last-child, nth-of-type, nth-last-of-type (API??)
-  // MAYBE: target, target-within, visited
-} as const
 
-// ALIASES ////////////////////////////////////////////////////////////////////
+// ALIASES ////////////////////////////////////////////////////////////////////////////////////////
 export const pseudoClassAliases = {
-  // Interactive Pseudo Classes
   ":focus": [":focus-visible"],
   ":hover, :focus": [":hover", ":focus-visible"],
   ":hover, :focus-visible": [":hover", ":focus-visible"],
   ":interactive": [":hover", ":focus-visible"],
-  // Structural Pseudo Classes
-  ":odd": [":nth-child(odd)"],
-  ":first": [":first-child"],
-  ":last": [":last-child"],
 } as const
 
-export type InteractivePseudoClassKeys = keyof ReturnType<typeof generateInteractivePseudoClassCss>
-export type StructuralPseudoClassKeys = keyof ReturnType<typeof generateStructuralPseudoClassCss>
-export type PseudoClassKeys = InteractivePseudoClassKeys | StructuralPseudoClassKeys
+// TYPES //////////////////////////////////////////////////////////////////////////////////////////
+export type PseudoClassKeys = keyof ReturnType<typeof generatePseudoClassCss>
 
 export type PseudoClassAliasKeys = keyof typeof pseudoClassAliases
 export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
 type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type InteractivePseudoClassesWithAliases<T extends PseudoClassObject> = T & {
-  ":focus"?: T[":focus-visible"]
-} & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } & {
-  ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"]
-} & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
-
-export type AllPseudoClassesWithAliases<T extends PseudoClassObject> = InteractivePseudoClassesWithAliases<T> & {
-  ":odd"?: T[":nth-child(odd)"]
-} & { ":first"?: T[":first-child"] } & { ":last"?: T[":last-child"] }
-
-// OUTPUT /////////////////////////////////////////////////////////////////////
-export const pseudoClasses = {
-  ...interactivePseudoClasses,
-  ...structuralPseudoClasses,
-} as const
+export type PseudoClassesWithAliases<T extends PseudoClassObject> = 
+  & T
+  & { ":focus"?: T[":focus-visible"] } 
+  & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
+  & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
+  & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
