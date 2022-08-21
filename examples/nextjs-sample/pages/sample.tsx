@@ -11,13 +11,13 @@ import Head from "next/head"
 const nuiProps = style(
   {
     bg: {
-      base: "$neutral3",
-      sm: "$amber3",
-      md: "$forest3",
-      lg: "$indigo3",
-      xl: "$primary3",
+      sm: "$magenta1",
+      md: "$amber1",
+      lg: "$forest1",
+      xl: "$aqua1",
       dark: "$primary4",
       light: "$secondary4",
+      base: "$neutral3",
     },
     color: "$textNeutral3",
     m: "$8",
@@ -49,18 +49,31 @@ const nuiProps = style(
       bg: "$primary9",
       color: "$textPrimary9",
     },
+    sm: {
+      color: "$textMagenta1",
+    },
+    md: {
+      color: "$textAmber1",
+    },
+    lg: {
+      color: "$textForest1",
+    },
+    xl: {
+      color: "$textAqua1",
+    },
     dark: {
       outlineWidth: "$widthBase",
+      color: "$textAqua1",
     },
     motion: {
       animation: "none",
     },
   },
   {
-    // sm: true,
-    // md: true,
+    sm: true,
+    md: true,
     lg: true,
-    // xl: true,
+    xl: true,
     // "!sm": true,
     // "!md": true,
     // "!lg": true,

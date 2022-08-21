@@ -21,10 +21,17 @@ import {
   tokenToVarMap,
   ConditionalCSS,
 } from "./styles.css"
-import { ConditionKey, BASE, InlineConditionValue } from "./styles.models"
-import { conditionsMap, responsiveConditions } from "./conditions"
+import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey } from "./styles.models"
+import {
+  conditionKeys,
+  conditionsMap,
+  ResponsiveCondition,
+  responsiveConditions,
+  responsiveConditionsMap,
+} from "./conditions"
 import { CssAlias } from "./scales/scales.models"
 
+/** Get theme override style */
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
   const overrides = {
     ...(colorMode === "dark" ? darkVarMap : {}),
@@ -37,31 +44,79 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
 export function style(css: CSS, conditions: Conditions, styleName?: string) {
   const classList: string[] = []
   const classDict: ClassDict = {
-    base: {},
-    ":focus-visible": {},
-    ":hover": {},
-    ":active": {},
-    ":nth-child(odd)": {},
-    ":first-child": {},
-    ":last-child": {},
+    base: {
+      base: {},
+      ":focus-visible": {},
+      ":hover": {},
+      ":active": {},
+      ":nth-child(odd)": {},
+      ":first-child": {},
+      ":last-child": {},
+    },
+    sm: {
+      base: {},
+      ":focus-visible": {},
+      ":hover": {},
+      ":active": {},
+      ":nth-child(odd)": {},
+      ":first-child": {},
+      ":last-child": {},
+    },
+    md: {
+      base: {},
+      ":focus-visible": {},
+      ":hover": {},
+      ":active": {},
+      ":nth-child(odd)": {},
+      ":first-child": {},
+      ":last-child": {},
+    },
+    lg: {
+      base: {},
+      ":focus-visible": {},
+      ":hover": {},
+      ":active": {},
+      ":nth-child(odd)": {},
+      ":first-child": {},
+      ":last-child": {},
+    },
+    xl: {
+      base: {},
+      ":focus-visible": {},
+      ":hover": {},
+      ":active": {},
+      ":nth-child(odd)": {},
+      ":first-child": {},
+      ":last-child": {},
+    },
   }
   const styleDict: Record<string, string> = {}
   const style: Style = {}
   let styleCount = 0
 
   /** Adds a class name, and optionally a CSS var assignment, to our data */
-  function addClass(
+  function addStyle(
     prop: CssPropKey,
     className: string,
-    pseudoClass: PseudoCategory = BASE,
+    inlineCondition: InlineConditionKey = BASE,
+    pseudoClass: PseudoCategoryKey = BASE,
     varName?: string,
     value?: string
   ) {
-    const isNew = classDict[pseudoClass][prop] === undefined
-    const index = classDict[pseudoClass][prop] ?? classList.length
+    const condition = responsiveConditionsMap[inlineCondition as ResponsiveCondition]
+      ? (inlineCondition as ResponsiveConditionKey)
+      : BASE
+
+    const hasExistingHigherPriorityStyle = hasHigherPriorityStyle(prop, classDict, condition, pseudoClass)
+    if (hasExistingHigherPriorityStyle) {
+      return
+    }
+    const isNew = classDict[condition][pseudoClass][prop] === undefined
+    const index = classDict[condition][pseudoClass][prop] ?? classList.length
+
     if (isNew) {
       classList.push(className)
-      classDict[pseudoClass][prop] = index
+      classDict[condition][pseudoClass][prop] = index
     } else {
       // Clear out old style that got overwritten, if need be
       const oldClass = classList[index]
@@ -79,7 +134,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
     }
   }
 
-  processCss(css, addClass, conditions)
+  processCss(css, addStyle, conditions)
 
   // Compile our data into an output object
   const outputClass = classList.join(" ")
@@ -99,77 +154,99 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
   return output
 }
 
-function processCss(css: CSS, addClass: AddClass, conditions: Conditions) {
+function processCss(css: CSS, addStyle: AddStyle, conditions: Conditions, condition: InlineConditionKey = BASE) {
   const props = Object.entries(css)
   // Loop through each prop of css
-  for (let index = 0; index < props.length; index++) {
+  const propsLen = props.length
+  for (let index = 0; index < propsLen; index++) {
     const [propName, propValue] = props[index]
     // If the prop is a condition, process its inner props, including its inner pseudo-classes
     if (conditionsMap[propName as ConditionKey]) {
       // Skip if the condition is currently false
       if (!conditions[propName as ConditionKey]) continue
-      processCss(propValue as ConditionalCSS, addClass, conditions)
+      processCss(propValue as ConditionalCSS, addStyle, conditions, propName as InlineConditionKey)
     } else if (pseudoClasses[propName as PseudoClassKey]) {
       // If the prop is a pseudo-class, process its inner props
-      processBaseCss(propValue as BaseCSS, addClass, propName as PseudoClassKey, conditions)
+      processBaseCss(propValue as BaseCSS, addStyle, propName as PseudoClassKey, conditions, condition)
     } else {
       // Else, process the prop's value
-      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addClass, conditions)
+      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addStyle, conditions, condition)
     }
   }
 }
 
-function processBaseCss(baseCss: BaseCSS, addClass: AddClass, pseudo: PseudoClassKey, conditions: Conditions) {
+function processBaseCss(
+  baseCss: BaseCSS,
+  addStyle: AddStyle,
+  pseudo: PseudoClassKey,
+  conditions: Conditions,
+  condition: InlineConditionKey = BASE
+) {
   const props = Object.entries(baseCss)
-  for (let index = 0; index < props.length; index++) {
+  const propsLen = props.length
+  for (let index = 0; index < propsLen; index++) {
     const [propName, propValue] = props[index]
-    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addClass, conditions, pseudo)
+    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addStyle, conditions, condition, pseudo)
   }
 }
 
 function processCssProp(
   prop: CssPropKey,
   value: InlineConditionValue,
-  addClass: AddClass,
+  addStyle: AddStyle,
   conditions: Conditions,
+  condition: InlineConditionKey = BASE,
   pseudo?: PseudoClassKey
 ) {
   if (typeof value === "object") {
-    // If no responsive condition is set, apply the base condition
-    if (value.base !== undefined && isBaseCondition(value, conditions)) {
-      processCssProp(prop, value.base, addClass, conditions, pseudo)
+    if (value[BASE] !== undefined) {
+      processCssProp(prop, value[BASE], addStyle, conditions, BASE, pseudo)
     }
-    Object.entries(value).forEach(([condition, innerValue]) => {
-      if (conditions[condition as keyof typeof conditions]) {
-        processCssProp(prop, innerValue, addClass, conditions, pseudo)
+    const conditionKeysLen = conditionKeys.length
+    for (let index = 0; index < conditionKeysLen; index++) {
+      const conditionKey = conditionKeys[index]
+      const innerValue = value[conditionKey]
+      if (innerValue !== undefined && conditions[conditionKey] !== undefined) {
+        processCssProp(prop, innerValue, addStyle, conditions, conditionKey as InlineConditionKey, pseudo)
       }
-    })
+    }
   } else {
     const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
     // If it's a mapped prop, run its mapping func, and proceed with the result of that
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
-      for (let index = 0; index < innerProps.length; index++) {
+      const innerPropsLen = innerProps.length
+      for (let index = 0; index < innerPropsLen; index++) {
         const [propName, propValue] = innerProps[index]
-        processCssProp(propName as CssPropKey, propValue, addClass, conditions, pseudo)
+        processCssProp(propName as CssPropKey, propValue, addStyle, conditions, condition, pseudo)
       }
     } else {
       value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
       if (pseudo) {
         const pseudos =
           pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-        pseudos.forEach(pseudoKey => addClassFromStyle(prop, value as string, addClass, pseudoKey))
+        const pseudosLen = pseudos.length
+        for (let index = 0; index < pseudosLen; index++) {
+          const pseudoKey = pseudos[index]
+          addClassFromStyle(prop, value as string, addStyle, condition, pseudoKey)
+        }
       } else {
-        addClassFromStyle(prop, value, addClass)
+        addClassFromStyle(prop, value, addStyle, condition)
       }
     }
   }
 }
 
-function addClassFromStyle(prop: CssPropKey, value: string, addClass: AddClass, pseudo?: PseudoClassKey) {
+function addClassFromStyle(
+  prop: CssPropKey,
+  value: string,
+  addStyle: AddStyle,
+  condition: InlineConditionKey = BASE,
+  pseudo?: PseudoClassKey
+) {
   const output = getStyle(prop, value, pseudo)
   if (output) {
-    addClass(prop, output.className, pseudo ?? BASE, output.varName, output.value)
+    addStyle(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value)
   }
 }
 
@@ -214,35 +291,6 @@ const css: CSS = {
     px: "$56",
   },
 }
-// const result = style(css,
-//   {
-//     "@sm": false,
-//     "@md": false,
-//     "@lg": false,
-//     "@xl": false,
-//     "!sm": false,
-//     "!md": false,
-//     "!lg": false,
-//     "!xl": false,
-//     "@highContrast": false,
-//     "@reducedMotion": false,
-//     "@reducedData": false,
-//     "@touch": false,
-//     "@pointer": false,
-//     "@tv": false,
-//     "!highContrast": false,
-//     "!reducedMotion": false,
-//     "!reducedData": false,
-//     "!touch": false,
-//     "!pointer": false,
-//     "!tv": false,
-//     "@light": false,
-//     "@dark": false,
-//     debug: true,
-//   }
-// )
-// console.log("className", { className: result.className })
-// console.log("style", result.style)
 
 /*************************************************************************************************
  * UTILS
@@ -259,7 +307,8 @@ function flattenOverrides(overrides?: ThemeOverrides) {
       }, {} as Record<string, string | number>)
 }
 
-function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = BASE) {
+/** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
+function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
   const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
   const staticProp = staticMap[prop as keyof typeof staticMap]
   const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
@@ -303,15 +352,19 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategory = BASE
   }
 }
 
-function isBaseCondition(values: Partial<Record<keyof Conditions, unknown>>, conditions: Conditions) {
-  for (let index = 0; index < responsiveConditions.length; index++) {
-    const condition = responsiveConditions[index]
-    if (conditions[condition] && values[condition] !== undefined) {
-      console.log("condition", condition, values, conditions)
-      return false
-    }
-  }
-  return true
+/** Checks to see if a class dictionary already has a higher priority responsive style for a given prop */
+function hasHigherPriorityStyle(
+  prop: CssPropKey,
+  classDict: ClassDict,
+  condition: ResponsiveConditionKey = BASE,
+  pseudoClass: PseudoCategoryKey = BASE
+) {
+  return responsiveConditions.some(conditionKey => {
+    const reachedCurrentCondition = conditionKey === condition
+    if (reachedCurrentCondition) return false
+    const hasExistingHigherPriorityStyle = classDict[conditionKey][pseudoClass][prop] !== undefined
+    return hasExistingHigherPriorityStyle
+  })
 }
 
 function getDebugVar(className: string) {
@@ -327,11 +380,12 @@ function getStyleName() {
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
+type ResponsiveConditionKey = ResponsiveCondition | typeof BASE
 type PseudoClassKey = keyof typeof pseudoClasses
-type PseudoCategory = PseudoClassKey | typeof BASE
+type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
-type ClassDict = { [p in PseudoCategory]: { [c in CssPropKey]?: number } }
+type ClassDict = { [c in ResponsiveConditionKey]: { [p in PseudoCategoryKey]: { [c in CssPropKey]?: number } } }
 
 type Vars = typeof vars
 
@@ -343,10 +397,11 @@ export type ThemeOverrides = {
 
 type Style = Record<string, string>
 
-type AddClass = (
+type AddStyle = (
   prop: CssPropKey,
   className: string,
-  pseudoClass?: PseudoCategory,
+  inlineCondition?: InlineConditionKey,
+  pseudoClass?: PseudoCategoryKey,
   varName?: string,
   value?: string
 ) => void

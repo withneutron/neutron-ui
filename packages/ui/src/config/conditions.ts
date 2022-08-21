@@ -4,14 +4,15 @@ const lg = "999.9987654321"
 const xl = "1299.9987654321"
 const unit = "px"
 
-const responsiveConditionsMap = {
+export const responsiveConditionsMap = {
   sm: `screen and (max-width: ${sm}${unit})`,
-  md: `screen and (min-width: ${sm}${unit}) and (max-width: ${md}${unit})`,
-  lg: `screen and (min-width: ${md}${unit}) and (max-width: ${lg}${unit})`,
-  xl: `screen and (min-width: ${lg}${unit}) and (max-width: ${xl}${unit})`,
+  md: `screen and (max-width: ${md}${unit})`,
+  lg: `screen and (max-width: ${lg}${unit})`,
+  xl: `screen and (max-width: ${xl}${unit})`,
 } as const
 
-export const responsiveConditions = Object.keys(responsiveConditionsMap) as Array<keyof typeof responsiveConditionsMap>
+export type ResponsiveCondition = keyof typeof responsiveConditionsMap
+export const responsiveConditions = Object.keys(responsiveConditionsMap) as Array<ResponsiveCondition>
 
 export const conditionsMap = {
   /**
@@ -48,6 +49,8 @@ export const conditionsMap = {
 
   debug: "debugmode",
 } as const
+
+export const conditionKeys = Object.keys(conditionsMap) as Array<keyof typeof conditionsMap>
 
 /**
  * GLOBAL STYLES
