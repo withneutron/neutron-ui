@@ -26,7 +26,7 @@ import {
   conditionKeys,
   conditionsMap,
   ResponsiveCondition,
-  responsiveConditions,
+  responsiveConditionsPriority,
   responsiveConditionsMap,
 } from "./conditions"
 import { CssAlias } from "./scales/scales.models"
@@ -44,36 +44,10 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
 export function style(css: CSS, conditions: Conditions, styleName?: string) {
   const classList: string[] = []
   const classDict: ClassDict = {
-    base: {
-      base: {},
-      ":focus-visible": {},
-      ":hover": {},
-      ":active": {},
-    },
-    sm: {
-      base: {},
-      ":focus-visible": {},
-      ":hover": {},
-      ":active": {},
-    },
-    md: {
-      base: {},
-      ":focus-visible": {},
-      ":hover": {},
-      ":active": {},
-    },
-    lg: {
-      base: {},
-      ":focus-visible": {},
-      ":hover": {},
-      ":active": {},
-    },
-    xl: {
-      base: {},
-      ":focus-visible": {},
-      ":hover": {},
-      ":active": {},
-    },
+    base: {},
+    ":focus-visible": {},
+    ":hover": {},
+    ":active": {},
   }
   const styleDict: Record<string, string> = {}
   const styleObj: Style = {}
@@ -92,16 +66,21 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
       ? (inlineCondition as ResponsiveConditionKey)
       : BASE
 
-    const hasExistingHigherPriorityStyle = hasHigherPriorityStyle(prop, classDict, condition, pseudoClass)
-    if (hasExistingHigherPriorityStyle) {
+    const existingData = classDict[pseudoClass][prop]
+    const incomingPriority = responsiveConditionsPriority[condition]
+    const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
+    // Lower-valued priorities take precedent, and cannot be overwritten
+    if (existingPriority < incomingPriority) {
       return
     }
-    const isNew = classDict[condition][pseudoClass][prop] === undefined
-    const index = classDict[condition][pseudoClass][prop] ?? classList.length
 
-    if (isNew) {
+    const index = existingData?.[0] ?? classList.length
+
+    // Make sure we keep the tracked priority up-to-date
+    classDict[pseudoClass][prop] = [index, incomingPriority]
+
+    if (existingData === undefined) {
       classList.push(className)
-      classDict[condition][pseudoClass][prop] = index
     } else {
       // Clear out old style that got overwritten, if need be
       const oldClass = classList[index]
@@ -139,7 +118,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
   return output
 }
 
-function processCss(css: CSS, addStyle: AddStyle, conditions: Conditions, condition: InlineConditionKey = BASE) {
+function processCss(css: CSS, addStyle: AddStyle, conditions: Conditions, condition?: InlineConditionKey) {
   const props = Object.entries(css)
   // Loop through each prop of css
   const propsLen = props.length
@@ -165,7 +144,7 @@ function processBaseCss(
   addStyle: AddStyle,
   pseudo: PseudoClassKey,
   conditions: Conditions,
-  condition: InlineConditionKey = BASE
+  condition?: InlineConditionKey
 ) {
   const props = Object.entries(baseCss)
   const propsLen = props.length
@@ -180,7 +159,7 @@ function processCssProp(
   value: InlineConditionValue,
   addStyle: AddStyle,
   conditions: Conditions,
-  condition: InlineConditionKey = BASE,
+  condition?: InlineConditionKey,
   pseudo?: PseudoClassKey
 ) {
   if (typeof value === "object") {
@@ -226,7 +205,7 @@ function addClassFromStyle(
   prop: CssPropKey,
   value: string,
   addStyle: AddStyle,
-  condition: InlineConditionKey = BASE,
+  condition?: InlineConditionKey,
   pseudo?: PseudoClassKey
 ) {
   const output = getStyle(prop, value, pseudo)
@@ -337,21 +316,6 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = B
   }
 }
 
-/** Checks to see if a class dictionary already has a higher priority responsive style for a given prop */
-function hasHigherPriorityStyle(
-  prop: CssPropKey,
-  classDict: ClassDict,
-  condition: ResponsiveConditionKey = BASE,
-  pseudoClass: PseudoCategoryKey = BASE
-) {
-  return responsiveConditions.some(conditionKey => {
-    const reachedCurrentCondition = conditionKey === condition
-    if (reachedCurrentCondition) return false
-    const hasExistingHigherPriorityStyle = classDict[conditionKey][pseudoClass][prop] !== undefined
-    return hasExistingHigherPriorityStyle
-  })
-}
-
 function getDebugVar(className: string) {
   return `--${className}`
 }
@@ -370,7 +334,7 @@ type PseudoClassKey = keyof typeof pseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
-type ClassDict = { [c in ResponsiveConditionKey]: { [p in PseudoCategoryKey]: { [c in CssPropKey]?: number } } }
+type ClassDict = { [p in PseudoCategoryKey]: { [c in CssPropKey]?: [number, number] } }
 
 type Vars = typeof vars
 

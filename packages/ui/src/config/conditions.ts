@@ -1,3 +1,5 @@
+import { BASE } from "./styles.models"
+
 const sm = "395.9987654321"
 const md = "659.9987654321"
 const lg = "999.9987654321"
@@ -12,7 +14,13 @@ export const responsiveConditionsMap = {
 } as const
 
 export type ResponsiveCondition = keyof typeof responsiveConditionsMap
-export const responsiveConditions = Object.keys(responsiveConditionsMap) as Array<ResponsiveCondition>
+export const responsiveConditionsPriority = {
+  sm: 0,
+  md: 1,
+  lg: 2,
+  xl: 3,
+  [BASE]: 4,
+} as const
 
 export const conditionsMap = {
   /**

@@ -90,8 +90,8 @@ const nuiProps = style(
     // "!touch": true,
     // "!pointer": true,
     // "!tv": true,
-    // light: true,
-    // dark: true,
+    light: true,
+    dark: true,
     debug: true,
   },
   "SampleBox"
