@@ -42,20 +42,147 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
 }
 
 /** Converts a CSS style object into a set of pre-generated CSS class names, and possibly a style object */
-export function style(css: CSS, conditions: Conditions, styleName?: string) {
-  const classList: string[] = []
-  const classDict: ClassDict = {
+export function style(
+  css: CSS,
+  conditions: Conditions,
+  overrides?: CSS | null,
+  styleName?: string,
+  manager?: StyleManager
+) {
+  manager = manager ?? new StyleManager(conditions, styleName)
+
+  // Process defined styles
+  processCss(css, manager, conditions)
+
+  // Process style overrides, if any. This is useful for runtime overrides
+  if (overrides) {
+    processCss(overrides, manager, conditions)
+  }
+
+  return manager.compile()
+}
+
+function processCss(css: CSS, manager: StyleManager, conditions: Conditions, condition?: InlineConditionKey) {
+  const props = Object.entries(css)
+  // Loop through each prop of css
+  const propsLen = props.length
+  for (let index = 0; index < propsLen; index++) {
+    const [propName, propValue] = props[index]
+    // If the prop is a condition, process its inner props, including its inner pseudo-classes
+    if (conditionsMap[propName as ConditionKey]) {
+      // Skip if the condition is currently false
+      if (!conditions[propName as ConditionKey]) continue
+      processCss(propValue as ConditionalCSS, manager, conditions, propName as InlineConditionKey)
+    } else if (pseudoClasses[propName as PseudoClassKey]) {
+      // If the prop is a pseudo-class, process its inner props
+      processBaseCss(propValue as BaseCSS, manager, propName as PseudoClassKey, conditions, condition)
+    } else {
+      // Else, process the prop's value
+      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, manager, conditions, condition)
+    }
+  }
+}
+
+function processBaseCss(
+  baseCss: BaseCSS,
+  manager: StyleManager,
+  pseudo: PseudoClassKey,
+  conditions: Conditions,
+  condition?: InlineConditionKey
+) {
+  const props = Object.entries(baseCss)
+  const propsLen = props.length
+  for (let index = 0; index < propsLen; index++) {
+    const [propName, propValue] = props[index]
+    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, manager, conditions, condition, pseudo)
+  }
+}
+
+function processCssProp(
+  prop: CssPropKey,
+  value: InlineConditionValue,
+  manager: StyleManager,
+  conditions: Conditions,
+  condition?: InlineConditionKey,
+  pseudo?: PseudoClassKey
+) {
+  if (typeof value === "object") {
+    if (value[BASE] !== undefined) {
+      processCssProp(prop, value[BASE], manager, conditions, BASE, pseudo)
+    }
+    const conditionKeysLen = conditionKeys.length
+    for (let index = 0; index < conditionKeysLen; index++) {
+      const conditionKey = conditionKeys[index]
+      const innerValue = value[conditionKey]
+      if (innerValue !== undefined && conditions[conditionKey] !== undefined) {
+        processCssProp(prop, innerValue, manager, conditions, conditionKey as InlineConditionKey, pseudo)
+      }
+    }
+  } else {
+    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
+    // If it's a mapped prop, run its mapping func, and proceed with the result of that
+    if (mapper) {
+      const innerProps = Object.entries(mapper(value))
+      const innerPropsLen = innerProps.length
+      for (let index = 0; index < innerPropsLen; index++) {
+        const [propName, propValue] = innerProps[index]
+        processCssProp(propName as CssPropKey, propValue, manager, conditions, condition, pseudo)
+      }
+    } else {
+      value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
+      if (pseudo) {
+        const pseudos =
+          pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
+        const pseudosLen = pseudos.length
+        for (let index = 0; index < pseudosLen; index++) {
+          const pseudoKey = pseudos[index]
+          addClassFromStyle(prop, value as string, manager, condition, pseudoKey)
+        }
+      } else {
+        addClassFromStyle(prop, value, manager, condition)
+      }
+    }
+  }
+}
+
+function addClassFromStyle(
+  prop: CssPropKey,
+  value: string,
+  manager: StyleManager,
+  condition?: InlineConditionKey,
+  pseudo?: PseudoClassKey
+) {
+  const output = getStyle(prop, value, pseudo)
+  if (output) {
+    manager.add(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value)
+  }
+}
+
+/*************************************************************************************************
+ * CLASSES
+ *************************************************************************************************/
+/** Class to manage tracking, updating, and compilation of styles */
+export class StyleManager {
+  classList: string[] = []
+  classDict: ClassDict = {
     base: {},
     ":focus-visible": {},
     ":hover": {},
     ":active": {},
   }
-  const styleDict: Record<string, string> = {}
-  const styleObj: Style = {}
-  let styleCount = 0
+  styleDict: Record<string, string> = {}
+  style: StyleObj = {}
+  styleCount = 0
 
-  /** Adds a class name, and optionally a CSS var assignment, to our data */
-  function addStyle(
+  conditions: Conditions
+  name: string
+
+  constructor(conditions: Conditions, name?: string) {
+    this.conditions = conditions
+    this.name = name ?? getStyleName()
+  }
+
+  add(
     prop: CssPropKey,
     className: string,
     inlineCondition: InlineConditionKey = BASE,
@@ -71,7 +198,8 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
     if (propId === undefined) {
       throw new Error(`Invalid prop "${prop}" passed into '${sourcePropsIdMap}'`)
     }
-    const existingData = classDict[pseudoClass][propId]
+
+    const existingData = this.classDict[pseudoClass][propId]
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
     // Lower-valued priorities take precedent, and cannot be overwritten
@@ -79,187 +207,49 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
       return
     }
 
-    const index = existingData?.[0] ?? classList.length
+    const index = existingData?.[0] ?? this.classList.length
 
     // Make sure we keep the tracked priority up-to-date
-    classDict[pseudoClass][propId] = [index, incomingPriority]
+    this.classDict[pseudoClass][propId] = [index, incomingPriority]
 
     if (existingData === undefined) {
-      classList.push(className)
+      this.classList.push(className)
     } else {
       // Clear out old style that got overwritten, if need be
-      const oldClass = classList[index]
-      const oldStyleVar = styleDict[oldClass]
+      const oldClass = this.classList[index]
+      const oldStyleVar = this.styleDict[oldClass]
       if (oldStyleVar) {
-        delete styleObj[oldStyleVar]
-        styleCount--
+        delete this.style[oldStyleVar]
+        this.styleCount--
       }
-      classList[index] = className
+      this.classList[index] = className
     }
     if (varName && value) {
-      styleCount++
-      styleDict[className] = varName
-      styleObj[varName] = value
+      this.styleCount++
+      this.styleDict[className] = varName
+      this.style[varName] = value
     }
   }
 
-  processCss(css, addStyle, conditions)
-
-  // Compile our data into an output object
-  const outputClass = classList.join(" ")
-  const output: { style?: Style; className: string } = {
-    className: outputClass,
-  }
-
-  // Handle debug
-  if (conditions.debug) {
-    styleCount++
-    styleObj[getDebugVar(styleName ?? getStyleName())] = outputClass
-  }
-
-  if (styleCount > 0) {
-    output.style = styleObj
-  }
-
-  return output
-}
-
-function processCss(css: CSS, addStyle: AddStyle, conditions: Conditions, condition?: InlineConditionKey) {
-  const props = Object.entries(css)
-  // Loop through each prop of css
-  const propsLen = props.length
-  for (let index = 0; index < propsLen; index++) {
-    const [propName, propValue] = props[index]
-    // If the prop is a condition, process its inner props, including its inner pseudo-classes
-    if (conditionsMap[propName as ConditionKey]) {
-      // Skip if the condition is currently false
-      if (!conditions[propName as ConditionKey]) continue
-      processCss(propValue as ConditionalCSS, addStyle, conditions, propName as InlineConditionKey)
-    } else if (pseudoClasses[propName as PseudoClassKey]) {
-      // If the prop is a pseudo-class, process its inner props
-      processBaseCss(propValue as BaseCSS, addStyle, propName as PseudoClassKey, conditions, condition)
-    } else {
-      // Else, process the prop's value
-      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addStyle, conditions, condition)
+  compile() {
+    // Compile our data into an output object
+    const outputClass = this.classList.join(" ")
+    const output: { className: string; styleManager: StyleManager; style?: StyleObj } = {
+      className: outputClass,
+      styleManager: this,
     }
-  }
-}
 
-function processBaseCss(
-  baseCss: BaseCSS,
-  addStyle: AddStyle,
-  pseudo: PseudoClassKey,
-  conditions: Conditions,
-  condition?: InlineConditionKey
-) {
-  const props = Object.entries(baseCss)
-  const propsLen = props.length
-  for (let index = 0; index < propsLen; index++) {
-    const [propName, propValue] = props[index]
-    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, addStyle, conditions, condition, pseudo)
-  }
-}
-
-function processCssProp(
-  prop: CssPropKey,
-  value: InlineConditionValue,
-  addStyle: AddStyle,
-  conditions: Conditions,
-  condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey
-) {
-  if (typeof value === "object") {
-    if (value[BASE] !== undefined) {
-      processCssProp(prop, value[BASE], addStyle, conditions, BASE, pseudo)
+    // Handle debug
+    if (this.conditions.debug) {
+      this.styleCount++
+      this.style[getDebugVar(this.name ?? getStyleName())] = outputClass
     }
-    const conditionKeysLen = conditionKeys.length
-    for (let index = 0; index < conditionKeysLen; index++) {
-      const conditionKey = conditionKeys[index]
-      const innerValue = value[conditionKey]
-      if (innerValue !== undefined && conditions[conditionKey] !== undefined) {
-        processCssProp(prop, innerValue, addStyle, conditions, conditionKey as InlineConditionKey, pseudo)
-      }
-    }
-  } else {
-    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
-    // If it's a mapped prop, run its mapping func, and proceed with the result of that
-    if (mapper) {
-      const innerProps = Object.entries(mapper(value))
-      const innerPropsLen = innerProps.length
-      for (let index = 0; index < innerPropsLen; index++) {
-        const [propName, propValue] = innerProps[index]
-        processCssProp(propName as CssPropKey, propValue, addStyle, conditions, condition, pseudo)
-      }
-    } else {
-      value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
-      if (pseudo) {
-        const pseudos =
-          pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-        const pseudosLen = pseudos.length
-        for (let index = 0; index < pseudosLen; index++) {
-          const pseudoKey = pseudos[index]
-          addClassFromStyle(prop, value as string, addStyle, condition, pseudoKey)
-        }
-      } else {
-        addClassFromStyle(prop, value, addStyle, condition)
-      }
-    }
-  }
-}
 
-function addClassFromStyle(
-  prop: CssPropKey,
-  value: string,
-  addStyle: AddStyle,
-  condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey
-) {
-  const output = getStyle(prop, value, pseudo)
-  if (output) {
-    addStyle(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value)
+    if (this.styleCount > 0) {
+      output.style = this.style
+    }
+    return output
   }
-}
-
-// Sample to test types + auto-complete
-const css: CSS = {
-  bg: "$neutral10",
-  color: "$textNeutral10",
-  border: "$primary",
-  mt: "$8",
-  mb: "$20",
-  ml: "$16",
-  mr: "$12",
-  pl: "$16",
-  pr: "$32",
-  py: { sm: "$24", md: "$32", base: "$40" },
-  radiusTopLeft: "$2",
-  radiusTopRight: "$12",
-  radiusBottomLeft: "$8",
-  radiusBottomRight: "$3",
-  float: "left",
-  maxWidth: "$320",
-  fontWeight: "$bold",
-  fontStyle: "italic",
-  ":active": {
-    color: "$primary9",
-    bg: "$successMax",
-  },
-  ":focus-visible": {
-    color: "$neutral10",
-    bg: "$warningMin",
-  },
-  ":hover": {
-    bg: "$secondary9",
-  },
-  dark: {
-    outlineWidth: "$widthBase",
-  },
-  motion: {
-    animation: "none",
-  },
-  md: {
-    px: "$56",
-  },
 }
 
 /*************************************************************************************************
@@ -350,7 +340,7 @@ export type ThemeOverrides = {
   }
 }
 
-type Style = Record<string, string>
+type StyleObj = Record<string, string>
 
 type AddStyle = (
   prop: CssPropKey,

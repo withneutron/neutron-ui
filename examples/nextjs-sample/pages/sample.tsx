@@ -94,6 +94,7 @@ const nuiProps = style(
     dark: true,
     debug: true,
   },
+  null,
   "SampleBox"
 )
 console.log("nuiProps", nuiProps)
