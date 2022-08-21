@@ -149,7 +149,9 @@ const Sample: NextPage = () => {
           <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection tabIndex={0}>NUI-powered sample box</NuiSection>
+          <NuiSection tabIndex={0} css={{ h: "$200" }}>
+            NUI-powered sample box
+          </NuiSection>
         </>
       )}
       {!showSampleBox && sampleControls}
