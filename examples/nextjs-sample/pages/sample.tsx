@@ -1,6 +1,19 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme, keyframes, useColors, getTheme, style } from "@/ui"
+import {
+  Box,
+  Column,
+  Heading,
+  Text,
+  Anchor,
+  appDarkTheme,
+  appTheme,
+  keyframes,
+  useColors,
+  getTheme,
+  style,
+  styledNUI,
+} from "@/ui"
 import { Cards } from "@/components/sample/Cards"
 import { Tags } from "@/components/sample/Tags"
 import { ButtonSamples } from "@/components/sample/ButtonSamples"
@@ -8,7 +21,8 @@ import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 
-const nuiProps = style(
+const BaseSection = styledNUI(
+  "section",
   {
     bg: {
       sm: "$magenta1",
@@ -49,6 +63,12 @@ const nuiProps = style(
       bg: "$primary9",
       color: "$textPrimary9",
     },
+  },
+  "BaseSection"
+)
+const NuiSection = styledNUI(
+  BaseSection,
+  {
     sm: {
       color: "$textMagenta1",
     },
@@ -69,35 +89,8 @@ const nuiProps = style(
       animation: "none",
     },
   },
-  {
-    sm: true,
-    md: true,
-    lg: true,
-    xl: true,
-    // "!sm": true,
-    // "!md": true,
-    // "!lg": true,
-    // "!xl": true,
-    // contrast: true,
-    // motion: true,
-    // data: true,
-    // touch: true,
-    // pointer: true,
-    // tv: true,
-    // "!contrast": true,
-    // "!motion": true,
-    // "!data": true,
-    // "!touch": true,
-    // "!pointer": true,
-    // "!tv": true,
-    light: true,
-    dark: true,
-    debug: true,
-  },
-  null,
-  "SampleBox"
+  "NuiSection"
 )
-console.log("nuiProps", nuiProps)
 
 const Sample: NextPage = () => {
   const showColorPalette = true
@@ -153,12 +146,10 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box>
-          <div tabIndex={0} {...nuiProps}>
+          <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
-          </div>
-          <div tabIndex={0} {...nuiProps}>
-            NUI-powered sample box
-          </div>
+          </NuiSection>
+          <NuiSection tabIndex={0}>NUI-powered sample box</NuiSection>
         </>
       )}
       {!showSampleBox && sampleControls}

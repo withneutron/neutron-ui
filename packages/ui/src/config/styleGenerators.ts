@@ -49,13 +49,18 @@ export function style(
   styleName?: string,
   manager?: StyleManager
 ) {
-  manager = manager ?? new StyleManager(conditions, styleName)
+  if (manager) {
+    manager.setName(styleName)
+  } else {
+    manager = new StyleManager(conditions, styleName)
+  }
 
   // Process defined styles
   processCss(css, manager, conditions)
 
   // Process style overrides, if any. This is useful for runtime overrides
   if (overrides) {
+    manager.setName(`${manager.name}-CSS`)
     processCss(overrides, manager, conditions)
   }
 
@@ -163,9 +168,16 @@ function addClassFromStyle(
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
+  debugList: string[] = []
   classList: string[] = []
   classDict: ClassDict = {
-    base: {},
+    [BASE]: {},
+    ":focus-visible": {},
+    ":hover": {},
+    ":active": {},
+  }
+  parentClassDict: ClassDict = {
+    [BASE]: {},
     ":focus-visible": {},
     ":hover": {},
     ":active": {},
@@ -179,6 +191,19 @@ export class StyleManager {
 
   constructor(conditions: Conditions, name?: string) {
     this.conditions = conditions
+    this.name = name ?? getStyleName()
+  }
+
+  debug() {
+    if (this.conditions.debug) {
+      this.styleCount++
+      this.style[getDebugVar(this.name)] = this.debugList.join(" ")
+    }
+    this.debugList = []
+  }
+
+  setName(name?: string) {
+    this.debug()
     this.name = name ?? getStyleName()
   }
 
@@ -202,8 +227,13 @@ export class StyleManager {
     const existingData = this.classDict[pseudoClass][propId]
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
+
+    const parentData = this.parentClassDict[pseudoClass][propId]
+    const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
+
     // Lower-valued priorities take precedent, and cannot be overwritten
-    if (existingPriority < incomingPriority) {
+    const isOverridePrevented = parentPriority <= incomingPriority
+    if (existingPriority < incomingPriority || isOverridePrevented) {
       return
     }
 
@@ -214,6 +244,7 @@ export class StyleManager {
 
     if (existingData === undefined) {
       this.classList.push(className)
+      this.debugList.push(className)
     } else {
       // Clear out old style that got overwritten, if need be
       const oldClass = this.classList[index]
@@ -223,6 +254,7 @@ export class StyleManager {
         this.styleCount--
       }
       this.classList[index] = className
+      this.debugList[index] = className
     }
     if (varName && value) {
       this.styleCount++
@@ -232,6 +264,14 @@ export class StyleManager {
   }
 
   compile() {
+    // Any further usage of this class will be for nested composition
+    this.parentClassDict = {
+      [BASE]: { ...this.classDict[BASE] },
+      ":focus-visible": { ...this.classDict[":focus-visible"] },
+      ":hover": { ...this.classDict[":hover"] },
+      ":active": { ...this.classDict[":active"] },
+    }
+
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
     const output: { className: string; styleManager: StyleManager; style?: StyleObj } = {
@@ -240,14 +280,12 @@ export class StyleManager {
     }
 
     // Handle debug
-    if (this.conditions.debug) {
-      this.styleCount++
-      this.style[getDebugVar(this.name ?? getStyleName())] = outputClass
-    }
+    this.debug()
 
     if (this.styleCount > 0) {
       output.style = this.style
     }
+
     return output
   }
 }
