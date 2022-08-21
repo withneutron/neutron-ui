@@ -27,8 +27,7 @@ const nuiProps = style(
     p: "$32",
     pl: "$16",
     border: "$primaryMax",
-    // outline: "$primary",
-    // fontFamily: "$code",
+    fontFamily: "$code",
     radius: "$1",
     radiusTopRight: "$8",
     radiusBottomLeft: "$6",
@@ -42,8 +41,9 @@ const nuiProps = style(
       color: "$textPrimary10",
     },
     ":focus-visible": {
-      color: "$textNeutral10",
-      bg: "$warningMax",
+      color: "$textPrimary9",
+      bg: "$primary9",
+      outline: "$primaryMax",
     },
     ":hover": {
       bg: "$primary9",
