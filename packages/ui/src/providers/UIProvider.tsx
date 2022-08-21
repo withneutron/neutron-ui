@@ -107,6 +107,7 @@ interface UIProviderProps {
   theme?: Theme
   locale?: Locale
   isMobile?: boolean
+  isDebugMode?: boolean
   translations?: UITranslations
   constants?: UIConstants
 }
@@ -119,13 +120,14 @@ export function UIProvider(props: UIProviderProps): ReactElement {
     darkTheme = baseDarkTheme,
     locale,
     isMobile = false,
+    isDebugMode = false,
     translations = {} as UITranslations,
     constants = {} as UIConstants,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
-  const conditions = useConditions(colorMode, isMobile)
+  const conditions = useConditions(colorMode, isMobile, isDebugMode)
   const isTouchDevice = conditions.touch
 
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -175,7 +177,7 @@ export function UIProvider(props: UIProviderProps): ReactElement {
   )
 }
 
-function useConditions(colorMode: ColorMode, isMobile?: boolean) {
+function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = false) {
   const sm = useMediaQuery(queryConditionsMap.sm, false)
   const md = useMediaQuery(queryConditionsMap.md, false)
   const lg = useMediaQuery(queryConditionsMap.lg, false)
@@ -183,7 +185,7 @@ function useConditions(colorMode: ColorMode, isMobile?: boolean) {
   const contrast = useMediaQuery(queryConditionsMap.contrast, false)
   const motion = useMediaQuery(queryConditionsMap.motion, false)
   const data = useMediaQuery(queryConditionsMap.data, false)
-  const touch = useMediaQuery(queryConditionsMap.touch, !!isMobile)
+  const touch = useMediaQuery(queryConditionsMap.touch, isMobile)
   const pointer = useMediaQuery(queryConditionsMap.pointer, false)
   const tv = useMediaQuery(queryConditionsMap.tv, false)
   const conditions: QueryConditions = {
@@ -198,5 +200,5 @@ function useConditions(colorMode: ColorMode, isMobile?: boolean) {
     pointer,
     tv,
   }
-  return mapConditions(conditions, colorMode)
+  return mapConditions(conditions, colorMode, isDebugMode)
 }

@@ -1,15 +1,28 @@
 import { useState, useEffect } from "react"
 import { isSSR } from "../shared/utils"
 
+export function useMediaQuery(
+  query: string,
+  defaultValue: boolean,
+  trueValue?: never,
+  falseValue?: never
+): boolean
 export function useMediaQuery<T>(
   query: string,
-  defaultValue: T | boolean = false,
+  defaultValue: T,
+  trueValue: T,
+  falseValue: T
+): T
+export function useMediaQuery<T = boolean>(
+  query: string,
+  defaultValue: T,
   trueValue?: T,
   falseValue?: T
 ): T | boolean {
-  const trueOutput: T | boolean = trueValue ?? true
-  const falseOutput: T | boolean = falseValue ?? false
-  const [matches, setMatches] = useState(defaultValue)
+  const trueOutput = trueValue ?? true
+  const falseOutput = falseValue ?? false
+  const defaultState = !!defaultValue ?? false
+  const [matches, setMatches] = useState(defaultState)
 
   useEffect(() => {
     if (!isSSR) {
