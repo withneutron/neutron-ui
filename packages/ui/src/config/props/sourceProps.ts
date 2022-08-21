@@ -6,131 +6,8 @@
  * props (and the classes we generate for them) get shorter hashes.
  */
 
-/** Full list of supported CSS props (186 props + 39 utility props) */
-export const sourceProps = {
-  ////////////////////
-  // Remapped Props // (Skip class creation for these)
-  ////////////////////
-  // Utils
-  p: true,
-  pt: true,
-  pr: true,
-  pb: true,
-  pl: true,
-  px: true,
-  paddingX: true,
-  py: true,
-  paddingY: true,
-
-  m: true,
-  mt: true,
-  mr: true,
-  mb: true,
-  ml: true,
-  mx: true,
-  marginX: true,
-  my: true,
-  marginY: true,
-
-  bg: true,
-
-  borderX: true,
-  borderY: true,
-
-  radius: true,
-  radiusTop: true,
-  radiusBottom: true,
-  radiusLeft: true,
-  radiusRight: true,
-  radiusTopLeft: true,
-  radiusTopRight: true,
-  radiusBottomLeft: true,
-  radiusBottomRight: true,
-
-  z: true,
-
-  h: true,
-  w: true,
-  size: true,
-
-  gt: true,
-  gtAreas: true,
-  gtColumns: true,
-  gtRows: true,
-
-  // Standard Props
-  height: true,
-  width: true,
-  minHeight: true,
-  minWidth: true,
-  maxHeight: true,
-  maxWidth: true,
-
-  margin: true,
-  marginBottom: true,
-  marginLeft: true,
-  marginRight: true,
-  marginTop: true,
-
-  padding: true,
-  paddingBottom: true,
-  paddingLeft: true,
-  paddingRight: true,
-  paddingTop: true,
-
-  bottom: true,
-  top: true,
-  left: true,
-  right: true,
-
-  border: true,
-  borderColor: true,
-  borderStyle: true,
-  borderWidth: true,
-
-  borderBlock: true,
-  borderBlockColor: true,
-  borderBlockStyle: true,
-  borderBlockWidth: true,
-
-  borderInline: true,
-  borderInlineColor: true,
-  borderInlineStyle: true,
-  borderInlineWidth: true,
-
-  borderTop: true,
-  borderTopColor: true,
-  borderTopStyle: true,
-  borderTopWidth: true,
-
-  borderBottom: true,
-  borderBottomColor: true,
-  borderBottomStyle: true,
-  borderBottomWidth: true,
-
-  borderLeft: true,
-  borderLeftColor: true,
-  borderLeftStyle: true,
-  borderLeftWidth: true,
-
-  borderRight: true,
-  borderRightColor: true,
-  borderRightStyle: true,
-  borderRightWidth: true,
-
-  borderRadius: true,
-  borderTopLeftRadius: true,
-  borderTopRightRadius: true,
-  borderBottomLeftRadius: true,
-  borderBottomRightRadius: true,
-
-  gap: true, // SPREAD into `rowGap` & `columnGap`
-
-  wordWrap: true, // Alias for "overflowWrap"
-
-  ///////////////////
-  // Classed Props //
-  ///////////////////
+/** Props for which we generate CSS classes — so no mapped/alias props */
+export const sourceClassedProps = {
   display: true,
 
   inlineSize: true,
@@ -349,4 +226,140 @@ export const sourceProps = {
   // "textJustify": true,
   // "textUnderlinePosition": true,
 } as const
-export const sourcePropsList = Object.keys(sourceProps)
+
+/** Full list of supported CSS props (186 props + 39 utility props) */
+export const sourceProps = {
+  ////////////////////
+  // Remapped Props // (Skip class creation for these)
+  ////////////////////
+  // Utils
+  p: true,
+  pt: true,
+  pr: true,
+  pb: true,
+  pl: true,
+  px: true,
+  paddingX: true,
+  py: true,
+  paddingY: true,
+
+  m: true,
+  mt: true,
+  mr: true,
+  mb: true,
+  ml: true,
+  mx: true,
+  marginX: true,
+  my: true,
+  marginY: true,
+
+  bg: true,
+
+  borderX: true,
+  borderY: true,
+
+  radius: true,
+  radiusTop: true,
+  radiusBottom: true,
+  radiusLeft: true,
+  radiusRight: true,
+  radiusTopLeft: true,
+  radiusTopRight: true,
+  radiusBottomLeft: true,
+  radiusBottomRight: true,
+
+  z: true,
+
+  h: true,
+  w: true,
+  size: true,
+
+  gt: true,
+  gtAreas: true,
+  gtColumns: true,
+  gtRows: true,
+
+  // Standard Props
+  height: true,
+  width: true,
+  minHeight: true,
+  minWidth: true,
+  maxHeight: true,
+  maxWidth: true,
+
+  margin: true,
+  marginBottom: true,
+  marginLeft: true,
+  marginRight: true,
+  marginTop: true,
+
+  padding: true,
+  paddingBottom: true,
+  paddingLeft: true,
+  paddingRight: true,
+  paddingTop: true,
+
+  bottom: true,
+  top: true,
+  left: true,
+  right: true,
+
+  border: true,
+  borderColor: true,
+  borderStyle: true,
+  borderWidth: true,
+
+  borderBlock: true,
+  borderBlockColor: true,
+  borderBlockStyle: true,
+  borderBlockWidth: true,
+
+  borderInline: true,
+  borderInlineColor: true,
+  borderInlineStyle: true,
+  borderInlineWidth: true,
+
+  borderTop: true,
+  borderTopColor: true,
+  borderTopStyle: true,
+  borderTopWidth: true,
+
+  borderBottom: true,
+  borderBottomColor: true,
+  borderBottomStyle: true,
+  borderBottomWidth: true,
+
+  borderLeft: true,
+  borderLeftColor: true,
+  borderLeftStyle: true,
+  borderLeftWidth: true,
+
+  borderRight: true,
+  borderRightColor: true,
+  borderRightStyle: true,
+  borderRightWidth: true,
+
+  borderRadius: true,
+  borderTopLeftRadius: true,
+  borderTopRightRadius: true,
+  borderBottomLeftRadius: true,
+  borderBottomRightRadius: true,
+
+  gap: true, // SPREAD into `rowGap` & `columnGap`
+
+  wordWrap: true, // Alias for "overflowWrap"
+
+  ///////////////////
+  // Classed Props //
+  ///////////////////
+  ...sourceClassedProps,
+} as const
+
+type ClassedKeys = keyof typeof sourceClassedProps
+
+/** Maps (classed) source props to numeric IDs */
+export const sourcePropsIdMap = {} as { [k in ClassedKeys]: number }
+
+Object.keys(sourceProps).forEach((prop, id) => {
+  sourcePropsIdMap[prop as ClassedKeys] = id
+})

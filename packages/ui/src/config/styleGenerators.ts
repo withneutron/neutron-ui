@@ -7,6 +7,7 @@ import {
   pseudoClassAliases,
   CustomVarPropValue,
   SCALED_VALUE,
+  sourcePropsIdMap,
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
@@ -66,7 +67,11 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
       ? (inlineCondition as ResponsiveConditionKey)
       : BASE
 
-    const existingData = classDict[pseudoClass][prop]
+    const propId = sourcePropsIdMap[prop as keyof typeof sourcePropsIdMap]
+    if (propId === undefined) {
+      throw new Error(`Invalid prop "${prop}" passed into '${sourcePropsIdMap}'`)
+    }
+    const existingData = classDict[pseudoClass][propId]
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
     // Lower-valued priorities take precedent, and cannot be overwritten
@@ -77,7 +82,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
     const index = existingData?.[0] ?? classList.length
 
     // Make sure we keep the tracked priority up-to-date
-    classDict[pseudoClass][prop] = [index, incomingPriority]
+    classDict[pseudoClass][propId] = [index, incomingPriority]
 
     if (existingData === undefined) {
       classList.push(className)
@@ -115,6 +120,7 @@ export function style(css: CSS, conditions: Conditions, styleName?: string) {
   if (styleCount > 0) {
     output.style = styleObj
   }
+
   return output
 }
 
@@ -334,7 +340,7 @@ type PseudoClassKey = keyof typeof pseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
-type ClassDict = { [p in PseudoCategoryKey]: { [c in CssPropKey]?: [number, number] } }
+type ClassDict = { [p in PseudoCategoryKey]: { [c: number]: [number, number] } }
 
 type Vars = typeof vars
 
