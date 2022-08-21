@@ -30,8 +30,6 @@ const BaseSection = styledNUI(
       lg: "$forest1",
       xl: "$aqua1",
       dark: "$primary4",
-      light: "$secondary4",
-      base: "$neutral3",
     },
     color: "$textNeutral3",
     m: "$8",

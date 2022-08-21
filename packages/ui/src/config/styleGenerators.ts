@@ -50,7 +50,7 @@ export function style(
   manager?: StyleManager
 ) {
   if (manager) {
-    manager.setName(styleName)
+    manager.setNewStyle(conditions, styleName)
   } else {
     manager = new StyleManager(conditions, styleName)
   }
@@ -111,7 +111,8 @@ export class StyleManager {
     this.debugList = []
   }
 
-  setName(name?: string) {
+  setNewStyle(conditions: Conditions, name?: string) {
+    this.conditions = conditions
     this.name = name ?? getStyleName()
   }
 
@@ -276,7 +277,7 @@ function processCssProp(
     for (let index = 0; index < conditionKeysLen; index++) {
       const conditionKey = conditionKeys[index]
       const innerValue = value[conditionKey]
-      if (innerValue !== undefined && conditions[conditionKey] !== undefined) {
+      if (innerValue !== undefined && conditions[conditionKey] === true) {
         processCssProp(prop, innerValue, manager, conditions, conditionKey as InlineConditionKey, pseudo)
       }
     }

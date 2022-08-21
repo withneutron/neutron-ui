@@ -1,3 +1,4 @@
+import { ColorMode } from "../shared/models"
 import { BASE } from "./styles.models"
 
 const sm = "395.9987654321"
@@ -22,6 +23,19 @@ export const responsiveConditionsPriority = {
   [BASE]: 4,
 } as const
 
+export const queryConditionsMap = {
+  ...responsiveConditionsMap,
+
+  contrast: "(prefers-contrast: more)",
+  motion: "(prefers-reduced-motion)",
+  data: "(prefers-reduced-data)",
+  touch: "(hover: none)",
+  pointer: "(hover: hover) and (pointer: fine)",
+  tv: "(hover: hover) and (pointer: coarse)",
+} as const
+
+export type QueryConditions = Record<keyof typeof queryConditionsMap, boolean>
+
 export const conditionsMap = {
   /**
    * For all conditions below, create a `ConditionsContext` at our base provider,
@@ -36,14 +50,7 @@ export const conditionsMap = {
    * facilitates that, by not forcing them to touch existing styles,
    * only add new ones.
    */
-  ...responsiveConditionsMap,
-
-  contrast: "(prefers-contrast: more)",
-  motion: "(prefers-reduced-motion)",
-  data: "(prefers-reduced-data)",
-  touch: "(hover: none)",
-  pointer: "(hover: hover) and (pointer: fine)",
-  tv: "(hover: hover) and (pointer: coarse)",
+  ...queryConditionsMap,
 
   "!contrast": !"(prefers-contrast: more)",
   "!motion": !"(prefers-reduced-motion)",
@@ -58,7 +65,26 @@ export const conditionsMap = {
   debug: "debugmode",
 } as const
 
-export const conditionKeys = Object.keys(conditionsMap) as Array<keyof typeof conditionsMap>
+export type ConditionKeys = keyof typeof conditionsMap
+export const conditionKeys = Object.keys(conditionsMap) as Array<ConditionKeys>
+
+export function mapConditions(conditions: QueryConditions, colorMode: ColorMode, debug = false) {
+  return {
+    ...conditions,
+
+    "!contrast": !conditions.contrast,
+    "!motion": !conditions.motion,
+    "!data": !conditions.data,
+    "!touch": !conditions.touch,
+    "!pointer": !conditions.pointer,
+    "!tv": !conditions.tv,
+
+    light: colorMode === "light",
+    dark: colorMode === "dark",
+
+    debug,
+  } as const
+}
 
 /**
  * GLOBAL STYLES

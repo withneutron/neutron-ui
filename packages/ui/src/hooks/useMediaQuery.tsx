@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react"
 import { isSSR } from "../shared/utils"
 
-export function useMediaQuery(
-  query: string,
-  defaultValue?: boolean,
-  trueValue?: never,
-  falseValue?: never
-): boolean
-export function useMediaQuery<T>(query: string, trueValue: T, falseValue: T, defaultValue?: T): T
 export function useMediaQuery<T>(
   query: string,
+  defaultValue: T | boolean = false,
   trueValue?: T,
-  falseValue?: T,
-  defaultValue: T | boolean = false
+  falseValue?: T
 ): T | boolean {
   const trueOutput: T | boolean = trueValue ?? true
   const falseOutput: T | boolean = falseValue ?? false

@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode, RefObject } from "react"
+import { ReactElement, ReactNode, RefObject, useMemo } from "react"
 import { createRef, createContext, useContext, useRef, useCallback, useEffect, useState } from "react"
 import { SSRProvider } from "@react-aria/ssr"
 import { useLocale, I18nProvider } from "@react-aria/i18n"
@@ -6,6 +6,7 @@ import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
 import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
+import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "../config/conditions"
 
 // NESTABLE NEUTRON THEME PROVIDER ////////////////////////////////////////////
 export interface ThemeContextProps {
@@ -21,6 +22,13 @@ export const ThemeContext = createContext<ThemeContextProps>({
   theme: baseTheme,
   darkTheme: baseDarkTheme,
 })
+
+export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
+  Object.keys(conditionsMap).reduce((output, key) => {
+    output[key as ConditionKeys] = false
+    return output
+  }, {} as Record<ConditionKeys, boolean>)
+)
 
 interface UIThemeProps extends Omit<ThemeContextProps, "isDark" | "ref"> {
   children: ReactNode
@@ -115,8 +123,11 @@ export function UIProvider(props: UIProviderProps): ReactElement {
     constants = {} as UIConstants,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
-  const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", "dark", "light", defaultColorMode)
-  const isTouchDevice = useMediaQuery("(hover: none)", isMobile)
+
+  const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
+  const conditions = useConditions(colorMode, isMobile)
+  const isTouchDevice = conditions.touch
+
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
   const { locale: systemLocale } = useLocale()
   const activeLocale = locale || Locale[systemLocale.replace("-", "_") as keyof typeof Locale] || Locale.en_US
@@ -156,10 +167,36 @@ export function UIProvider(props: UIProviderProps): ReactElement {
       <SSRProvider>
         <I18nProvider locale={activeLocale}>
           <UITheme theme={theme} darkTheme={darkTheme} isRoot={true}>
-            {children}
+            <CssConditionsContext.Provider value={conditions}>{children}</CssConditionsContext.Provider>
           </UITheme>
         </I18nProvider>
       </SSRProvider>
     </UIContext.Provider>
   )
+}
+
+function useConditions(colorMode: ColorMode, isMobile?: boolean) {
+  const sm = useMediaQuery(queryConditionsMap.sm, false)
+  const md = useMediaQuery(queryConditionsMap.md, false)
+  const lg = useMediaQuery(queryConditionsMap.lg, false)
+  const xl = useMediaQuery(queryConditionsMap.xl, false)
+  const contrast = useMediaQuery(queryConditionsMap.contrast, false)
+  const motion = useMediaQuery(queryConditionsMap.motion, false)
+  const data = useMediaQuery(queryConditionsMap.data, false)
+  const touch = useMediaQuery(queryConditionsMap.touch, !!isMobile)
+  const pointer = useMediaQuery(queryConditionsMap.pointer, false)
+  const tv = useMediaQuery(queryConditionsMap.tv, false)
+  const conditions: QueryConditions = {
+    sm,
+    md,
+    lg,
+    xl,
+    contrast,
+    motion,
+    data,
+    touch,
+    pointer,
+    tv,
+  }
+  return mapConditions(conditions, colorMode)
 }
