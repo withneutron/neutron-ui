@@ -21,8 +21,23 @@ import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 
+function Pos(props: {
+  children: React.ReactNode
+  position?: "fixed" | "absolute" | "relative"
+  tabIndex?: number
+  className?: string
+  style?: Record<string, any>
+}) {
+  console.log("position", props.position)
+  return (
+    <section tabIndex={props.tabIndex} className={props.className} style={props.style}>
+      {props.children}
+    </section>
+  )
+}
+
 const BaseSection = styledNUI(
-  "section",
+  Pos,
   {
     bg: {
       sm: "$magenta1",
@@ -30,6 +45,7 @@ const BaseSection = styledNUI(
       lg: "$forest1",
       xl: "$aqua1",
       dark: "$primary4",
+      base: "$neutral3",
     },
     color: "$textNeutral3",
     m: "$8",
@@ -144,10 +160,10 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box>
-          <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
+          <NuiSection tabIndex={0} css={{ fontSize: "$36" }} position="relative">
             NUI-powered sample box
           </NuiSection>
-          <NuiSection tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection tabIndex={0} css={{ h: "$200" }} position="fixed">
             NUI-powered sample box
           </NuiSection>
         </>
