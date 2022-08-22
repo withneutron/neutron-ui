@@ -39,6 +39,7 @@ function Pos(props: {
 const BaseSection = styledNUI(
   Pos,
   {
+    h: "$80",
     bg: {
       sm: "$magenta1",
       md: "$amber1",
@@ -83,6 +84,7 @@ const BaseSection = styledNUI(
 const NuiSection = styledNUI(
   BaseSection,
   {
+    h: "$320",
     sm: {
       color: "$textMagenta1",
     },

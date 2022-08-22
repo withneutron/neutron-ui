@@ -60,8 +60,7 @@ export function style(
 
   // Process style overrides, if any. This is useful for runtime overrides
   if (overrides) {
-    manager.debug()
-    manager.setToOverride()
+    manager.setToOverrideMode()
     processCss(overrides, manager, conditions)
   }
 
@@ -116,8 +115,55 @@ export class StyleManager {
     this.name = name ?? getStyleName()
   }
 
-  setToOverride() {
+  setToOverrideMode() {
+    this.debug()
     this.name = `${this.name}_css`
+  }
+
+  private getConditionFromInline(inlineCondition: InlineConditionKey) {
+    return responsiveConditionsMap[inlineCondition as ResponsiveCondition]
+      ? (inlineCondition as ResponsiveConditionKey)
+      : BASE
+  }
+
+  private getPropId(prop: CssPropKey) {
+    const propId = sourcePropsIdMap[prop as keyof typeof sourcePropsIdMap]
+    if (propId === undefined) {
+      throw new Error(`Invalid prop "${prop}" passed into '${sourcePropsIdMap}'`)
+    }
+    return propId
+  }
+
+  private getBaseState(prop: CssPropKey, inlineCondition: InlineConditionKey, pseudoClass: PseudoCategoryKey) {
+    const condition = this.getConditionFromInline(inlineCondition)
+    const propId = this.getPropId(prop)
+
+    // Existing data, to make sure we don't have a conflict
+    const existingData = this.classDict[pseudoClass][propId]
+    const incomingPriority = responsiveConditionsPriority[condition]
+    const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
+
+    // Parent data, to make sure we don't have a conflict with that data
+    const parentData = this.parentClassDict[pseudoClass][propId]
+    const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
+
+    // If the parent already has this style, only override if this one has HIGHER priority.
+    const hasParentConflic = parentPriority <= incomingPriority
+
+    // If what we've already processed of the current styles have a conflict,
+    // only override it if this one has HIGHER OR EQUAL priority.
+    const hasExistingConflict = existingPriority < incomingPriority
+
+    return {
+      propId,
+      existingData,
+      incomingPriority,
+      existingPriority,
+      parentData,
+      parentPriority,
+      hasParentConflic,
+      hasExistingConflict,
+    }
   }
 
   add(
@@ -128,25 +174,14 @@ export class StyleManager {
     varName?: string,
     value?: string
   ) {
-    const condition = responsiveConditionsMap[inlineCondition as ResponsiveCondition]
-      ? (inlineCondition as ResponsiveConditionKey)
-      : BASE
-
-    const propId = sourcePropsIdMap[prop as keyof typeof sourcePropsIdMap]
-    if (propId === undefined) {
-      throw new Error(`Invalid prop "${prop}" passed into '${sourcePropsIdMap}'`)
-    }
-
-    const existingData = this.classDict[pseudoClass][propId]
-    const incomingPriority = responsiveConditionsPriority[condition]
-    const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
-
-    const parentData = this.parentClassDict[pseudoClass][propId]
-    const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
+    const { propId, existingData, incomingPriority, hasExistingConflict, hasParentConflic } = this.getBaseState(
+      prop,
+      inlineCondition,
+      pseudoClass
+    )
 
     // Lower-valued priorities take precedent, and cannot be overwritten
-    const isOverridePrevented = parentPriority <= incomingPriority
-    if (existingPriority < incomingPriority || isOverridePrevented) {
+    if (hasExistingConflict || hasParentConflic) {
       return
     }
 
