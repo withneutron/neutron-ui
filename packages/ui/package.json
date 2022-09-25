@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A highly accessible and easily customizable UI library",
-  "main": "dist/neutron-ui.cjs.js",
-  "module": "dist/neutron-ui.es.js",
-  "types": "dist/neutron-ui.cjs.d.ts",
+  "main": "dist/nui.js",
+  "module": "dist/nui.es.js",
+  "jsnext:main": "dist/nui.es.js",
+  "types": "dist/nui.d.ts",
   "directories": {
     "dist": "dist",
     "test": "__tests__"
@@ -15,13 +16,13 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/neutron-ui.es.js",
-      "require": "./dist/neutron-ui.cjs.js",
-      "types": "./dist/neutron-ui.cjs.d.ts"
+      "import": "./dist/nui.es.js",
+      "require": "./dist/nui.js",
+      "types": "./dist/nui.d.ts"
     },
     "./styles": {
-      "import": "./dist/neutron-ui.css",
-      "require": "./dist/neutron-ui.css"
+      "import": "./dist/nui.css",
+      "require": "./dist/nui.css"
     }
   },
   "scripts": {
@@ -29,10 +30,8 @@
     "build:types": "tsc --declaration --declarationDir dist/types",
     "build": "yarn build:js && yarn build:types",
     "watch": "vite build --watch",
-    "minify": "sass --style=compressed --watch dist/style.css:dist/neutron-ui.css",
-    "minify:build": "sass --style=compressed dist/style.css:dist/neutron-ui.css",
-    "build:lib": "yarn build && yarn minify:build",
-    "watch:lib": "yarn watch && yarn minify",
+    "build:lib": "yarn build",
+    "watch:lib": "yarn watch",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "echo \"Error: run tests from root\" && exit 1",
     "postinstall": "patch-package"
@@ -96,8 +95,8 @@
     "@types/react": "17.0.2",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",
-    "@vanilla-extract/css": "^1.7.2",
-    "@vanilla-extract/vite-plugin": "^3.2.1",
+    "@vanilla-extract/css": "^1.9.1",
+    "@vanilla-extract/vite-plugin": "^3.6.0",
     "eslint": "8.14.0",
     "eslint-config-prettier": "8.x",
     "eslint-plugin-react": "7.x",
@@ -107,7 +106,6 @@
     "postinstall-postinstall": "^2.1.0",
     "prettier": "2.x",
     "pretty-quick": "3.x",
-    "sass": "^1.54.0",
     "typescript": "^4.1.2",
     "vite": "^3.0.4",
     "vite-dts": "^1.0.4"

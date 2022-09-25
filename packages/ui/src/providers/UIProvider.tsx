@@ -1,10 +1,10 @@
-import { ReactElement, ReactNode, RefObject, useMemo } from "react"
+import { ReactElement, ReactNode, RefObject } from "react"
 import { createRef, createContext, useContext, useRef, useCallback, useEffect, useState } from "react"
 import { SSRProvider } from "@react-aria/ssr"
 import { useLocale, I18nProvider } from "@react-aria/i18n"
 import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
-import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
+import { baseDarkTheme, baseTheme, STheme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
 import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "../config/conditions"
 
@@ -12,8 +12,8 @@ import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryCond
 export interface ThemeContextProps {
   isDark: boolean
   ref: RefObject<ClientElement>
-  theme: Theme
-  darkTheme?: Theme
+  theme: STheme
+  darkTheme?: STheme
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
@@ -103,8 +103,8 @@ interface UITranslations {
 interface UIProviderProps {
   children: ReactNode
   defaultColorMode?: ColorMode
-  darkTheme?: Theme
-  theme?: Theme
+  darkTheme?: STheme
+  theme?: STheme
   locale?: Locale
   isMobile?: boolean
   isDebugMode?: boolean

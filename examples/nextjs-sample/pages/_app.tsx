@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       darkTheme={appDarkTheme}
       defaultColorMode={colorMode}
       isMobile={isMobile}
-      isDebugMode={true}
+      isDebugMode={false}
     >
       <Style />
       <Head>

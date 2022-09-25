@@ -10,16 +10,21 @@ export default defineConfig({
   },
   build: {
     emptyOutDir: false,
-    minify: false,
     reportCompressedSize: false,
+    outDir: path.resolve(__dirname, "./dist"),
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       formats: ["es", "cjs"],
-      fileName: format => `neutron-ui.${format}.js`,
+      fileName: format => (format === "cjs" ? "nui.js" : `nui.${format}.js`),
     },
-    outDir: path.resolve(__dirname, "./dist"),
     rollupOptions: {
       external: Object.keys(pkg.peerDependencies),
+      output: {
+        assetFileNames: ({ name }: Record<string, any>) => {
+          if (name === "style.css") return "nui.css"
+          return name ?? "untitled.js"
+        },
+      },
     },
   },
   optimizeDeps: {
