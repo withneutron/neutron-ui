@@ -20,7 +20,7 @@
  *************************************************************************************************/
 
 import { globalStyle, globalKeyframes } from "@vanilla-extract/css"
-import { addPrefix, CharHash } from "./utils"
+import { addPrefix, classHash, keyframeHash, varHash } from "./utils"
 import {
   getSize,
   getSpace,
@@ -60,10 +60,6 @@ import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineCond
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
  *************************************************************************************************/
-const varHash = new CharHash()
-const keyframeHash = new CharHash()
-const classHash = new CharHash()
-
 // GENERATE THEME SCALES //////////////////////////////////////////////////////////////////////////
 const size = getSize(varHash)
 const space = getSpace(varHash, size.vars)

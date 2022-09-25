@@ -3,7 +3,7 @@ import Head from "next/head"
 import Layout from "@/components/layout/Layout"
 import { Locale, UIProvider, simulateRTL, appTheme, appDarkTheme, getInitialProps, Style } from "@/ui"
 import App from "next/app"
-import "@withneutron/ui/styles"
+import "@withneutron/quarks/styles"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { locale, colorMode, isMobile, ...props } = pageProps

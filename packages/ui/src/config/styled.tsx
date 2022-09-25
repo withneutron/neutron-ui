@@ -1,7 +1,6 @@
 import { ComponentProps, FunctionComponent, Ref } from "react"
 import { useStyleConditions } from "../hooks/useStyleConditions"
-import { CSS } from "./styles.css"
-import { style, StyleManager } from "./styleGenerators"
+import { CSS, style, StyleManager } from "@withneutron/quarks"
 
 type ComponentType<T> = keyof JSX.IntrinsicElements | FunctionComponent<T>
 

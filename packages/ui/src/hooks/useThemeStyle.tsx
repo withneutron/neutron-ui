@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { getTheme } from "../config"
+import { getTheme } from "@withneutron/quarks"
 import { useColors } from "./useColors"
 
 export function useThemeStyle() {

@@ -1,10 +1,9 @@
 import type { DetailedHTMLProps, HtmlHTMLAttributes, ReactElement, ReactNode } from "react"
 import { useLocale } from "@react-aria/i18n"
 import { useTheme } from "../../hooks"
-import { themeClass } from "../../config/styles.css"
+import { themeClass } from "@withneutron/quarks"
 
-interface HtmlProps
-  extends DetailedHTMLProps<HtmlHTMLAttributes<HTMLHtmlElement>, HTMLHtmlElement> {
+interface HtmlProps extends DetailedHTMLProps<HtmlHTMLAttributes<HTMLHtmlElement>, HTMLHtmlElement> {
   children: ReactNode
 }
 

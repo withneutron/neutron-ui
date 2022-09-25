@@ -1,6 +1,6 @@
 import { sourceProps } from "./sourceProps"
 import { CssValue, CssValueMap } from "../scales"
-import { THEME_PREFIX } from "../utils/style.utils"
+import { THEME_PREFIX } from "../utils"
 
 export type KeysFromScale<T extends CssValueMap> = `${typeof THEME_PREFIX}${Exclude<keyof T, symbol>}`
 

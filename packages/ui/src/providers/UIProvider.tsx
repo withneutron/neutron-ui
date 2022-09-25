@@ -6,7 +6,7 @@ import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
 import { baseDarkTheme, baseTheme, STheme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
-import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "../config/conditions"
+import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "@withneutron/quarks"
 
 // NESTABLE NEUTRON THEME PROVIDER ////////////////////////////////////////////
 export interface ThemeContextProps {

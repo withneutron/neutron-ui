@@ -1,19 +1,6 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import {
-  Box,
-  Column,
-  Heading,
-  Text,
-  Anchor,
-  appDarkTheme,
-  appTheme,
-  keyframes,
-  useColors,
-  getTheme,
-  style,
-  styledNUI,
-} from "@/ui"
+import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme, styledNUI } from "@/ui"
 import { Cards } from "@/components/sample/Cards"
 import { Tags } from "@/components/sample/Tags"
 import { ButtonSamples } from "@/components/sample/ButtonSamples"

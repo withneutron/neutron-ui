@@ -1,7 +1,7 @@
 import { useLocale } from "@react-aria/i18n"
 import { isSSR } from "../shared/utils"
 import { useTheme } from "./"
-import { themeClass } from "../config/styles.css"
+import { themeClass } from "@withneutron/quarks"
 
 export function useHtml() {
   const { isDark, theme, darkTheme } = useTheme()
