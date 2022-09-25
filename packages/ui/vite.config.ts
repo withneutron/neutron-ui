@@ -22,7 +22,7 @@ export default defineConfig({
       output: {
         assetFileNames: ({ name }: Record<string, any>) => {
           if (name === "style.css") return "nui.css"
-          return name ?? "untitled.js"
+          return name ?? "custom.js"
         },
       },
     },
@@ -36,9 +36,4 @@ export default defineConfig({
     noExternal: true,
   },
   plugins: [dts(), vanillaExtractPlugin({ identifiers: "short" })],
-  // resolve: {
-  //   alias: {
-  //     "@polaris/tokens": path.resolve(__dirname, "../tokens/src/index.ts"),
-  //   },
-  // },
 })

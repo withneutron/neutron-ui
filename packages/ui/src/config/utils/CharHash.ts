@@ -62,7 +62,7 @@ export interface VarData {
 
 const MAX_LENGTH = 3
 
-/** Generates single or double character hashes, with 51M permutations (7K single chars) */
+/** Generates a 1 to 3 character hash, with 200K permutations */
 export class CharHash {
   private _count = 0
   /** We only ever need 1-3 keys (i.e. chars), because that still creates 200K possible hashes */

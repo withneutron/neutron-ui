@@ -42,7 +42,7 @@
     }
   },
   "bugs": {
-    "url": "https://github.com/withneutron/neutron/issues"
+    "url": "https://github.com/withneutron/neutron-ui/issues"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
