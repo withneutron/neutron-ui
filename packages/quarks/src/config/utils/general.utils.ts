@@ -1,5 +1,3 @@
-import { CharHash } from "./CharHash"
-
 /** Our theme object/token prefix */
 export const THEME_PREFIX = "$"
 
@@ -7,7 +5,3 @@ export const THEME_PREFIX = "$"
 export function addPrefix(value: string) {
   return `${THEME_PREFIX}${value}`
 }
-
-export const varHash = new CharHash()
-export const keyframeHash = new CharHash()
-export const classHash = new CharHash()

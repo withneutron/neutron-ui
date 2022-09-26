@@ -1,7 +1,8 @@
 import { CSS } from "./styles.css"
 
-export function getSelector(className: string, condition = "") {
-  return `.${className}${condition}`
+/** Generates a CSS class name from a `className` string, plus an optional pseudo-class */
+export function getSelector(className: string, pseudoClass = "") {
+  return `.${className}${pseudoClass}`
 }
 
 /** Keeps the order of merged CSS selectors & props, unlike a regular merge, if an object key is repeated */

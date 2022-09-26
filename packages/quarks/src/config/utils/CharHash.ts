@@ -139,3 +139,8 @@ export class CharHash {
           .join("")
   }
 }
+
+// Export our necessary CharHash instances
+export const varHash = new CharHash()
+export const keyframeHash = new CharHash()
+export const classHash = new CharHash()
