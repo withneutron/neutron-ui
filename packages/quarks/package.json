@@ -49,28 +49,18 @@
       "eslint --fix"
     ]
   },
-  "peerDependencies": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-icons": "^4.3.1"
-  },
   "dependencies": {
-    "@react-types/shared": "3.12.0",
-    "chroma-js": "^2.1.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "chroma-js": "^2.1.2"
   },
   "devDependencies": {
     "@types/chroma-js": "2.x",
     "@types/node": "17.0.31",
-    "@types/react": "17.0.2",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",
     "@vanilla-extract/css": "^1.9.1",
     "@vanilla-extract/vite-plugin": "^3.6.0",
     "eslint": "8.14.0",
     "eslint-config-prettier": "8.x",
-    "eslint-plugin-react": "7.x",
     "husky": "7.0.4",
     "lint-staged": "12.4.1",
     "prettier": "2.x",

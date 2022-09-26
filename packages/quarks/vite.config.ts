@@ -2,12 +2,8 @@ import path from "path"
 import { defineConfig } from "vite"
 import dts from "vite-dts"
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin"
-import pkg from "./package.json"
 
 export default defineConfig({
-  esbuild: {
-    jsxInject: "import React from 'react'",
-  },
   build: {
     emptyOutDir: false,
     reportCompressedSize: false,
@@ -18,7 +14,6 @@ export default defineConfig({
       fileName: format => (format === "cjs" ? "quarks.js" : `quarks.${format}.js`),
     },
     rollupOptions: {
-      external: Object.keys(pkg.peerDependencies),
       output: {
         assetFileNames: ({ name }: Record<string, any>) => {
           if (name === "style.css") return "quarks.css"
