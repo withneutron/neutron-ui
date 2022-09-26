@@ -4,7 +4,7 @@ import { SSRProvider } from "@react-aria/ssr"
 import { useLocale, I18nProvider } from "@react-aria/i18n"
 import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
-import { baseDarkTheme, baseTheme, STheme } from "../config/stitches.config"
+import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
 import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "@withneutron/quarks"
 
@@ -12,8 +12,8 @@ import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryCond
 export interface ThemeContextProps {
   isDark: boolean
   ref: RefObject<ClientElement>
-  theme: STheme
-  darkTheme?: STheme
+  theme: Theme
+  darkTheme?: Theme
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
@@ -103,8 +103,8 @@ interface UITranslations {
 interface UIProviderProps {
   children: ReactNode
   defaultColorMode?: ColorMode
-  darkTheme?: STheme
-  theme?: STheme
+  darkTheme?: Theme
+  theme?: Theme
   locale?: Locale
   isMobile?: boolean
   isDebugMode?: boolean
