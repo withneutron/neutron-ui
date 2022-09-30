@@ -15,7 +15,6 @@ function Pos(props: {
   className?: string
   style?: Record<string, any>
 }) {
-  console.log("position", props.position)
   return (
     <section tabIndex={props.tabIndex} className={props.className} style={props.style}>
       {props.children}
