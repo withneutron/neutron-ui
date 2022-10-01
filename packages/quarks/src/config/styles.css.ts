@@ -112,7 +112,7 @@ globalStyle("html, body", {
 })
 globalStyle("html", { fontSize: "6.25%" })
 globalStyle("body", {
-  background: color.vars.neutral2.ref,
+  background: color.vars.tertiary2.ref,
   color: color.vars.defaultBody.ref,
   fontSize: "16em",
   fontWeight: fontWeight.vars.p.ref,
@@ -136,7 +136,7 @@ globalStyle("*", {
   boxSizing: "border-box",
 })
 globalStyle("*::placeholder", {
-  color: color.vars.textNeutral9.ref,
+  color: color.vars.tertiaryText9.ref,
 })
 globalStyle("body, a, p, li, strong, em, b, i, button", {
   fontFamily: fontFamily.vars.body.ref,
@@ -148,8 +148,8 @@ globalStyle("pre, code", {
   fontFamily: fontFamily.vars.code.ref,
 })
 globalStyle("code", {
-  background: color.vars.neutralMaxA2.ref,
-  color: color.vars.neutralMax.ref,
+  background: color.vars.neutralHighAlpha2.ref,
+  color: color.vars.neutralHigh.ref,
   fontWeight: fontWeight.vars.code.ref,
 })
 globalStyle("blockquote", {
@@ -174,8 +174,8 @@ globalStyle("a:focus", {
   outline: outline.vars.primaryMax.ref,
 })
 globalStyle("blockquote, pre", {
-  background: color.vars.neutral3.ref,
-  color: color.vars.textNeutral3.ref,
+  background: color.vars.tertiary3.ref,
+  color: color.vars.tertiaryText3.ref,
   marginInline: 0,
   paddingInline: space.vars[32].ref,
   paddingBlock: space.vars[20].ref,
@@ -214,7 +214,7 @@ globalStyle("strong", {
 })
 globalStyle("::selection", {
   background: color.vars.primary9.ref,
-  color: color.vars.textPrimary9.ref,
+  color: color.vars.primaryText9.ref,
 })
 
 // Add keyframes to CSS

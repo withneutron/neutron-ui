@@ -1,40 +1,35 @@
-import { CharHash } from "../utils"
-import { ColorPalette, ScaleEntry, ThemeScale } from "./scales.models"
-import { generateThemeColors, getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { ColorPalette, DEFAULT_SOURCE_COLORS } from "../../shared/models/colorGen.models"
+import { generateThemeColors } from "../../shared/utils/colorGen.utils"
+import { addPrefix, CharHash } from "../utils"
+import { ColorPaletteEntry, CssAliasMap, ScaleEntry, ThemeScale } from "./scales.models"
+import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `color` theme scale */
 export function getColor(hash: CharHash) {
-  const palette = {} as ColorPalette
-  const lightPalette = generateThemeColors(
-    {
-      neutral: "hsl(60,6.67%,94.12%)",
-      primary: "hsl(240,100%,54.31%)",
-      secondary: "hsl(90.93,100%,44.12%)",
-    },
+  const cssAliasMap = {} as CssAliasMap<any>
+
+  const lightPalette = generateThemeColors<ScaleEntry>(
+    DEFAULT_SOURCE_COLORS,
     "light",
-    (key: keyof ColorPalette, value?: string | ScaleEntry) => {
-      if (value) {
-        if (typeof value === "string") {
-          palette[key] = palette[key] ? { ...palette[key], value } : { ...hash.var, value }
-        } else {
-          palette[key] = palette[key] ? { ...palette[key], value: value.ref } : { ...hash.var, value: value.ref }
-        }
+    (key: keyof ColorPaletteEntry, palette: ColorPalette<ScaleEntry>, value: string | number, isMapped = false) => {
+      if (isMapped) {
+        cssAliasMap[addPrefix(key)] = addPrefix(String(value))
+      } else {
+        palette[key] = { ...hash.var, value: String(value) }
       }
-      if (!palette[key]) {
-        palette[key] = { ...hash.var, value: typeof value === "object" && value?.ref ? value.ref : String(value) }
-      }
-      return palette[key]
     }
   )
+  console.log("lightPalette", lightPalette)
+  console.log("cssAliasMap", cssAliasMap)
   const shadowBase = { ...hash.var, value: "53 0% 7%" }
 
   const lightScale = {
     shadowBase,
     shadowBlack: { ...hash.var, value: "hsl(0 0% 0%)" },
-    defaultBody: { ...hash.var, value: lightPalette.textNeutral2.ref },
-    defaultHeading: { ...hash.var, value: lightPalette.neutral10.ref },
+    defaultBody: { ...hash.var, value: lightPalette.tertiaryText2.ref },
+    defaultHeading: { ...hash.var, value: lightPalette.tertiary10.ref },
     // Unique to light palette
-    panel: { ...hash.var, value: lightPalette.neutralMin.ref },
+    panel: { ...hash.var, value: lightPalette.neutralLow.ref },
     shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.05)` },
     shadowHeavy: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.15)` },
     ...lightPalette,
@@ -46,24 +41,16 @@ export function getColor(hash: CharHash) {
     defaultBody: lightScale.defaultBody,
     defaultHeading: lightScale.defaultHeading,
     // Unique to dark palette
-    panel: { ...lightScale.panel, value: lightScale.neutral3.ref },
+    panel: { ...lightScale.panel, value: lightScale.tertiary3.ref },
     shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / 0.2)` },
     shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / 0.35)` },
-    ...generateThemeColors(
-      {
-        neutral: "hsl(60,6.67%,94.12%)",
-        primary: "hsl(240,100%,54.31%)",
-        secondary: "hsl(90.93,100%,44.12%)",
-      },
+    ...generateThemeColors<ScaleEntry>(
+      DEFAULT_SOURCE_COLORS,
       "dark",
-      (key: keyof ColorPalette, value?: string | ScaleEntry) => {
+      (key: keyof ColorPaletteEntry, palette: ColorPalette<ScaleEntry>, value: string | number) => {
         if (value) {
-          if (typeof value === "string") {
-            return { ...lightScale[key], value }
-          }
-          return { ...lightScale[key], value: value.ref }
+          palette[key] = { ...lightScale[key], value: String(value) }
         }
-        return lightScale[key]
       }
     ),
   } as const
@@ -82,8 +69,8 @@ export function getColor(hash: CharHash) {
 }
 
 export const colorCore = {
-  neutralMin: true,
-  neutralMax: true,
+  neutralLow: true,
+  neutralHigh: true,
   primary1: true,
   primary2: true,
   primary3: true,
@@ -108,56 +95,56 @@ export const colorCore = {
   secondary10: true,
   secondary11: true,
   secondary12: true,
-  neutral1: true,
-  neutral2: true,
-  neutral3: true,
-  neutral4: true,
-  neutral5: true,
-  neutral6: true,
-  neutral7: true,
-  neutral8: true,
-  neutral9: true,
-  neutral10: true,
-  neutral11: true,
-  neutral12: true,
+  tertiary1: true,
+  tertiary2: true,
+  tertiary3: true,
+  tertiary4: true,
+  tertiary5: true,
+  tertiary6: true,
+  tertiary7: true,
+  tertiary8: true,
+  tertiary9: true,
+  tertiary10: true,
+  tertiary11: true,
+  tertiary12: true,
 } as const
 
 export const colorText = {
   ...colorCore,
-  textPrimary1: true,
-  textPrimary2: true,
-  textPrimary3: true,
-  textPrimary4: true,
-  textPrimary5: true,
-  textPrimary6: true,
-  textPrimary7: true,
-  textPrimary8: true,
-  textPrimary9: true,
-  textPrimary10: true,
-  textPrimary11: true,
-  textPrimary12: true,
-  textSecondary1: true,
-  textSecondary2: true,
-  textSecondary3: true,
-  textSecondary4: true,
-  textSecondary5: true,
-  textSecondary6: true,
-  textSecondary7: true,
-  textSecondary8: true,
-  textSecondary9: true,
-  textSecondary10: true,
-  textSecondary11: true,
-  textSecondary12: true,
-  textNeutral1: true,
-  textNeutral2: true,
-  textNeutral3: true,
-  textNeutral4: true,
-  textNeutral5: true,
-  textNeutral6: true,
-  textNeutral7: true,
-  textNeutral8: true,
-  textNeutral9: true,
-  textNeutral10: true,
-  textNeutral11: true,
-  textNeutral12: true,
+  primaryText1: true,
+  primaryText2: true,
+  primaryText3: true,
+  primaryText4: true,
+  primaryText5: true,
+  primaryText6: true,
+  primaryText7: true,
+  primaryText8: true,
+  primaryText9: true,
+  primaryText10: true,
+  primaryText11: true,
+  primaryText12: true,
+  secondaryText1: true,
+  secondaryText2: true,
+  secondaryText3: true,
+  secondaryText4: true,
+  secondaryText5: true,
+  secondaryText6: true,
+  secondaryText7: true,
+  secondaryText8: true,
+  secondaryText9: true,
+  secondaryText10: true,
+  secondaryText11: true,
+  secondaryText12: true,
+  tertiaryText1: true,
+  tertiaryText2: true,
+  tertiaryText3: true,
+  tertiaryText4: true,
+  tertiaryText5: true,
+  tertiaryText6: true,
+  tertiaryText7: true,
+  tertiaryText8: true,
+  tertiaryText9: true,
+  tertiaryText10: true,
+  tertiaryText11: true,
+  tertiaryText12: true,
 } as const

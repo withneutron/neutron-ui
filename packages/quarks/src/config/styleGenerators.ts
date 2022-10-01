@@ -6,7 +6,7 @@ import {
   scaledPropScale,
   pseudoClassAliases,
   CustomVarPropValue,
-  SCALED_VALUE,
+  SCALED_PLACEHOLDER,
   sourcePropsIdMap,
 } from "./props"
 import { ColorMode } from "../shared/models"
@@ -374,12 +374,11 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = B
     return { className: staticValue }
   } else if (scaledValue) {
     // Check to see if this value is an alias
-    if (scaledValue === SCALED_VALUE) {
+    if (scaledValue === SCALED_PLACEHOLDER) {
       const propAliasMap = propScale.cssAliasMap
       type AliasKey = keyof typeof propAliasMap
-      const alias = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
-      if (alias) {
-        const aliasValue = alias.target
+      const aliasValue = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
+      if (aliasValue) {
         scaledValue = aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
       }
     }
@@ -427,14 +426,5 @@ export type ThemeOverrides = {
 }
 
 type StyleObj = Record<string, string>
-
-type AddStyle = (
-  prop: CssPropKey,
-  className: string,
-  inlineCondition?: InlineConditionKey,
-  pseudoClass?: PseudoCategoryKey,
-  varName?: string,
-  value?: string
-) => void
 
 type Conditions = Partial<Record<ConditionKey, boolean>>

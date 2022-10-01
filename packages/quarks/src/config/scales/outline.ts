@@ -13,9 +13,9 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
   const secondaryColorBase = { ...hash.var, value: color.secondary8.ref } as const
   const secondaryColorMin = { ...hash.var, value: color.secondary6.ref } as const
   const secondaryColorMax = { ...hash.var, value: color.secondary9.ref } as const
-  const neutralColorBase = { ...hash.var, value: color.neutral7.ref } as const
-  const neutralColorMin = { ...hash.var, value: color.neutral4.ref } as const
-  const neutralColorMax = { ...hash.var, value: color.neutral9.ref } as const
+  const tertiaryColorBase = { ...hash.var, value: color.tertiary7.ref } as const
+  const tertiaryColorMin = { ...hash.var, value: color.tertiary4.ref } as const
+  const tertiaryColorMax = { ...hash.var, value: color.tertiary9.ref } as const
   const offsetBase = { ...hash.var, value: widthBase.ref } as const
   const offsetMin = { ...hash.var, value: `max(0, calc(${offsetBase.ref}) - 2rem)` } as const
   const offsetMax = { ...hash.var, value: `calc(${offsetBase.ref} + 2rem)` } as const
@@ -34,9 +34,9 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     secondaryColorBase,
     secondaryColorMin,
     secondaryColorMax,
-    neutralColorBase,
-    neutralColorMin,
-    neutralColorMax,
+    tertiaryColorBase,
+    tertiaryColorMin,
+    tertiaryColorMax,
     offsetBase,
     offsetMin,
     offsetMax,
@@ -58,9 +58,9 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     secondary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorBase.ref}` },
     secondaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMin.ref}` },
     secondaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMax.ref}` },
-    neutral: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorBase.ref}` },
-    neutralMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorMin.ref}` },
-    neutralMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorMax.ref}` },
+    tertiary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorBase.ref}` },
+    tertiaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMin.ref}` },
+    tertiaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMax.ref}` },
   } as const
 
   // These keys will get mapped into classes with multiple CSS properties
@@ -73,9 +73,9 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     secondary: { outline: vars.secondary.ref, outlineOffset: vars.defaultOffset.ref },
     secondaryMin: { outline: vars.secondaryMin.ref, outlineOffset: vars.defaultOffsetMin.ref },
     secondaryMax: { outline: vars.secondaryMax.ref, outlineOffset: vars.defaultOffsetMax.ref },
-    neutral: { outline: vars.neutral.ref, outlineOffset: vars.defaultOffset.ref },
-    neutralMin: { outline: vars.neutralMin.ref, outlineOffset: vars.defaultOffsetMin.ref },
-    neutralMax: { outline: vars.neutralMax.ref, outlineOffset: vars.defaultOffsetMax.ref },
+    tertiary: { outline: vars.tertiary.ref, outlineOffset: vars.defaultOffset.ref },
+    tertiaryMin: { outline: vars.tertiaryMin.ref, outlineOffset: vars.defaultOffsetMin.ref },
+    tertiaryMax: { outline: vars.tertiaryMax.ref, outlineOffset: vars.defaultOffsetMax.ref },
   } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
 
@@ -100,9 +100,9 @@ export const outlineColors = {
   secondaryColorBase: true,
   secondaryColorMin: true,
   secondaryColorMax: true,
-  neutralColorBase: true,
-  neutralColorMin: true,
-  neutralColorMax: true,
+  tertiaryColorBase: true,
+  tertiaryColorMin: true,
+  tertiaryColorMax: true,
 } as const
 
 export const outlineOffsets = {
@@ -121,7 +121,7 @@ export const outlineCombos = {
   secondary: true,
   secondaryMin: true,
   secondaryMax: true,
-  neutral: true,
-  neutralMin: true,
-  neutralMax: true,
+  tertiary: true,
+  tertiaryMin: true,
+  tertiaryMax: true,
 } as const

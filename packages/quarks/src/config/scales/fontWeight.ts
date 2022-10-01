@@ -46,15 +46,15 @@ export function getFontWeight(hash: CharHash) {
     black: "black",
   } as const
   const cssAliasMap = {
-    [addPrefix("thin")]: { var: baseVars[100].ref, target: addPrefix("100") },
-    [addPrefix("extraLight")]: { var: baseVars[200].ref, target: addPrefix("200") },
-    [addPrefix("light")]: { var: baseVars[300].ref, target: addPrefix("300") },
-    [addPrefix("regular")]: { var: baseVars[400].ref, target: addPrefix("400") },
-    [addPrefix("medium")]: { var: baseVars[500].ref, target: addPrefix("500") },
-    [addPrefix("semiBold")]: { var: baseVars[600].ref, target: addPrefix("600") },
-    [addPrefix("bold")]: { var: baseVars[700].ref, target: addPrefix("700") },
-    [addPrefix("extraBold")]: { var: baseVars[800].ref, target: addPrefix("800") },
-    [addPrefix("black")]: { var: baseVars[900].ref, target: addPrefix("900") },
+    [addPrefix("thin")]: addPrefix("100"),
+    [addPrefix("extraLight")]: addPrefix("200"),
+    [addPrefix("light")]: addPrefix("300"),
+    [addPrefix("regular")]: addPrefix("400"),
+    [addPrefix("medium")]: addPrefix("500"),
+    [addPrefix("semiBold")]: addPrefix("600"),
+    [addPrefix("bold")]: addPrefix("700"),
+    [addPrefix("extraBold")]: addPrefix("800"),
+    [addPrefix("black")]: addPrefix("900"),
   } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap), ...getThemePropsFromCssMap(cssAliasMap) } as const
 

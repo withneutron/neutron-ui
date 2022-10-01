@@ -23,4 +23,4 @@ export type PickKeys<T extends Record<string, unknown>, K extends Record<string,
 
 export type CustomVarPropValue = { varName: string; className: string }
 
-export const SCALED_VALUE = "SCALED"
+export const SCALED_PLACEHOLDER = "SCALED"

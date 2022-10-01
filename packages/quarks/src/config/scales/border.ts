@@ -13,9 +13,9 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
   const secondaryColorBase = { ...hash.var, value: color.secondary8.ref } as const
   const secondaryColorMin = { ...hash.var, value: color.secondary6.ref } as const
   const secondaryColorMax = { ...hash.var, value: color.secondary9.ref } as const
-  const neutralColorBase = { ...hash.var, value: color.neutral7.ref } as const
-  const neutralColorMin = { ...hash.var, value: color.neutral4.ref } as const
-  const neutralColorMax = { ...hash.var, value: color.neutral9.ref } as const
+  const tertiaryColorBase = { ...hash.var, value: color.tertiary7.ref } as const
+  const tertiaryColorMin = { ...hash.var, value: color.tertiary4.ref } as const
+  const tertiaryColorMax = { ...hash.var, value: color.tertiary9.ref } as const
 
   const defaultWidth = { ...hash.var, value: widthBase.ref } as const
   const defaultStyle = { ...hash.var, value: "solid" } as const
@@ -30,9 +30,9 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     secondaryColorBase,
     secondaryColorMin,
     secondaryColorMax,
-    neutralColorBase,
-    neutralColorMin,
-    neutralColorMax,
+    tertiaryColorBase,
+    tertiaryColorMin,
+    tertiaryColorMax,
     // Composition combos
     primary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorBase.ref}` },
     primaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMin.ref}` },
@@ -40,9 +40,9 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     secondary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorBase.ref}` },
     secondaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMin.ref}` },
     secondaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMax.ref}` },
-    neutral: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorBase.ref}` },
-    neutralMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorMin.ref}` },
-    neutralMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${neutralColorMax.ref}` },
+    tertiary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorBase.ref}` },
+    tertiaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMin.ref}` },
+    tertiaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMax.ref}` },
     // Defaults are not added here, because they are just internal reference vars;
     // they can only be consumed via the composite combos.
   } as const
@@ -72,9 +72,9 @@ export const borderColors = {
   secondaryColorBase: true,
   secondaryColorMin: true,
   secondaryColorMax: true,
-  neutralColorBase: true,
-  neutralColorMin: true,
-  neutralColorMax: true,
+  tertiaryColorBase: true,
+  tertiaryColorMin: true,
+  tertiaryColorMax: true,
 } as const
 
 export const borderCombos = {
@@ -84,7 +84,7 @@ export const borderCombos = {
   secondary: true,
   secondaryMin: true,
   secondaryMax: true,
-  neutral: true,
-  neutralMin: true,
-  neutralMax: true,
+  tertiary: true,
+  tertiaryMin: true,
+  tertiaryMax: true,
 } as const

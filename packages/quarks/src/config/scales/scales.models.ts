@@ -1,13 +1,11 @@
 import { THEME_PREFIX, VarData } from "../utils"
-import { BodyFontFamily, HeadingFontFamily, CodeFontFamily, ThemeColor } from "../../shared/models"
+import { BodyFontFamily, HeadingFontFamily, CodeFontFamily } from "../../shared/models"
+import { ColorPalette, ThemeColor } from "../../shared/models/colorGen.models"
 
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
 export type CssValue = string | Record<string, string | number>
-export type CssAlias<T extends string | number = string | number> = {
-  var: string
-  target: `${typeof THEME_PREFIX}${T}`
-}
+export type CssAlias<T extends string | number = string | number> = `${typeof THEME_PREFIX}${T}`
 export type ScaleEntry = VarData & {
   value: CssValue
 }
@@ -80,19 +78,15 @@ export type FontFamily = BaseVars<
   | keyof typeof CodeFontFamily
 >
 
-export type ColorScaleRange = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-export type StatusColors = "error" | "info" | "success" | "warning"
-export type CoreColorKeys =
-  | `primary${ColorScaleRange}`
-  | `secondary${ColorScaleRange}`
-  | `neutral${ColorScaleRange}`
-  | StatusColors
-  | "shadowBase"
+export type CoreColorKeys = ThemeColor | "shadowBase"
 export type ColorVars = Record<CoreColorKeys, ScaleEntry>
-export type ColorPalette = {
-  [key in ThemeColor]: ScaleEntry
-}
-export type ColorSetter = (key: keyof ColorPalette, value?: string) => ScaleEntry
+export type ColorPaletteEntry = ColorPalette<ScaleEntry>
+export type ColorSetter<T = ScaleEntry> = (
+  key: keyof ColorPalette<T>,
+  palette: ColorPalette<T>,
+  value: string | number,
+  isMapped?: boolean
+) => void
 
 export type KeyframeObject = Record<string, Record<string, string>>
 export type Keyframes = Record<string, KeyframeObject>
@@ -116,7 +110,7 @@ export interface ThemeScale<
    * Used to generate aliases for some CSS classes
    *
    * NOTE: These keys must ALSO be added to `cssValueMap`, for the generated types to work properly.
-   * NOTE 2: Thes keys MUST have the THEME_PREFIX as a prefix
+   * NOTE 2: These keys MUST have `THEME_PREFIX` as a prefix
    */
   cssAliasMap?: A
   /** Used for building keyframe-based animations */
