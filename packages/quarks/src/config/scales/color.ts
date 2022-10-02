@@ -46,8 +46,8 @@ export function getColor(hash: CharHash) {
   const lightScale = {
     shadowBase,
     shadowBlack: { ...hash.var, value: "hsl(0 0% 0%)" },
-    defaultBody: { ...hash.var, value: lightPalette[getTextColor(CoreColorName.tertiary, 2)].ref },
-    defaultHeading: { ...hash.var, value: lightPalette.tertiary10.ref },
+    defaultBody: { ...hash.var, value: lightPalette[getTextColor(CoreColorName.primary, 2)].ref },
+    defaultHeading: { ...hash.var, value: lightPalette.primary10.ref },
     // Unique to light palette
     panel: { ...hash.var, value: lightPalette.min.ref },
     shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.05)` },
@@ -61,7 +61,7 @@ export function getColor(hash: CharHash) {
     defaultBody: lightScale.defaultBody,
     defaultHeading: lightScale.defaultHeading,
     // Unique to dark palette
-    panel: { ...lightScale.panel, value: lightScale.tertiary3.ref },
+    panel: { ...lightScale.panel, value: lightScale.primary3.ref },
     shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / 0.2)` },
     shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / 0.35)` },
     ...generateThemeColors<ScaleEntry>(
