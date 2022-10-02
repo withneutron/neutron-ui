@@ -1,7 +1,7 @@
 import chroma, { Color } from "chroma-js"
-import { Theme } from "config"
 import { IncomingMessage } from "http"
 import { Locale } from "locale-enum"
+import { Theme } from "../../config"
 import {
   AlphaColorName,
   ALPHA_COLOR_VALUES,
@@ -50,7 +50,7 @@ import {
 } from "../../shared/models/theme.models"
 import { enumValues, capitalizeFirstLetter } from "../../shared/utils/common.utils"
 
-const getChromaObject = (color: ChromaColor): Color => {
+export const getChromaObject = (color: ChromaColor): Color => {
   if (typeof color === "string" && color.includes("hsl(")) {
     const div = color.includes(",") ? "," : " "
     const stringValues: string[] = color.replace("hsl(", "").replace(")", "").split(div)
@@ -64,7 +64,7 @@ const getChromaObject = (color: ChromaColor): Color => {
   return chroma(color)
 }
 
-const generateCssColors = (
+export const generateCssColors = (
   scale: number[],
   color: ChromaColor,
   method: "luminance" | "alpha",
@@ -94,22 +94,20 @@ const generateCssColors = (
     const max = isDark ? 1 : 0
     const highContrastValue = index >= HIGH_CONTRAST_INDEX ? max : value
     const actualValue = isHighContrastNeutral ? highContrastValue : value
-    const scaled =
-      method === "alpha" ? adjusted.alpha(actualValue) : adjusted.luminance(actualValue)
+    const scaled = method === "alpha" ? adjusted.alpha(actualValue) : adjusted.luminance(actualValue)
     return scaled.css("hsl")
   })
 }
 
-const getColorRange = (
+export const getColorRange = (
   color: ChromaColor,
   luminanceValues: number[],
   isStatic = false,
   isDark = false,
   isHighContrastNeutral = false
-): string[] =>
-  generateCssColors(luminanceValues, color, "luminance", isStatic, isDark, isHighContrastNeutral)
+): string[] => generateCssColors(luminanceValues, color, "luminance", isStatic, isDark, isHighContrastNeutral)
 
-const getAlphaColors = (
+export const getAlphaColors = (
   color: ChromaColor,
   isStatic = false,
   isDark = false,
@@ -117,9 +115,7 @@ const getAlphaColors = (
   isHighContrastNeutral = false
 ): string[] => {
   const scaleBase =
-    NEUTRAL_ALPHA_COLOR_VALUES[
-      (isDark ? "darkBg" : "lightBg") as keyof typeof NEUTRAL_ALPHA_COLOR_VALUES
-    ]
+    NEUTRAL_ALPHA_COLOR_VALUES[(isDark ? "darkBg" : "lightBg") as keyof typeof NEUTRAL_ALPHA_COLOR_VALUES]
   const neutralScale = scaleBase[`${neutral}Fg` as keyof typeof scaleBase]
   return generateCssColors(
     neutral ? neutralScale : ALPHA_COLOR_VALUES,
@@ -130,16 +126,14 @@ const getAlphaColors = (
     neutral && isHighContrastNeutral
   )
 }
-const getAlphaColorAtIndex = (
+export const getAlphaColorAtIndex = (
   index: number,
   color: ChromaColor,
   isDark = false,
   neutral?: "dark" | "light"
 ): string => {
   const scaleBase =
-    NEUTRAL_ALPHA_COLOR_VALUES[
-      (isDark ? "darkBg" : "lightBg") as keyof typeof NEUTRAL_ALPHA_COLOR_VALUES
-    ]
+    NEUTRAL_ALPHA_COLOR_VALUES[(isDark ? "darkBg" : "lightBg") as keyof typeof NEUTRAL_ALPHA_COLOR_VALUES]
   const neutralScale = scaleBase[`${neutral}Fg` as keyof typeof scaleBase]
   const colorScale = isDark ? DARK_ALPHA_COLOR_VALUES : LIGHT_ALPHA_COLOR_VALUES
   const isNeutral = !!neutral
@@ -150,17 +144,15 @@ const getAlphaColorAtIndex = (
   const satHSV = src.set("hsv.s", isDark ? 0.7 : 0.875)
   const satHSL = isAdjustable ? satHSV.set("hsl.s", Math.min(1, satHSV.get("hsl.s") * 0.875)) : src
   const saturated = satHSL
-  const normalized = isAdjustable
-    ? saturated.set("hsi.i", saturated.get("hsi.i") * 1.25)
-    : saturated
+  const normalized = isAdjustable ? saturated.set("hsi.i", saturated.get("hsi.i") * 1.25) : saturated
   return normalized.alpha(alpha).css("hsl")
 }
 
-const getColorObject = (list: string[], name: string) =>
-  list.reduce((output, value, index): Partial<ColorPalette> => {
+export const getColorObject = <T extends string>(name: T, list: string[]) =>
+  list.reduce((output, value, index): Record<ColorKeys<T>, string> => {
     output[`${name}${index + 1}` as keyof typeof output] = value
     return output
-  }, {} as Partial<ColorPalette>)
+  }, {} as Record<ColorKeys<T>, string>)
 
 /** Generate a full set of color scales, with ranges from 1 (low contrast)
  * to 12 (high contrast), following the Radix Colors system.
@@ -180,15 +172,9 @@ export const generateThemeColors = (
     black: "#000",
     white: "#fff",
     [StaticColor.neutralMax]: max,
-    ...getColorObject(
-      getAlphaColors(max, true, isDark, isDark ? "light" : "dark"),
-      AlphaColorName.neutralMaxA
-    ),
     [StaticColor.neutralMin]: min,
-    ...getColorObject(
-      getAlphaColors(min, true, isDark, isDark ? "dark" : "light"),
-      AlphaColorName.neutralMinA
-    ),
+    ...getColorObject(AlphaColorName.neutralMaxA, getAlphaColors(max, true, isDark, isDark ? "light" : "dark")),
+    ...getColorObject(AlphaColorName.neutralMinA, getAlphaColors(min, true, isDark, isDark ? "dark" : "light")),
   }
 
   const colorNames: (SemanticColorName | FlavorColorName | StatusColorName)[] = [
@@ -200,8 +186,7 @@ export const generateThemeColors = (
   // Calculate the named colors and the color values that go with each one
   colorNames.forEach((name: ThemeColorName): void => {
     const color =
-      inputColors[name as keyof typeof inputColors] ||
-      DEFAULT_SOURCE_COLORS[name as keyof typeof DEFAULT_SOURCE_COLORS]
+      inputColors[name as keyof typeof inputColors] || DEFAULT_SOURCE_COLORS[name as keyof typeof DEFAULT_SOURCE_COLORS]
     if (!color) {
       return
     }
@@ -216,14 +201,10 @@ export const generateThemeColors = (
       const isAlt = name === "warning" || (isDark && name === "info")
       const defaultTextColor = isDark || isAlt ? "$black" : "$white"
       const darkLum = isAlt ? DARK_STATUS_INVERTED_LUMINANCE_VALUES : DARK_STATUS_LUMINANCE_VALUES
-      const lightLum = isAlt
-        ? LIGHT_STATUS_INVERTED_LUMINANCE_VALUES
-        : LIGHT_STATUS_LUMINANCE_VALUES
+      const lightLum = isAlt ? LIGHT_STATUS_INVERTED_LUMINANCE_VALUES : LIGHT_STATUS_LUMINANCE_VALUES
       const statusLuminanceValues = isDark ? darkLum : lightLum
       const typo = getChromaObject(color)
-      const fgColor = isDark
-        ? typo.luminance(DARK_STATUS_TEXT_LUMINANCE)
-        : typo.luminance(LIGHT_STATUS_TEXT_LUMINANCE)
+      const fgColor = isDark ? typo.luminance(DARK_STATUS_TEXT_LUMINANCE) : typo.luminance(LIGHT_STATUS_TEXT_LUMINANCE)
       const fgColorMax = isDark
         ? typo.luminance(DARK_STATUS_TEXT_MAX_LUMINANCE)
         : typo.luminance(LIGHT_STATUS_TEXT_MAX_LUMINANCE)
@@ -231,24 +212,17 @@ export const generateThemeColors = (
       colors[`${name}ForegroundMax` as keyof typeof colors] = fgColorMax.css("hsl")
       getColorRange(color, statusLuminanceValues, true).forEach((colorValue, index) => {
         const pointer = STATUS_COLOR_POINTERS[index as keyof typeof STATUS_COLOR_POINTERS]
-        const textPointer =
-          STATUS_TEXT_COLOR_TARGETS[index as keyof typeof STATUS_TEXT_COLOR_TARGETS]
+        const textPointer = STATUS_TEXT_COLOR_TARGETS[index as keyof typeof STATUS_TEXT_COLOR_TARGETS]
         const infoTextPointer = isDark
-          ? DARK_INFO_STATUS_TEXT_COLOR_TARGETS[
-              index as keyof typeof DARK_INFO_STATUS_TEXT_COLOR_TARGETS
-            ]
-          : LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS[
-              index as keyof typeof LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS
-            ]
+          ? DARK_INFO_STATUS_TEXT_COLOR_TARGETS[index as keyof typeof DARK_INFO_STATUS_TEXT_COLOR_TARGETS]
+          : LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS[index as keyof typeof LIGHT_INFO_STATUS_TEXT_COLOR_TARGETS]
         const key = `${name}${pointer}`
         const infoPointer = isDark
           ? DARK_STATUS_INFO_COLOR_POINTERS[index as keyof typeof DARK_STATUS_INFO_COLOR_POINTERS]
           : LIGHT_STATUS_INFO_COLOR_POINTERS[index as keyof typeof LIGHT_STATUS_INFO_COLOR_POINTERS]
         const textColor = isInfo ? `$neutral${infoTextPointer}` : `$${name}${textPointer}`
         colors[key as keyof typeof colors] = isInfo ? `$neutral${infoPointer}` : colorValue
-        colors[`text${capitalizeFirstLetter(key)}` as keyof typeof colors] = textPointer
-          ? textColor
-          : defaultTextColor
+        colors[`text${capitalizeFirstLetter(key)}` as keyof typeof colors] = textPointer ? textColor : defaultTextColor
       })
     } else {
       // Create non-status color scale
@@ -256,43 +230,34 @@ export const generateThemeColors = (
       const lightScale = isNeutral ? NEUTRAL_LIGHT_LUMINANCE_VALUES : LIGHT_LUMINANCE_VALUES
       const luminanceValues = isDark ? darkScale : lightScale
       const neutralTextColor = "$neutralMin"
-      getColorRange(
-        color,
-        luminanceValues,
-        isNeutral,
-        isDark,
-        isNeutral && isHighContrastNeutral
-      ).forEach((colorValue, index, scale) => {
-        const pointer = index + 1
-        const textPointer = TEXT_COLOR_TARGETS[pointer as keyof typeof TEXT_COLOR_TARGETS]
-        const key = `${name}${pointer}`
-        const alphaValue = (
-          index < FG_COLOR_INDEX ? scale[FG_COLOR_INDEX as keyof typeof scale] : colorValue
-        ) as ChromaColor
-        colors[key as keyof typeof colors] = colorValue
-        if (!isFlavor) {
-          colors[`${name}A${pointer}` as keyof typeof colors] = getAlphaColorAtIndex(
-            index,
-            alphaValue,
-            isDark,
-            isDark ? "light" : "dark"
-          )
+      getColorRange(color, luminanceValues, isNeutral, isDark, isNeutral && isHighContrastNeutral).forEach(
+        (colorValue, index, scale) => {
+          const pointer = index + 1
+          const textPointer = TEXT_COLOR_TARGETS[pointer as keyof typeof TEXT_COLOR_TARGETS]
+          const key = `${name}${pointer}`
+          const alphaValue = (
+            index < FG_COLOR_INDEX ? scale[FG_COLOR_INDEX as keyof typeof scale] : colorValue
+          ) as ChromaColor
+          colors[key as keyof typeof colors] = colorValue
+          if (!isFlavor) {
+            colors[`${name}A${pointer}` as keyof typeof colors] = getAlphaColorAtIndex(
+              index,
+              alphaValue,
+              isDark,
+              isDark ? "light" : "dark"
+            )
+          }
+          colors[`text${capitalizeFirstLetter(key)}` as keyof typeof colors] = textPointer
+            ? `$${name}${textPointer}`
+            : neutralTextColor
         }
-        colors[`text${capitalizeFirstLetter(key)}` as keyof typeof colors] = textPointer
-          ? `$${name}${textPointer}`
-          : neutralTextColor
-      })
+      )
     }
   })
   return colors as ColorPalette
 }
 
-const normalizeSaturation = (
-  color: Color,
-  name: ThemeColorName,
-  baseHue: number,
-  forceHue: number
-) => {
+const normalizeSaturation = (color: Color, name: ThemeColorName, baseHue: number, forceHue: number) => {
   const isNeutral = name.toLowerCase().includes("neutral")
   // Normalize saturation
   if (!isNeutral) {
@@ -333,12 +298,7 @@ const getColorPalettes = (
   const isYellowish = 35 <= baseHue && baseHue < 85
   const isRedToned = 279 <= baseHue || baseHue < 16
   const primaryColor = base.set("hsi.s", options.primarySat).luminance(options.mainFgLum)
-  const primary = normalizeSaturation(
-    primaryColor,
-    SemanticColorName.primary,
-    baseHue,
-    baseHue
-  ).css("hsl")
+  const primary = normalizeSaturation(primaryColor, SemanticColorName.primary, baseHue, baseHue).css("hsl")
   // Tetrad
   const tetradSecondary = getColor(
     SemanticColorName.secondary,
@@ -411,9 +371,7 @@ const getColorPalettes = (
     neutral: getColor(
       SemanticColorName.neutral,
       base,
-      getChromaObject(isGreenish || isRedToned ? triadSecondary : tetradSecondaryVariant).get(
-        "hsl.h"
-      ),
+      getChromaObject(isGreenish || isRedToned ? triadSecondary : tetradSecondaryVariant).get("hsl.h"),
       0,
       options.neutralSat,
       options.altBgLum
@@ -422,17 +380,13 @@ const getColorPalettes = (
   // PALETTE 3: Pure Split Complements
   colors.push({
     primary,
-    secondary: isYellowish
-      ? splitSecondaryVariant
-      : isRedToned
-      ? triadSecondaryVariant
-      : splitSecondary,
+    secondary: isYellowish ? splitSecondaryVariant : isRedToned ? triadSecondaryVariant : splitSecondary,
     neutral: getColor(
       SemanticColorName.neutral,
       base,
-      getChromaObject(
-        isYellowish ? splitSecondaryVariant : isRedToned ? triadSecondaryVariant : splitSecondary
-      ).get("hsl.h"),
+      getChromaObject(isYellowish ? splitSecondaryVariant : isRedToned ? triadSecondaryVariant : splitSecondary).get(
+        "hsl.h"
+      ),
       0,
       options.neutralSat,
       options.altBgLum
@@ -454,9 +408,7 @@ export const getComplementaryColors = (
     throw new Error("Parameter `saturation` must be a number between 0 and 1")
   }
   const color: ChromaColor = `hsl(${hue}, ${saturation * 100}%, 50%)`
-  return mode === "dark"
-    ? getColorPalettes(color, DARK_CHROMA_OPTIONS)
-    : getColorPalettes(color, LIGHT_CHROMA_OPTIONS)
+  return mode === "dark" ? getColorPalettes(color, DARK_CHROMA_OPTIONS) : getColorPalettes(color, LIGHT_CHROMA_OPTIONS)
 }
 
 /** Generates a set of complementary colors from one base hue. */
@@ -468,17 +420,11 @@ export const generatePaletteFromHue = (
 ): SemanticColors => getComplementaryColors(hue, saturation, mode)[variant - 1]
 
 /** Remaps a color to a semantic alias */
-export function mapColorToAlias<T, K extends string>(
-  color: T,
-  alias: string
-): Record<ColorKeys<K>, string> {
-  return Object.keys(color).reduce(
-    (output: Record<string, string>, current: string, index: number) => {
-      output[`${alias}${index + 1}` as keyof typeof output] = `$${current}`
-      return output
-    },
-    {}
-  ) as Record<ColorKeys<K>, string>
+export function mapColorToAlias<T, K extends string>(color: T, alias: string): Record<ColorKeys<K>, string> {
+  return Object.keys(color).reduce((output: Record<string, string>, current: string, index: number) => {
+    output[`${alias}${index + 1}` as keyof typeof output] = `$${current}`
+    return output
+  }, {}) as Record<ColorKeys<K>, string>
 }
 
 /** Helper function to alter color saturation */
@@ -498,7 +444,11 @@ export function getColorModeFromHeaders(req: IncomingMessage | Request): ColorMo
   if (isRequest(req)) {
     colorMode = req.headers.get(key) as ColorMode
   } else {
-    colorMode = (req.headers[key] ?? req.rawHeaders[key]) as ColorMode
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      console.log("2 req.headers", headers[key] as ColorMode)
+      colorMode = headers[key as keyof typeof headers] as ColorMode
+    }
   }
   return colorMode || DEFAULT_COLOR_MODE
 }
@@ -509,8 +459,12 @@ export function getIsMobileFromHeaders(req: IncomingMessage | Request): boolean 
   if (isRequest(req)) {
     return String(req.headers.get(key)).includes("?1")
   } else {
-    return String(req.headers[key] ?? req.rawHeaders[key]).includes("?1")
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      return String(headers[key]).includes("?1")
+    }
   }
+  return false
 }
 
 /** Parse HTTP accept-language header of the user browser */
@@ -522,7 +476,10 @@ export function getLanguageFromHeaders(req: IncomingMessage | Request): Locale[]
   if (isRequest(req)) {
     acceptLangs = req.headers.get(key)
   } else {
-    acceptLangs = req.headers[key] ?? req.rawHeaders[key]
+    const headers = req.headers ?? req.rawHeaders
+    if (headers) {
+      acceptLangs = headers[key]
+    }
   }
 
   if (!acceptLangs) {
@@ -545,9 +502,7 @@ export function getInitialProps<
   const { req, defaultLocale } = ctx
   const colorMode = !req ? undefined : getColorModeFromHeaders(req)
   const isMobile = !req ? undefined : getIsMobileFromHeaders(req)
-  const locale = !req
-    ? (defaultLocale as Locale)
-    : getLanguageFromHeaders(req)[0] || (defaultLocale as Locale)
+  const locale = !req ? (defaultLocale as Locale) : getLanguageFromHeaders(req)[0] || (defaultLocale as Locale)
 
   return { ...props, colorMode, isMobile, locale }
 }

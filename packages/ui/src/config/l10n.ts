@@ -131,13 +131,63 @@ const utilMap = {
 const utilNames = Object.keys(utilMap).map(u => u.toLocaleLowerCase())
 
 const reverseDirection = {
+  inherit: "inherit",
+  initial: "initial",
+  revert: "revert",
+  "revert-layer": "revert-layer",
+  unset: "unset",
+  auto: "auto",
+  none: "none",
+  normal: "normal",
+  start: "start",
+  end: "end",
   left: "right",
   right: "left",
   center: "center",
   top: "top",
   bottom: "bottom",
-  auto: "auto",
-  none: "none",
+  "flex-start": "flex-start",
+  "flex-end": "flex-end",
+  "space-between": "space-between",
+  "space-around": "space-around",
+  "space-evenly": "space-evenly",
+  stretch: "stretch",
+  baseline: "baseline",
+  "first baseline": "first baseline",
+  "last baseline": "last baseline",
+
+  "safe normal": "safe normal",
+  "unsafe normal": "unsafe normal",
+  "safe end": "safe end",
+  "unsafe end": "unsafe end",
+  "safe left": "safe right",
+  "unsafe left": "unsafe right",
+  "safe right": "safe left",
+  "unsafe right": "unsafe left",
+  "safe center": "safe center",
+  "unsafe center": "unsafe center",
+  "safe top": "safe top",
+  "unsafe top": "unsafe top",
+  "safe bottom": "safe bottom",
+  "unsafe bottom": "unsafe bottom",
+  "safe stretch": "safe stretch",
+  "unsafe stretch": "unsafe stretch",
+  "safe baseline": "safe baseline",
+  "unsafe baseline": "unsafe baseline",
+  "safe flex-start": "safe flex-start",
+  "unsafe flex-start": "unsafe flex-start",
+  "safe flex-end": "safe flex-end",
+  "unsafe flex-end": "unsafe flex-end",
+  "safe space-between": "safe space-between",
+  "unsafe space-between": "unsafe space-between",
+  "safe space-around": "safe space-around",
+  "unsafe space-around": "unsafe space-around",
+  "safe space-evenly": "safe space-evenly",
+  "unsafe space-evenly": "unsafe space-evenly",
+  "safe first baseline": "safe first baseline",
+  "unsafe first baseline": "unsafe first baseline",
+  "safe last baseline": "safe last baseline",
+  "unsafe last baseline": "unsafe last baseline",
 }
 
 const offsetPath = {
@@ -176,15 +226,14 @@ function getShorthandRTLValue(rule: string, input: string | number) {
 // SHORTHAND VALUE HANDLERS ///////////////////////////////////////////////////
 function getBackgroundRTLValue(value: string) {
   const backgrounds = value.split(",").reduce((output, bg) => {
+    bg = bg.trim()
     const openP = bg.indexOf("(")
     const closeP = bg.indexOf(")")
     const url = openP > -1 ? bg.substring(openP, closeP) : ""
     const cleanBg = bg.replace(url, "‡‡‡")
     const hasLeft = cleanBg.includes("left")
     const hasRight = cleanBg.includes("right")
-    const firstNumber = (cleanBg.match(
-      /(\d*\.?\d+)\s?(px|em|rem|ex|ch|%|in|cn|mm|pt|pc|vw|vh|vmax|vmin+)/
-    ) || [])[0]
+    const firstNumber = (cleanBg.match(/(\d*\.?\d+)\s?(px|em|rem|ex|ch|%|in|cn|mm|pt|pc|vw|vh|vmax|vmin+)/) || [])[0]
     let outStr = cleanBg
 
     if (hasLeft) {
@@ -278,7 +327,15 @@ function getAnimationOffsetRTLValue(value: string) {
   return out.join(" / ")
 }
 
-function getPositionOffsetRTLValue(value: string) {
+function getPositionOffsetRTLValue(sourceValue: string) {
+  const outputValues = sourceValue.split(",").reduce((output, value) => {
+    output.push(convertPositionOffsetRTLValue(value.trim()))
+    return output
+  }, [] as string[])
+  return outputValues.join(", ")
+}
+
+function convertPositionOffsetRTLValue(value: string) {
   if (["left", "right"].includes(value)) {
     return switchDirectionalRTLValue(value)
   }

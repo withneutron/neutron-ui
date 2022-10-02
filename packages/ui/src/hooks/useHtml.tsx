@@ -1,6 +1,7 @@
 import { useLocale } from "@react-aria/i18n"
 import { isSSR } from "../shared/utils"
 import { useTheme } from "./"
+import { themeClass } from "@withneutron/quarks"
 
 export function useHtml() {
   const { isDark, theme, darkTheme } = useTheme()
@@ -20,6 +21,7 @@ export function useHtml() {
     document.documentElement.setAttribute("dir", output.dir)
     document.documentElement.classList.remove(String(inactiveTheme))
     document.documentElement.classList.add(output.className)
+    document.documentElement.classList.add(themeClass)
   }
 
   return output

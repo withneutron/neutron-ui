@@ -1,21 +1,30 @@
 import path from "path"
-
 import { defineConfig } from "vite"
 import dts from "vite-dts"
+import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin"
+import pkg from "./package.json"
 
-const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id)
-
-export default defineConfig(() => ({
+export default defineConfig({
   esbuild: {
     jsxInject: "import React from 'react'",
   },
   build: {
+    emptyOutDir: false,
+    reportCompressedSize: false,
+    outDir: path.resolve(__dirname, "./dist"),
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       formats: ["es", "cjs"],
+      fileName: format => (format === "cjs" ? "nui.js" : `nui.${format}.js`),
     },
     rollupOptions: {
-      external: isExternal,
+      external: Object.keys(pkg.peerDependencies),
+      output: {
+        assetFileNames: ({ name }: Record<string, any>) => {
+          if (name === "style.css") return "nui.css"
+          return name ?? "custom.js"
+        },
+      },
     },
   },
   optimizeDeps: {
@@ -26,5 +35,5 @@ export default defineConfig(() => ({
   ssr: {
     noExternal: true,
   },
-  plugins: [dts()],
-}))
+  plugins: [dts(), vanillaExtractPlugin({ identifiers: "short" })],
+})

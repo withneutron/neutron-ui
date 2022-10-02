@@ -6,7 +6,11 @@
   "repository": "https://github.com/withneutron/neutron-ui.git",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "private": false,
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@storybook/addon-actions": "^6.5.0-alpha.49",
@@ -17,15 +21,16 @@
     "@storybook/testing-library": "^0.0.9",
     "@types/react": "^17.0.2",
     "babel-loader": "^8.2.4",
+    "concurrently": "^7.4.0",
+    "eslint-config-prettier": "8.5.0",
     "lerna": "^4.0.0",
+    "patch-package": "6.4.7",
+    "postinstall-postinstall": "2.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "storybook-builder-vite": "^0.1.21",
     "vite": "^2.8.6",
-    "vite-dts": "^1.0.4",
-    "eslint-config-prettier": "8.5.0",
-    "patch-package": "6.4.7",
-    "postinstall-postinstall": "2.1.0"
+    "vite-dts": "^1.0.4"
   },
   "resolutions": {
     "react": "17.0.2",
@@ -33,12 +38,21 @@
   },
   "dependencies": {},
   "scripts": {
+    "dev": "yarn workspace nextjs-sample dev",
+    "build": "yarn workspaces run build",
+    "build:lib": "yarn workspaces run build:lib",
+    "watch:lib": "concurrently -c \"yellow,magenta,cyan\" -n \"quarks,quarks-react,ui\" \"yarn workspace @withneutron/quarks run watch:lib\" \"yarn workspace @withneutron/quarks-react run watch:lib\" \"yarn workspace @withneutron/ui run watch:lib\"",
+    "lint": "eslint '**/*.{js,ts,tsx}'",
+    "tsc": "tsc --noEmit",
+    "test": "vite-jest",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cypress": "start-server-and-test 'yarn run dev' http-get://localhost:3000 'yarn run cy:run'",
+    "version": "changeset version && yarn",
+    "release": "yarn build && changeset publish",
+    "size": "yarn build && size-limit",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "dev": "FORCE_COLOR=1 lerna run dev --stream",
-    "build": "FORCE_COLOR=1 lerna run build --stream",
-    "build:lib": "FORCE_COLOR=1 lerna run build:lib --stream",
-    "watch:lib": "FORCE_COLOR=1 lerna run watch:lib --stream",
+    "build:storybook": "build-storybook",
     "postinstall": "patch-package"
   }
 }

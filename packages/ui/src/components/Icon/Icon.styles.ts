@@ -1,13 +1,12 @@
-import {
-  BASE_VARIANTS,
-  COLOR_VARIANTS,
-  generateVariantSequence,
-  keyframes,
-} from "../../config/stitches.config"
+import { BASE_VARIANTS, COLOR_VARIANTS, generateVariantSequence, keyframes } from "../../config/stitches.config"
 
 const spin = keyframes({
   "0%": { transform: "rotate(0deg)" },
-  "50%": { transform: "rotate(180deg)" },
+  "15%": { transform: "rotate(180deg)" },
+  "30%": { transform: "rotate(360deg)" },
+  "30.1%": { transform: "rotate(0deg)" },
+  "45%": { transform: "rotate(180deg)" },
+  "60%": { transform: "rotate(360deg)" },
   "100%": { transform: "rotate(360deg)" },
 })
 
@@ -106,11 +105,11 @@ export const iconStyles = {
       },
     },
     spin: {
-      faster: { animation: `${spin} $transitions$faster infinite linear` },
-      fast: { animation: `${spin} $transitions$fast infinite linear` },
-      slow: { animation: `${spin} $transitions$slow infinite linear` },
-      slower: { animation: `${spin} $transitions$slower infinite linear` },
-      slowest: { animation: `${spin} $transitions$slowest infinite linear` },
+      faster: { animation: `${spin} 1s infinite linear` },
+      fast: { animation: `${spin} 1s infinite linear` },
+      slow: { animation: `${spin} 1s infinite linear` },
+      slower: { animation: `${spin} 1s infinite linear` },
+      slowest: { animation: `${spin} 1s infinite linear` },
     },
     noPointerEvents: {
       true: { pointerEvents: "none" },

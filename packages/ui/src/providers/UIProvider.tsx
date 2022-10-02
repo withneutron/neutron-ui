@@ -1,19 +1,12 @@
-import type { ReactElement, ReactNode, RefObject } from "react"
-import {
-  createRef,
-  createContext,
-  useContext,
-  useRef,
-  useCallback,
-  useEffect,
-  useState,
-} from "react"
+import { ReactElement, ReactNode, RefObject } from "react"
+import { createRef, createContext, useContext, useRef, useCallback, useEffect, useState } from "react"
 import { SSRProvider } from "@react-aria/ssr"
 import { useLocale, I18nProvider } from "@react-aria/i18n"
 import { ClientElement, Locale } from "../shared/models/models"
 import { ColorMode, DEFAULT_COLOR_MODE, DELAYS } from "../shared/models/theme.models"
 import { baseDarkTheme, baseTheme, Theme } from "../config/stitches.config"
 import { useMediaQuery } from "../hooks/useMediaQuery"
+import { ConditionKeys, conditionsMap, mapConditions, QueryConditions, queryConditionsMap } from "@withneutron/quarks"
 
 // NESTABLE NEUTRON THEME PROVIDER ////////////////////////////////////////////
 export interface ThemeContextProps {
@@ -30,17 +23,19 @@ export const ThemeContext = createContext<ThemeContextProps>({
   darkTheme: baseDarkTheme,
 })
 
+export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
+  Object.keys(conditionsMap).reduce((output, key) => {
+    output[key as ConditionKeys] = false
+    return output
+  }, {} as Record<ConditionKeys, boolean>)
+)
+
 interface UIThemeProps extends Omit<ThemeContextProps, "isDark" | "ref"> {
   children: ReactNode
   isRoot?: boolean
 }
 
-export function UITheme({
-  theme,
-  darkTheme = baseDarkTheme,
-  children,
-  isRoot = false,
-}: UIThemeProps): ReactElement {
+export function UITheme({ theme, darkTheme = baseDarkTheme, children, isRoot = false }: UIThemeProps): ReactElement {
   const { isDark = DEFAULT_COLOR_MODE === "dark" } = useContext(UIContext)
   const ref = useRef<ClientElement>(null)
   const className = isDark ? String(darkTheme) : String(theme)
@@ -112,6 +107,7 @@ interface UIProviderProps {
   theme?: Theme
   locale?: Locale
   isMobile?: boolean
+  isDebugMode?: boolean
   translations?: UITranslations
   constants?: UIConstants
 }
@@ -124,21 +120,19 @@ export function UIProvider(props: UIProviderProps): ReactElement {
     darkTheme = baseDarkTheme,
     locale,
     isMobile = false,
+    isDebugMode = false,
     translations = {} as UITranslations,
     constants = {} as UIConstants,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
-  const systemColorMode = useMediaQuery<ColorMode>(
-    "(prefers-color-scheme: dark)",
-    "dark",
-    "light",
-    defaultColorMode
-  )
-  const isTouchDevice = useMediaQuery("(hover: none)", isMobile)
+
+  const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
+  const conditions = useConditions(colorMode, isMobile, isDebugMode)
+  const isTouchDevice = conditions.touch
+
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
   const { locale: systemLocale } = useLocale()
-  const activeLocale =
-    locale || Locale[systemLocale.replace("-", "_") as keyof typeof Locale] || Locale.en_US
+  const activeLocale = locale || Locale[systemLocale.replace("-", "_") as keyof typeof Locale] || Locale.en_US
   const mergedConstants = Object.assign(
     {
       notificationRevealDelay: DELAYS.notificationReveal,
@@ -175,10 +169,36 @@ export function UIProvider(props: UIProviderProps): ReactElement {
       <SSRProvider>
         <I18nProvider locale={activeLocale}>
           <UITheme theme={theme} darkTheme={darkTheme} isRoot={true}>
-            {children}
+            <CssConditionsContext.Provider value={conditions}>{children}</CssConditionsContext.Provider>
           </UITheme>
         </I18nProvider>
       </SSRProvider>
     </UIContext.Provider>
   )
+}
+
+function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = false) {
+  const sm = useMediaQuery(queryConditionsMap.sm, false)
+  const md = useMediaQuery(queryConditionsMap.md, false)
+  const lg = useMediaQuery(queryConditionsMap.lg, false)
+  const xl = useMediaQuery(queryConditionsMap.xl, false)
+  const contrast = useMediaQuery(queryConditionsMap.contrast, false)
+  const motion = useMediaQuery(queryConditionsMap.motion, false)
+  const data = useMediaQuery(queryConditionsMap.data, false)
+  const touch = useMediaQuery(queryConditionsMap.touch, isMobile)
+  const pointer = useMediaQuery(queryConditionsMap.pointer, false)
+  const tv = useMediaQuery(queryConditionsMap.tv, false)
+  const conditions: QueryConditions = {
+    sm,
+    md,
+    lg,
+    xl,
+    contrast,
+    motion,
+    data,
+    touch,
+    pointer,
+    tv,
+  }
+  return mapConditions(conditions, colorMode, isDebugMode)
 }

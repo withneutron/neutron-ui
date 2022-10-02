@@ -141,10 +141,7 @@ const DEFAULT_FONTS: Required<FontFamilySpec> = {
 
 // LIGHT THEME ////////////////////////////////////////////////////////////////
 // Color generation
-const lightPalette = generateThemeColors(
-  generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE),
-  "light"
-)
+const lightPalette = generateThemeColors(generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE), "light")
 const colors: ThemeColors = {
   none: "transparent",
   panel: "$neutralMin",
@@ -198,10 +195,7 @@ const baseThemeValues = {
       {} as Record<keyof typeof BodyFontFamily, string>
     ),
     ...enumKeys(HeadingFontFamily).reduce(
-      (
-        output: Record<keyof typeof HeadingFontFamily, string>,
-        key: keyof typeof HeadingFontFamily
-      ) => {
+      (output: Record<keyof typeof HeadingFontFamily, string>, key: keyof typeof HeadingFontFamily) => {
         output[key] = `"${HeadingFontFamily[key]}"`
         return output
       },
@@ -264,6 +258,7 @@ const baseThemeValues = {
     thin: "$2",
     light: "$3",
     regular: "$4",
+    semiBold: "$5",
     bold: "$6",
     heavy: "$7",
     black: "$9",
@@ -384,178 +379,170 @@ const baseThemeValues = {
   },
 }
 
-export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes, config } =
-  createStitches({
-    cssPreProcessor: generateDirectionalCSS,
-    theme: baseThemeValues,
-    themeMap: {
-      ...defaultThemeMap,
-      padding: "sizes",
-      paddingTop: "sizes",
-      paddingRight: "sizes",
-      paddingBottom: "sizes",
-      paddingLeft: "sizes",
-      paddingBlock: "sizes",
-      paddingBlockEnd: "sizes",
-      paddingBlockStart: "sizes",
-      paddingInline: "sizes",
-      paddingInlineEnd: "sizes",
-      paddingInlineStart: "sizes",
-    },
-    media: {
-      ...(Object.entries(breakpoints).reduce((output, [name, size]) => {
-        output[name] = `(min-width: ${size}px)`
-        output[`<${name}`] = `(max-width: ${size - 0.00001}px)`
-        return output
-      }, {} as Record<string, string>) as Record<Breakpoints, string>),
-      highContrast: "(prefers-contrast: more)",
-      lowContrast: "(prefers-contrast: less)",
-      forcedColors: "(forced-colors: active)",
-      reducedMotion: "(prefers-reduced-motion)",
-      reducedData: "(prefers-reduced-data)",
-      touch: "(hover: none)",
-      hover: "(any-hover: hover)",
-      controller: "(hover: hover) and (pointer: coarse)",
-      pointer: "(hover: hover) and (pointer: fine)",
-      dark: "(prefers-color-scheme: dark)",
-      light: "(prefers-color-scheme: light)",
-      safari: "not all and (min-resolution:.001dpcm)",
-    },
-    // Uses `styled-system` as a base for utils
-    utils: {
-      p: (value: S.PropertyValue<"padding">) => ({
-        padding: value,
-      }),
-      pt: (value: S.PropertyValue<"padding">) => ({
-        paddingTop: value,
-      }),
-      pr: (value: S.PropertyValue<"padding">) => ({
-        paddingRight: value,
-      }),
-      pb: (value: S.PropertyValue<"padding">) => ({
-        paddingBottom: value,
-      }),
-      pl: (value: S.PropertyValue<"padding">) => ({
-        paddingLeft: value,
-      }),
-      px: (value: S.PropertyValue<"padding">) => ({
-        paddingLeft: value,
-        paddingRight: value,
-      }),
-      py: (value: S.PropertyValue<"padding">) => ({
-        paddingTop: value,
-        paddingBottom: value,
-      }),
+export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes, config } = createStitches({
+  cssPreProcessor: generateDirectionalCSS,
+  theme: baseThemeValues,
+  themeMap: {
+    ...defaultThemeMap,
+    padding: "sizes",
+    paddingTop: "sizes",
+    paddingRight: "sizes",
+    paddingBottom: "sizes",
+    paddingLeft: "sizes",
+    paddingBlock: "sizes",
+    paddingBlockEnd: "sizes",
+    paddingBlockStart: "sizes",
+    paddingInline: "sizes",
+    paddingInlineEnd: "sizes",
+    paddingInlineStart: "sizes",
+  },
+  media: {
+    ...(Object.entries(breakpoints).reduce((output, [name, size]) => {
+      output[name] = `(min-width: ${size}px)`
+      output[`<${name}`] = `(max-width: ${size - 0.00001}px)`
+      return output
+    }, {} as Record<string, string>) as Record<Breakpoints, string>),
+    highContrast: "(prefers-contrast: more)", // hc
+    lowContrast: "(prefers-contrast: less)", // lc
+    forcedColors: "(forced-colors: active)", // fc
+    reducedMotion: "(prefers-reduced-motion)", // rm
+    reducedData: "(prefers-reduced-data)", // rd
+    touch: "(hover: none)", // touch
+    hover: "(any-hover: hover)", // hover
+    controller: "(hover: hover) and (pointer: coarse)", // controller
+    pointer: "(hover: hover) and (pointer: fine)", // pointer
+    dark: "(prefers-color-scheme: dark)", // dark
+    light: "(prefers-color-scheme: light)", // light
+    safari: "not all and (min-resolution:.001dpcm)", // safari
+  },
+  // Uses `styled-system` as a base for utils
+  utils: {
+    p: (value: S.PropertyValue<"padding">) => ({
+      padding: value,
+    }),
+    pt: (value: S.PropertyValue<"padding">) => ({
+      paddingTop: value,
+    }),
+    pr: (value: S.PropertyValue<"padding">) => ({
+      paddingRight: value,
+    }),
+    pb: (value: S.PropertyValue<"padding">) => ({
+      paddingBottom: value,
+    }),
+    pl: (value: S.PropertyValue<"padding">) => ({
+      paddingLeft: value,
+    }),
+    px: (value: S.PropertyValue<"padding">) => ({
+      paddingLeft: value,
+      paddingRight: value,
+    }),
+    py: (value: S.PropertyValue<"padding">) => ({
+      paddingTop: value,
+      paddingBottom: value,
+    }),
 
-      m: (value: S.PropertyValue<"margin">) => ({
-        margin: value,
-      }),
-      mt: (value: S.PropertyValue<"margin">) => ({
-        marginTop: value,
-      }),
-      mr: (value: S.PropertyValue<"margin">) => ({
-        marginRight: value,
-      }),
-      mb: (value: S.PropertyValue<"margin">) => ({
-        marginBottom: value,
-      }),
-      ml: (value: S.PropertyValue<"margin">) => ({
-        marginLeft: value,
-      }),
-      mx: (value: S.PropertyValue<"margin">) => ({
-        marginLeft: value,
-        marginRight: value,
-      }),
-      my: (value: S.PropertyValue<"margin">) => ({
-        marginTop: value,
-        marginBottom: value,
-      }),
+    m: (value: S.PropertyValue<"margin">) => ({
+      margin: value,
+    }),
+    mt: (value: S.PropertyValue<"margin">) => ({
+      marginTop: value,
+    }),
+    mr: (value: S.PropertyValue<"margin">) => ({
+      marginRight: value,
+    }),
+    mb: (value: S.PropertyValue<"margin">) => ({
+      marginBottom: value,
+    }),
+    ml: (value: S.PropertyValue<"margin">) => ({
+      marginLeft: value,
+    }),
+    mx: (value: S.PropertyValue<"margin">) => ({
+      marginLeft: value,
+      marginRight: value,
+    }),
+    my: (value: S.PropertyValue<"margin">) => ({
+      marginTop: value,
+      marginBottom: value,
+    }),
 
-      bg: (value: S.PropertyValue<"background"> | "alphaPattern") => {
-        // TODO: Account for high contrast mode
-        return value === "alphaPattern"
-          ? {
-              backgroundColor: "transparent",
-              backgroundSize: "12px 12px",
-              backgroundPosition: "0px 0px, 6px 0px, 6px -6px, 0px 6px",
-              backgroundImage: `linear-gradient(
+    bg: (value: S.PropertyValue<"background"> | "alphaPattern") => {
+      // TODO: Account for high contrast mode
+      return value === "alphaPattern"
+        ? {
+            backgroundColor: "transparent",
+            backgroundSize: "12px 12px",
+            backgroundPosition: "0px 0px, 6px 0px, 6px -6px, 0px 6px",
+            backgroundImage: `linear-gradient(
           45deg, $neutral6 25%, transparent 25%), linear-gradient(
           135deg, $neutral6 25%, transparent 25%), linear-gradient(
           45deg, transparent 75%, $neutral6 75%), linear-gradient(
           135deg, transparent 75%, $neutral6 75%)`,
-            }
-          : {
-              background: value,
-            }
-      },
-
-      radius: (value: S.PropertyValue<"borderRadius">) => ({
-        borderRadius: value,
-      }),
-      radiusTop: (value: S.PropertyValue<"borderRadius">) => ({
-        borderTopLeftRadius: value,
-        borderTopRightRadius: value,
-      }),
-      radiusBottom: (value: S.PropertyValue<"borderRadius">) => ({
-        borderBottomLeftRadius: value,
-        borderBottomRightRadius: value,
-      }),
-      radiusLeft: (value: S.PropertyValue<"borderRadius">) => ({
-        borderTopLeftRadius: value,
-        borderBottomLeftRadius: value,
-      }),
-      radiusRight: (value: S.PropertyValue<"borderRadius">) => ({
-        borderTopRightRadius: value,
-        borderBottomRightRadius: value,
-      }),
-
-      borderX: (value: S.PropertyValue<"border">) => ({
-        borderLeft: value,
-        borderRight: value,
-      }),
-      borderY: (value: S.PropertyValue<"border">) => ({
-        borderBottom: value,
-        borderTop: value,
-      }),
-
-      z: (value: S.PropertyValue<"zIndex">) => ({ zIndex: value }),
-
-      h: (value: S.PropertyValue<"height">) => ({ height: value }),
-      w: (value: S.PropertyValue<"width">) => ({ width: value }),
-      size: (value: S.PropertyValue<"width" & "height">) => ({
-        width: value,
-        height: value,
-      }),
-
-      linearGradient: (value: string) => ({
-        backgroundImage: `linear-gradient(${value})`,
-      }),
-
-      appearance: (value: S.PropertyValue<"appearance">) => ({
-        WebkitAppearance: value,
-        appearance: value,
-      }),
-      userSelect: (value: S.PropertyValue<"userSelect">) => ({
-        WebkitUserSelect: value,
-        userSelect: value,
-      }),
-      backgroundClip: (value: S.PropertyValue<"backgroundClip">) => ({
-        WebkitBackgroundClip: value,
-        backgroundClip: value,
-      }),
+          }
+        : {
+            background: value,
+          }
     },
-  })
+
+    radius: (value: S.PropertyValue<"borderRadius">) => ({
+      borderRadius: value,
+    }),
+    radiusTop: (value: S.PropertyValue<"borderRadius">) => ({
+      borderTopLeftRadius: value,
+      borderTopRightRadius: value,
+    }),
+    radiusBottom: (value: S.PropertyValue<"borderRadius">) => ({
+      borderBottomLeftRadius: value,
+      borderBottomRightRadius: value,
+    }),
+    radiusLeft: (value: S.PropertyValue<"borderRadius">) => ({
+      borderTopLeftRadius: value,
+      borderBottomLeftRadius: value,
+    }),
+    radiusRight: (value: S.PropertyValue<"borderRadius">) => ({
+      borderTopRightRadius: value,
+      borderBottomRightRadius: value,
+    }),
+
+    borderX: (value: S.PropertyValue<"border">) => ({
+      borderLeft: value,
+      borderRight: value,
+    }),
+    borderY: (value: S.PropertyValue<"border">) => ({
+      borderBottom: value,
+      borderTop: value,
+    }),
+
+    z: (value: S.PropertyValue<"zIndex">) => ({ zIndex: value }),
+
+    h: (value: S.PropertyValue<"height">) => ({ height: value }),
+    w: (value: S.PropertyValue<"width">) => ({ width: value }),
+    size: (value: S.PropertyValue<"width" & "height">) => ({
+      width: value,
+      height: value,
+    }),
+
+    linearGradient: (value: string) => ({
+      backgroundImage: `linear-gradient(${value})`,
+    }),
+
+    appearance: (value: S.PropertyValue<"appearance">) => ({
+      WebkitAppearance: value,
+      appearance: value,
+    }),
+    userSelect: (value: S.PropertyValue<"userSelect">) => ({
+      WebkitUserSelect: value,
+      userSelect: value,
+    }),
+    backgroundClip: (value: S.PropertyValue<"backgroundClip">) => ({
+      WebkitBackgroundClip: value,
+      backgroundClip: value,
+    }),
+  },
+})
 export const baseTheme = theme
 
 // Animations
-export type TimingFuctionValues =
-  | "ease"
-  | "ease-in"
-  | "ease-out"
-  | "ease-in-out"
-  | "linear"
-  | "step-start"
-  | "step-end"
+export type TimingFuctionValues = "ease" | "ease-in" | "ease-out" | "ease-in-out" | "linear" | "step-start" | "step-end"
 
 export interface AnimationOptions {
   duration?: number | string
@@ -602,10 +589,7 @@ export const animate = (
 
 // DARK THEME /////////////////////////////////////////////////////////////////
 // Color generation
-const darkPalette = generateThemeColors(
-  generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE, 1, "dark"),
-  "dark"
-)
+const darkPalette = generateThemeColors(generatePaletteFromHue(DEFAULT_HUE, DEFAULT_PALETTE, 1, "dark"), "dark")
 export const darkThemeColors = {
   none: "transparent",
   panel: "$neutral3",
@@ -621,119 +605,6 @@ export const darkTheme = createTheme("neutron-dark-theme", {
   shadows: shadows.dark,
 })
 export const baseDarkTheme = darkTheme
-
-// GLOBAL STYLES //////////////////////////////////////////////////////////////
-// CSS Reset //
-export const globalStyles = globalCss({
-  html: {
-    fontSize: "6.25%",
-  },
-  // Fix for Safari to properly set `rem` units
-  "@safari": {
-    "@supports (-webkit-appearance:none)": {
-      html: { fontSize: "1px" },
-    },
-  },
-  body: {
-    bg: "$neutral2",
-    color: "$defaultBody",
-    fontSize: "16em",
-    fontWeight: "$p",
-    lineHeight: "$body",
-    m: "$none",
-    p: "$none",
-  },
-  "*": {
-    WebkitFontSmoothing: "antialiased",
-    MozOsxFontSmoothing: "grayscale",
-    boxSizing: "border-box",
-    "&::placeholder": {
-      color: "$textNeutral9",
-    },
-    "@reducedMotion": {
-      animation: "$none !important",
-      transition: "$none !important",
-    },
-  },
-  "body, a, p, li, strong, em, b, i, button": {
-    fontFamily: "$body",
-  },
-  button: {
-    fontFamily: "$button",
-  },
-  "pre, code": {
-    fontFamily: "$code",
-  },
-  code: {
-    bg: "$neutralMaxA2",
-    color: "$neutralMax",
-    fontWeight: "$code",
-  },
-  blockquote: {
-    fontFamily: "$quote",
-    fontSize: "$quote",
-    lineHeight: "$spaced",
-    fontStyle: "italic",
-  },
-  ul: {
-    listStyleType: "circle",
-  },
-  "a, p, li, pre, code, strong, em, b, i, blockquote": {
-    fontSize: "$p",
-  },
-  a: {
-    color: "$primary10",
-    fontWeight: "$6",
-    radius: "$field",
-    textDecoration: "underline",
-    "&:focus": {
-      outline: "2px solid $colors$primaryA10",
-    },
-  },
-  "blockquote, pre": {
-    bg: "$neutral3",
-    color: "$textNeutral3",
-    mx: "$none",
-    px: "$8",
-    py: "$6",
-    radius: "$rounded",
-  },
-  h1: {
-    fontSize: "$h1",
-    fontWeight: "$h1",
-    letterSpacing: "$tightest",
-  },
-  h2: {
-    fontSize: "$h2",
-    fontWeight: "$h2",
-  },
-  h3: {
-    fontSize: "$h3",
-    fontWeight: "$h3",
-  },
-  h4: {
-    fontSize: "$h4",
-    fontWeight: "$h4",
-  },
-  h5: {
-    fontSize: "$h5",
-    fontWeight: "$h5",
-  },
-  h6: {
-    fontSize: "$h6",
-    fontWeight: "$h6",
-  },
-  em: {
-    fontStyle: "normal",
-  },
-  strong: {
-    fontWeight: "$p",
-  },
-  "::selection": {
-    bg: "$primary9",
-    color: "$textPrimary9",
-  },
-})
 
 // DERIVED TYPES //////////////////////////////////////////////////////////////
 type ThemeColors = typeof lightPalette & {
@@ -1046,11 +917,7 @@ export const FONT_PROPS = Object.keys(baseThemeValues.fonts) as (keyof Fonts)[]
 
 // DERIVED UTILS //////////////////////////////////////////////////////////////
 /** Find the root value of a theme variable */
-export function getRootValueFromTheme(
-  theme: Theme,
-  category: ThemeCategoryName,
-  token: ThemeStyleTokenProps
-): string {
+export function getRootValueFromTheme(theme: Theme, category: ThemeCategoryName, token: ThemeStyleTokenProps): string {
   const categoryData = theme[category]
   if (categoryData) {
     const tokenData = categoryData[token as keyof typeof categoryData] as Token
@@ -1059,11 +926,7 @@ export function getRootValueFromTheme(
       const isVar = value.includes("var(")
       if (isVar) {
         const keys = value.replace(`var(--`, "").replace(")", "").split("-")
-        value = getRootValueFromTheme(
-          theme,
-          keys[0] as ThemeCategoryName,
-          keys[1] as ThemeStyleTokenProps
-        )
+        value = getRootValueFromTheme(theme, keys[0] as ThemeCategoryName, keys[1] as ThemeStyleTokenProps)
       }
     }
     return String(value)
@@ -1157,21 +1020,17 @@ export function getFontLinks(fontFamilies: FontFamilySpec = DEFAULT_FONTS): Html
 }
 
 /** Get theme font data + font links to add to the HTML <head> */
-export function getThemeFonts(
-  fontFamilies: FontFamilySpec = DEFAULT_FONTS
-): GetThemeFonts<FontFamilies> {
+export function getThemeFonts(fontFamilies: FontFamilySpec = DEFAULT_FONTS): GetThemeFonts<FontFamilies> {
   const { body, button, heading, code } = fontFamilies
   const bodyKey = body || DEFAULT_FONTS.body
   const buttonKey = button || body || DEFAULT_FONTS.button
   const headingKey = heading || DEFAULT_FONTS.heading
   const codeKey = code || DEFAULT_FONTS.code
   const buttonFontData =
-    bodyFonts[buttonKey as keyof typeof bodyFonts] ||
-    headingFonts[buttonKey as keyof typeof headingFonts]
+    bodyFonts[buttonKey as keyof typeof bodyFonts] || headingFonts[buttonKey as keyof typeof headingFonts]
   const bodyFallback = bodyFonts[bodyKey as keyof typeof bodyFonts].fallbackKey || "systemSans"
   const buttonFallback = buttonFontData.fallbackKey || "systemSans"
-  const headingFallback =
-    headingFonts[headingKey as keyof typeof headingFonts].fallbackKey || "systemSerif"
+  const headingFallback = headingFonts[headingKey as keyof typeof headingFonts].fallbackKey || "systemSerif"
   const codeFallback = codeFonts[codeKey as keyof typeof codeFonts].fallbackKey || "systemCode"
   return {
     fonts: {
@@ -1185,9 +1044,11 @@ export function getThemeFonts(
 }
 
 /** Generates a numbered sequence of Stitches variant entries */
-export function generateVariantSequence<
-  T extends Partial<SizeVariant | SignedSizeVariant> = SizeVariant
->(entries: number, contentGetter: (value: number) => CSS, shift = 1): T {
+export function generateVariantSequence<T extends Partial<SizeVariant | SignedSizeVariant> = SizeVariant>(
+  entries: number,
+  contentGetter: (value: number) => CSS,
+  shift = 1
+): T {
   const out: T = Array(entries)
     .fill(0)
     .reduce((output: Record<string | number, CSS>, x: number, index: number) => {
@@ -1207,13 +1068,10 @@ function getSignedContentGetter(prop: keyof CSS): (n: number) => CSS {
 }
 
 function getSemanticSizes(prop: keyof CSS): Record<SemanticSizes, CSS> {
-  return enumKeys(SemanticSize).reduce(
-    (output: Record<SemanticSizes, CSS>, key: keyof typeof SemanticSize) => {
-      output[key] = { [prop]: `$${key}` }
-      return output
-    },
-    {} as Record<SemanticSizes, CSS>
-  )
+  return enumKeys(SemanticSize).reduce((output: Record<SemanticSizes, CSS>, key: keyof typeof SemanticSize) => {
+    output[key] = { [prop]: `$${key}` }
+    return output
+  }, {} as Record<SemanticSizes, CSS>)
 }
 
 const heightVariants = {
@@ -1238,8 +1096,7 @@ const getBgColorReducer =
     const name = bg.toLowerCase()
     const isNeutral = name.includes("neutral")
     const isNeutralStatic = isNeutral && (name.includes("max") || name.includes("min"))
-    const isStatus =
-      !isNeutral && !!SemanticStaticColorName[bg as keyof typeof SemanticStaticColorName]
+    const isStatus = !isNeutral && !!SemanticStaticColorName[bg as keyof typeof SemanticStaticColorName]
     let style: CSS
     if (isNeutralStatic || isStatus) {
       style = { bg: `$${bg}` }
@@ -1249,14 +1106,10 @@ const getBgColorReducer =
       COLOR_KEYS.forEach((key: number) => {
         if (!isNeutralStatic) {
           style = { bg: `$${bg}${key}` }
-          output[`${bg}${key}` as keyof BGColorNames] = isFocusStyle
-            ? { "&:focus, &:hover": style }
-            : style
+          output[`${bg}${key}` as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
         }
         style = { bg: `$${bg}A${key}` }
-        output[`${bg}A${key}` as keyof BGColorNames] = isFocusStyle
-          ? { "&:focus, &:hover": style }
-          : style
+        output[`${bg}A${key}` as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
       })
     }
     if (!output.transparent) {
@@ -1271,27 +1124,20 @@ const getBorderColorReducer =
     const name = borderColor.toLowerCase()
     const isNeutral = name.includes("neutral")
     const isNeutralStatic = isNeutral && (name.includes("max") || name.includes("min"))
-    const isStatus =
-      !isNeutral && !!SemanticStaticColorName[borderColor as keyof typeof SemanticStaticColorName]
+    const isStatus = !isNeutral && !!SemanticStaticColorName[borderColor as keyof typeof SemanticStaticColorName]
     let style: CSS
     if (isNeutralStatic || isStatus) {
       style = { borderColor: `$${borderColor}` }
-      output[borderColor as keyof BGColorNames] = isFocusStyle
-        ? { "&:focus, &:hover": style }
-        : style
+      output[borderColor as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
     }
     if (!isStatus) {
       COLOR_KEYS.forEach((key: number) => {
         if (!isNeutralStatic) {
           style = { borderColor: `$${borderColor}${key}` }
-          output[`${borderColor}${key}` as keyof BGColorNames] = isFocusStyle
-            ? { "&:focus, &:hover": style }
-            : style
+          output[`${borderColor}${key}` as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
         }
         style = { borderColor: `$${borderColor}A${key}` }
-        output[`${borderColor}A${key}` as keyof BGColorNames] = isFocusStyle
-          ? { "&:focus, &:hover": style }
-          : style
+        output[`${borderColor}A${key}` as keyof BGColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
       })
     }
     if (!output.transparent) {
@@ -1311,9 +1157,7 @@ const getTextColorReducer =
     } else {
       COLOR_KEYS.forEach((key: number) => {
         style = { color: `$${color}${key}` }
-        output[`${color}${key}` as keyof TextColorNames] = isFocusStyle
-          ? { "&:focus, &:hover": style }
-          : style
+        output[`${color}${key}` as keyof TextColorNames] = isFocusStyle ? { "&:focus, &:hover": style } : style
       })
     }
     if (!output.transparent) {
@@ -1339,8 +1183,7 @@ const focusButtonReducer = (output: BGColorNames, color: string) => {
   const name = color.toLowerCase()
   const isNeutral = name.includes("neutral")
   const isNeutralStatic = isNeutral && (name.includes("max") || name.includes("min"))
-  const isStatus =
-    !isNeutral && !!SemanticStaticColorName[color as keyof typeof SemanticStaticColorName]
+  const isStatus = !isNeutral && !!SemanticStaticColorName[color as keyof typeof SemanticStaticColorName]
   if (isNeutralStatic || isStatus) {
     output[color as keyof BGColorNames] = getHoverColorProps(`$${color}`)
   }
@@ -1605,11 +1448,7 @@ export const TYPOGRAPHY_VARIANTS = {
     largest: { fontSize: "$largest !important" },
   },
   fontWeight: {
-    ...generateVariantSequence<FontWeightVariant>(
-      10,
-      (n: number) => ({ fontWeight: `$${n} !important` }),
-      0
-    ),
+    ...generateVariantSequence<FontWeightVariant>(10, (n: number) => ({ fontWeight: `$${n} !important` }), 0),
     h1: { fontWeight: "$h1 !important" },
     h2: { fontWeight: "$h2 !important" },
     h3: { fontWeight: "$h3 !important" },
@@ -1635,13 +1474,12 @@ export const TYPOGRAPHY_VARIANTS = {
     systemSans: { fontFamily: "$systemSans" },
     systemSerif: { fontFamily: "$systemSerif" },
     systemMono: { fontFamily: "$systemMono" },
-    ...[
-      ...enumKeys(BodyFontFamily),
-      ...enumKeys(HeadingFontFamily),
-      ...enumKeys(CodeFontFamily),
-    ].reduce((output: Record<FontFamilyKey, CSS>, key: FontFamilyKey) => {
-      output[key] = { fontFamily: `$${key}"` }
-      return output
-    }, {} as Record<FontFamilyKey, CSS>),
+    ...[...enumKeys(BodyFontFamily), ...enumKeys(HeadingFontFamily), ...enumKeys(CodeFontFamily)].reduce(
+      (output: Record<FontFamilyKey, CSS>, key: FontFamilyKey) => {
+        output[key] = { fontFamily: `$${key}"` }
+        return output
+      },
+      {} as Record<FontFamilyKey, CSS>
+    ),
   },
 }
