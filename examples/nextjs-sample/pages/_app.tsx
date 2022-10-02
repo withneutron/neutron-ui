@@ -6,7 +6,7 @@ import App from "next/app"
 import "@withneutron/quarks/styles"
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { locale, colorMode, isMobile, ...props } = pageProps
+  const { locale, colorMode, isMobile, isDebugMode, ...props } = pageProps
 
   return (
     <UIProvider
@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       darkTheme={appDarkTheme}
       defaultColorMode={colorMode}
       isMobile={isMobile}
-      isDebugMode={false}
+      isDebugMode={isDebugMode}
     >
       <Style />
       <Head>
@@ -32,7 +32,10 @@ MyApp.displayName = "MyApp"
 
 MyApp.getInitialProps = async (AppContext: AppContext) => {
   const appProps = await App.getInitialProps(AppContext)
-  const pageProps = getInitialProps(AppContext.ctx, appProps)
+  const pageProps = {
+    ...getInitialProps(AppContext.ctx, appProps),
+    isDebugMode: AppContext.router.query.debugmode === "1",
+  }
   return {
     ...appProps,
     pageProps,
