@@ -1,6 +1,6 @@
 {
   "name": "remix-sample",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A sample Remix app using NeutronUI",
   "private": true,

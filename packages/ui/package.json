@@ -1,6 +1,6 @@
 {
   "name": "@withneutron/ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A highly accessible and easily customizable UI library",
   "main": "dist/nui.js",
@@ -8,6 +8,7 @@
   "jsnext:main": "dist/nui.es.js",
   "types": "dist/nui.d.ts",
   "typings": "dist/nui.d.ts",
+  "private": true,
   "directories": {
     "dist": "dist",
     "test": "__tests__"
