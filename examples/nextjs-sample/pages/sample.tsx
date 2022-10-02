@@ -1,25 +1,14 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import {
-  Box,
-  Column,
-  Heading,
-  Text,
-  Anchor,
-  appDarkTheme,
-  appTheme,
-  keyframes,
-  useColors,
-  getTheme,
-  style,
-  styledNUI,
-} from "@/ui"
+import { appDarkTheme, appTheme } from "@/ui"
 import { Cards } from "@/components/sample/Cards"
 import { Tags } from "@/components/sample/Tags"
 import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
+import { styled, Box, Column, Heading, Text, Anchor } from "@withneutron/quarks-react"
+import { vars } from "@withneutron/quarks"
 
 function Pos(props: {
   children: React.ReactNode
@@ -28,7 +17,6 @@ function Pos(props: {
   className?: string
   style?: Record<string, any>
 }) {
-  console.log("position", props.position)
   return (
     <section tabIndex={props.tabIndex} className={props.className} style={props.style}>
       {props.children}
@@ -36,19 +24,20 @@ function Pos(props: {
   )
 }
 
-const BaseSection = styledNUI(
+const BaseSection = styled(
   Pos,
   {
     h: "$80",
+    width: `calc(100vw - ${vars.size[120]})`,
     bg: {
       sm: "$magenta1",
       md: "$amber1",
       lg: "$forest1",
       xl: "$aqua1",
       dark: "$primary4",
-      base: "$neutral3",
+      base: "$tertiary3",
     },
-    color: "$textNeutral3",
+    color: "$tertiaryText3",
     m: "$8",
     mb: "$20",
     ml: "$16",
@@ -62,44 +51,44 @@ const BaseSection = styledNUI(
     radiusBottomLeft: "$6",
     radiusBottomRight: "$2",
     float: "left",
-    maxWidth: "$480",
+    maxWidth: "$640",
     fontWeight: "$600",
     fontSize: "$h3",
     ":active": {
       bg: "$primary10",
-      color: "$textPrimary10",
+      color: "$primaryText10",
     },
     ":focus-visible": {
-      color: "$textPrimary9",
+      color: "$primaryText9",
       bg: "$primary9",
       outline: "$primaryMax",
     },
     ":hover": {
       bg: "$primary9",
-      color: "$textPrimary9",
+      color: "$primaryText9",
     },
   },
   "BaseSection"
 )
-const NuiSection = styledNUI(
+const NuiSection = styled(
   BaseSection,
   {
     h: "$320",
     sm: {
-      color: "$textMagenta1",
+      color: "$magentaText1",
     },
     md: {
-      color: "$textAmber1",
+      color: "$amberText1",
     },
     lg: {
-      color: "$textForest1",
+      color: "$forestText1",
     },
     xl: {
-      color: "$textAqua1",
+      color: "$aquaText1",
     },
     dark: {
       outlineWidth: "$widthBase",
-      color: "$textAqua1",
+      color: "$aquaText1",
     },
     motion: {
       animation: "none",
@@ -120,17 +109,23 @@ const Sample: NextPage = () => {
   const sampleControls = (
     <>
       {showColorPalette && <Cards title="Color Palette" theme={appTheme} darkTheme={appDarkTheme} />}
-      <Box mt="6" maxWidth="25" mx="auto">
+      <Box
+        css={{
+          mt: "$20",
+          mx: "auto",
+          maxWidth: "960rem",
+        }}
+      >
         {showTypography && (
           <>
             <Heading>
               <Anchor href="#">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit&quot;</Anchor>
             </Heading>
-            <Text.p>
+            <Text>
               Lorem &apos;ipsum&apos; dolor sit amet -- consectetur adipiscing elit. Donec scelerisque quis est non
               pharetra. &quot;Etiam&quot; at lacus arcu. Nullam vitae <Anchor href="#">varius nisl semper</Anchor> nulla
               ac ipsum ultricies hendrerit sit amet metus.
-            </Text.p>
+            </Text>
           </>
         )}
         {showButtons && <ButtonSamples />}
@@ -141,7 +136,7 @@ const Sample: NextPage = () => {
     </>
   )
   return (
-    <Column.article>
+    <Column.Article>
       <Head>
         <title>UI Lib + Design System Sample</title>
         <meta name="description" content="Sample of various NeutronUI components" />
@@ -149,15 +144,23 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
+          <Heading.H2>Sample Heading</Heading.H2>
           <Box
             css={{
-              bg: "$neutral10",
-              color: "$textNeutral10",
-              margin: "$2 $4 $7 $6",
-              p: "$8 $8 $8 $4",
-              borderRadius: "$2 $5 $1 $4",
+              bg: "$primary10",
+              color: "$primaryText10",
+              mt: "$4",
+              mr: "$12",
+              mb: "$24",
+              ml: "$20",
+              p: "$32",
+              pl: "$12",
+              radiusTopLeft: "$3",
+              radiusTopRight: "$8",
+              radiusBottomRight: "$1",
+              radiusBottomLeft: "$6",
               float: "left",
-              maxWidth: "$20",
+              maxWidth: "$480",
             }}
           >
             Sample box
@@ -171,7 +174,7 @@ const Sample: NextPage = () => {
         </>
       )}
       {!showSampleBox && sampleControls}
-    </Column.article>
+    </Column.Article>
   )
 }
 

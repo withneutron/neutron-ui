@@ -1,0 +1,329 @@
+import { omitKeys } from "./props.utils"
+import {
+  Scale,
+  CssValueMap,
+  Scales,
+  outlineCombos,
+  outlineColors,
+  outlineOffsets,
+  outlineWidths,
+  borderColors,
+  borderCombos,
+  borderWidths,
+  CssValue,
+  animationCombos,
+  animationDurations,
+  colorCore,
+  colorText,
+  CssAliasMap,
+} from "../scales"
+import {
+  CssPropKey,
+  CssRule,
+  CssValueClassMap,
+  FilterKeys,
+  KeysFromScale,
+  PickKeys,
+  SCALED_PLACEHOLDER,
+} from "./props.models"
+import { addPrefix } from "../utils"
+
+function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
+  const output: PickKeys<M, typeof keys> = { ...map }
+  Object.keys(map).forEach((key: keyof M) => {
+    if (!keys[key as keyof typeof keys]) {
+      delete output[key as keyof typeof output]
+    }
+  })
+  return output
+}
+
+/** Util to extract the CSS value map from a scale object */
+function map<
+  S extends Scales,
+  V extends Scale,
+  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
+>(scales: S, scale: V, keys?: K) {
+  const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
+  if (keys) {
+    return filterMap(map, keys)
+  }
+  return map
+}
+
+/**
+ * Used to generate CSS classes for various CSS props, based on scaled values.
+ * Returns an object containing props with values matching a signature of:
+ * `Record<ScaleKey, CssClassForThatKey>`
+ */
+export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
+  scales: S,
+  generateClass: (value: CssRule) => string,
+  keys?: K
+) {
+  function entries<M extends CssValueMap, A extends CssAliasMap = CssAliasMap>(prop: CssPropKey, map: M, aliasMap?: A) {
+    return Object.entries(map).reduce(
+      (output: Record<KeysFromScale<M>, string>, [scaleKey, scaleValue]: [keyof M, CssValue]) => {
+        const value = typeof scaleValue === "string" ? { [prop]: scaleValue } : scaleValue
+
+        const isFilteredKey = keys && !keys[prop]
+        const isAliasKey = aliasMap?.[addPrefix(String(scaleKey))]
+        const fallbackValue = isAliasKey ? SCALED_PLACEHOLDER : ""
+        const className = isFilteredKey || isAliasKey ? fallbackValue : generateClass(value)
+
+        const key = addPrefix(String(scaleKey)) as KeysFromScale<M>
+        output[key] = className
+
+        return output
+      },
+      {} as CssValueClassMap<typeof map>
+    )
+  }
+
+  const backgroundColor = entries(
+    "backgroundColor",
+    map(scales, Scale.color, colorCore),
+    scales[Scale.color].cssAliasMap
+  )
+
+  const props = {
+    inlineSize: entries("inlineSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+    blockSize: entries("blockSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+    minInlineSize: entries("minInlineSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+    maxInlineSize: entries("maxInlineSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+    minBlockSize: entries("minBlockSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+    maxBlockSize: entries("maxBlockSize", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+
+    marginBlockStart: entries("marginBlockStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    marginBlockEnd: entries("marginBlockEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    marginInlineStart: entries("marginInlineStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    marginInlineEnd: entries("marginInlineEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+
+    paddingBlockStart: entries("paddingBlockStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    paddingBlockEnd: entries("paddingBlockEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    paddingInlineStart: entries("paddingInlineStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    paddingInlineEnd: entries("paddingInlineEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+
+    insetBlockStart: entries("insetBlockStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    insetBlockEnd: entries("insetBlockEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    insetInlineStart: entries("insetInlineStart", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+
+    outline: entries("outline", map(scales, Scale.outline, outlineCombos), scales[Scale.outline].cssAliasMap),
+    outlineWidth: entries("outlineWidth", map(scales, Scale.outline, outlineWidths), scales[Scale.outline].cssAliasMap),
+    outlineColor: entries("outlineColor", map(scales, Scale.outline, outlineColors), scales[Scale.outline].cssAliasMap),
+    outlineOffset: entries(
+      "outlineOffset",
+      map(scales, Scale.outline, outlineOffsets),
+      scales[Scale.outline].cssAliasMap
+    ),
+
+    borderBlockStart: entries(
+      "borderBlockStart",
+      map(scales, Scale.border, borderCombos),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderBlockEnd: entries(
+      "borderBlockEnd",
+      map(scales, Scale.border, borderCombos),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineStart: entries(
+      "borderInlineStart",
+      map(scales, Scale.border, borderCombos),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineEnd: entries(
+      "borderInlineEnd",
+      map(scales, Scale.border, borderCombos),
+      scales[Scale.border].cssAliasMap
+    ),
+
+    borderBlockStartColor: entries(
+      "borderBlockStartColor",
+      map(scales, Scale.border, borderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderBlockEndColor: entries(
+      "borderBlockEndColor",
+      map(scales, Scale.border, borderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineStartColor: entries(
+      "borderInlineStartColor",
+      map(scales, Scale.border, borderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineEndColor: entries(
+      "borderInlineEndColor",
+      map(scales, Scale.border, borderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+
+    borderBlockStartWidth: entries(
+      "borderBlockStartWidth",
+      map(scales, Scale.border, borderWidths),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderBlockEndWidth: entries(
+      "borderBlockEndWidth",
+      map(scales, Scale.border, borderWidths),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineStartWidth: entries(
+      "borderInlineStartWidth",
+      map(scales, Scale.border, borderWidths),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineEndWidth: entries(
+      "borderInlineEndWidth",
+      map(scales, Scale.border, borderWidths),
+      scales[Scale.border].cssAliasMap
+    ),
+
+    flexBasis: entries("flexBasis", map(scales, Scale.size), scales[Scale.size].cssAliasMap),
+
+    // gridTemplateRows is probably not useful enough. Instead, use...
+    gridAutoRows: entries("gridAutoRows", map(scales, Scale.row), scales[Scale.row].cssAliasMap),
+    gridTemplateColumns: entries("gridTemplateColumns", map(scales, Scale.column), scales[Scale.column].cssAliasMap),
+
+    columnGap: entries("columnGap", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+    rowGap: entries("rowGap", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
+
+    borderStartStartRadius: entries(
+      "borderStartStartRadius",
+      map(scales, Scale.radius),
+      scales[Scale.radius].cssAliasMap
+    ),
+    borderStartEndRadius: entries("borderStartEndRadius", map(scales, Scale.radius), scales[Scale.radius].cssAliasMap),
+    borderEndStartRadius: entries("borderEndStartRadius", map(scales, Scale.radius), scales[Scale.radius].cssAliasMap),
+    borderEndEndRadius: entries("borderEndEndRadius", map(scales, Scale.radius), scales[Scale.radius].cssAliasMap),
+
+    // Scaled color values from `background` get routed to this instead
+    background: backgroundColor,
+    backgroundColor,
+
+    color: entries("color", map(scales, Scale.color, colorText), scales[Scale.color].cssAliasMap),
+    fill: entries("fill", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
+    stroke: entries("stroke", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
+
+    font: entries("font", map(scales, Scale.font), scales[Scale.font].cssAliasMap),
+    fontFamily: entries("fontFamily", map(scales, Scale.fontFamily), scales[Scale.fontFamily].cssAliasMap),
+    fontSize: entries("fontSize", map(scales, Scale.fontSize), scales[Scale.fontSize].cssAliasMap),
+    fontWeight: entries("fontWeight", map(scales, Scale.fontWeight), scales[Scale.fontWeight].cssAliasMap),
+
+    textDecoration: entries(
+      "textDecoration",
+      map(scales, Scale.textDecoration),
+      scales[Scale.textDecoration].cssAliasMap
+    ),
+
+    lineHeight: entries("lineHeight", map(scales, Scale.lineHeight), scales[Scale.lineHeight].cssAliasMap),
+    letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
+    wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
+    textUnderlineOffset: entries(
+      "textUnderlineOffset",
+      map(scales, Scale.typeSpace),
+      scales[Scale.typeSpace].cssAliasMap
+    ),
+
+    zIndex: entries("zIndex", map(scales, Scale.zIndex), scales[Scale.zIndex].cssAliasMap),
+
+    boxShadow: entries("boxShadow", map(scales, Scale.shadow), scales[Scale.shadow].cssAliasMap),
+
+    animation: entries("animation", map(scales, Scale.animation, animationCombos), scales[Scale.animation].cssAliasMap),
+    animationDuration: entries(
+      "animationDuration",
+      map(scales, Scale.animation, animationDurations),
+      scales[Scale.animation].cssAliasMap
+    ),
+  } as const
+
+  if (keys) {
+    return omitKeys(props, keys)
+  }
+  return props
+}
+
+export const scaledPropScale = {
+  inlineSize: Scale.size,
+  blockSize: Scale.size,
+  minInlineSize: Scale.size,
+  maxInlineSize: Scale.size,
+  minBlockSize: Scale.size,
+  maxBlockSize: Scale.size,
+
+  marginBlockStart: Scale.space,
+  marginBlockEnd: Scale.space,
+  marginInlineStart: Scale.space,
+  marginInlineEnd: Scale.space,
+
+  paddingBlockStart: Scale.space,
+  paddingBlockEnd: Scale.space,
+  paddingInlineStart: Scale.space,
+  paddingInlineEnd: Scale.space,
+
+  insetBlockStart: Scale.space,
+  insetBlockEnd: Scale.space,
+  insetInlineStart: Scale.space,
+  insetInlineEnd: Scale.space,
+
+  outline: Scale.outline,
+  outlineWidth: Scale.outline,
+  outlineColor: Scale.outline,
+  outlineOffset: Scale.outline,
+
+  borderBlockStart: Scale.border,
+  borderBlockEnd: Scale.border,
+  borderInlineStart: Scale.border,
+  borderInlineEnd: Scale.border,
+
+  borderBlockStartColor: Scale.border,
+  borderBlockEndColor: Scale.border,
+  borderInlineStartColor: Scale.border,
+  borderInlineEndColor: Scale.border,
+
+  borderBlockStartWidth: Scale.border,
+  borderBlockEndWidth: Scale.border,
+  borderInlineStartWidth: Scale.border,
+  borderInlineEndWidth: Scale.border,
+
+  flexBasis: Scale.size,
+
+  gridAutoRows: Scale.row,
+  gridTemplateColumns: Scale.column,
+
+  columnGap: Scale.space,
+  rowGap: Scale.space,
+
+  borderStartStartRadius: Scale.radius,
+  borderStartEndRadius: Scale.radius,
+  borderEndStartRadius: Scale.radius,
+  borderEndEndRadius: Scale.radius,
+
+  background: Scale.color,
+  backgroundColor: Scale.color,
+
+  color: Scale.color,
+  fill: Scale.color,
+  stroke: Scale.color,
+
+  font: Scale.font,
+  fontFamily: Scale.fontFamily,
+  fontSize: Scale.fontSize,
+  fontWeight: Scale.fontWeight,
+
+  textDecoration: Scale.textDecoration,
+
+  lineHeight: Scale.lineHeight,
+  letterSpacing: Scale.typeSpace,
+  wordSpacing: Scale.typeSpace,
+  textUnderlineOffset: Scale.typeSpace,
+
+  zIndex: Scale.zIndex,
+
+  boxShadow: Scale.shadow,
+
+  animation: Scale.animation,
+  animationDuration: Scale.animation,
+} as const

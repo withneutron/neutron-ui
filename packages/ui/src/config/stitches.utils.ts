@@ -11,35 +11,6 @@ import {
 import { isSSR } from "../shared/utils/dom.utils"
 import { getSemantic } from "../utilityComponents"
 
-// Keeps the order of merged CSS selectors & props, unlike a regular merge, if an object key is repeated
-export const mergeCSS = (...cssObject: CSS[]): CSS => {
-  const mergedObj: CSS = {} as CSS
-
-  // Loop through each CSS object
-  cssObject.forEach((obj: CSS): void => {
-    // Loop through each property of the object
-    Object.keys(obj).forEach((key: string): void => {
-      const newValue = obj[key]
-
-      if (mergedObj[key] === undefined) {
-        mergedObj[key] = newValue
-      } else if (typeof newValue === "object" && newValue !== null && !Array.isArray(newValue)) {
-        // To preserve the order of values, we have to first delete the old value,
-        // then re-introduce this key.
-        const oldValue = mergedObj[key] ? (mergedObj[key] as CSS) : ({} as CSS)
-        delete mergedObj[key]
-        mergedObj[key] = mergeCSS(oldValue, newValue as CSS)
-      } else {
-        // For primitives, just replace the old value with the new one, after deleting
-        // the old one to preserve the order of properties.
-        delete mergedObj[key]
-        mergedObj[key] = newValue
-      }
-    })
-  })
-  return mergedObj
-}
-
 /** Get the styled markup for SSR, based on a generator */
 export const getStyledMarkup = (generator: () => string): string => {
   // Render the markup

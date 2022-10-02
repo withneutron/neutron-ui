@@ -7,6 +7,7 @@
   "module": "dist/nui.es.js",
   "jsnext:main": "dist/nui.es.js",
   "types": "dist/nui.d.ts",
+  "typings": "dist/nui.d.ts",
   "directories": {
     "dist": "dist",
     "test": "__tests__"
@@ -55,6 +56,7 @@
     "react-icons": "^4.3.1"
   },
   "dependencies": {
+    "@withneutron/quarks": "^0.1.0",
     "@react-aria/button": "^3.4.4",
     "@react-aria/checkbox": "^3.3.4",
     "@react-aria/focus": "^3.5.5",
