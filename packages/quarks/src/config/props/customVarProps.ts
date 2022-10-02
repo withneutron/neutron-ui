@@ -72,6 +72,13 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     listStyleImage: value("listStyleImage"),
 
     filter: value("filter"),
+
+    inlineSize: value("inlineSize"),
+    minInlineSize: value("minInlineSize"),
+    maxInlineSize: value("maxInlineSize"),
+    blockSize: value("blockSize"),
+    minBlockSize: value("minBlockSize"),
+    maxBlockSize: value("maxBlockSize"),
   } as const
 
   if (keys) {
