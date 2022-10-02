@@ -12,10 +12,14 @@ import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 // Font definition
 export const DEFAULT_FONTS: Required<FontFamilySpec> = {
-  body: "sourceSansPro",
-  button: "sourceSansPro",
-  heading: "montserrat",
-  code: "firaCode",
+  // body: "sourceSansPro",
+  // button: "sourceSansPro",
+  // heading: "montserrat",
+  // code: "firaCode",
+  body: "openSans",
+  button: "inconsolata",
+  heading: "inconsolata",
+  code: "inconsolata",
 }
 /** Generator function for `fontFamily` theme scale */
 export function getFontFamily(hash: CharHash) {
@@ -48,13 +52,13 @@ export function getFontFamily(hash: CharHash) {
 
   const heading = {
     ...hash.var,
-    value: `${baseVars[DEFAULT_FONTS.heading].ref}, ${baseVars.systemSerif.ref}`,
+    value: `${baseVars[DEFAULT_FONTS.heading].ref}, ${baseVars.systemMono.ref}`,
   } as const
 
   const sharedVars = {
     heading,
     body: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.body].ref}, ${baseVars.systemSans.ref}` },
-    button: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.button].ref}, ${baseVars.systemSans.ref}` },
+    button: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.button].ref}, ${baseVars.systemMono.ref}` },
     code: { ...hash.var, value: `${baseVars[DEFAULT_FONTS.code].ref}, ${baseVars.systemMono.ref}` },
     quote: { ...hash.var, value: `${heading.ref}, ${baseVars.systemSerif.ref}` },
   } as const

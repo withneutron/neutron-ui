@@ -39,6 +39,7 @@ function options<T extends string>(...options: T[]) {
 const transparent = options("transparent")
 const noneAuto = options("none", "auto")
 const none = options("none")
+const auto = options("auto")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
 const borderStyle = options("dashed", "dotted", "groove")
 
@@ -288,10 +289,10 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     blockSize: values("blockSize"),
     minBlockSize: values("minBlockSize"),
     maxBlockSize: values("maxBlockSize"),
-    marginBlockStart: values("marginBlockStart"),
-    marginBlockEnd: values("marginBlockEnd"),
-    marginInlineStart: values("marginInlineStart"),
-    marginInlineEnd: values("marginInlineEnd"),
+    marginBlockStart: values("marginBlockStart", auto),
+    marginBlockEnd: values("marginBlockEnd", auto),
+    marginInlineStart: values("marginInlineStart", auto),
+    marginInlineEnd: values("marginInlineEnd", auto),
     paddingBlockStart: values("paddingBlockStart"),
     paddingBlockEnd: values("paddingBlockEnd"),
     paddingInlineStart: values("paddingInlineStart"),
@@ -315,11 +316,11 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderStartEndRadius: values("borderStartEndRadius"),
     borderEndStartRadius: values("borderEndStartRadius"),
     borderEndEndRadius: values("borderEndEndRadius"),
-    outline: values("outline"),
+    outline: values("outline", none),
     outlineOffset: values("outlineOffset"),
     outlineWidth: values("outlineWidth"),
     zIndex: values("zIndex"),
-    boxShadow: values("boxShadow"),
+    boxShadow: values("boxShadow", none),
     rowGap: values("rowGap"),
     columnGap: values("columnGap"),
     animationDuration: values("animationDuration"),

@@ -56,8 +56,8 @@ import {
 } from "./props"
 import { getSelector } from "./styles.utils"
 import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
-import { CoreColorName } from "../shared/models/colorGen.models"
-import { getTextColor } from "../shared/utils/colorGen.utils"
+import { CoreColorName, STYLE_UNIT } from "../shared/models/"
+import { getTextColor } from "../shared/utils/"
 
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
@@ -167,13 +167,26 @@ globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
   fontSize: fontSize.vars.p.ref,
 })
 globalStyle("a", {
-  color: color.vars.secondary10.ref,
+  color: color.vars.secondary9.ref,
   fontWeight: fontWeight.vars[600].ref,
   borderRadius: radius.vars.field.ref,
   textDecoration: "underline",
+  boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.secondary5.ref}`,
 })
 globalStyle("a:focus", {
-  outline: outline.vars.secondaryMax.ref,
+  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary9.ref}`,
+  // outline: outline.vars.secondaryMax.ref,
+  outline: "none",
+})
+globalStyle("a:hover", {
+  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary5.ref}`,
+  color: color.vars.secondary12.ref,
+})
+globalStyle("a:focus, a:focus code", {
+  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
+})
+globalStyle("li > a, nav a, button a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a", {
+  boxShadow: "none",
 })
 globalStyle("blockquote, pre", {
   background: color.vars.primary3.ref,
@@ -193,28 +206,28 @@ globalStyle(mapSelectorsToTemplate("& + &", ...headings), {
 globalStyle(mapSelectorsToTemplate("&, & > *", ...headings), {
   fontFamily: fontFamily.vars.heading.ref,
 })
-globalStyle("h1", {
+globalStyle("h1, h1 > *", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
   letterSpacing: typeSpace.vars.tightest.ref,
 })
-globalStyle("h2", {
+globalStyle("h2, h2 > *", {
   fontSize: fontSize.vars.h2.ref,
   fontWeight: fontWeight.vars.h2.ref,
 })
-globalStyle("h3", {
+globalStyle("h3, h3 > *", {
   fontSize: fontSize.vars.h3.ref,
   fontWeight: fontWeight.vars.h3.ref,
 })
-globalStyle("h4", {
+globalStyle("h4, h4 > *", {
   fontSize: fontSize.vars.h4.ref,
   fontWeight: fontWeight.vars.h4.ref,
 })
-globalStyle("h5", {
+globalStyle("h5, h5 > *", {
   fontSize: fontSize.vars.h5.ref,
   fontWeight: fontWeight.vars.h5.ref,
 })
-globalStyle("h6", {
+globalStyle("h6, h6 > *", {
   fontSize: fontSize.vars.h6.ref,
   fontWeight: fontWeight.vars.h6.ref,
 })

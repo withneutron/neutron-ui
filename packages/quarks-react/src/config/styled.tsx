@@ -6,18 +6,16 @@ type ComponentType<T> = keyof JSX.IntrinsicElements | FunctionComponent<T>
 
 /** TODO: Add Ref forwarding */
 export function styled<C extends ComponentType<any>>(component: C, css: CSS, styleName?: string) {
-  function styledComponent<T extends ComponentType<any>, R>(
-    props: ComponentProps<C> & ComponentProps<T> & { as?: T; css?: CSS; styleManager?: StyleManager }
-  ) {
+  function styledComponent<R>(props: ComponentProps<C> & { css?: CSS; styleManager?: StyleManager }) {
     const conditions = useStyleConditions()
-    const { as: polyAs, css: propsCss, styleManager, ...rest } = props
+    const { css: propsCss, styleManager, ...rest } = props
 
     const styleProps = style(css, conditions, propsCss, styleName, styleManager)
     const className = rest.className ? `${styleProps.className} ${rest.className}` : styleProps.className
     const styleObj = rest.style ? { ...styleProps.style, ...rest.style } : styleProps.style
 
     const isIntrinsic = typeof component === "string"
-    const Element = (polyAs as FunctionComponent<any>) ?? (component as FunctionComponent<any>)
+    const Element = component as FunctionComponent<any>
     const passDownProps: Record<string, unknown> = { ...styleProps }
     if (isIntrinsic) {
       delete passDownProps.styleManager

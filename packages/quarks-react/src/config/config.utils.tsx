@@ -15,7 +15,7 @@ function getSemantic(
   ): ReactNode | null => cloneElement(<Comp />, { as: tag, ref, ...props })
 
   const suffix = tag ? `.${tag}` : ""
-  return Object.assign({}, Comp, {
+  return Object.assign(Comp, {
     render: Wrapper,
     displayName: `${Comp.displayName || "Styled"}${suffix}`,
   })
@@ -26,16 +26,16 @@ function getSemantic(
 export function getSemanticLayoutPrimitive<T>(Comp: T) {
   const output = Comp as SemanticLayoutPrimitive<T>
   // Semantic HTML shortcuts
-  output.article = getSemantic(Comp, "article")
-  output.aside = getSemantic(Comp, "aside")
-  output.dialog = getSemantic(Comp, "dialog")
-  output.div = getSemantic(Comp, "div")
-  output.footer = getSemantic(Comp, "footer")
-  output.header = getSemantic(Comp, "header")
-  output.label = getSemantic(Comp, "label")
-  output.main = getSemantic(Comp, "main")
-  output.nav = getSemantic(Comp, "nav")
-  output.section = getSemantic(Comp, "section")
+  output.Article = getSemantic(Comp, "article")
+  output.Aside = getSemantic(Comp, "aside")
+  output.Dialog = getSemantic(Comp, "dialog")
+  output.Div = getSemantic(Comp, "div")
+  output.Footer = getSemantic(Comp, "footer")
+  output.Header = getSemantic(Comp, "header")
+  output.Label = getSemantic(Comp, "label")
+  output.Main = getSemantic(Comp, "main")
+  output.Nav = getSemantic(Comp, "nav")
+  output.Section = getSemantic(Comp, "section")
   return output
 }
 
@@ -44,19 +44,19 @@ export function getSemanticLayoutPrimitive<T>(Comp: T) {
 export function getSemanticTextPrimitive<T>(Comp: T) {
   const output = getSemantic(Comp, undefined) as SemanticTextPrimitive<T>
   // Semantic HTML shortcuts
-  output.blockquote = getSemantic(Comp, "blockquote")
-  output.code = getSemantic(Comp, "code")
-  output.del = getSemantic(Comp, "del")
-  output.em = getSemantic(Comp, "em")
-  output.i = getSemantic(Comp, "i")
-  output.ins = getSemantic(Comp, "ins")
-  output.label = getSemantic(Comp, "label")
-  output.p = getSemantic(Comp, "p")
-  output.pre = getSemantic(Comp, "pre")
-  output.small = getSemantic(Comp, "small")
-  output.span = getSemantic(Comp, "span")
-  output.strong = getSemantic(Comp, "strong")
-  output.time = getSemantic(Comp, "time")
+  output.Blockquote = getSemantic(Comp, "blockquote")
+  output.Code = getSemantic(Comp, "code")
+  output.Del = getSemantic(Comp, "del")
+  output.Em = getSemantic(Comp, "em")
+  output.I = getSemantic(Comp, "i")
+  output.Ins = getSemantic(Comp, "ins")
+  output.Label = getSemantic(Comp, "label")
+  output.P = getSemantic(Comp, "p")
+  output.Pre = getSemantic(Comp, "pre")
+  output.Small = getSemantic(Comp, "small")
+  output.Span = getSemantic(Comp, "span")
+  output.Strong = getSemantic(Comp, "strong")
+  output.Time = getSemantic(Comp, "time")
   return output
 }
 
@@ -65,11 +65,11 @@ export function getSemanticTextPrimitive<T>(Comp: T) {
 export function getSemanticHeadingPrimitive<T>(Comp: T) {
   const output = getSemantic(Comp, undefined) as SemanticHeadingPrimitive<T>
   // Semantic HTML shortcuts
-  output.h1 = getSemantic(Comp, "h1")
-  output.h2 = getSemantic(Comp, "h2")
-  output.h3 = getSemantic(Comp, "h3")
-  output.h4 = getSemantic(Comp, "h4")
-  output.h5 = getSemantic(Comp, "h5")
-  output.h6 = getSemantic(Comp, "h6")
+  output.H1 = getSemantic(Comp, "h1")
+  output.H2 = getSemantic(Comp, "h2")
+  output.H3 = getSemantic(Comp, "h3")
+  output.H4 = getSemantic(Comp, "h4")
+  output.H5 = getSemantic(Comp, "h5")
+  output.H6 = getSemantic(Comp, "h6")
   return output
 }
