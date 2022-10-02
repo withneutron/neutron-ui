@@ -1,6 +1,6 @@
 import { THEME_PREFIX, VarData } from "../utils"
 import { BodyFontFamily, HeadingFontFamily, CodeFontFamily } from "../../shared/models"
-import { ColorPalette, ThemeColor } from "../../shared/models/colorGen.models"
+import { ColorNumberKey, ColorPalette, ThemeColor } from "../../shared/models/colorGen.models"
 
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
@@ -85,6 +85,7 @@ export type ColorSetter<T = ScaleEntry> = (
   key: keyof ColorPalette<T>,
   palette: ColorPalette<T>,
   value: string | number,
+  numberKey?: ColorNumberKey,
   isMapped?: boolean
 ) => void
 

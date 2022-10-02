@@ -1,35 +1,55 @@
-import { ColorPalette, DEFAULT_SOURCE_COLORS } from "../../shared/models/colorGen.models"
-import { generateThemeColors } from "../../shared/utils/colorGen.utils"
+import {
+  ColorNumberKey,
+  ColorPalette,
+  CoreColorName,
+  DEFAULT_SOURCE_COLORS,
+  ScaleColorName,
+} from "../../shared/models/colorGen.models"
+import { generateThemeColors, getTextColor } from "../../shared/utils/colorGen.utils"
 import { addPrefix, CharHash } from "../utils"
-import { ColorPaletteEntry, CssAliasMap, ScaleEntry, ThemeScale } from "./scales.models"
+import { ColorPaletteEntry, CssAliasMap, CssValueMap, ScaleEntry, ThemeScale } from "./scales.models"
 import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `color` theme scale */
 export function getColor(hash: CharHash) {
   const cssAliasMap = {} as CssAliasMap<any>
+  const cssValueMapFromAliases = {} as CssValueMap
+
+  const addAlias = (k: string, v: string) => {
+    cssAliasMap[addPrefix(k)] = addPrefix(v)
+    cssValueMapFromAliases[k] = k
+  }
 
   const lightPalette = generateThemeColors<ScaleEntry>(
     DEFAULT_SOURCE_COLORS,
     "light",
-    (key: keyof ColorPaletteEntry, palette: ColorPalette<ScaleEntry>, value: string | number, isMapped = false) => {
+    (
+      key: keyof ColorPaletteEntry,
+      palette: ColorPalette<ScaleEntry>,
+      value: string | number,
+      numberKey?: ColorNumberKey,
+      isMapped = false
+    ) => {
       if (isMapped) {
-        cssAliasMap[addPrefix(key)] = addPrefix(String(value))
+        addAlias(key, String(value))
       } else {
         palette[key] = { ...hash.var, value: String(value) }
       }
+      // Create a matching text alias
+      const baseKey = key.replace(String(numberKey), "")
+      addAlias(`${baseKey}Text${numberKey ?? ""}`, getTextColor(baseKey as ScaleColorName, numberKey))
     }
   )
-  console.log("lightPalette", lightPalette)
-  console.log("cssAliasMap", cssAliasMap)
+
   const shadowBase = { ...hash.var, value: "53 0% 7%" }
 
   const lightScale = {
     shadowBase,
     shadowBlack: { ...hash.var, value: "hsl(0 0% 0%)" },
-    defaultBody: { ...hash.var, value: lightPalette.tertiaryText2.ref },
+    defaultBody: { ...hash.var, value: lightPalette[getTextColor(CoreColorName.tertiary, 2)].ref },
     defaultHeading: { ...hash.var, value: lightPalette.tertiary10.ref },
     // Unique to light palette
-    panel: { ...hash.var, value: lightPalette.neutralLow.ref },
+    panel: { ...hash.var, value: lightPalette.min.ref },
     shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.05)` },
     shadowHeavy: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.15)` },
     ...lightPalette,
@@ -57,7 +77,7 @@ export function getColor(hash: CharHash) {
 
   ////////////////////////////////////////////////////////////////////////////////
   const vars = lightScale
-  const cssValueMap = { ...getCssMapFromVars(lightScale) } as const
+  const cssValueMap = { ...getCssMapFromVars(lightScale), ...cssValueMapFromAliases } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
 
   return {
@@ -65,12 +85,13 @@ export function getColor(hash: CharHash) {
     darkVars,
     themeProps,
     cssValueMap,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+    cssAliasMap,
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }
 
 export const colorCore = {
-  neutralLow: true,
-  neutralHigh: true,
+  min: true,
+  max: true,
   primary1: true,
   primary2: true,
   primary3: true,

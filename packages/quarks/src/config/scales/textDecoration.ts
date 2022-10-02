@@ -21,10 +21,10 @@ export function getTextDecoration<T extends ColorVars>(hash: CharHash, color: T)
   const defaultColor = { ...hash.var, value: "currentColor" } as const
   const primaryColor = { ...hash.var, value: color.primary9.ref } as const
   const secondaryColor = { ...hash.var, value: color.secondary9.ref } as const
-  const infoColor = { ...hash.var, value: color.info.ref } as const
-  const successColor = { ...hash.var, value: color.success.ref } as const
-  const warningColor = { ...hash.var, value: color.warning.ref } as const
-  const errorColor = { ...hash.var, value: color.error.ref } as const
+  const infoColor = { ...hash.var, value: color.info9.ref } as const
+  const successColor = { ...hash.var, value: color.success9.ref } as const
+  const warningColor = { ...hash.var, value: color.warning9.ref } as const
+  const errorColor = { ...hash.var, value: color.error9.ref } as const
 
   const vars = {
     underlineStyle,

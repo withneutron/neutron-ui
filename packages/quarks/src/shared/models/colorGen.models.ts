@@ -29,13 +29,58 @@ export const TEXT_COLOR_TARGETS = {
   6: 12,
   7: 12,
   8: 12,
-  9: "neutralLow",
-  10: "neutralLow",
+  9: "min",
+  10: "min",
   11: 3,
   12: 5,
 } as const
 
-export const ALPHA_COLOR_VALUES = [0.015, 0.05, 0.1, 0.15, 0.23, 0.32, 0.42, 0.53, 0.75, 0.85, 0.9, 0.95] as const
+export const ALPHA_TEXT_COLOR_TARGETS = {
+  1: "max",
+  2: "max",
+  3: "max",
+  4: "max",
+  5: "max",
+  6: "max",
+  7: "max",
+  8: "max",
+  9: "min",
+  10: "min",
+  11: 1,
+  12: 2,
+} as const
+
+export const MIN_ALPHA_TEXT_COLOR_TARGETS = {
+  1: "max",
+  2: "max",
+  3: 12,
+  4: 12,
+  5: 11,
+  6: 11,
+  7: 10,
+  8: 10,
+  9: 9,
+  10: 9,
+  11: 8,
+  12: 8,
+} as const
+
+export const MAX_ALPHA_TEXT_COLOR_TARGETS = {
+  1: "max",
+  2: "max",
+  3: "max",
+  4: "max",
+  5: "max",
+  6: "max",
+  7: "max",
+  8: "min",
+  9: "min",
+  10: 1,
+  11: 2,
+  12: 3,
+} as const
+
+export const ALPHA_VALUES = [0.015, 0.05, 0.1, 0.15, 0.23, 0.32, 0.42, 0.53, 0.75, 0.85, 0.9, 0.95] as const
 
 export const ZERO_SATURATION_LUMINANCE = `|{ywrnhaF?5)|{ywsnhaF?5)&+15:=@EUbjy"&,037:=S]jz`
 
@@ -68,12 +113,12 @@ export const COLOR_KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const
 
 export const DEFAULT_SOURCE_COLORS: ColorGenOptions = {
   // Core colors
-  primary: { hue: DEFAULT_HUE, saturation: 0, isNeutral: true },
+  primary: { hue: 0, saturation: 0, isNeutral: true },
   secondary: { hue: DEFAULT_HUE, saturation: 100 },
-  tertiary: { hue: 36, saturation: 85 },
+  tertiary: { hue: 36, saturation: 75 },
   // Neutral colors
-  neutralLow: { hue: 0, saturation: 0, contrast: 0 },
-  neutralHigh: { hue: 0, saturation: 0, contrast: 100 },
+  min: { hue: 0, saturation: 0, contrast: 0 },
+  max: { hue: 0, saturation: 0, contrast: 100 },
   // Status colors
   info: { hue: 194, saturation: 95 },
   success: { hue: 123, saturation: 90 },
@@ -96,8 +141,8 @@ export type ColorMode = "light" | "dark"
 export type ColorType = "color" | "neutral"
 
 export enum StaticColorName {
-  neutralHigh = "neutralHigh",
-  neutralLow = "neutralLow",
+  max = "max",
+  min = "min",
 }
 
 export enum CoreColorName {
@@ -130,9 +175,10 @@ export enum AlphaColorName {
   primaryAlpha = "primaryAlpha",
   secondaryAlpha = "secondaryAlpha",
   tertiaryAlpha = "tertiaryAlpha",
-  neutralHighAlpha = "neutralHighAlpha",
-  neutralLowAlpha = "neutralLowAlpha",
+  maxAlpha = "maxAlpha",
+  minAlpha = "minAlpha",
 }
+export const ALPHA_KEY = "Alpha"
 
 export type ColorNumberKey = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 
@@ -164,7 +210,7 @@ export type ColorGenOptions = { [k in CoreColorName]: SourceColor } &
 export type ScaleColorName = CoreColorName | StatusColorName | FlavorColorName | AlphaColorName
 export type TextColorName = TextColor<ScaleColorName>
 
-export type ThemeColor = `${StaticColorName}` | ScaleColor<ScaleColorName> | ScaleColor<TextColorName>
+export type ThemeColor = `${StaticColorName}` | ScaleColor<ScaleColorName>
 
 export type ColorPalette<T = string> = {
   [key in ThemeColor]: T

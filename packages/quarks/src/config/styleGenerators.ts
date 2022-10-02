@@ -6,8 +6,8 @@ import {
   scaledPropScale,
   pseudoClassAliases,
   CustomVarPropValue,
-  SCALED_PLACEHOLDER,
   sourcePropsIdMap,
+  SCALED_PLACEHOLDER,
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {

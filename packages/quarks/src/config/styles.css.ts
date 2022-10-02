@@ -56,6 +56,8 @@ import {
 } from "./props"
 import { getSelector } from "./styles.utils"
 import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
+import { CoreColorName } from "../shared/models/colorGen.models"
+import { getTextColor } from "../shared/utils/colorGen.utils"
 
 /*************************************************************************************************
  * STYLING SYSTEM GENERATION
@@ -112,7 +114,7 @@ globalStyle("html, body", {
 })
 globalStyle("html", { fontSize: "6.25%" })
 globalStyle("body", {
-  background: color.vars.tertiary2.ref,
+  background: color.vars.primary2.ref,
   color: color.vars.defaultBody.ref,
   fontSize: "16em",
   fontWeight: fontWeight.vars.p.ref,
@@ -136,7 +138,7 @@ globalStyle("*", {
   boxSizing: "border-box",
 })
 globalStyle("*::placeholder", {
-  color: color.vars.tertiaryText9.ref,
+  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 globalStyle("body, a, p, li, strong, em, b, i, button", {
   fontFamily: fontFamily.vars.body.ref,
@@ -148,8 +150,8 @@ globalStyle("pre, code", {
   fontFamily: fontFamily.vars.code.ref,
 })
 globalStyle("code", {
-  background: color.vars.neutralHighAlpha2.ref,
-  color: color.vars.neutralHigh.ref,
+  background: color.vars.maxAlpha2.ref,
+  color: color.vars.max.ref,
   fontWeight: fontWeight.vars.code.ref,
 })
 globalStyle("blockquote", {
@@ -165,17 +167,17 @@ globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
   fontSize: fontSize.vars.p.ref,
 })
 globalStyle("a", {
-  color: color.vars.primary10.ref,
+  color: color.vars.secondary10.ref,
   fontWeight: fontWeight.vars[600].ref,
   borderRadius: radius.vars.field.ref,
   textDecoration: "underline",
 })
 globalStyle("a:focus", {
-  outline: outline.vars.primaryMax.ref,
+  outline: outline.vars.secondaryMax.ref,
 })
 globalStyle("blockquote, pre", {
-  background: color.vars.tertiary3.ref,
-  color: color.vars.tertiaryText3.ref,
+  background: color.vars.primary3.ref,
+  color: color.vars[getTextColor(CoreColorName.primary, 3)].ref,
   marginInline: 0,
   paddingInline: space.vars[32].ref,
   paddingBlock: space.vars[20].ref,
@@ -213,8 +215,8 @@ globalStyle("strong", {
   fontWeight: fontWeight.vars.p.ref,
 })
 globalStyle("::selection", {
-  background: color.vars.primary9.ref,
-  color: color.vars.primaryText9.ref,
+  background: color.vars.secondary9.ref,
+  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
 })
 
 // Add keyframes to CSS

@@ -1,11 +1,4 @@
-import {
-  ThemePropValue,
-  ScaleEntry,
-  ColorSetter,
-  BaseVars,
-  CssValueMap,
-  PrefixedKey,
-} from "../../config/scales/scales.models"
+import { ColorSetter } from "../../config/scales/scales.models"
 import {
   ColorGenOptions,
   ColorMode,
@@ -21,7 +14,38 @@ import {
   COLOR_MATRIX,
   DECODE_DIFF,
   ZERO_SATURATION_LUMINANCE,
+  ALPHA_KEY,
+  MAX_ALPHA_TEXT_COLOR_TARGETS,
+  MIN_ALPHA_TEXT_COLOR_TARGETS,
+  TEXT_COLOR_TARGETS,
+  ALPHA_TEXT_COLOR_TARGETS,
+  AlphaColorName,
+  ALPHA_VALUES,
+  CoreColorName,
 } from "../models/colorGen.models"
+
+export function getTextColor(color: ScaleColorName, numberKey?: ColorNumberKey): ThemeColor {
+  const isMin = color.startsWith(StaticColorName.min)
+  const isMax = color.startsWith(StaticColorName.max)
+  const isAlpha = color.endsWith(ALPHA_KEY)
+  let targets: Record<ColorNumberKey, string | number> = TEXT_COLOR_TARGETS
+  if (isAlpha) {
+    if (isMin) {
+      targets = MIN_ALPHA_TEXT_COLOR_TARGETS
+    } else if (isMax) {
+      targets = MAX_ALPHA_TEXT_COLOR_TARGETS
+    } else {
+      targets = ALPHA_TEXT_COLOR_TARGETS
+    }
+  }
+  if (!numberKey) {
+    return isMin ? StaticColorName.max : StaticColorName.min
+  }
+  const targetKey = targets[numberKey]
+  const safeColor = isMin || isMax ? CoreColorName.primary : color
+  const targetColor = isAlpha ? safeColor.replace(ALPHA_KEY, "") : safeColor
+  return (typeof targetKey === "number" ? `${targetColor}${targetKey}` : targetKey) as ThemeColor
+}
 
 /** Generates a color mode-based palette */
 export function generateThemeColors<T = string>(
@@ -43,7 +67,7 @@ export function generateThemeColors<T = string>(
     let saturation = isInputObject ? inputValue.saturation ?? 100 : 100
 
     // Validate hue and saturation
-    if (typeof hue !== "number" || isNaN(hue) || hue > 360 || hue < 0) {
+    if ((!isMapped && typeof hue !== "number") || isNaN(hue) || hue > 360 || hue < 0) {
       throw new Error(`Invalid value for hue on color "${colorKey}": ${hue}. Must be a number between 0 and 360.`)
     }
     if (typeof saturation !== "number" || isNaN(saturation) || saturation > 100 || saturation < 0) {
@@ -52,16 +76,28 @@ export function generateThemeColors<T = string>(
       )
     }
 
+    if (!isMapped) {
+      // Make sure we normalize hue, and map 360 to 0
+      hue = Math.round(hue)
+      hue = hue > 359 ? 0 : hue
+    }
+    // Make sure we normalize saturation, including for neutrals
+    saturation = Math.round(saturation)
+    saturation = isNeutral && saturation > 40 ? Math.round((saturation / 100) * 40) : saturation
+
     if (isMapped) {
+      /** These colors just reference another color */
       COLOR_KEYS.forEach(numberKey => {
         setValue(
           numerize(colorKey as ScaleColorName, numberKey),
           colors,
           numerize(inputValue as ScaleColorName, numberKey),
+          numberKey,
           true
         )
       })
     } else if (isStatic) {
+      /** These colors are NOT scaled */
       const contrast = inputValue.contrast
       // Validate contrast
       if (typeof contrast !== "number" || isNaN(contrast) || contrast > 100 || contrast < 0) {
@@ -75,12 +111,6 @@ export function generateThemeColors<T = string>(
        * We are dealing with a non-mapped, scaled color, so we need to grab scaled luminance values
        * from the encoded matrix, and interpolate those against the target saturation.
        */
-      // Make sure we normalize hue, and map 360 to 0
-      hue = Math.round(hue)
-      hue = hue > 359 ? 0 : hue
-      // Make sure we normalize saturation, including for neutrals
-      saturation = Math.round(saturation)
-      saturation = isNeutral && saturation > 40 ? Math.round((saturation / 100) * 40) : saturation
 
       const fullSat = isNeutral ? MAX_NEUTRAL_SATURATION : 100
       const halfSat = fullSat / 2
@@ -101,7 +131,12 @@ export function generateThemeColors<T = string>(
         processSet(
           set,
           (setKey, setSaturation, setLuminance) => {
-            setValue(numerize(colorKey as ScaleColorName, setKey), colors, getHSL(hue, setSaturation, setLuminance))
+            setValue(
+              numerize(colorKey as ScaleColorName, setKey),
+              colors,
+              getHSL(hue, setSaturation, setLuminance),
+              setKey
+            )
           },
           isZeroSat
         )
@@ -111,8 +146,8 @@ export function generateThemeColors<T = string>(
         let multiplier = (saturation - halfSat) / (fullSat - halfSat)
 
         if (saturation < halfSat) {
-          multiplier = saturation / halfSat
           // Interpolate using zero and half sets
+          multiplier = saturation / halfSat
           startSet = ZERO_SATURATION_LUMINANCE
           endSet = COLOR_MATRIX.substring(setIndex, setIndex + SEGMENT_SIZE.set)
           interpolateSets(
@@ -120,7 +155,12 @@ export function generateThemeColors<T = string>(
             endSet,
             multiplier,
             (setKey, setSaturation, setLuminance) => {
-              setValue(numerize(colorKey as ScaleColorName, setKey), colors, getHSL(hue, setSaturation, setLuminance))
+              setValue(
+                numerize(colorKey as ScaleColorName, setKey),
+                colors,
+                getHSL(hue, setSaturation, setLuminance),
+                setKey
+              )
             },
             true
           )
@@ -129,15 +169,33 @@ export function generateThemeColors<T = string>(
           startSet = COLOR_MATRIX.substring(setIndex, setIndex + SEGMENT_SIZE.set)
           endSet = COLOR_MATRIX.substring(setIndex + SEGMENT_SIZE.set, setIndex + SEGMENT_SIZE.set * 2)
           interpolateSets(startSet, endSet, multiplier, (setKey, setSaturation, setLuminance) => {
-            setValue(numerize(colorKey as ScaleColorName, setKey), colors, getHSL(hue, setSaturation, setLuminance))
+            setValue(
+              numerize(colorKey as ScaleColorName, setKey),
+              colors,
+              getHSL(hue, setSaturation, setLuminance),
+              setKey
+            )
           })
         }
       }
+    }
+
+    /**
+     * If the current `colorKey` is supposed to have an alpha scale, create it now
+     */
+    const alphaColorKey = AlphaColorName[`${colorKey}${ALPHA_KEY}` as keyof typeof AlphaColorName]
+    if (alphaColorKey) {
+      ALPHA_VALUES.forEach((alpha, index) => {
+        const alphaKey = (index + 1) as ColorNumberKey
+        setValue(numerize(alphaColorKey, alphaKey), colors, getHSL(hue, saturation, 50, alpha), alphaKey)
+      })
     }
   })
 
   return colors
 }
+
+// INTERNAL UTILS /////////////////////////////////////////////////////////////////////////////////
 
 function getHSL(hue: number, saturation: number, luminance: number, alpha?: number) {
   const alphaText = alpha ? `,${String(alpha).replace("0.", ".")}` : ""
