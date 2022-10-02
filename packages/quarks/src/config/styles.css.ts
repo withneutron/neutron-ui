@@ -183,6 +183,16 @@ globalStyle("blockquote, pre", {
   paddingBlock: space.vars[20].ref,
   borderRadius: radius.vars.rounded.ref,
 })
+const headings = ["h1", "h2", "h3", "h4", "h5", "h6"]
+globalStyle(mapSelectorsToTemplate("&:first-child", ...headings), {
+  marginTop: space.vars[0].ref,
+})
+globalStyle(mapSelectorsToTemplate("& + &", ...headings), {
+  marginTop: space.vars[0].ref,
+})
+globalStyle(mapSelectorsToTemplate("&, & > *", ...headings), {
+  fontFamily: fontFamily.vars.heading.ref,
+})
 globalStyle("h1", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
@@ -218,6 +228,16 @@ globalStyle("::selection", {
   background: color.vars.secondary9.ref,
   color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
 })
+
+/** Get a series of selectors from a template (replaces instances of `&`) */
+function mapSelectorsToTemplate(template: string, ...targets: string[]) {
+  let output = ""
+  targets.forEach((target, index) => {
+    const prefix = index === 0 ? "" : ","
+    output += `${prefix}${template.replaceAll("&", target)}`
+  })
+  return output
+}
 
 // Add keyframes to CSS
 if (animation.keyframes) {
@@ -380,7 +400,7 @@ export const darkVarMap = {} as Record<string, string | number>
 
 function getVars<V extends BaseVars>(vars: V, map = varMap) {
   return Object.entries(vars).reduce((output, [key, { name, value }]) => {
-    output[key as keyof typeof output] = name
+    output[key as keyof typeof output] = `var(${name})`
     if (typeof value === "string") {
       map[name] = value
     }

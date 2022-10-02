@@ -1,12 +1,14 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme, styledNUI } from "@/ui"
+import { Box, Column, Heading, Text, Anchor, appDarkTheme, appTheme } from "@/ui"
 import { Cards } from "@/components/sample/Cards"
 import { Tags } from "@/components/sample/Tags"
 import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
+import { styled } from "@withneutron/quarks-react"
+import { vars } from "@withneutron/quarks"
 
 function Pos(props: {
   children: React.ReactNode
@@ -22,10 +24,11 @@ function Pos(props: {
   )
 }
 
-const BaseSection = styledNUI(
+const BaseSection = styled(
   Pos,
   {
     h: "$80",
+    width: `calc(100vw - ${vars.size[120]})`,
     bg: {
       sm: "$magenta1",
       md: "$amber1",
@@ -48,7 +51,7 @@ const BaseSection = styledNUI(
     radiusBottomLeft: "$6",
     radiusBottomRight: "$2",
     float: "left",
-    maxWidth: "$480",
+    // maxWidth: "$480",
     fontWeight: "$600",
     fontSize: "$h3",
     ":active": {
@@ -67,11 +70,10 @@ const BaseSection = styledNUI(
   },
   "BaseSection"
 )
-const NuiSection = styledNUI(
+const NuiSection = styled(
   BaseSection,
   {
     h: "$320",
-    w: "234px",
     sm: {
       color: "$magentaText1",
     },

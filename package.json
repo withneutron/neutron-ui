@@ -41,7 +41,7 @@
     "dev": "yarn workspace nextjs-sample dev",
     "build": "yarn workspaces run build",
     "build:lib": "yarn workspaces run build:lib",
-    "watch:lib": "concurrently -c \"yellow,cyan\" -n \"quarks,ui\" \"yarn workspace @withneutron/quarks run watch:lib\" \"yarn workspace @withneutron/ui run watch:lib\"",
+    "watch:lib": "concurrently -c \"yellow,magenta,cyan\" -n \"quarks,quarks-react,ui\" \"yarn workspace @withneutron/quarks run watch:lib\" \"yarn workspace @withneutron/quarks-react run watch:lib\" \"yarn workspace @withneutron/ui run watch:lib\"",
     "lint": "eslint '**/*.{js,ts,tsx}'",
     "tsc": "tsc --noEmit",
     "test": "vite-jest",

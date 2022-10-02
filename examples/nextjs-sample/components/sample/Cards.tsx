@@ -13,9 +13,9 @@ import {
   TextColorNameKeys,
   Theme,
   UITheme,
-  styledNUI,
 } from "@/ui"
-import { vars } from "@/../../packages/quarks/src"
+import { styled as styledNUI } from "@withneutron/quarks-react"
+import { vars } from "@withneutron/quarks"
 
 const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
@@ -47,12 +47,13 @@ const CardBox = styled(GridItem, {
 
 const NUICardGrid = styledNUI("article", {
   display: "grid",
-  maxWidth: "calc(100vw - 32px)",
+  maxWidth: `calc(100vw - ${vars.size[32]})`,
   gtColumns: {
-    base: "repeat(3, 1fr)",
-    sm: "repeat(4, 1fr)",
-    md: "repeat(6, 1fr)",
-    lg: "repeat(12, 1fr)",
+    base: "repeat(12, 1fr)",
+    sm: "repeat(2, 1fr)",
+    md: "repeat(3, 1fr)",
+    lg: "repeat(4, 1fr)",
+    xl: "repeat(6, 1fr)",
   },
   overflow: "hidden",
   my: "$24",
@@ -179,12 +180,17 @@ export function Cards({ title, theme, darkTheme }: CardsProps): React.ReactEleme
             {title}
           </Heading.h2>
         </Row>
-        <CardGrid>{cards}</CardGrid>
+        <NUICardGrid>{cards}</NUICardGrid>
         {showInverted && (
           <Box className={isDark ? theme.className : darkTheme.className}>
-            <CardGrid bg="neutral2" mb="8">
+            <NUICardGrid
+              css={{
+                bg: "$primary2",
+                mb: "$32",
+              }}
+            >
               {cards}
-            </CardGrid>
+            </NUICardGrid>
           </Box>
         )}
       </UITheme>

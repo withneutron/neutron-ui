@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.d.ts", "**/examples/**/*.*", "../../**/examples/**/*.*", "examples"],
-  "include": ["manualTypes.d.ts", "src", "../quarks-react/src/config/styled.tsx"],
+  "include": ["manualTypes.d.ts", "src"],
   "compilerOptions": {
     "outDir": "dist",
     "lib": [
