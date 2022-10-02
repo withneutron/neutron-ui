@@ -6,7 +6,7 @@ type ComponentType<T> = keyof JSX.IntrinsicElements | FunctionComponent<T>
 
 /** TODO: Add Ref forwarding */
 export function styled<C extends ComponentType<any>>(component: C, css: CSS, styleName?: string) {
-  function styledComponent<infer T>(
+  function styledComponent<T extends ComponentType<any>>(
     props: ComponentProps<T> & ComponentProps<C> & { as?: T; css?: CSS; styleManager?: StyleManager }
   ) {
     const conditions = useStyleConditions()
