@@ -105,10 +105,11 @@ export class StyleManager {
   debug() {
     if (this.conditions.debug) {
       this.styleCount += this.debugList.length
-      this.style[this.getDebugVar(this.name)] = ""
+      const scopeName = this.getDebugVar(`-${this.name}`)
+      this.style[scopeName] = ""
       this.debugList.forEach(([debugClass, debugValue]) => {
-        this.style[this.getDebugVar(this.name)] += `${debugClass} `
-        this.style[this.getDebugVar(`-${debugClass}`)] = debugValue
+        this.style[scopeName] += `${debugClass} `
+        this.style[this.getDebugVar(`--${debugClass}`)] = debugValue
       })
     }
     this.debugList = []
