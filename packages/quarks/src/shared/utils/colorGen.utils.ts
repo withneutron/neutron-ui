@@ -22,6 +22,7 @@ import {
   AlphaColorName,
   ALPHA_VALUES,
   CoreColorName,
+  ZERO_SATURATION_INDICES,
 } from "../models/colorGen.models"
 
 export function getTextColor(color: ScaleColorName, numberKey?: ColorNumberKey): ThemeColor {
@@ -116,10 +117,14 @@ export function generateThemeColors<T = string>(
       const halfSat = fullSat / 2
 
       // Get our starting index in the encoded matrix
-      const baseIndex = MATRIX_INDICES[mode][isNeutral ? "neutral" : "color"]
+      const colorType = isNeutral ? "neutral" : "color"
+      const baseIndex = MATRIX_INDICES[mode][colorType]
       const hueIndex = baseIndex + SEGMENT_SIZE.hue * hue
       // Only skip the half-saturation set if we are dealing with full saturation
       const setIndex = saturation < fullSat ? hueIndex : hueIndex + SEGMENT_SIZE.set
+
+      const zeroSatIndex = ZERO_SATURATION_INDICES[mode][colorType]
+      const zeroSatSet = ZERO_SATURATION_LUMINANCE.substring(zeroSatIndex, zeroSatIndex + 12)
 
       const needsInterpolation = saturation !== 0 && saturation !== fullSat && saturation !== halfSat
       let set = ""
@@ -127,7 +132,7 @@ export function generateThemeColors<T = string>(
       if (!needsInterpolation) {
         // Our saturation matches a set exactly, so we don't need to interpolate!
         const isZeroSat = saturation === 0
-        set = isZeroSat ? ZERO_SATURATION_LUMINANCE : COLOR_MATRIX.substring(setIndex, setIndex + SEGMENT_SIZE.set)
+        set = isZeroSat ? zeroSatSet : COLOR_MATRIX.substring(setIndex, setIndex + SEGMENT_SIZE.set)
         processSet(
           set,
           (setKey, setSaturation, setLuminance) => {
@@ -148,7 +153,7 @@ export function generateThemeColors<T = string>(
         if (saturation < halfSat) {
           // Interpolate using zero and half sets
           multiplier = saturation / halfSat
-          startSet = ZERO_SATURATION_LUMINANCE
+          startSet = zeroSatSet
           endSet = COLOR_MATRIX.substring(setIndex, setIndex + SEGMENT_SIZE.set)
           interpolateSets(
             startSet,

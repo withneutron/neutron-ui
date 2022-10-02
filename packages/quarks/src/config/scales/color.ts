@@ -67,8 +67,14 @@ export function getColor(hash: CharHash) {
     ...generateThemeColors<ScaleEntry>(
       DEFAULT_SOURCE_COLORS,
       "dark",
-      (key: keyof ColorPaletteEntry, palette: ColorPalette<ScaleEntry>, value: string | number) => {
-        if (value) {
+      (
+        key: keyof ColorPaletteEntry,
+        palette: ColorPalette<ScaleEntry>,
+        value: string | number,
+        _numberKey?: ColorNumberKey,
+        isMapped = false
+      ) => {
+        if (!isMapped) {
           palette[key] = { ...lightScale[key], value: String(value) }
         }
       }

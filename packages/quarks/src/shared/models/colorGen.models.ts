@@ -80,6 +80,16 @@ export const MAX_ALPHA_TEXT_COLOR_TARGETS = {
 export const ALPHA_VALUES = [0.015, 0.05, 0.1, 0.15, 0.23, 0.32, 0.42, 0.53, 0.75, 0.85, 0.9, 0.95] as const
 
 export const ZERO_SATURATION_LUMINANCE = `|{ywrnhaF?5)|{ywsnhaF?5)&+15:=@EUbjy"&,037:=S]jz`
+export const ZERO_SATURATION_INDICES = {
+  light: {
+    color: 0,
+    neutral: 12,
+  },
+  dark: {
+    color: 24,
+    neutral: 36,
+  },
+}
 
 /** Base indices of color modes in the encoded color matrix */
 export const MATRIX_INDICES = {
