@@ -4,9 +4,6 @@ import { m } from "./encodedColors.models"
 
 export const DEFAULT_COLOR_MODE = "light" as const
 
-export const BASE_STYLE_SIZE = 4
-export const STYLE_UNIT = "rem"
-
 // Neutron Palette
 export const DEFAULT_HUE = 240
 export const DEFAULT_PALETTE = 2

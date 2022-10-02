@@ -49,11 +49,8 @@
       "eslint --fix"
     ]
   },
-  "dependencies": {
-    "chroma-js": "^2.1.2"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/chroma-js": "2.x",
     "@types/node": "17.0.31",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",

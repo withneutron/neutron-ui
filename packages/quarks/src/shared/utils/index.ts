@@ -1,2 +1,2 @@
 export * from "./common.utils"
-export * from "./theme.utils"
+export * from "./colorGen.utils"

@@ -70,9 +70,11 @@ const NUIHeading = styledNUI("h2", {
   fontSize: "$h3",
 })
 
-const NUIText = styledNUI(Text, {
+const NUIText = styledNUI("p", {
   lineHeight: "$heading",
   fontSize: "$16",
+  fontWeight: "$400",
+  my: "$0",
 })
 
 interface CardsProps {
