@@ -68,7 +68,7 @@ const NUICardBox = styledNUI("section", {
 const NUIHeading = styledNUI("h2", {
   mt: "$0",
   mb: "$2",
-  fontSize: "$h3",
+  fontSize: "$h4",
 })
 
 const NUIText = styledNUI("p", {
