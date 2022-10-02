@@ -71,6 +71,7 @@ const NuiSection = styledNUI(
   BaseSection,
   {
     h: "$320",
+    w: "234px",
     sm: {
       color: "$magentaText1",
     },
@@ -101,7 +102,7 @@ const Sample: NextPage = () => {
   const showInputs = true
   const showTags = true
   const showStatuses = true
-  const showSampleBox = false
+  const showSampleBox = true
 
   const sampleControls = (
     <>

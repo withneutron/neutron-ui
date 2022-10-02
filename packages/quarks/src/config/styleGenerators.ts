@@ -72,7 +72,7 @@ export function style(
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
-  private debugList: string[] = []
+  private debugList: [string, string][] = []
   private classList: string[] = []
   private classDict: ClassDict = {
     [BASE]: {},
@@ -104,8 +104,12 @@ export class StyleManager {
 
   debug() {
     if (this.conditions.debug) {
-      this.styleCount++
-      this.style[this.getDebugVar(this.name)] = this.debugList.join(" ")
+      this.styleCount += this.debugList.length
+      this.style[this.getDebugVar(this.name)] = ""
+      this.debugList.forEach(([debugClass, debugValue]) => {
+        this.style[this.getDebugVar(this.name)] += `${debugClass} `
+        this.style[this.getDebugVar(`-${debugClass}`)] = debugValue
+      })
     }
     this.debugList = []
   }
@@ -172,7 +176,9 @@ export class StyleManager {
     inlineCondition: InlineConditionKey = BASE,
     pseudoClass: PseudoCategoryKey = BASE,
     varName?: string,
-    value?: string
+    value?: string,
+    originalProp?: CssPropKey,
+    originalValue?: string
   ) {
     const { propId, existingData, incomingPriority, hasExistingConflict, hasParentConflic } = this.getBaseState(
       prop,
@@ -192,7 +198,7 @@ export class StyleManager {
 
     if (existingData === undefined) {
       this.classList.push(className)
-      this.debugList.push(className)
+      this.debugList.push([className, `${originalProp}: ${originalValue}\n`])
     } else {
       // Clear out old style that got overwritten, if need be
       const oldClass = this.classList[index]
@@ -202,7 +208,7 @@ export class StyleManager {
         this.styleCount--
       }
       this.classList[index] = className
-      this.debugList[index] = className
+      this.debugList[index] = [className, `${originalProp}: ${originalValue}\n`]
     }
     if (varName && value) {
       this.styleCount++
@@ -302,7 +308,8 @@ function processCssProp(
   manager: StyleManager,
   conditions: Conditions,
   condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey
+  pseudo?: PseudoClassKey,
+  originalProp?: CssPropKey
 ) {
   if (typeof value === "object") {
     if (value[BASE] !== undefined) {
@@ -324,7 +331,7 @@ function processCssProp(
       const innerPropsLen = innerProps.length
       for (let index = 0; index < innerPropsLen; index++) {
         const [propName, propValue] = innerProps[index]
-        processCssProp(propName as CssPropKey, propValue, manager, conditions, condition, pseudo)
+        processCssProp(propName as CssPropKey, propValue, manager, conditions, condition, pseudo, prop)
       }
     } else {
       value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
@@ -334,10 +341,10 @@ function processCssProp(
         const pseudosLen = pseudos.length
         for (let index = 0; index < pseudosLen; index++) {
           const pseudoKey = pseudos[index]
-          addStyle(prop, value as string, manager, condition, pseudoKey)
+          addStyle(prop, value as string, manager, condition, pseudoKey, originalProp ?? prop)
         }
       } else {
-        addStyle(prop, value, manager, condition)
+        addStyle(prop, value, manager, condition, undefined, originalProp ?? prop)
       }
     }
   }
@@ -349,11 +356,12 @@ function addStyle(
   value: string,
   manager: StyleManager,
   condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey
+  pseudo?: PseudoClassKey,
+  originalProp?: CssPropKey
 ) {
   const output = getStyle(prop, value, pseudo)
   if (output) {
-    manager.add(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value)
+    manager.add(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value, originalProp, value)
   }
 }
 
