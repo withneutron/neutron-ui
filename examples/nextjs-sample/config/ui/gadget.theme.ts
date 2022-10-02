@@ -42,21 +42,21 @@ const CUSTOM_STYLES = {
 }
 
 const customPalette: SemanticColors = {
-  neutral: "hsl(60,6.67%,94.12%)",
-  primary: "hsl(240,100%,54.31%)",
-  secondary: "hsl(90.93,100%,44.12%)",
+  neutral: "hsl(60,6.67%,100%)",
+  primary: "hsl(240,100%,50%)",
+  secondary: "hsl(36,85%,50%)",
 }
 const customDarkPalette: SemanticColors = {
-  neutral: "hsl(60,6.67%,94.12%)",
-  primary: "hsl(240,100%,54.31%)",
-  secondary: "hsl(90.93,100%,44.12%)",
+  neutral: "hsl(60,6.67%,100%)",
+  primary: "hsl(240,100%,50%)",
+  secondary: "hsl(36,85%,50%)",
   // primary: "hsl(90.93,100%,44.12%)",
   // secondary: "hsl(240,100%,54.31%)",
 }
 export const customThemeValues = {
   ...CUSTOM_STYLES,
   colors: {
-    ...generateThemeColors(customPalette, "light", true),
+    ...generateThemeColors(customPalette, "light"),
     defaultHeading: "$neutralMax",
   },
 }
@@ -64,7 +64,7 @@ export const customTheme = createTheme("custom-theme", customThemeValues)
 export const customDarkThemeValues = {
   ...CUSTOM_STYLES,
   colors: {
-    ...generateThemeColors(customDarkPalette, "dark", true),
+    ...generateThemeColors(customDarkPalette, "dark"),
     defaultHeading: "$neutralMax",
   },
 }

@@ -32,9 +32,9 @@ const BaseSection = styledNUI(
       lg: "$forest1",
       xl: "$aqua1",
       dark: "$primary4",
-      base: "$neutral3",
+      base: "$tertiary3",
     },
-    color: "$textNeutral3",
+    color: "$tertiaryText3",
     m: "$8",
     mb: "$20",
     ml: "$16",
@@ -53,16 +53,16 @@ const BaseSection = styledNUI(
     fontSize: "$h3",
     ":active": {
       bg: "$primary10",
-      color: "$textPrimary10",
+      color: "$primaryText10",
     },
     ":focus-visible": {
-      color: "$textPrimary9",
+      color: "$primaryText9",
       bg: "$primary9",
       outline: "$primaryMax",
     },
     ":hover": {
       bg: "$primary9",
-      color: "$textPrimary9",
+      color: "$primaryText9",
     },
   },
   "BaseSection"
@@ -72,20 +72,20 @@ const NuiSection = styledNUI(
   {
     h: "$320",
     sm: {
-      color: "$textMagenta1",
+      color: "$magentaText1",
     },
     md: {
-      color: "$textAmber1",
+      color: "$amberText1",
     },
     lg: {
-      color: "$textForest1",
+      color: "$forestText1",
     },
     xl: {
-      color: "$textAqua1",
+      color: "$aquaText1",
     },
     dark: {
       outlineWidth: "$widthBase",
-      color: "$textAqua1",
+      color: "$aquaText1",
     },
     motion: {
       animation: "none",
@@ -101,7 +101,7 @@ const Sample: NextPage = () => {
   const showInputs = true
   const showTags = true
   const showStatuses = true
-  const showSampleBox = true
+  const showSampleBox = false
 
   const sampleControls = (
     <>

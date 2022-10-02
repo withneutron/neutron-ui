@@ -13,7 +13,9 @@ import {
   TextColorNameKeys,
   Theme,
   UITheme,
+  styledNUI,
 } from "@/ui"
+import { vars } from "@/../../packages/quarks/src"
 
 const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
@@ -43,6 +45,36 @@ const CardBox = styled(GridItem, {
   },
 })
 
+const NUICardGrid = styledNUI("article", {
+  display: "grid",
+  maxWidth: "calc(100vw - 32px)",
+  gtColumns: {
+    base: "repeat(3, 1fr)",
+    sm: "repeat(4, 1fr)",
+    md: "repeat(6, 1fr)",
+    lg: "repeat(12, 1fr)",
+  },
+  overflow: "hidden",
+  my: "$24",
+  radius: "$8",
+})
+
+const NUICardBox = styledNUI("section", {
+  px: "$16",
+  py: "$12",
+})
+
+const NUIHeading = styledNUI("h2", {
+  mt: "$0",
+  mb: "$2",
+  fontSize: "$h3",
+})
+
+const NUIText = styledNUI(Text, {
+  lineHeight: "$heading",
+  fontSize: "$16",
+})
+
 interface CardsProps {
   title: string
   theme: Theme
@@ -62,34 +94,61 @@ export function Cards({ title, theme, darkTheme }: CardsProps): React.ReactEleme
       </Text>
     </Column>
   )
+  const getNUIInner = (color: any) => (
+    <Column>
+      <NUIHeading css={{ color }}>Abc</NUIHeading>
+      <NUIText css={{ color }}>Defg hi jklmnop</NUIText>
+    </Column>
+  )
   const cards = (
     <>
       {keys.map((key: number) => (
-        <CardBox
-          key={key}
-          bg={`primary${key as ColorNumberKey}`}
-          color={`textPrimary${key as ColorNumberKey}`}
-        >
+        <CardBox key={key} bg={`primary${key as ColorNumberKey}`} color={`textPrimary${key as ColorNumberKey}`}>
           {getInner(`textPrimary${key as ColorNumberKey}`)}
         </CardBox>
       ))}
       {keys.map((key: number) => (
-        <CardBox
-          key={key}
-          bg={`secondary${key as ColorNumberKey}`}
-          color={`textSecondary${key as ColorNumberKey}`}
+        <NUICardBox
+          key={`nui-${key}`}
+          css={{
+            bg: `$secondary${key as ColorNumberKey}`,
+            color: `$secondaryText${key as ColorNumberKey}`,
+          }}
         >
+          {getNUIInner(`$secondaryText${key as ColorNumberKey}`)}
+        </NUICardBox>
+      ))}
+      {keys.map((key: number) => (
+        <CardBox key={key} bg={`secondary${key as ColorNumberKey}`} color={`textSecondary${key as ColorNumberKey}`}>
           {getInner(`textSecondary${key as ColorNumberKey}`)}
         </CardBox>
       ))}
       {keys.map((key: number) => (
-        <CardBox
-          key={key}
-          bg={`neutral${key as ColorNumberKey}`}
-          color={`textNeutral${key as ColorNumberKey}`}
+        <NUICardBox
+          key={`nui-${key}`}
+          css={{
+            bg: `$tertiary${key as ColorNumberKey}`,
+            color: `$tertiaryText${key as ColorNumberKey}`,
+          }}
         >
+          {getNUIInner(`$tertiaryText${key as ColorNumberKey}`)}
+        </NUICardBox>
+      ))}
+      {keys.map((key: number) => (
+        <CardBox key={key} bg={`neutral${key as ColorNumberKey}`} color={`textNeutral${key as ColorNumberKey}`}>
           {getInner(`textNeutral${key as ColorNumberKey}`)}
         </CardBox>
+      ))}
+      {keys.map((key: number) => (
+        <NUICardBox
+          key={`nui-${key}`}
+          css={{
+            bg: `$primary${key as ColorNumberKey}`,
+            color: `$primaryText${key as ColorNumberKey}`,
+          }}
+        >
+          {getNUIInner(`$primaryText${key as ColorNumberKey}`)}
+        </NUICardBox>
       ))}
       {/* {enumKeys(FlavorColorName).reduce((output: React.ReactElement[], color: keyof typeof FlavorColorName) => {
         keys.forEach((key: number) => {
