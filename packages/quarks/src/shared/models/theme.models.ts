@@ -1,4 +1,3 @@
-import { Locale } from "locale-enum"
 import { ColorMode } from "./colorGen.models"
 
 export const BASE_STYLE_SIZE = 4
@@ -617,5 +616,5 @@ export interface GetThemeFonts<T = ThemeFonts> {
 export interface InitialProps {
   colorMode?: ColorMode
   isMobile?: boolean
-  locale?: Locale
+  locale?: string
 }

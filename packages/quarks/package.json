@@ -8,7 +8,7 @@
   "jsnext:main": "dist/quarks.es.js",
   "types": "dist/quarks.d.ts",
   "typings": "dist/quarks.d.ts",
-  "private": false,
+  "private": true,
   "directories": {
     "dist": "dist",
     "test": "__tests__"

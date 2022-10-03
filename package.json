@@ -6,7 +6,7 @@
   "repository": "https://github.com/withneutron/neutron-ui.git",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "private": false,
+  "private": true,
   "workspaces": [
     "packages/*",
     "examples/*"
@@ -38,7 +38,10 @@
   },
   "dependencies": {},
   "scripts": {
-    "dev": "yarn workspace nextjs-sample dev",
+    "dev:cra": "yarn workspace cra-sample dev",
+    "dev:astro": "yarn workspace astro-sample dev",
+    "dev:next": "yarn workspace nextjs-sample dev",
+    "dev:remix": "yarn workspace remix-sample dev",
     "build": "yarn workspaces run build",
     "build:lib": "yarn workspaces run build:lib",
     "watch:lib": "concurrently -c \"yellow,magenta,cyan\" -n \"quarks,quarks-react,ui\" \"yarn workspace @withneutron/quarks run watch:lib\" \"yarn workspace @withneutron/quarks-react run watch:lib\" \"yarn workspace @withneutron/ui run watch:lib\"",
