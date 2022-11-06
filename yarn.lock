@@ -6563,7 +6563,7 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
-"@types/react@18.2.0":
+"@types/react@18.0.21":
   version "18.0.21"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.21.tgz#b8209e9626bb00a34c76f55482697edd2b43cc67"
   integrity sha512-7QUCOxvFgnD5Jk8ZKlUAhVcRj7GuJRjnjjiY/IUBWKgOlnvDvTMLD4RTF7NPyVmbRhNrbomZiOepg7M/2Kj1mA==
@@ -20019,9 +20019,9 @@ prepend-http@^1.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha512-PhmXi5XmoyKw1Un4E+opM2KcsJInDvKyuOumcjjw3waw86ZNjHwVUOOWLc4bCzLdcKNaWBH9e99sbWzDQsVaYg==
 
-prettier-plugin-astro@^0.5.3:
+prettier-plugin-astro@^0.5.3, prettier-plugin-astro@^0.5.5:
   version "0.5.5"
-  resolved "https://registry.npmjs.org/prettier-plugin-astro/-/prettier-plugin-astro-0.5.5.tgz"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-astro/-/prettier-plugin-astro-0.5.5.tgz#39bed9aa73b2e0b0f7aedff33eb56794af12e52f"
   integrity sha512-tEJiPjTB1eVT5Czcbkj9GoRG/oMewOnG9x737p/hJUD5QXJmn7LiYFM2dKkX0i4A1fhhsGfXT+uqsAXcw2r8JQ==
   dependencies:
     "@astrojs/compiler" "^0.23.4"
@@ -20532,7 +20532,7 @@ react-docgen@^5.0.0:
     node-dir "^0.1.10"
     strip-indent "^3.0.0"
 
-react-dom@17.0.2, react-dom@18.2.0, react-dom@^17.0.2, react-dom@^17.2.0, react-dom@^18.0.0:
+react-dom@17.0.2, react-dom@^17.0.2, react-dom@^17.2.0, react-dom@^18.0.0:
   version "17.0.2"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -20754,7 +20754,7 @@ react-walk-element-tree@^0.0.1:
   resolved "https://registry.npmjs.org/react-walk-element-tree/-/react-walk-element-tree-0.0.1.tgz"
   integrity sha512-1d5t3RExYdVO9bgPx999J1i6dIF5z9jg6jF3pII12uxDGp8U3FxDPVx7EKxADuxaahr5VTKfFwb7H7sBpkNwYQ==
 
-react@17.0.2, react@18.2.0, react@^17.0.2, react@^17.2.0, react@^18.0.0:
+react@17.0.2, react@^17.0.2, react@^17.2.0, react@^18.0.0:
   version "17.0.2"
   resolved "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==

@@ -446,7 +446,6 @@ export function getColorModeFromHeaders(req: IncomingMessage | Request): ColorMo
   } else {
     const headers = req.headers ?? req.rawHeaders
     if (headers) {
-      console.log("2 req.headers", headers[key] as ColorMode)
       colorMode = headers[key as keyof typeof headers] as ColorMode
     }
   }
