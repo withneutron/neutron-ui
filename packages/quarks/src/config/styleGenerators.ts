@@ -29,6 +29,8 @@ import {
   ResponsiveCondition,
   responsiveConditionsPriority,
   responsiveConditionsMap,
+  ConditionCategories,
+  ConditionCategory,
 } from "./conditions"
 import { CssAlias } from "./scales/scales.models"
 
@@ -72,6 +74,13 @@ export function style(
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
+  private watchCategories: { [k in ConditionCategory]: boolean } = {
+    [ConditionCategory.responsive]: false,
+    [ConditionCategory.preference]: false,
+    [ConditionCategory.device]: false,
+    [ConditionCategory.colorMode]: false,
+    [ConditionCategory.debug]: false,
+  }
   private debugList: [string, string][] = []
   private classList: string[] = []
   private classDict: ClassDict = {
@@ -125,7 +134,11 @@ export class StyleManager {
     this.name = `${this.name}_css`
   }
 
-  private getConditionFromInline(inlineCondition: InlineConditionKey) {
+  /**
+   * Get the responsive condition from a style line that defines that style
+   * for one or more conditions.
+   */
+  private getResponsiveConditionFromInline(inlineCondition: InlineConditionKey) {
     return responsiveConditionsMap[inlineCondition as ResponsiveCondition]
       ? (inlineCondition as ResponsiveConditionKey)
       : BASE
@@ -140,7 +153,7 @@ export class StyleManager {
   }
 
   private getBaseState(prop: CssPropKey, inlineCondition: InlineConditionKey, pseudoClass: PseudoCategoryKey) {
-    const condition = this.getConditionFromInline(inlineCondition)
+    const condition = this.getResponsiveConditionFromInline(inlineCondition)
     const propId = this.getPropId(prop)
 
     // Existing data, to make sure we don't have a conflict
@@ -171,6 +184,19 @@ export class StyleManager {
     }
   }
 
+  /** Returns an object with boolean values for whether this manager is watching each condition */
+  getWatchedConditions() {
+    return this.watchCategories
+  }
+
+  watchCondition(condition: InlineConditionKey) {
+    const category = ConditionCategories[condition as ConditionKey]
+    if (category) {
+      this.watchCategories[category] = true
+    }
+  }
+
+  /** Add a style to the style set */
   add(
     prop: CssPropKey,
     className: string,
@@ -270,8 +296,11 @@ function processCss(css: CSS, manager: StyleManager, conditions: Conditions, con
     const [propName, propValue] = props[index]
     // If the prop is a condition, process its inner props, including its inner pseudo-classes
     if (conditionsMap[propName as ConditionKey]) {
+      // Register that this style set depends on this condition being watched
+      manager.watchCondition(propName as ConditionKey)
       // Skip if the condition is currently false
       if (!conditions[propName as ConditionKey]) continue
+      // Otherwise, proceed
       processCss(propValue as ConditionalCSS, manager, conditions, propName as InlineConditionKey)
     } else if (pseudoClasses[propName as PseudoClassKey]) {
       // If the prop is a pseudo-class, process its inner props
@@ -312,7 +341,9 @@ function processCssProp(
   pseudo?: PseudoClassKey,
   originalProp?: CssPropKey
 ) {
+  // Check first to see if we have an inline condition `object`!
   if (typeof value === "object") {
+    // If inline conditions include a base value, process that first
     if (value[BASE] !== undefined) {
       processCssProp(prop, value[BASE], manager, conditions, BASE, pseudo)
     }
@@ -320,8 +351,11 @@ function processCssProp(
     for (let index = 0; index < conditionKeysLen; index++) {
       const conditionKey = conditionKeys[index]
       const innerValue = value[conditionKey]
-      if (innerValue !== undefined && conditions[conditionKey] === true) {
-        processCssProp(prop, innerValue, manager, conditions, conditionKey as InlineConditionKey, pseudo)
+      if (innerValue !== undefined) {
+        manager.watchCondition(conditionKey)
+        if (conditions[conditionKey] === true) {
+          processCssProp(prop, innerValue, manager, conditions, conditionKey as InlineConditionKey, pseudo)
+        }
       }
     }
   } else {
@@ -417,7 +451,7 @@ function getStyleName() {
 }
 
 /*************************************************************************************************
- * TYPE GENERATION
+ * TYPES
  *************************************************************************************************/
 type ResponsiveConditionKey = ResponsiveCondition | typeof BASE
 type PseudoClassKey = keyof typeof pseudoClasses

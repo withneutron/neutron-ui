@@ -86,6 +86,36 @@ export function mapConditions(conditions: QueryConditions, colorMode: ColorMode,
   } as const
 }
 
+export enum ConditionCategory {
+  responsive = "responsive",
+  preference = "preference",
+  device = "device",
+  colorMode = "colorMode",
+  debug = "debug",
+}
+
+export const ConditionCategories: { [k in ConditionKeys]: ConditionCategory } = {
+  sm: ConditionCategory.responsive,
+  md: ConditionCategory.responsive,
+  lg: ConditionCategory.responsive,
+  xl: ConditionCategory.responsive,
+  contrast: ConditionCategory.preference,
+  motion: ConditionCategory.preference,
+  data: ConditionCategory.preference,
+  "!contrast": ConditionCategory.preference,
+  "!motion": ConditionCategory.preference,
+  "!data": ConditionCategory.preference,
+  touch: ConditionCategory.device,
+  pointer: ConditionCategory.device,
+  tv: ConditionCategory.device,
+  "!touch": ConditionCategory.device,
+  "!pointer": ConditionCategory.device,
+  "!tv": ConditionCategory.device,
+  light: ConditionCategory.colorMode,
+  dark: ConditionCategory.colorMode,
+  debug: ConditionCategory.debug,
+}
+
 /**
  * GLOBAL STYLES
  * - For `html` and `body` styles, just treat those as any other component,
