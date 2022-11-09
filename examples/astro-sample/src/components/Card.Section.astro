@@ -1,0 +1,11 @@
+---
+import Card from "./Card.astro"
+
+export interface Props {
+  title: string
+  body: string
+  href: string
+}
+---
+
+<Card {...Astro.props} as="section" />

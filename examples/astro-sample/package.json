@@ -1,0 +1,27 @@
+{
+  "name": "astro-sample",
+  "type": "module",
+  "version": "0.1.1",
+  "author": "Lucas Castro <lucas.castro@gmail.com>",
+  "description": "A sample Astro app using Quarks",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^1.1.4",
+    "@withneutron/quarks": "^0.1.0",
+    "@withneutron/quarks-react": "^0.1.0",
+    "astro": "^1.4.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.2",
+    "prettier-plugin-astro": "^0.5.5"
+  }
+}
