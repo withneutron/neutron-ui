@@ -7,7 +7,7 @@ import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
-import { styled, Box, Column, Heading, Text, Anchor } from "@withneutron/quarks-react"
+import { styled, Box, Column, Heading, Text, Anchor, Grid, Row } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
 
 function Pos(props: {
@@ -97,6 +97,31 @@ const NuiSection = styled(
   "NuiSection"
 )
 
+const SampleGrid = styled(
+  Grid,
+  {
+    bg: "$primary2",
+    gtColumns: "$fit200",
+    autoRows: "$80",
+    gap: "$12",
+    p: "$12",
+  },
+  "SampleGrid"
+)
+const GridBox = styled(
+  Row,
+  {
+    bg: "$primary4",
+    color: "$primaryText4",
+    p: "$12",
+    fontSize: "$21",
+    fontWeight: "$600",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  "GridBox"
+)
+
 const Sample: NextPage = () => {
   const showColorPalette = true
   const showTypography = true
@@ -171,6 +196,22 @@ const Sample: NextPage = () => {
           <NuiSection tabIndex={0} css={{ h: "$200" }} position="fixed">
             NUI-powered sample box
           </NuiSection>
+          <SampleGrid as="article">
+            <GridBox>1</GridBox>
+            <GridBox>2</GridBox>
+            <GridBox>3</GridBox>
+            <GridBox>4</GridBox>
+
+            <GridBox>5</GridBox>
+            <GridBox>6</GridBox>
+            <GridBox>7</GridBox>
+            <GridBox>8</GridBox>
+
+            <GridBox>9</GridBox>
+            <GridBox>10</GridBox>
+            <GridBox>11</GridBox>
+            <GridBox>12</GridBox>
+          </SampleGrid>
         </>
       )}
       {!showSampleBox && sampleControls}
