@@ -6,7 +6,7 @@ import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
 export function getRadius(hash: CharHash) {
   const base = { ...hash.var, value: "4rem" } as const
   const field = { ...hash.var, value: base.ref } as const
-  const rounded = { ...hash.var, value: `min(max(${field.ref}, 4rem), 4rem)` } as const
+  const rounded = { ...hash.var, value: `max(${field.ref}, 4rem)` } as const
 
   const sharedVars = {
     0: { ...hash.var, value: "0" },
