@@ -1,9 +1,9 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { Box } from "../Box/Box"
 import { getSemanticLayoutPrimitive } from "../../config"
 
 export const Flex = getSemanticLayoutPrimitive(
-  styled(
+  styledPrimitive(
     Box,
     {
       display: "flex",

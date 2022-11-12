@@ -1,8 +1,8 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { getSemanticHeadingPrimitive } from "../../config"
 
 export const Heading = getSemanticHeadingPrimitive(
-  styled(
+  styledPrimitive(
     "h1",
     {
       color: "$defaultHeading",

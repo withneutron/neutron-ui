@@ -1,7 +1,7 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { getTextStyles } from "../Text/Text"
 
-export const ListItem = styled(
+export const ListItem = styledPrimitive(
   "li",
   {
     ...getTextStyles(),

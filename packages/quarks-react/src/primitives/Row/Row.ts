@@ -1,9 +1,9 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { Flex } from "../Flex/Flex"
 import { getSemanticLayoutPrimitive } from "../../config"
 
 export const Row = getSemanticLayoutPrimitive(
-  styled(
+  styledPrimitive(
     Flex,
     {
       flexDirection: "row",

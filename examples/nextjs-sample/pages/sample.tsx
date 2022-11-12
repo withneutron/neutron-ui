@@ -170,7 +170,7 @@ const Sample: NextPage = () => {
       {showSampleBox && (
         <>
           <Heading.H2>Sample Heading</Heading.H2>
-          <Box
+          <Box.Section
             css={{
               bg: "$primary10",
               color: "$primaryText10",
@@ -189,14 +189,14 @@ const Sample: NextPage = () => {
             }}
           >
             Sample box
-          </Box>
-          <NuiSection tabIndex={0} css={{ fontSize: "$36" }} position="relative">
+          </Box.Section>
+          <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection tabIndex={0} css={{ h: "$200" }} position="fixed">
+          <NuiSection tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
           </NuiSection>
-          <SampleGrid as="article">
+          <SampleGrid>
             <GridBox>1</GridBox>
             <GridBox>2</GridBox>
             <GridBox>3</GridBox>

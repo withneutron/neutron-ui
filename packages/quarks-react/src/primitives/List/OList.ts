@@ -1,4 +1,4 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { getListStyles } from ".."
 
-export const OList = styled("ol", getListStyles(), "OList")
+export const OList = styledPrimitive("ol", getListStyles(), "OList")

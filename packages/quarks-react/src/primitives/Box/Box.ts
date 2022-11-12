@@ -1,4 +1,4 @@
-import { styled } from "../../config"
+import { styledPrimitive } from "../../config"
 import { getSemanticLayoutPrimitive } from "../../config"
 
-export const Box = getSemanticLayoutPrimitive(styled("section", {}, "Box"))
+export const Box = getSemanticLayoutPrimitive(styledPrimitive("section", {}, "Box"))

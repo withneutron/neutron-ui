@@ -1,14 +1,20 @@
-import { ComponentProps, FunctionComponent, Ref } from "react"
+import { ComponentProps, FunctionComponent, HTMLAttributes, Ref } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, style, StyleManager } from "@withneutron/quarks"
+import { getSemanticUniversalPrimitive } from "./config.utils"
+import { AnyProps, ComponentType } from "../shared/models"
 
-type ComponentType<T> = keyof JSX.IntrinsicElements | FunctionComponent<T>
+// type ComponentType<T = any> = keyof JSX.IntrinsicElements | FunctionComponent<T>
+// type AnyProps = Record<string, unknown>
 
 /** TODO: Add Ref forwarding */
-export function styled<C extends ComponentType<any>>(component: C, css: CSS, styleName?: string) {
-  function styledComponent<T extends ComponentType<any>>(
-    props: ComponentProps<T> & ComponentProps<C> & { as?: T; css?: CSS; styleManager?: StyleManager }
-  ) {
+export function styled<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
+  return getSemanticUniversalPrimitive(styledPrimitive(component, css, styleName))
+}
+
+/** TODO: Add Ref forwarding */
+export function styledPrimitive<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
+  function styledComponent(props: { css?: CSS; styleManager?: StyleManager } & HTMLAttributes<C> & ComponentProps<C>) {
     const conditions = useStyleConditions()
     const { as: polyAs, css: propsCss, styleManager, ...rest } = props
 
