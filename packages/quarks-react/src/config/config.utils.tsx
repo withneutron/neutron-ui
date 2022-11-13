@@ -1,29 +1,35 @@
-import type { ComponentProps, HTMLAttributes, ReactNode, RefObject } from "react"
-import { cloneElement } from "react"
+import {
+  forwardRef,
+  HTMLAttributes,
+  RefObject,
+  cloneElement,
+  ForwardRefRenderFunction,
+  ComponentPropsWithRef,
+} from "react"
 import {
   SemanticLayoutPrimitive,
   SemanticTextPrimitive,
   SemanticHeadingPrimitive,
-  ComponentType,
   SemanticUniversalPrimitive,
 } from "../shared/models"
 
 type StyledRef = ((instance: HTMLElement | null) => void) | RefObject<HTMLElement> | null | undefined
+type StyledComponent = ForwardRefRenderFunction<any, any>
 
-function getSemantic<T extends ComponentType<any>>(Comp: T, tag?: keyof JSX.IntrinsicElements) {
+function getSemantic<T extends StyledComponent>(Comp: T, tag?: keyof JSX.IntrinsicElements) {
   const AnyComp: any = Comp
   const WrappedComponent = (
-    props: HTMLAttributes<HTMLElement> & ComponentProps<T>,
+    props: HTMLAttributes<HTMLElement> & ComponentPropsWithRef<T>,
     ref?: StyledRef
-  ): ReactNode | null => cloneElement(<AnyComp />, { as: tag, ref, ...props })
+  ): JSX.Element | null => cloneElement(<AnyComp />, { as: tag, ref, ...props })
 
   const suffix = tag ? `.${tag}` : ""
   WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}${suffix}`
-  return WrappedComponent as T
+  return forwardRef(WrappedComponent) as any as T
 }
 
 /** Generates a series of typed, semantic layout primitives associated with an input component */
-export function getSemanticLayoutPrimitive<T extends ComponentType<any>>(Comp: T) {
+export function getSemanticLayoutPrimitive<T extends StyledComponent>(Comp: T) {
   const output = Comp as SemanticLayoutPrimitive<T>
   // Semantic HTML shortcuts
   output.Article = getSemantic(Comp, "article")
@@ -40,7 +46,7 @@ export function getSemanticLayoutPrimitive<T extends ComponentType<any>>(Comp: T
 }
 
 /** Generates a series of typed, semantic text primitives associated with an input component */
-export function getSemanticTextPrimitive<T extends ComponentType<any>>(Comp: T) {
+export function getSemanticTextPrimitive<T extends StyledComponent>(Comp: T) {
   const output = getSemantic(Comp, undefined) as SemanticTextPrimitive<T>
   // Semantic HTML shortcuts
   output.Blockquote = getSemantic(Comp, "blockquote")
@@ -60,7 +66,7 @@ export function getSemanticTextPrimitive<T extends ComponentType<any>>(Comp: T) 
 }
 
 /** Generates a series of typed, semantic heading primitives associated with an input component */
-export function getSemanticHeadingPrimitive<T extends ComponentType<any>>(Comp: T) {
+export function getSemanticHeadingPrimitive<T extends StyledComponent>(Comp: T) {
   const output = getSemantic(Comp, undefined) as SemanticHeadingPrimitive<T>
   // Semantic HTML shortcuts
   output.H1 = getSemantic(Comp, "h1")
@@ -73,7 +79,7 @@ export function getSemanticHeadingPrimitive<T extends ComponentType<any>>(Comp: 
 }
 
 /** Generates a series of typed, semantic universal primitives associated with an input component */
-export function getSemanticUniversalPrimitive<T extends ComponentType<any>>(Comp: T) {
+export function getSemanticUniversalPrimitive<T extends StyledComponent>(Comp: T) {
   const output = getSemantic(Comp, undefined) as SemanticUniversalPrimitive<T>
   // Semantic HTML shortcuts
   output.Article = getSemantic(Comp, "article")

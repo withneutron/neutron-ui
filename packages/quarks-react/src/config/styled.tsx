@@ -1,32 +1,43 @@
-import { ComponentProps, FunctionComponent, HTMLAttributes, JSXElementConstructor, Ref } from "react"
+import {
+  ComponentPropsWithRef,
+  ForwardedRef,
+  forwardRef,
+  FunctionComponent,
+  HTMLAttributes,
+  JSXElementConstructor,
+} from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, style, StyleManager } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
 
 type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
-  ComponentProps<T>,
+  ComponentPropsWithRef<T>,
   "css" | "styleManager"
 >
 
-/** TODO: Add Ref forwarding */
+/** Used to style any React component of basic HTML element.
+ * The output component will include semantic HTML variants, such as `Component.Aside`. */
 export function styled<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
   return getSemanticUniversalPrimitive(styledPrimitive(component, css, styleName))
 }
 
-/** TODO: Add Ref forwarding */
+/** Used to create styling primitives, like `Row`, `Column`, etc */
 export function styledPrimitive<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
-  function styledComponent<T extends ComponentType>(
+  function styledComponent<T extends ComponentType, R>(
     props: HTMLAttributes<C> &
       StylelessComponentProps<C> &
-      StylelessComponentProps<T> & { as: T; css?: CSS; styleManager?: StyleManager }
+      StylelessComponentProps<T> & { as: T; css?: CSS; styleManager?: StyleManager },
+    ref?: ForwardedRef<R>
   ): JSX.Element
-  function styledComponent(
-    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any; css?: CSS; styleManager?: StyleManager }
+  function styledComponent<R>(
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any; css?: CSS; styleManager?: StyleManager },
+    ref?: ForwardedRef<R>
   ): JSX.Element
-  function styledComponent(
+  function styledComponent<R>(
     props: HTMLAttributes<C> &
-      StylelessComponentProps<C> & { as?: ComponentType; css?: CSS; styleManager?: StyleManager }
+      StylelessComponentProps<C> & { as?: ComponentType; css?: CSS; styleManager?: StyleManager },
+    ref?: ForwardedRef<R>
   ) {
     const conditions = useStyleConditions()
     const { as: polyAs, css: propsCss, styleManager, ...rest } = props
@@ -47,6 +58,7 @@ export function styledPrimitive<C extends ComponentType>(component: C, css: CSS,
     return (
       <Element
         as={isIntrinsic ? undefined : polyAs}
+        ref={ref}
         {...rest}
         {...passDownProps}
         className={className}
@@ -55,5 +67,5 @@ export function styledPrimitive<C extends ComponentType>(component: C, css: CSS,
     )
   }
   styledComponent.displayName = styleName
-  return styledComponent
+  return forwardRef(styledComponent) as any as typeof styledComponent
 }

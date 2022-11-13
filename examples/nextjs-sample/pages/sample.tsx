@@ -9,6 +9,7 @@ import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 import { styled, Box, Column, Heading, Text, Anchor, Grid, Row } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
+import { useEffect, useRef } from "react"
 
 function Pos(props: {
   children: React.ReactNode
@@ -130,6 +131,11 @@ const Sample: NextPage = () => {
   const showTags = true
   const showStatuses = true
   const showSampleBox = true
+  const ref = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    console.log("@@@ ref", ref.current)
+  }, [ref.current])
 
   const sampleControls = (
     <>
@@ -161,7 +167,12 @@ const Sample: NextPage = () => {
     </>
   )
   return (
-    <Column.Article>
+    <Column.Article
+      ref={ref}
+      css={{
+        color: "text",
+      }}
+    >
       <Head>
         <title>UI Lib + Design System Sample</title>
         <meta name="description" content="Sample of various NeutronUI components" />
@@ -170,7 +181,10 @@ const Sample: NextPage = () => {
       {showSampleBox && (
         <>
           <Heading.H2>Sample Heading</Heading.H2>
-          <Box.Section
+          <Box.Aside
+            ref={(element: HTMLDivElement) => {
+              console.log("@@@ element", element)
+            }}
             css={{
               bg: "$primary10",
               color: "$primaryText10",
@@ -189,7 +203,7 @@ const Sample: NextPage = () => {
             }}
           >
             Sample box
-          </Box.Section>
+          </Box.Aside>
           <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>

@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react"
-import { ComponentType } from "./models"
+import { ForwardRefRenderFunction } from "react"
 
 // SEMANTIC HTML //////////////////////////////////////////////////////////////
-export type SemanticLayoutPrimitive<T> = T & {
+export type SemanticLayoutPrimitive<T extends ForwardRefRenderFunction<any, any>> = T & {
   /** ARTICLE: Defines independent, self-contained content */
   Article: T
   /** ASIDE: Defines content aside from, but related to, the main content */
@@ -31,7 +30,7 @@ export type SemanticLayoutPrimitive<T> = T & {
   // Span: T
 }
 
-export type SemanticTextPrimitive<T> = T & {
+export type SemanticTextPrimitive<T extends ForwardRefRenderFunction<any, any>> = T & {
   /** BLOCKQUOTE: Defines a section that is quoted from another source */
   Blockquote: T
   /** CODE: Defines a piece of computer code */
@@ -89,7 +88,7 @@ export type SemanticTextPrimitive<T> = T & {
   // Wbr: T
 }
 
-export type SemanticHeadingPrimitive<T> = T & {
+export type SemanticHeadingPrimitive<T extends ForwardRefRenderFunction<any, any>> = T & {
   /** H1: Defines a primary heading */
   H1: T
   /** H2: Defines a secondary heading */
@@ -104,7 +103,7 @@ export type SemanticHeadingPrimitive<T> = T & {
   H6: T
 }
 
-export type SemanticUniversalPrimitive<T> = T & {
+export type SemanticUniversalPrimitive<T extends ForwardRefRenderFunction<any, any>> = T & {
   /** ARTICLE: Defines independent, self-contained content */
   Article: T
   /** ASIDE: Defines content aside from, but related to, the main content */
