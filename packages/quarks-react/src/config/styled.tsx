@@ -2,7 +2,7 @@ import { ComponentProps, FunctionComponent, HTMLAttributes, JSXElementConstructo
 import { useStyleConditions } from "../hooks"
 import { CSS, style, StyleManager } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
-import { AnyProps, ComponentType } from "../shared/models"
+import { ComponentType } from "../shared/models"
 
 type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
   ComponentProps<T>,

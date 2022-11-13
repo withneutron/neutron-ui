@@ -6,7 +6,6 @@ import {
   SemanticHeadingPrimitive,
   ComponentType,
   SemanticUniversalPrimitive,
-  AnyProps,
 } from "../shared/models"
 
 type StyledRef = ((instance: HTMLElement | null) => void) | RefObject<HTMLElement> | null | undefined
