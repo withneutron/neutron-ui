@@ -1,11 +1,13 @@
-import { ComponentProps, FunctionComponent, HTMLAttributes, Ref } from "react"
+import { ComponentProps, FunctionComponent, HTMLAttributes, JSXElementConstructor, Ref } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, style, StyleManager } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
 import { AnyProps, ComponentType } from "../shared/models"
 
-// type ComponentType<T = any> = keyof JSX.IntrinsicElements | FunctionComponent<T>
-// type AnyProps = Record<string, unknown>
+type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
+  ComponentProps<T>,
+  "css" | "styleManager"
+>
 
 /** TODO: Add Ref forwarding */
 export function styled<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
@@ -14,7 +16,18 @@ export function styled<C extends ComponentType>(component: C, css: CSS, styleNam
 
 /** TODO: Add Ref forwarding */
 export function styledPrimitive<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
-  function styledComponent(props: { css?: CSS; styleManager?: StyleManager } & HTMLAttributes<C> & ComponentProps<C>) {
+  function styledComponent<T extends ComponentType>(
+    props: HTMLAttributes<C> &
+      StylelessComponentProps<C> &
+      StylelessComponentProps<T> & { as: T; css?: CSS; styleManager?: StyleManager }
+  ): JSX.Element
+  function styledComponent(
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any; css?: CSS; styleManager?: StyleManager }
+  ): JSX.Element
+  function styledComponent(
+    props: HTMLAttributes<C> &
+      StylelessComponentProps<C> & { as?: ComponentType; css?: CSS; styleManager?: StyleManager }
+  ) {
     const conditions = useStyleConditions()
     const { as: polyAs, css: propsCss, styleManager, ...rest } = props
 
