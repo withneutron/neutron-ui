@@ -167,12 +167,7 @@ const Sample: NextPage = () => {
     </>
   )
   return (
-    <Column.Article
-      ref={ref}
-      css={{
-        color: "text",
-      }}
-    >
+    <Column.Article ref={ref}>
       <Head>
         <title>UI Lib + Design System Sample</title>
         <meta name="description" content="Sample of various NeutronUI components" />

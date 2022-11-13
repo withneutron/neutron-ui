@@ -217,7 +217,9 @@ export type ColorGenOptions = { [k in CoreColorName]: SourceColor } &
 export type ScaleColorName = CoreColorName | StatusColorName | FlavorColorName | AlphaColorName
 export type TextColorName = TextColor<ScaleColorName>
 
-export type ThemeColor = `${StaticColorName}` | ScaleColor<ScaleColorName>
+export type ScaleTextColor = ScaleColor<TextColorName>
+
+export type ThemeColor = `${StaticColorName}` | ScaleColor<ScaleColorName> | ScaleTextColor
 
 export type ColorPalette<T = string> = {
   [key in ThemeColor]: T
