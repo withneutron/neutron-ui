@@ -316,6 +316,7 @@ export const scaledPropScale = {
 
   textDecoration: Scale.textDecoration,
 
+  type: Scale.type,
   lineHeight: Scale.lineHeight,
   letterSpacing: Scale.typeSpace,
   wordSpacing: Scale.typeSpace,

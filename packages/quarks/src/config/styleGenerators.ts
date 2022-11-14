@@ -166,7 +166,7 @@ export class StyleManager {
     const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
 
     // If the parent already has this style, only override if this one has HIGHER priority.
-    const hasParentConflic = parentPriority <= incomingPriority
+    const hasParentConflict = parentPriority <= incomingPriority
 
     // If what we've already processed of the current styles have a conflict,
     // only override it if this one has HIGHER OR EQUAL priority.
@@ -179,7 +179,7 @@ export class StyleManager {
       existingPriority,
       parentData,
       parentPriority,
-      hasParentConflic,
+      hasParentConflict,
       hasExistingConflict,
     }
   }
@@ -207,14 +207,14 @@ export class StyleManager {
     originalProp?: CssPropKey,
     originalValue?: string
   ) {
-    const { propId, existingData, incomingPriority, hasExistingConflict, hasParentConflic } = this.getBaseState(
+    const { propId, existingData, incomingPriority, hasExistingConflict, hasParentConflict } = this.getBaseState(
       prop,
       inlineCondition,
       pseudoClass
     )
 
     // Lower-valued priorities take precedent, and cannot be overwritten
-    if (hasExistingConflict || hasParentConflic) {
+    if (hasExistingConflict || hasParentConflict) {
       return
     }
 
@@ -278,12 +278,12 @@ export class StyleManager {
 function flattenOverrides(overrides?: ThemeOverrides) {
   return !overrides
     ? {}
-    : Object.values(overrides).reduce((output, rules) => {
+    : (Object.values(overrides).reduce((output, rules) => {
         Object.entries(rules).forEach(([varName, value]) => {
           output[varName] = value
         })
         return output
-      }, {} as Record<string, string | number>)
+      }, {} as any) as Record<string, string | number>)
 }
 
 // PROCESSING FUNCTIONS ///////////////////////////////////////////////////////////////////////////
@@ -427,7 +427,7 @@ function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = B
     }
     if (scaledValue) return { className: scaledValue }
   } else {
-    // If value is scaled, but we ended up, it could be filtered out of the scale (e.g., a non-core color)
+    // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
     if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
       const tokenMap = tokenToVarMap[scaleKey]
       const varFromToken = tokenMap[value as keyof typeof tokenMap]

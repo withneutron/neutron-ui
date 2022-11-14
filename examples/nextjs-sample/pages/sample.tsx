@@ -83,10 +83,17 @@ const NuiSection = styled(
   },
   variants({
     kind: {
-      error: { bg: "$error3" },
-      success: { bg: "$success3" },
+      error: {
+        bg: "$error3",
+        color: "$errorText3",
+      },
+      success: {
+        bg: "$success3",
+        color: "$successText3",
+      },
       warning: {
         bg: "$warning3",
+        color: "$warningText3",
         px: {
           sm: "$12",
           md: "$16",

@@ -20,7 +20,7 @@
  *************************************************************************************************/
 
 import { globalStyle, globalKeyframes } from "@vanilla-extract/css"
-import { addPrefix, classHash, keyframeHash, varHash } from "./utils"
+import { addPrefix, classHash, keyframeHash, removePrefix, varHash } from "./utils"
 import {
   getSize,
   getSpace,
@@ -44,6 +44,7 @@ import {
   BaseVars,
   ThemeProps,
   PrefixedKey,
+  CssAliasMap,
 } from "./scales"
 import {
   CssPropKey,
@@ -424,12 +425,21 @@ function getVars<V extends BaseVars>(vars: V, map = varMap) {
   }, {} as { [k in keyof V]: string })
 }
 
-function getTokenToVarsMap<V extends BaseVars>(vars: V) {
-  return Object.entries(vars).reduce((output, [key, { name }]) => {
+function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, aliases?: A) {
+  const output = {} as { [k in PrefixedKey<V>]: string }
+  Object.entries(vars).forEach(([key, { name }]) => {
     const token = addPrefix(key)
     output[token as keyof typeof output] = name
     return output
-  }, {} as { [k in PrefixedKey<V>]: string })
+  })
+  if (aliases) {
+    Object.entries(aliases).forEach(([token, alias]) => {
+      const keyFromAlias = removePrefix(alias)
+      output[token as keyof typeof output] = vars[keyFromAlias].name
+      return output
+    })
+  }
+  return output
 }
 
 function getThemeProps<T extends ThemeProps>(props: T) {
@@ -491,25 +501,25 @@ export const theme = {
  * instead, which will leverage our custom var system instead of a pre-generated CSS class.
  */
 export const tokenToVarMap = {
-  animation: getTokenToVarsMap(animation.vars),
-  border: getTokenToVarsMap(border.vars),
-  color: getTokenToVarsMap(color.vars),
-  column: getTokenToVarsMap(column.vars),
-  font: getTokenToVarsMap(font.vars),
-  fontFamily: getTokenToVarsMap(fontFamily.vars),
-  fontSize: getTokenToVarsMap(fontSize.vars),
-  fontWeight: getTokenToVarsMap(fontWeight.vars),
-  lineHeight: getTokenToVarsMap(lineHeight.vars),
-  outline: getTokenToVarsMap(outline.vars),
-  radius: getTokenToVarsMap(radius.vars),
-  row: getTokenToVarsMap(row.vars),
-  shadow: getTokenToVarsMap(shadow.vars),
-  size: getTokenToVarsMap(size.vars),
-  space: getTokenToVarsMap(space.vars),
-  textDecoration: getTokenToVarsMap(textDecoration.vars),
-  typeSpace: getTokenToVarsMap(typeSpace.vars),
-  type: getTokenToVarsMap(type.vars),
-  zIndex: getTokenToVarsMap(zIndex.vars),
+  animation: getTokenToVarsMap(animation.vars, animation.cssAliasMap),
+  border: getTokenToVarsMap(border.vars, border.cssAliasMap),
+  color: getTokenToVarsMap(color.vars, color.cssAliasMap),
+  column: getTokenToVarsMap(column.vars, column.cssAliasMap),
+  font: getTokenToVarsMap(font.vars, font.cssAliasMap),
+  fontFamily: getTokenToVarsMap(fontFamily.vars, fontFamily.cssAliasMap),
+  fontSize: getTokenToVarsMap(fontSize.vars, fontSize.cssAliasMap),
+  fontWeight: getTokenToVarsMap(fontWeight.vars, fontWeight.cssAliasMap),
+  lineHeight: getTokenToVarsMap(lineHeight.vars, lineHeight.cssAliasMap),
+  outline: getTokenToVarsMap(outline.vars, outline.cssAliasMap),
+  radius: getTokenToVarsMap(radius.vars, radius.cssAliasMap),
+  row: getTokenToVarsMap(row.vars, row.cssAliasMap),
+  shadow: getTokenToVarsMap(shadow.vars, shadow.cssAliasMap),
+  size: getTokenToVarsMap(size.vars, size.cssAliasMap),
+  space: getTokenToVarsMap(space.vars, space.cssAliasMap),
+  textDecoration: getTokenToVarsMap(textDecoration.vars, textDecoration.cssAliasMap),
+  typeSpace: getTokenToVarsMap(typeSpace.vars, typeSpace.cssAliasMap),
+  type: getTokenToVarsMap(type.vars, type.cssAliasMap),
+  zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
 export const darkColor = getVars(color.darkVars!, darkVarMap)
