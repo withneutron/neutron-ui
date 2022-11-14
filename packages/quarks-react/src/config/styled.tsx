@@ -30,7 +30,8 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
   styleName?: string
 ) {
   styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
-  const variants = typeof variantsOrStyleName === "function" ? variantsOrStyleName : () => undefined
+  const hasVariants = typeof variantsOrStyleName === "function"
+  const variants = hasVariants ? variantsOrStyleName : () => undefined
 
   function styledComponent<T extends ComponentType, R>(
     props: HTMLAttributes<C> &
@@ -66,6 +67,15 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
       delete passDownProps.styleManager
     }
 
+    if (hasVariants) {
+      const variantKeys = getVariantKeys(variants)
+      if (variantKeys.length > 0) {
+        variantKeys.forEach(key => {
+          delete rest[key]
+        })
+      }
+    }
+
     return (
       <Element
         as={isIntrinsic ? undefined : polyAs}
@@ -95,4 +105,39 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
       ? styledPrimitive(component, css, variantsOrStyleName, styleName)
       : styledPrimitive(component, css, styleName)
   return getSemanticUniversalPrimitive(primitive)
+}
+
+// UTILS //////////////////////////////////////////////////////////////////////
+/** Retrieves the argument names of a given function */
+function getVariantKeys(func: (...params: any[]) => any) {
+  let funcString = func.toString().replace(/\s/g, "")
+  let chunks: string[]
+  const hasObjectSyntax = funcString.includes("param.")
+
+  if (hasObjectSyntax) {
+    chunks = funcString.split("param.")
+  } else {
+    // Start parameter names after first '('
+    const start = funcString.indexOf("(") + 1
+    const endArrow = funcString.indexOf(")=>")
+    const endFunc = funcString.indexOf("){")
+    let end = Math.min(endArrow, endFunc)
+
+    if (end < 0) {
+      end = Math.max(endArrow, endFunc)
+    }
+
+    chunks = funcString.substring(start, end).split(",")
+  }
+
+  const params: string[] = []
+
+  chunks.forEach((chunk: string, index) => {
+    const end = chunk.search(/[\W_]+/g)
+    chunk = end > 0 ? chunk.substring(0, end) : chunk.replace(/[\W_]+/g, "")
+
+    if ((index > 0 || !hasObjectSyntax) && chunk.length > 0) params.push(chunk)
+  })
+
+  return params
 }
