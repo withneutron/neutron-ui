@@ -11,22 +11,8 @@ import { styled, Box, Column, Heading, Text, Anchor, Grid, Row } from "@withneut
 import { vars } from "@withneutron/quarks"
 import { useEffect, useRef } from "react"
 
-function Pos(props: {
-  children: React.ReactNode
-  position?: "fixed" | "absolute" | "relative"
-  tabIndex?: number
-  className?: string
-  style?: Record<string, any>
-}) {
-  return (
-    <section tabIndex={props.tabIndex} className={props.className} style={props.style}>
-      {props.children}
-    </section>
-  )
-}
-
 const BaseSection = styled(
-  Pos,
+  "div",
   {
     h: "$80",
     width: `calc(100vw - ${vars.size[120]})`,
@@ -131,7 +117,7 @@ const Sample: NextPage = () => {
   const showTags = true
   const showStatuses = true
   const showSampleBox = true
-  const ref = useRef<HTMLElement | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     console.log("@@@ ref", ref.current)
@@ -167,7 +153,7 @@ const Sample: NextPage = () => {
     </>
   )
   return (
-    <Column.Article ref={ref}>
+    <Column.Article>
       <Head>
         <title>UI Lib + Design System Sample</title>
         <meta name="description" content="Sample of various NeutronUI components" />
@@ -205,7 +191,7 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box.Aside>
-          <NuiSection tabIndex={0} css={{ fontSize: "$36" }}>
+          <NuiSection ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
           <NuiSection tabIndex={0} css={{ h: "$200" }}>

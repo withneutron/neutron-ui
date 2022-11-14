@@ -1,19 +1,7 @@
 import Link from "next/link"
 import Logo from "@/components/layout/Logo"
-import {
-  useHtml,
-  Button,
-  Column,
-  FlexList,
-  FlexListItem,
-  Grid,
-  Heading,
-  IconButton,
-  IconName,
-  Row,
-  Text,
-  useColors,
-} from "@/ui"
+import { useHtml, Button, IconButton, IconName, useColors } from "@/ui"
+import { Column, Heading, FlexList, FlexListItem, Text, Grid, Row } from "@withneutron/quarks-react"
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { toggleColorMode, isDark } = useColors()
@@ -23,42 +11,61 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <section>
-      <Grid h="fullVh" verticalPanels={{ "@initial": "14-11", "@bp1": "12-11" }}>
-        <Row.header
-          alignItems="center"
-          px="9"
-          bg="neutral3"
-          wrap
-          shadow="highSoft"
-          justifyContent={{ "@initial": "spaceBetween", "@<bp1": "center" }}
+      <Grid
+        css={{
+          h: "100vh",
+          gtRows: "96rem auto",
+        }}
+      >
+        <Row.Header
+          css={{
+            alignItems: "center",
+            px: "$40",
+            bg: "$primary3",
+            flexWrap: "wrap",
+            boxShadow: "$highSoft",
+            justifyContent: {
+              base: "space-between",
+              sm: "center",
+            },
+          }}
         >
-          <Heading.h1
-            lineHeight="min"
-            flat
-            p="2"
-            ml={{ "@bp1": "minus2" }}
-            w={{ "@<bp1": "full" }}
-            align={{ "@<bp1": "center" }}
+          <Heading.H1
+            css={{
+              lineHeight: "$min",
+              p: "$8",
+              mb: "$0",
+              ml: { base: "-8rem", sm: "initial" },
+              w: { sm: "100%" },
+              textAlign: { sm: "center" },
+            }}
           >
             <Logo />
-          </Heading.h1>
-          <Row.nav
-            alignItems="center"
-            gap="6"
-            w={{ "@<bp1": "full" }}
-            justifyContent={{ "@<bp1": "center" }}
+          </Heading.H1>
+          <Row.Nav
+            css={{
+              alignItems: "center",
+              gap: "$12",
+              w: { sm: "100%" },
+              justifyContent: { sm: "center" },
+            }}
           >
-            <Row aria-label="Main navigation" alignItems="center">
-              <FlexList gap="2">
+            <Row
+              aria-label="Main navigation"
+              css={{
+                alignItems: "center",
+              }}
+            >
+              <FlexList css={{ gap: "$8" }}>
                 <FlexListItem>
-                  <Link href="/">
+                  <Link passHref href="/">
                     <Button size="small" variant="ghost">
                       Home
                     </Button>
                   </Link>
                 </FlexListItem>
                 <FlexListItem>
-                  <Link href="/sample">
+                  <Link passHref href="/sample">
                     <Button size="small" variant="ghost">
                       Sample
                     </Button>
@@ -74,14 +81,26 @@ function Layout({ children }: { children: React.ReactNode }) {
               iconName={isDark ? IconName.sun : IconName.moon}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             />
-          </Row.nav>
-        </Row.header>
-        <Column.main p="9" pb="13">
+          </Row.Nav>
+        </Row.Header>
+        <Column.Main
+          css={{
+            p: "$40",
+            pb: "$56",
+          }}
+        >
           {children}
-        </Column.main>
-        <Row.footer alignItems="center" justifyContent="center" px="9" bg="neutral3">
+        </Column.Main>
+        <Row.Footer
+          css={{
+            alignItems: "center",
+            justifyContent: "center",
+            px: "$40",
+            bg: "$primary3",
+          }}
+        >
           <Text>&copy; Neutron</Text>
-        </Row.footer>
+        </Row.Footer>
       </Grid>
     </section>
   )

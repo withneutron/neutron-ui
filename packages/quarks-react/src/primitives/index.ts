@@ -1,6 +1,5 @@
 export * from "./Box/Box"
 export * from "./Column/Column"
-export * from "./Flex/Flex"
 export * from "./Grid/Grid"
 export * from "./Heading/Heading"
 export * from "./Anchor/Anchor"

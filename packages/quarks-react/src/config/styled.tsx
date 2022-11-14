@@ -16,6 +16,8 @@ type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementC
   "css" | "styleManager"
 >
 
+type BaseStyledProps = { css?: CSS; styleManager?: StyleManager }
+
 /** Used to style any React component of basic HTML element.
  * The output component will include semantic HTML variants, such as `Component.Aside`. */
 export function styled<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
@@ -25,18 +27,15 @@ export function styled<C extends ComponentType>(component: C, css: CSS, styleNam
 /** Used to create styling primitives, like `Row`, `Column`, etc */
 export function styledPrimitive<C extends ComponentType>(component: C, css: CSS, styleName?: string) {
   function styledComponent<T extends ComponentType, R>(
-    props: HTMLAttributes<C> &
-      StylelessComponentProps<C> &
-      StylelessComponentProps<T> & { as: T; css?: CSS; styleManager?: StyleManager },
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & StylelessComponentProps<T> & { as?: T } & BaseStyledProps,
     ref?: ForwardedRef<R>
-  ): JSX.Element
+  ): JSX.Element | null
   function styledComponent<R>(
-    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any; css?: CSS; styleManager?: StyleManager },
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any } & BaseStyledProps,
     ref?: ForwardedRef<R>
-  ): JSX.Element
+  ): JSX.Element | null
   function styledComponent<R>(
-    props: HTMLAttributes<C> &
-      StylelessComponentProps<C> & { as?: ComponentType; css?: CSS; styleManager?: StyleManager },
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: ComponentType } & BaseStyledProps,
     ref?: ForwardedRef<R>
   ) {
     const conditions = useStyleConditions()
@@ -55,6 +54,7 @@ export function styledPrimitive<C extends ComponentType>(component: C, css: CSS,
     if (isIntrinsic) {
       delete passDownProps.styleManager
     }
+
     return (
       <Element
         as={isIntrinsic ? undefined : polyAs}

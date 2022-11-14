@@ -73,12 +73,28 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
 
     filter: value("filter"),
 
+    // Make sure all sizing-related properties can have custom values
     inlineSize: value("inlineSize"),
     minInlineSize: value("minInlineSize"),
     maxInlineSize: value("maxInlineSize"),
     blockSize: value("blockSize"),
     minBlockSize: value("minBlockSize"),
     maxBlockSize: value("maxBlockSize"),
+
+    marginBlockStart: value("marginBlockStart"),
+    marginBlockEnd: value("marginBlockEnd"),
+    marginInlineStart: value("marginInlineStart"),
+    marginInlineEnd: value("marginInlineEnd"),
+
+    paddingBlockStart: value("paddingBlockStart"),
+    paddingBlockEnd: value("paddingBlockEnd"),
+    paddingInlineStart: value("paddingInlineStart"),
+    paddingInlineEnd: value("paddingInlineEnd"),
+
+    insetBlockStart: value("insetBlockStart"),
+    insetBlockEnd: value("insetBlockEnd"),
+    insetInlineStart: value("insetInlineStart"),
+    insetInlineEnd: value("insetInlineEnd"),
   } as const
 
   if (keys) {
