@@ -7,7 +7,7 @@ import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
-import { styled, Box, Column, Heading, Text, Anchor, Grid, Row } from "@withneutron/quarks-react"
+import { styled, Box, Column, Heading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
 import { useEffect, useRef } from "react"
 
@@ -81,16 +81,23 @@ const NuiSection = styled(
       animation: "none",
     },
   },
-  ({ isChunky, variant }: { isChunky?: boolean; variant?: "error" | "warning" | "success" }) => ({
-    bg:
-      variant === "error"
-        ? "$error3"
-        : variant === "success"
-        ? "$success3"
-        : variant === "warning"
-        ? "$warning3"
-        : undefined,
-    borderWidth: isChunky ? "$widthMax" : undefined,
+  variants({
+    kind: {
+      error: { bg: "$error3" },
+      success: { bg: "$success3" },
+      warning: {
+        bg: "$warning3",
+        px: {
+          sm: "$12",
+          md: "$16",
+          lg: "$24",
+          base: "$40",
+        },
+      },
+    },
+    isChunky: {
+      true: { borderWidth: "$widthMax" },
+    },
   }),
   "NuiSection"
 )
@@ -202,10 +209,10 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box.Aside>
-          <NuiSection isChunky variant="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
+          <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection variant="warning" tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection kind="warning" tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
           </NuiSection>
           <SampleGrid>
