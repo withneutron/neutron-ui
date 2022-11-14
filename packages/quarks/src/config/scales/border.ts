@@ -58,6 +58,9 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
 
+// FILTER KEYS ////////////////////////////////////////////////////////////////
+// Used for generating types that map to only parts of this scale
+
 export const borderWidths = {
   widthBase: true,
   widthMin: true,

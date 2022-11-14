@@ -86,6 +86,9 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
 
+// FILTER KEYS ////////////////////////////////////////////////////////////////
+// Used for generating types that map to only parts of this scale
+
 export const outlineWidths = {
   widthBase: true,
   widthMin: true,

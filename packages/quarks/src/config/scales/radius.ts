@@ -11,8 +11,8 @@ export function getRadius(hash: CharHash) {
   const sharedVars = {
     0: { ...hash.var, value: "0" },
     1: { ...hash.var, value: "1rem" },
-    2: { ...hash.var, value: `calc(${base.ref} * 0.5)` },
-    3: { ...hash.var, value: `calc(${base.ref} * 0.75)` },
+    2: { ...hash.var, value: `calc(${base.ref} * .5)` },
+    3: { ...hash.var, value: `calc(${base.ref} * .75)` },
     4: { ...hash.var, value: base.ref },
     6: { ...hash.var, value: `calc(${base.ref} * 1.5)` },
     8: { ...hash.var, value: `calc(${base.ref} * 2)` },

@@ -10,18 +10,18 @@ export function getTypeSpace(hash: CharHash) {
 
   const sharedVars = {
     emBase,
-    emMin: { ...hash.var, value: `calc(${emBase.ref} - 0.125em)` },
-    emMax: { ...hash.var, value: `calc(${emBase.ref} + 0.125em)` },
+    emMin: { ...hash.var, value: `calc(${emBase.ref} - .1em)` },
+    emMax: { ...hash.var, value: `calc(${emBase.ref} + .1em)` },
     remBase,
-    remMin: { ...hash.var, value: `calc(${remBase.ref} - 2rem)` },
-    remMax: { ...hash.var, value: `calc(${remBase.ref} + 2rem)` },
+    remMin: { ...hash.var, value: `calc(${remBase.ref} - 1.5rem)` },
+    remMax: { ...hash.var, value: `calc(${remBase.ref} + 1.5rem)` },
     chBase,
-    chMin: { ...hash.var, value: `calc(${chBase.ref} - 0.2ch)` },
-    chMax: { ...hash.var, value: `calc(${chBase.ref} + 0.2ch)` },
+    chMin: { ...hash.var, value: `calc(${chBase.ref} - .15ch)` },
+    chMax: { ...hash.var, value: `calc(${chBase.ref} + .15ch)` },
     tightest: { ...hash.var, value: `calc(${remBase.ref} - 1rem)` },
-    tight: { ...hash.var, value: `calc(${remBase.ref} - 0.25rem)` },
+    tight: { ...hash.var, value: `calc(${remBase.ref} - .33rem)` },
     regular: { ...hash.var, value: remBase.ref },
-    loose: { ...hash.var, value: `calc(${remBase.ref} + 0.5rem)` },
+    loose: { ...hash.var, value: `calc(${remBase.ref} + .67rem)` },
   } as const
 
   const vars = sharedVars

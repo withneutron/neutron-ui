@@ -13,7 +13,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
   const bounceLeft = keyframeHash.name
   const keyframes: Keyframes = {
     [spin]: {
-      "0%, 50.1%": { transform: "rotate(0deg)" },
+      "0%, 5.1%": { transform: "rotate(0deg)" },
       "20%, 80%": { transform: "rotate(180deg)" },
       "50%, to": { transform: "rotate(360deg)" },
     },
@@ -28,20 +28,20 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     },
     [bounceTop]: {
       "0%, 10%, 26.5%, 50%, to": {
-        animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
       },
       "20%, 21.5%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(0, -30px, 0) scaleY(1.1)",
       },
       "35%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(0, -15px, 0) scaleY(1.05)",
       },
       "40%": {
-        transitionTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-        transform: "translate3d(0, 0, 0) scaleY(0.95)",
+        transitionTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
+        transform: "translate3d(0, 0, 0) scaleY(.95)",
       },
       "45%": {
         transform: "translate3d(0, -4px, 0) scaleY(1.02)",
@@ -49,20 +49,20 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     },
     [bounceRight]: {
       "0%, 10%, 26.5%, 50%, to": {
-        animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
       },
       "20%, 21.5%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(30px, 0, 0) scaleX(1.1)",
       },
       "35%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(15px, 0, 0) scaleX(1.05)",
       },
       "40%": {
-        transitionTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-        transform: "translate3d(0, 0, 0) scaleX(0.95)",
+        transitionTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
+        transform: "translate3d(0, 0, 0) scaleX(.95)",
       },
       "45%": {
         transform: "translate3d(4px, 0, 0) scaleX(1.02)",
@@ -70,20 +70,20 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     },
     [bounceBottom]: {
       "0%, 10%, 26.5%, 50%, to": {
-        animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
       },
       "20%, 21.5%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(0, 30px, 0) scaleY(1.1)",
       },
       "35%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(0, 15px, 0) scaleY(1.05)",
       },
       "40%": {
-        transitionTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-        transform: "translate3d(0, 0, 0) scaleY(0.95)",
+        transitionTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
+        transform: "translate3d(0, 0, 0) scaleY(.95)",
       },
       "45%": {
         transform: "translate3d(0, 4px, 0) scaleY(1.02)",
@@ -91,20 +91,20 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     },
     [bounceLeft]: {
       "0%, 10%, 26.5%, 50%, to": {
-        animationTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
       },
       "20%, 21.5%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(-30px, 0, 0) scaleX(1.1)",
       },
       "35%": {
-        animationTimingFunction: "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        animationTimingFunction: "cubic-bezier(.755, .05, .855, .06)",
         transform: "translate3d(-15px, 0, 0) scaleX(1.05)",
       },
       "40%": {
-        transitionTimingFunction: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-        transform: "translate3d(0, 0, 0) scaleX(0.95)",
+        transitionTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
+        transform: "translate3d(0, 0, 0) scaleX(.95)",
       },
       "45%": {
         transform: "translate3d(-4px, 0, 0) scaleX(1.02)",
@@ -211,6 +211,9 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     keyframes,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, Record<any, any>, typeof keyframes>
 }
+
+// FILTER KEYS ////////////////////////////////////////////////////////////////
+// Used for generating types that map to only parts of this scale
 
 export const animationDurations = {
   fastDuration: true,

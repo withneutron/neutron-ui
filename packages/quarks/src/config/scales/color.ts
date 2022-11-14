@@ -50,8 +50,8 @@ export function getColor(hash: CharHash) {
     defaultHeading: { ...hash.var, value: lightPalette.primary10.ref },
     // Unique to light palette
     panel: { ...hash.var, value: lightPalette.min.ref },
-    shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.05)` },
-    shadowHeavy: { ...hash.var, value: `hsl(${shadowBase.ref} / 0.15)` },
+    shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / .05)` },
+    shadowHeavy: { ...hash.var, value: `hsl(${shadowBase.ref} / .15)` },
     ...lightPalette,
   } as const
 
@@ -62,8 +62,8 @@ export function getColor(hash: CharHash) {
     defaultHeading: lightScale.defaultHeading,
     // Unique to dark palette
     panel: { ...lightScale.panel, value: lightScale.primary3.ref },
-    shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / 0.2)` },
-    shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / 0.35)` },
+    shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / .2)` },
+    shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / .35)` },
     ...generateThemeColors<ScaleEntry>(
       DEFAULT_SOURCE_COLORS,
       "dark",
@@ -94,6 +94,9 @@ export function getColor(hash: CharHash) {
     cssAliasMap,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }
+
+// FILTER KEYS ////////////////////////////////////////////////////////////////
+// Used for generating types that map to only parts of this scale
 
 export const colorCore = {
   min: true,

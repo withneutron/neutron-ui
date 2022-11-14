@@ -38,11 +38,11 @@ export function getFontSize(hash: CharHash) {
     // Components
     field,
     button,
-    fieldTiny: { ...hash.var, value: `calc(${field.ref} * 0.8)` },
-    fieldSmall: { ...hash.var, value: `calc(${field.ref} * 0.9)` },
+    fieldTiny: { ...hash.var, value: `calc(${field.ref} * .8)` },
+    fieldSmall: { ...hash.var, value: `calc(${field.ref} * .9)` },
     fieldLarge: { ...hash.var, value: `calc(${field.ref} * 1.25)` },
-    buttonTiny: { ...hash.var, value: `calc(${button.ref} * 0.8)` },
-    buttonSmall: { ...hash.var, value: `calc(${button.ref} * 0.9)` },
+    buttonTiny: { ...hash.var, value: `calc(${button.ref} * .8)` },
+    buttonSmall: { ...hash.var, value: `calc(${button.ref} * .9)` },
     buttonLarge: { ...hash.var, value: `calc(${button.ref} * 1.25)` },
   } as const
 

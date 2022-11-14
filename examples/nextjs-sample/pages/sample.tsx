@@ -175,7 +175,13 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
-          <Heading.H2>Sample Heading</Heading.H2>
+          <Heading.H2 css={{ type: "$majorTitle" }}>Major Title</Heading.H2>
+          <Heading.H2 css={{ type: "$title" }}>Title</Heading.H2>
+          <Heading.H2 css={{ type: "$minorTitle" }}>Minor Title</Heading.H2>
+          <Heading.H2 css={{ type: "$heading" }}>Heading</Heading.H2>
+          <Heading.H2 css={{ type: "$subHeading" }}>Sub-Heading</Heading.H2>
+          <Text css={{ type: "$body" }}>Body</Text>
+          <Text css={{ type: "$caption" }}>Caption</Text>
           <Box.Aside
             ref={(element: HTMLDivElement) => {
               console.log("@@@ element", element)

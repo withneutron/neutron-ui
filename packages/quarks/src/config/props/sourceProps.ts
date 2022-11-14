@@ -45,6 +45,7 @@ export const sourceClassedProps = {
   fontSize: true,
   fontWeight: true,
   fontStyle: true,
+  type: true,
 
   borderBlockStart: true,
   borderBlockStartColor: true,
@@ -278,6 +279,8 @@ export const sourceProps = {
   gtAreas: true,
   gtColumns: true,
   gtRows: true,
+
+  typography: true,
 
   // Standard Props
   height: true,

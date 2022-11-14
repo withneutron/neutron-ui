@@ -8,6 +8,7 @@ export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
   const modifier = { ...hash.var, value: "0" } as const
   const lh20 = { ...hash.var, value: `calc(${size[20].ref} + ${modifier.ref})` } as const
   const field = { ...hash.var, value: lh20.ref } as const
+  const body = { ...hash.var, value: `calc(${base.ref} + ${modifier.ref})` } as const
 
   const sharedVars = {
     4: { ...hash.var, value: `calc(${size[4].ref} + ${modifier.ref})` },
@@ -20,18 +21,21 @@ export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
     40: { ...hash.var, value: `calc(${size[40].ref} + ${modifier.ref})` },
     min: { ...hash.var, value: "1px" },
     spaced: { ...hash.var, value: `calc((${base.ref} * 1.1) + ${modifier.ref})` },
-    tight: { ...hash.var, value: `calc((${base.ref} / 1.65) + ${modifier.ref})` },
+    tight: { ...hash.var, value: `calc((${base.ref} * .85) + ${modifier.ref})` },
+    tightest: { ...hash.var, value: `calc((${base.ref} * .67) + ${modifier.ref})` },
+    flat: { ...hash.var, value: `calc(1 + ${modifier.ref})` },
     // Semantic
-    body: { ...hash.var, value: `calc(${base.ref} + ${modifier.ref})` },
-    heading: { ...hash.var, value: `calc((0.75 + (${base.ref} * 0.3)) + ${modifier.ref})` },
-    listItem: { ...hash.var, value: `calc((0.75 + (${base.ref} * 0.3)) + ${modifier.ref})` },
+    body,
+    heading: { ...hash.var, value: `calc((.75 + (${base.ref} * .3)) + ${modifier.ref})` },
+    subHeading: { ...hash.var, value: body.ref },
+    listItem: { ...hash.var, value: `calc((.75 + (${base.ref} * .3)) + ${modifier.ref})` },
     // Components
     field,
     label: { ...hash.var, value: field.ref },
     button: { ...hash.var, value: "2rem" },
   } as const
 
-  const vars = { ...sharedVars, base } as const
+  const vars = { ...sharedVars, base, modifier } as const
   const cssValueMap = { ...getCssMapFromVars(sharedVars) } as const
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
 

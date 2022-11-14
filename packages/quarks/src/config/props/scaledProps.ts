@@ -218,6 +218,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
       scales[Scale.textDecoration].cssAliasMap
     ),
 
+    type: entries("type", map(scales, Scale.type), scales[Scale.type].cssAliasMap),
     lineHeight: entries("lineHeight", map(scales, Scale.lineHeight), scales[Scale.lineHeight].cssAliasMap),
     letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
     wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),

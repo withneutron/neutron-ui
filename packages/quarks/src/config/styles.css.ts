@@ -30,6 +30,7 @@ import {
   getZIndex,
   getLineHeight,
   getTypeSpace,
+  getType,
   getTextDecoration,
   getShadow,
   getFontSize,
@@ -69,7 +70,7 @@ const color = getColor(varHash)
 const fontSize = getFontSize(varHash)
 const fontWeight = getFontWeight(varHash)
 const fontFamily = getFontFamily(varHash)
-const font = getFont(varHash, fontSize.vars, fontWeight.vars, fontFamily.vars)
+const font = getFont(varHash, fontWeight.vars, fontSize.vars, fontFamily.vars)
 const border = getBorder(varHash, color.vars)
 const outline = getOutline(varHash, color.vars)
 const radius = getRadius(varHash)
@@ -78,6 +79,7 @@ const column = getColumn(varHash, size.vars)
 const row = getRow(varHash, column.vars)
 const lineHeight = getLineHeight(varHash, size.vars)
 const typeSpace = getTypeSpace(varHash)
+const type = getType(font.vars, lineHeight.vars, typeSpace.vars)
 const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
@@ -100,6 +102,7 @@ export const scales = {
   space,
   textDecoration,
   typeSpace,
+  type,
   zIndex,
 } as const
 
@@ -454,6 +457,7 @@ export const vars = {
   space: getVars(space.vars),
   textDecoration: getVars(textDecoration.vars),
   typeSpace: getVars(typeSpace.vars),
+  type: getVars(type.vars),
   zIndex: getVars(zIndex.vars),
 } as const
 
@@ -475,6 +479,7 @@ export const theme = {
   space: getThemeProps(space.themeProps),
   textDecoration: getThemeProps(textDecoration.themeProps),
   typeSpace: getThemeProps(typeSpace.themeProps),
+  type: getThemeProps(type.themeProps),
   zIndex: getThemeProps(zIndex.themeProps),
 } as const
 
@@ -503,6 +508,7 @@ export const tokenToVarMap = {
   space: getTokenToVarsMap(space.vars),
   textDecoration: getTokenToVarsMap(textDecoration.vars),
   typeSpace: getTokenToVarsMap(typeSpace.vars),
+  type: getTokenToVarsMap(type.vars),
   zIndex: getTokenToVarsMap(zIndex.vars),
 } as const
 

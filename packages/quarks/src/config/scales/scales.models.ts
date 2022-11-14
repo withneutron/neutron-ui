@@ -14,6 +14,30 @@ export type CssValueMap = Record<string | number, CssValue>
 export type CssAliasMap<C extends CssValueMap = CssValueMap> = Record<string | number, CssAlias<keyof Omit<C, symbol>>>
 export type BaseVars<T extends string | number = string | number> = Record<T, ScaleEntry>
 
+export type Font = BaseVars<
+  "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "body" | "code" | "quote" | "li" | "small" | "em" | "strong"
+>
+export type LineHeight = BaseVars<
+  | 4
+  | 8
+  | 12
+  | 16
+  | 24
+  | 32
+  | 40
+  | "min"
+  | "spaced"
+  | "tight"
+  | "tightest"
+  | "flat"
+  | "body"
+  | "heading"
+  | "subHeading"
+  | "listItem"
+  | "field"
+  | "label"
+  | "button"
+>
 export type FontSize = BaseVars<
   | 14
   | 16
@@ -42,6 +66,21 @@ export type FontSize = BaseVars<
   | "buttonTiny"
   | "buttonSmall"
   | "buttonLarge"
+>
+export type TypeSpace = BaseVars<
+  | "emBase"
+  | "emMin"
+  | "emMax"
+  | "remBase"
+  | "remMin"
+  | "remMax"
+  | "chBase"
+  | "chMin"
+  | "chMax"
+  | "tightest"
+  | "tight"
+  | "regular"
+  | "loose"
 >
 export type FontWeight = BaseVars<
   | "100"
@@ -136,6 +175,7 @@ export enum Scale {
   space = "space",
   textDecoration = "textDecoration",
   typeSpace = "typeSpace",
+  type = "type",
   zIndex = "zIndex",
 }
 

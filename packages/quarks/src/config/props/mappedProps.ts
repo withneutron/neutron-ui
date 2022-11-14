@@ -153,6 +153,8 @@ export const mappedProps = {
   gap: getPropMapper("rowGap", "columnGap"),
 
   wordWrap: getPropMapper("overflowWrap"),
+
+  typography: getPropMapper("type"),
 } as const
 
 /*************************************************************************************************
