@@ -81,6 +81,17 @@ const NuiSection = styled(
       animation: "none",
     },
   },
+  ({ isChunky, variant }: { isChunky?: boolean; variant?: "error" | "warning" | "success" }) => ({
+    bg:
+      variant === "error"
+        ? "$error3"
+        : variant === "success"
+        ? "$success3"
+        : variant === "warning"
+        ? "$warning3"
+        : undefined,
+    borderWidth: isChunky ? "$widthMax" : undefined,
+  }),
   "NuiSection"
 )
 
@@ -191,10 +202,10 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box.Aside>
-          <NuiSection ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
+          <NuiSection isChunky variant="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection variant="warning" tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
           </NuiSection>
           <SampleGrid>
