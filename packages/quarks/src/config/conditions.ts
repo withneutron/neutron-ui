@@ -52,12 +52,12 @@ export const conditionsMap = {
    */
   ...queryConditionsMap,
 
-  "!contrast": !"(prefers-contrast: more)",
-  "!motion": !"(prefers-reduced-motion)",
-  "!data": !"(prefers-reduced-data)",
-  "!touch": !"(hover: none)",
-  "!pointer": !"(hover: hover) and (pointer: fine)",
-  "!tv": !"(hover: hover) and (pointer: coarse)",
+  "!contrast": "(prefers-contrast: more)",
+  "!motion": "(prefers-reduced-motion)",
+  "!data": "(prefers-reduced-data)",
+  "!touch": "(hover: none)",
+  "!pointer": "(hover: hover) and (pointer: fine)",
+  "!tv": "(hover: hover) and (pointer: coarse)",
 
   light: "COLOR_MODE === light",
   dark: "COLOR_MODE === dark",
