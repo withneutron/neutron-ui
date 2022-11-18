@@ -11,6 +11,7 @@ export type ScaleEntry = VarData & {
 }
 export type ThemeProps = Record<string | number, ThemePropValue>
 export type CssValueMap = Record<string | number, CssValue>
+export type CssValueMapProps<C extends CssValueMap> = Record<PrefixedKey<C>, [string, string | number][] | null>
 export type CssAliasMap<C extends CssValueMap = CssValueMap> = Record<string | number, CssAlias<keyof Omit<C, symbol>>>
 export type BaseVars<T extends string | number = string | number> = Record<T, ScaleEntry>
 
@@ -146,6 +147,8 @@ export interface ThemeScale<
   themeProps: T
   /** Used to generate static CSS classes, and the prop values that reference them */
   cssValueMap: C
+  /** Used to match combo classes with the CSS props in that combo */
+  cssValueMapProps: CssValueMapProps<C>
   /**
    * Used to generate aliases for some CSS classes
    *
@@ -183,7 +186,7 @@ export type Scales = {
   [key in Scale]: ThemeScale
 }
 
-export type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${keyof Omit<
-  T,
+export type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${Exclude<
+  keyof T,
   symbol
 >}`

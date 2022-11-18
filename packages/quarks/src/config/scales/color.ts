@@ -8,7 +8,7 @@ import {
 import { generateThemeColors, getTextColor } from "../../shared/utils/colorGen.utils"
 import { addPrefix, CharHash } from "../utils"
 import { ColorPaletteEntry, CssAliasMap, CssValueMap, ScaleEntry, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `color` theme scale */
 export function getColor(hash: CharHash) {
@@ -91,6 +91,7 @@ export function getColor(hash: CharHash) {
     darkVars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
     cssAliasMap,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }

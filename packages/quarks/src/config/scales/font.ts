@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { FontFamily, FontSize, FontWeight, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `font` theme scale */
 export function getFont<S extends FontSize, W extends FontWeight, F extends FontFamily>(
@@ -38,5 +38,6 @@ export function getFont<S extends FontSize, W extends FontWeight, F extends Font
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }

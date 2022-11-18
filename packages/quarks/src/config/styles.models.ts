@@ -1,5 +1,6 @@
 import { conditionsMap } from "./conditions"
 import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
+import { CSS } from "./styles.css"
 
 export const BASE = "base"
 
@@ -82,3 +83,5 @@ export type InlineConditionValue = string | { [k in InlineConditionKey]?: string
 export type InlineConditionCss<T> = {
   [k in keyof T]: InlineCondition<T[k]>
 }
+
+export type VariantCSS = Array<{ key: string, css: CSS }>

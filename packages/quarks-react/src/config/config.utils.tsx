@@ -1,4 +1,4 @@
-import { forwardRef, RefObject, ForwardRefRenderFunction, ComponentPropsWithoutRef } from "react"
+import { forwardRef, ForwardRefRenderFunction, ComponentPropsWithoutRef, ForwardedRef } from "react"
 import {
   SemanticLayoutPrimitive,
   SemanticTextPrimitive,
@@ -6,17 +6,15 @@ import {
   SemanticUniversalPrimitive,
 } from "../shared/models"
 
-type StyledRef = ((instance: HTMLElement | null) => void) | RefObject<HTMLElement> | null | undefined
 type StyledComponent = ForwardRefRenderFunction<any, any>
 
-function getSemantic<T extends StyledComponent>(Comp: T, tag?: keyof JSX.IntrinsicElements) {
+function getSemantic<T extends StyledComponent>(Comp: T, tag: keyof JSX.IntrinsicElements) {
   const AnyComp = Comp as any
-  const WrappedComponent = !tag
-    ? AnyComp
-    : (props: ComponentPropsWithoutRef<T>, ref?: StyledRef) => <AnyComp as={tag} ref={ref} {...props} />
+  function WrappedComponent<R>(props: ComponentPropsWithoutRef<T>, ref?: ForwardedRef<R>) {
+    return <AnyComp as={tag} ref={ref} {...props} />
+  }
 
-  const suffix = tag ? `.${tag}` : ""
-  WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}${suffix}`
+  WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}.${tag}`
   return forwardRef(WrappedComponent) as any as T
 }
 

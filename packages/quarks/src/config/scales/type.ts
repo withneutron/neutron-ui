@@ -1,5 +1,5 @@
 import { Font, LineHeight, ThemeScale, TypeSpace } from "./scales.models"
-import { getThemePropsFromCssMap } from "./scales.utils"
+import { getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `type` theme scale */
 export function getType<F extends Font, L extends LineHeight, S extends TypeSpace>(
@@ -13,42 +13,42 @@ export function getType<F extends Font, L extends LineHeight, S extends TypeSpac
   const cssValueMap = {
     // Composition combos, for class generation
     majorTitle: {
-      lineHeight: lineHeight.heading.ref,
       font: font.h1.ref,
+      lineHeight: lineHeight.heading.ref,
       fontStyle: "normal",
     },
     title: {
-      lineHeight: lineHeight.heading.ref,
       font: font.h2.ref,
+      lineHeight: lineHeight.heading.ref,
       fontStyle: "normal",
     },
     minorTitle: {
+      font: font.h5.ref,
       letterSpacing: typeSpace.loose.ref,
       lineHeight: lineHeight.heading.ref,
-      font: font.h5.ref,
       fontStyle: "normal",
       textTransform: "uppercase",
     },
     heading: {
-      lineHeight: lineHeight.heading.ref,
       font: font.h3.ref,
+      lineHeight: lineHeight.heading.ref,
       fontStyle: "normal",
     },
     subHeading: {
+      font: font.h4.ref,
       letterSpacing: typeSpace.remMax.ref,
       lineHeight: lineHeight.heading.ref,
-      font: font.h4.ref,
       fontStyle: "normal",
       textTransform: "uppercase",
     },
     body: {
-      lineHeight: lineHeight.body.ref,
       font: font.body.ref,
+      lineHeight: lineHeight.body.ref,
       fontStyle: "normal",
     },
     caption: {
-      lineHeight: lineHeight.tight.ref,
       font: font.small.ref,
+      lineHeight: lineHeight.tight.ref,
       fontStyle: "normal",
     },
   } as const
@@ -58,5 +58,6 @@ export function getType<F extends Font, L extends LineHeight, S extends TypeSpac
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }

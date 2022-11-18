@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `shadow` theme scale */
 export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
@@ -58,5 +58,6 @@ export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
     darkVars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }

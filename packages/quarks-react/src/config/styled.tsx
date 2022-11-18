@@ -7,7 +7,7 @@ import {
   JSXElementConstructor,
 } from "react"
 import { useStyleConditions } from "../hooks"
-import { CSS, mergeCss, style, StyleManager } from "@withneutron/quarks"
+import { CSS, VariantCSS, style, StyleManager } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
 import { getVariantKeys } from "./styled.utils"
@@ -17,7 +17,7 @@ type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementC
   "css" | "styleManager"
 >
 
-type VariantsFunction<T extends Record<string, any>> = (variants: T) => CSS
+type VariantFunction<T extends Record<string, any>> = (variants: T) => VariantCSS
 
 type BaseStyledProps<V extends Record<string, any> | undefined> = V extends Record<string, any>
   ? { css?: CSS; styleManager?: StyleManager } & V
@@ -27,7 +27,7 @@ type BaseStyledProps<V extends Record<string, any> | undefined> = V extends Reco
 export function styledPrimitive<C extends ComponentType, V extends Record<string, any>>(
   component: C,
   css: CSS,
-  variantsOrStyleName?: string | VariantsFunction<V>,
+  variantsOrStyleName?: string | VariantFunction<V>,
   styleName?: string
 ) {
   styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
@@ -51,10 +51,9 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
     const conditions = useStyleConditions()
     const { as: polyAs, css: propsCss, styleManager, ...rest } = props
 
-    const variantsCss = variants(rest as any as V)
-    const mergedCss = mergeCss(css, variantsCss)
+    const variantCss = variants(rest as any as V)
 
-    const styleProps = style(mergedCss, conditions, propsCss, styleName, styleManager)
+    const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager)
     const className = rest.className ? `${styleProps.className} ${rest.className}` : styleProps.className
     const styleObj = rest.style ? { ...styleProps.style, ...rest.style } : styleProps.style
 
@@ -97,7 +96,7 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
 export function styled<C extends ComponentType, V extends Record<string, any>>(
   component: C,
   css: CSS,
-  variantsOrStyleName?: string | VariantsFunction<V>,
+  variantsOrStyleName?: string | VariantFunction<V>,
   styleName?: string
 ) {
   styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName

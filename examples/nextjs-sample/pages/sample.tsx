@@ -61,6 +61,7 @@ const NuiSection = styled(
   BaseSection,
   {
     h: "$320",
+    mx: "$56",
     sm: {
       color: "$magentaText1",
     },
@@ -72,10 +73,14 @@ const NuiSection = styled(
     },
     xl: {
       color: "$aquaText1",
+      mx: "$24",
     },
     dark: {
       outlineWidth: "$widthBase",
       color: "$aquaText1",
+    },
+    "!touch": {
+      bg: "$aqua4",
     },
     motion: {
       animation: "none",
@@ -219,9 +224,9 @@ const Sample: NextPage = () => {
           <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection kind="warning" tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection.Aside kind="warning" tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
-          </NuiSection>
+          </NuiSection.Aside>
           <SampleGrid>
             <GridBox>1</GridBox>
             <GridBox>2</GridBox>

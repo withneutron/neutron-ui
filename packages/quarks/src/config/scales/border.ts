@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `border` theme scale */
 export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
@@ -55,6 +55,7 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
 

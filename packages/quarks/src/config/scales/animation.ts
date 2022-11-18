@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { ThemeScale, Keyframes } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `animation` theme scale */
 export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
@@ -208,6 +208,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
     keyframes,
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, Record<any, any>, typeof keyframes>
 }

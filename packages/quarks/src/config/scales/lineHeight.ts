@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { BaseVars, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `lineHeight` theme scale */
 export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
@@ -43,5 +43,6 @@ export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }
