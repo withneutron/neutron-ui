@@ -284,6 +284,23 @@ const scaledPropsPC = generatePseudoClassCss<typeof scaledProps>((pseudoClass: s
   )
 )
 
+// STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
+/** Generate CSS props that are based on scales */
+const staticProps = generateStaticPropsCss((value: CssRule) => {
+  const className = classHash.name
+  globalStyle(getSelector(className), value)
+  return className
+})
+
+/** Generate CSS props that are _pseudo class based_, and based on scales */
+const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
+  generateStaticPropsCss((value: CssRule) => {
+    const className = classHash.name
+    globalStyle(getSelector(className, pseudoClass), value)
+    return className
+  }, keys)
+)
+
 // CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
 /** Generate vars and classes for custom props */
 const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
@@ -310,23 +327,7 @@ const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys
 
 const customVarPropsPC = generatePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
 
-// STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
-/** Generate CSS props that are based on scales */
-const staticProps = generateStaticPropsCss((value: CssRule) => {
-  const className = classHash.name
-  globalStyle(getSelector(className), value)
-  return className
-})
-
-/** Generate CSS props that are _pseudo class based_, and based on scales */
-const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
-  generateStaticPropsCss((value: CssRule) => {
-    const className = classHash.name
-    globalStyle(getSelector(className, pseudoClass), value)
-    return className
-  }, keys)
-)
-
+// PROP MAPS //////////////////////////////////////////////////////////////////////////////////////
 export const scaledPropMap = {
   ...scaledPropsPC,
   [BASE]: scaledProps,

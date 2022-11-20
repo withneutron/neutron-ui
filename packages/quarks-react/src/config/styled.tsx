@@ -5,9 +5,10 @@ import {
   FunctionComponent,
   HTMLAttributes,
   JSXElementConstructor,
+  useEffect,
 } from "react"
 import { useStyleConditions } from "../hooks"
-import { CSS, VariantCSS, style, StyleManager } from "@withneutron/quarks"
+import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
 import { getVariantKeys } from "./styled.utils"
@@ -49,13 +50,13 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
     ref?: ForwardedRef<R>
   ) {
     const conditions = useStyleConditions()
-    const { as: polyAs, css: propsCss, styleManager, ...rest } = props
+    const { as: polyAs, css: propsCss, styleManager, isSemantic, ...rest } = props
 
     const variantCss = variants(rest as any as V)
 
     const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager)
     const className = rest.className ? `${styleProps.className} ${rest.className}` : styleProps.className
-    const styleObj = rest.style ? { ...styleProps.style, ...rest.style } : styleProps.style
+    const styleObj = styleProps.style
 
     const isIntrinsic = typeof component === "string"
     const Element = isIntrinsic
@@ -75,6 +76,18 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
         })
       }
     }
+
+    useEffect(() => {
+      if (rest.style && !styleManager) {
+        const isStringPolyAs = typeof polyAs === "string" && polyAs
+        const polySuffix = isStringPolyAs && isSemantic ? `.${capitalizeFirstLetter(polyAs)}` : ""
+        const polyTail = isStringPolyAs && !isSemantic ? ` (as ${polyAs})` : ""
+        const prefix = styleName ? `Component \`${styleName}${polySuffix}\`${polyTail}` : "Component"
+        console.warn(
+          `${prefix} does not support direct usage of the \`style\` prop. Please use the \`css\` prop for inline styling`
+        )
+      }
+    }, [])
 
     return (
       <Element

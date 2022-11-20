@@ -11,7 +11,7 @@ type StyledComponent = ForwardRefRenderFunction<any, any>
 function getSemantic<T extends StyledComponent>(Comp: T, tag: keyof JSX.IntrinsicElements) {
   const AnyComp = Comp as any
   function WrappedComponent<R>(props: ComponentPropsWithoutRef<T>, ref?: ForwardedRef<R>) {
-    return <AnyComp as={tag} ref={ref} {...props} />
+    return <AnyComp isSemantic as={tag} ref={ref} {...props} />
   }
 
   WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}.${tag}`

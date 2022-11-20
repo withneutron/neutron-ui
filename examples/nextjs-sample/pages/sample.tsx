@@ -150,7 +150,7 @@ const Sample: NextPage = () => {
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    console.log("@@@ ref", ref.current)
+    // console.log("@@@ ref", ref.current)
   }, [ref.current])
 
   const sampleControls = (
@@ -200,7 +200,10 @@ const Sample: NextPage = () => {
           <Text css={{ type: "$caption" }}>Caption</Text>
           <Box.Aside
             ref={(element: HTMLDivElement) => {
-              console.log("@@@ element", element)
+              // console.log("@@@ element", element)
+            }}
+            style={{
+              lineHeight: "200px",
             }}
             css={{
               bg: "$primary10",
@@ -217,6 +220,7 @@ const Sample: NextPage = () => {
               radiusBottomLeft: "$6",
               float: "left",
               maxWidth: "$480",
+              animation: "$slideInTop",
             }}
           >
             Sample box

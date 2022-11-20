@@ -32,7 +32,7 @@ import {
   ConditionCategories,
   ConditionCategory,
 } from "./conditions"
-import { CssAlias, PrefixedKey } from "./scales/scales.models"
+import { CssAlias } from "./scales/scales.models"
 
 /** Get theme override style */
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
@@ -79,6 +79,8 @@ export function style(
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
+  private key: string = getGlobalKey()
+
   private watchCategories: { [k in ConditionCategory]: boolean } = {
     [ConditionCategory.responsive]: false,
     [ConditionCategory.preference]: false,
@@ -86,6 +88,7 @@ export class StyleManager {
     [ConditionCategory.colorMode]: false,
     [ConditionCategory.debug]: false,
   }
+  private prevDebugDict: Record<string, Record<string, string>> = {}
   private debugDict: Record<string, Record<string, string>> = {}
   private classList: string[] = []
   private classDict: ClassDict = {
@@ -100,7 +103,9 @@ export class StyleManager {
     ":hover": {},
     ":active": {},
   }
-  private styleDict: Record<string, string> = {}
+  private styleVarsDict: Record<string, string> = {}
+  private styleVars: StyleObj = {}
+  private prevStyle: StyleObj = {}
   private style: StyleObj = {}
   private styleCount = 0
 
@@ -126,30 +131,35 @@ export class StyleManager {
   private get debugScope() {
     const scope: string[] = [this.name]
     if (this.variantName) scope.push(this.variantName)
-    if (this.conditionName) scope.push(this.conditionName)
     if (this.overridesName) scope.push(this.overridesName)
-    return this.getDebugVar(`-${scope.join("_")}`)
+    if (this.conditionName) scope.push(this.conditionName)
+    const scopeName = scope.join("_")
+    const suffix = scopeName.length < 4 ? "-" : ""
+    return this.getDebugVar(`${scopeName}${suffix}`)
   }
 
   private addDebugInfo(className: string, originalProp: string, originalValue?: string) {
     if (this.isDebugMode) {
       if (!this.debugDict[this.debugScope]) this.debugDict[this.debugScope] = {}
-      this.debugDict[this.debugScope][className] = `${originalProp}: ${originalValue}`
+      const value = originalValue ? `: ${originalValue}` : ""
+      this.debugDict[this.debugScope][className] = `${originalProp}${value}`
     }
   }
 
   private compileDebugInfo() {
     if (this.isDebugMode) {
-      const scopes = Object.entries(this.debugDict)
+      const debugDict = { ...this.debugDict, ...this.prevDebugDict }
+      const scopes = Object.entries(debugDict)
       scopes.forEach(([scope, debugData]) => {
+        this.style[scope] = "▼"
         const debugList = Object.entries(debugData)
         debugList.forEach(([debugClass, debugValue]) => {
           this.styleCount++
-          if (!this.style[scope]) this.style[scope] = ""
-          this.style[scope] += `${debugClass} `
-          this.style[this.getDebugVar(`--${debugClass}`)] = debugValue
+          const debugKey = this.getDebugVar(`-${debugClass}`)
+          this.style[debugKey] = debugValue
         })
       })
+      return this.key
     }
   }
 
@@ -158,6 +168,13 @@ export class StyleManager {
   }
 
   setNewStyle(conditions: Conditions, name?: string) {
+    if (this.isDebugMode) {
+      // Make sure we sequence the debug info in the correct order
+      this.prevStyle = this.style
+      this.style = {}
+      this.prevDebugDict = this.debugDict
+      this.debugDict = {}
+    }
     this.conditions = conditions
     this.setName(name)
   }
@@ -256,9 +273,9 @@ export class StyleManager {
     } else {
       // Clear out old style that is getting overwritten, if need be
       const oldClass = this.classList[index]
-      const oldStyleVar = this.styleDict[oldClass]
+      const oldStyleVar = this.styleVarsDict[oldClass]
       if (oldStyleVar) {
-        delete this.style[oldStyleVar]
+        delete this.styleVars[oldStyleVar]
         this.styleCount--
       }
       this.classList[index] = className
@@ -268,8 +285,8 @@ export class StyleManager {
 
     if (varName && value) {
       this.styleCount++
-      this.styleDict[className] = varName
-      this.style[varName] = value
+      this.styleVarsDict[className] = varName
+      this.styleVars[varName] = value
     }
   }
 
@@ -284,17 +301,26 @@ export class StyleManager {
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
-    const output: { className: string; styleManager: StyleManager; style?: StyleObj } = {
+    const output: { className: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
       className: outputClass,
       styleManager: this,
+      style: {},
     }
 
     // Generate debug info
-    this.compileDebugInfo()
+    const key = this.compileDebugInfo()
+    output.key = key
 
+    // Generate inline styles
     if (this.styleCount > 0) {
-      output.style = this.style
-      this.style = {}
+      if (this.isDebugMode) {
+        const style = { ...this.style, ...this.prevStyle }
+        output.style = { ...style }
+        output.style["--Variables"] = "▼"
+        Object.entries(this.styleVars).forEach(([key, value]) => (output.style[key] = value))
+      } else {
+        output.style = this.styleVars
+      }
     }
 
     return output
@@ -319,9 +345,6 @@ export class StyleManager {
 
   /** Process fully-nestable CSS, including conditions and pseudo-classes */
   processCss(css: CSS, conditions: Conditions, condition?: InlineConditionKey) {
-    if (!condition) {
-      this.conditionName = ""
-    }
     const props = Object.entries(css)
     // Loop through each prop of css
     const propsLen = props.length
@@ -336,6 +359,7 @@ export class StyleManager {
         // Otherwise, proceed
         this.conditionName = propName.replace("!", "not-")
         this.processCss(propValue as ConditionalCSS, conditions, propName as InlineConditionKey)
+        this.conditionName = ""
       } else if (pseudoClasses[propName as PseudoClassKey]) {
         // If the prop is a pseudo-class, process its inner props
         this.processBaseCss(propValue as BaseCSS, propName as PseudoClassKey, conditions, condition)
@@ -438,7 +462,7 @@ export class StyleManager {
             originalProp,
             value
           )
-          this.addDebugInfo(`${output.className}_${comboProp}`, comboProp, comboValue)
+          this.addDebugInfo(`${output.className}__${comboProp}`, comboValue)
         })
       }
     }
@@ -510,6 +534,11 @@ let styleId = 0
 function getStyleName() {
   styleId++
   return `style-${styleId}`
+}
+let globalKey = -1
+function getGlobalKey() {
+  globalKey++
+  return `Styled-${globalKey}`
 }
 
 /*************************************************************************************************

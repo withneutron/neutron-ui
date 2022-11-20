@@ -7,9 +7,9 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
   const spin = keyframeHash.name
   const spinAndPause = keyframeHash.name
   const flashSize = keyframeHash.name
-  const bounceTop = keyframeHash.name
+  const bounceUp = keyframeHash.name
   const bounceRight = keyframeHash.name
-  const bounceBottom = keyframeHash.name
+  const bounceDown = keyframeHash.name
   const bounceLeft = keyframeHash.name
   const keyframes: Keyframes = {
     [spin]: {
@@ -26,7 +26,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
       "0%, to": { transform: "scale3d(1, 1, 1)" },
       "50%": { transform: "scale3d(1.12, 1.12, 1)" },
     },
-    [bounceTop]: {
+    [bounceUp]: {
       "0%, 10%, 26.5%, 50%, to": {
         animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
@@ -68,7 +68,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
         transform: "translate3d(4px, 0, 0) scaleX(1.02)",
       },
     },
-    [bounceBottom]: {
+    [bounceDown]: {
       "0%, 10%, 26.5%, 50%, to": {
         animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
@@ -123,8 +123,10 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     bounceDuration: { ...hash.var, value: "2.5s" },
   } as const
 
-  const transition = `opacity ${vars.defaultDuration.ref}, transform ${vars.defaultDuration.ref}` as const
-  const baseIn = { transition } as const
+  const transition = {
+    transitionProperty: `opacity, transform`,
+    transitionDuration: vars.defaultDuration.ref,
+  } as const
   const hidden = {
     opacity: "0",
     pointerEvents: "none",
@@ -138,67 +140,95 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     ...getCssMapFromVars(vars),
     // Animations
     spin: {
-      animation: `${spin} ${vars.spinDuration.ref} infinite ease-in-out both`,
+      animationName: spin,
+      animationDuration: vars.spinDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
     },
     spinAndPause: {
-      animation: `${spinAndPause} ${vars.spinAndPauseDuration.ref} infinite ease-in-out both`,
+      animationName: spinAndPause,
+      animationDuration: vars.spinAndPauseDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
     },
     flashSize: {
-      animation: `${flashSize} ${vars.flashSizeDuration.ref} 2 ease-in-out both`,
+      animationName: flashSize,
+      animationDuration: vars.flashSizeDuration.ref,
+      animationIterationCount: "2",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
     },
-    bounceTop: {
-      animation: `${bounceTop} ${vars.bounceDuration.ref} infinite ease-in-out both`,
+    bounceUp: {
+      animationName: bounceUp,
+      animationDuration: vars.bounceDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
       transformOrigin: "center bottom",
     },
     bounceRight: {
-      animation: `${bounceRight} ${vars.bounceDuration.ref} infinite ease-in-out both`,
+      animationName: bounceRight,
+      animationDuration: vars.bounceDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
       transformOrigin: "left center",
     },
-    bounceBottom: {
-      animation: `${bounceBottom} ${vars.bounceDuration.ref} infinite ease-in-out both`,
+    bounceDown: {
+      animationName: bounceDown,
+      animationDuration: vars.bounceDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
       transformOrigin: "center top",
     },
     bounceLeft: {
-      animation: `${bounceLeft} ${vars.bounceDuration.ref} infinite ease-in-out both`,
+      animationName: bounceLeft,
+      animationDuration: vars.bounceDuration.ref,
+      animationIterationCount: "infinite",
+      animationTimingFunction: "ease-in-out",
+      animationFillMode: "both",
       transformOrigin: "right center",
     },
     // Animated Transitions
-    slideInTop: baseIn,
+    slideInTop: transition,
     slideOutTop: {
       ...hidden,
+      ...transition,
       transform: slideTop,
-      transition,
     },
-    slideInRight: baseIn,
+    slideInRight: transition,
     slideOutRight: {
       ...hidden,
+      ...transition,
       transform: slideRight,
-      transition,
     },
-    slideInBottom: baseIn,
+    slideInBottom: transition,
     slideOutBottom: {
       ...hidden,
+      ...transition,
       transform: slideBottom,
-      transition,
     },
-    slideInLeft: baseIn,
+    slideInLeft: transition,
     slideOutLeft: {
       ...hidden,
+      ...transition,
       transform: slideLeft,
-      transition,
     },
 
-    fadeIn: baseIn,
+    fadeIn: transition,
     fadeOut: {
       ...hidden,
-      transition,
+      ...transition,
     },
 
-    zoomIn: baseIn,
+    zoomIn: transition,
     zoomOut: {
       ...hidden,
+      ...transition,
       transform: "scale3d(.5,.5,1)",
-      transition,
     },
   } as const
 
@@ -230,9 +260,9 @@ export const animationCombos = {
   spin: true,
   spinAndPause: true,
   flashSize: true,
-  bounceTop: true,
+  bounceUp: true,
   bounceRight: true,
-  bounceBottom: true,
+  bounceDown: true,
   bounceLeft: true,
   slideInTop: true,
   slideOutTop: true,
