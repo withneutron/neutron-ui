@@ -75,12 +75,10 @@ export function style(
 }
 
 /*************************************************************************************************
- * CLASSES
+ * StyleManager Class Definition
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
-  private key: string = getGlobalKey()
-
   private watchCategories: { [k in ConditionCategory]: boolean } = {
     [ConditionCategory.responsive]: false,
     [ConditionCategory.preference]: false,
@@ -148,18 +146,22 @@ export class StyleManager {
 
   private compileDebugInfo() {
     if (this.isDebugMode) {
+      let hash = ""
       const debugDict = { ...this.debugDict, ...this.prevDebugDict }
       const scopes = Object.entries(debugDict)
       scopes.forEach(([scope, debugData]) => {
+        hash += stringToHash(scope)
         this.style[scope] = "▼"
         const debugList = Object.entries(debugData)
         debugList.forEach(([debugClass, debugValue]) => {
+          hash += stringToHash(debugClass + debugValue)
           this.styleCount++
           const debugKey = this.getDebugVar(`-${debugClass}`)
           this.style[debugKey] = debugValue
         })
       })
-      return this.key
+      // Returns a hashed key, to rerender when the debug info changes, but not when it doesn't
+      return `${this.name}-${hash}`
     }
   }
 
@@ -308,8 +310,7 @@ export class StyleManager {
     }
 
     // Generate debug info
-    const key = this.compileDebugInfo()
-    output.key = key
+    output.key = this.compileDebugInfo()
 
     // Generate inline styles
     if (this.styleCount > 0) {
@@ -405,7 +406,9 @@ export class StyleManager {
         if (innerValue !== undefined) {
           this.watchCondition(conditionKey)
           if (conditions[conditionKey] === true) {
+            this.conditionName = conditionKey.replace("!", "not-")
             this.processCssProp(prop, innerValue, conditions, conditionKey as InlineConditionKey, pseudo)
+            this.conditionName = ""
           }
         }
       }
@@ -535,10 +538,17 @@ function getStyleName() {
   styleId++
   return `style-${styleId}`
 }
-let globalKey = -1
-function getGlobalKey() {
-  globalKey++
-  return `Styled-${globalKey}`
+
+function stringToHash(source: string) {
+  const length = source.length
+  let hash = 0
+  if (length > 0) {
+    let index = 0
+    for (index = 0; index < length; index++) {
+      hash += source.charCodeAt(index)
+    }
+  }
+  return hash
 }
 
 /*************************************************************************************************

@@ -6,6 +6,7 @@ import {
   HTMLAttributes,
   JSXElementConstructor,
   useEffect,
+  useMemo,
 } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
@@ -34,6 +35,8 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
   styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
   const hasVariants = typeof variantsOrStyleName === "function"
   const variants = hasVariants ? variantsOrStyleName : () => undefined
+  const variantKeys = hasVariants ? getVariantKeys(variants) : []
+  const hasVariantKeys = variantKeys.length > 0
 
   function styledComponent<T extends ComponentType, R>(
     props: HTMLAttributes<C> &
@@ -52,29 +55,24 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
     const conditions = useStyleConditions()
     const { as: polyAs, css: propsCss, styleManager, isSemantic, ...rest } = props
 
-    const variantCss = variants(rest as any as V)
+    const variantCss = useMemo(() => variants(rest as any as V), [rest])
 
-    const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager)
+    const styleProps = useMemo(
+      () => style(css, conditions, variantCss, propsCss, styleName, styleManager),
+      [conditions, variantCss, propsCss, styleManager]
+    )
     const className = rest.className ? `${styleProps.className} ${rest.className}` : styleProps.className
-    const styleObj = styleProps.style
 
     const isIntrinsic = typeof component === "string"
-    const Element = isIntrinsic
-      ? (polyAs as FunctionComponent<any>) ?? component
-      : (component as FunctionComponent<any>)
+    const Element = useMemo(
+      () => (isIntrinsic ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>)),
+      []
+    )
 
-    const passDownProps: Record<string, unknown> = { ...styleProps }
-    if (isIntrinsic) {
-      delete passDownProps.styleManager
-    }
-
-    if (hasVariants) {
-      const variantKeys = getVariantKeys(variants)
-      if (variantKeys.length > 0) {
-        variantKeys.forEach(key => {
-          delete rest[key]
-        })
-      }
+    if (hasVariants && hasVariantKeys) {
+      variantKeys.forEach(key => {
+        delete rest[key]
+      })
     }
 
     useEffect(() => {
@@ -94,9 +92,9 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
         as={isIntrinsic ? undefined : polyAs}
         ref={ref}
         {...rest}
-        {...passDownProps}
+        {...styleProps}
+        styleManager={isIntrinsic ? undefined : styleProps.styleManager}
         className={className}
-        style={styleObj}
       />
     )
   }
