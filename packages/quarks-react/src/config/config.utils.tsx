@@ -14,7 +14,7 @@ function getSemantic<T extends StyledComponent>(Comp: T, tag: keyof JSX.Intrinsi
     return <AnyComp isSemantic as={tag} ref={ref} {...props} />
   }
 
-  WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}.${tag}`
+  WrappedComponent.displayName = `${AnyComp.displayName || "Semantic"}.${tag}`
   return forwardRef(WrappedComponent) as any as T
 }
 

@@ -1,6 +1,6 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 
-export const FlexList = styledPrimitive(
+export const FlexList = styled(
   "ul",
   {
     display: "flex",

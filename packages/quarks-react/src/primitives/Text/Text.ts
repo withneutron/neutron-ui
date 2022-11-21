@@ -1,4 +1,4 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 import { getSemanticTextPrimitive } from "../../config"
 
 const TEXT_STYLES = {
@@ -11,4 +11,4 @@ const TEXT_STYLES = {
 
 export const getTextStyles = () => TEXT_STYLES
 
-export const Text = getSemanticTextPrimitive(styledPrimitive("p", getTextStyles(), "Text"))
+export const Text = getSemanticTextPrimitive(styled("p", getTextStyles(), "Text"))

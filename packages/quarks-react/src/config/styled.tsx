@@ -5,6 +5,7 @@ import {
   FunctionComponent,
   HTMLAttributes,
   JSXElementConstructor,
+  memo,
   useEffect,
   useMemo,
 } from "react"
@@ -25,8 +26,8 @@ type BaseStyledProps<V extends Record<string, any> | undefined> = V extends Reco
   ? { css?: CSS; styleManager?: StyleManager } & V
   : { css?: CSS; styleManager?: StyleManager }
 
-/** Used to create styling primitives, like `Row`, `Column`, etc */
-export function styledPrimitive<C extends ComponentType, V extends Record<string, any>>(
+/** Used to style any React component of basic HTML element */
+export function styled<C extends ComponentType, V extends Record<string, any>>(
   component: C,
   css: CSS,
   variantsOrStyleName?: string | VariantFunction<V>,
@@ -99,12 +100,12 @@ export function styledPrimitive<C extends ComponentType, V extends Record<string
     )
   }
   styledComponent.displayName = styleName
-  return forwardRef(styledComponent) as any as typeof styledComponent
+  return memo(forwardRef(styledComponent)) as any as typeof styledComponent
 }
 
-/** Used to style any React component of basic HTML element.
+/** Used to create styling primitives, like `Row`, `Column`, etc.
  * The output component will include semantic HTML variants, such as `Component.Aside`. */
-export function styled<C extends ComponentType, V extends Record<string, any>>(
+export function styledPrimitive<C extends ComponentType, V extends Record<string, any>>(
   component: C,
   css: CSS,
   variantsOrStyleName?: string | VariantFunction<V>,
@@ -113,7 +114,7 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
   styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
   const primitive =
     typeof variantsOrStyleName === "function"
-      ? styledPrimitive(component, css, variantsOrStyleName, styleName)
-      : styledPrimitive(component, css, styleName)
+      ? styled(component, css, variantsOrStyleName, styleName)
+      : styled(component, css, styleName)
   return getSemanticUniversalPrimitive(primitive)
 }

@@ -7,12 +7,12 @@ import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
-import { styled, Box, Column, Heading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
+import { styled, Box, Column, Heading, SubHeading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
 import { useEffect, useRef } from "react"
 
 const BaseSection = styled(
-  "div",
+  "section",
   {
     h: "$80",
     width: `calc(100vw - ${vars.size[120]})`,
@@ -191,11 +191,11 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
-          <Heading.H2 css={{ type: "$majorTitle" }}>Major Title</Heading.H2>
-          <Heading.H2 css={{ type: "$title" }}>Title</Heading.H2>
-          <Heading.H2 css={{ type: "$minorTitle" }}>Minor Title</Heading.H2>
-          <Heading.H2 css={{ type: "$heading" }}>Heading</Heading.H2>
-          <Heading.H2 css={{ type: "$subHeading" }}>Sub-Heading</Heading.H2>
+          <Heading css={{ type: "$majorTitle" }}>Major Title</Heading>
+          <SubHeading css={{ type: "$title" }}>Title</SubHeading>
+          <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
+          <Heading css={{ type: "$heading" }}>Heading</Heading>
+          <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
           <Text css={{ type: "$body" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
           <Box.Aside
@@ -228,9 +228,9 @@ const Sample: NextPage = () => {
           <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection.Aside kind="warning" tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection as="aside" kind="warning" tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
-          </NuiSection.Aside>
+          </NuiSection>
           <SampleGrid>
             <GridBox>1</GridBox>
             <GridBox>2</GridBox>
