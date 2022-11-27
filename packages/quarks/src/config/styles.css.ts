@@ -45,6 +45,7 @@ import {
   ThemeProps,
   PrefixedKey,
   CssAliasMap,
+  SCALED_ALIAS,
 } from "./scales"
 import {
   CssPropKey,
@@ -436,7 +437,7 @@ function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, a
   if (aliases) {
     Object.entries(aliases).forEach(([token, alias]) => {
       const keyFromAlias = removePrefix(alias)
-      output[token as keyof typeof output] = vars[keyFromAlias].name
+      output[token as keyof typeof output] = keyFromAlias === SCALED_ALIAS ? SCALED_ALIAS : vars[keyFromAlias].name
       return output
     })
   }

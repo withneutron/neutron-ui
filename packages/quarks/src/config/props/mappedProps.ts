@@ -1,4 +1,6 @@
+import { NotShared, Shared } from "../../shared/models"
 import { CssPropKey } from "./props.models"
+import { OverrideScaledProp } from "./scaledProps"
 
 type PropValue = string | number
 
@@ -89,7 +91,20 @@ export const mappedProps = {
   left: getPropMapper("insetInlineStart"),
   right: getPropMapper("insetInlineEnd"),
 
-  border: getPropMapper("borderBlockStart", "borderBlockEnd", "borderInlineStart", "borderInlineEnd"),
+  border: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth",
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
   borderColor: getPropMapper(
     "borderBlockStartColor",
     "borderBlockEndColor",
@@ -109,35 +124,54 @@ export const mappedProps = {
     "borderInlineEndWidth"
   ),
 
-  borderBlock: getPropMapper("borderBlockStart", "borderBlockEnd"),
+  borderBlock: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth"
+  ),
   borderBlockColor: getPropMapper("borderBlockStartColor", "borderBlockEndColor"),
   borderBlockStyle: getPropMapper("borderBlockStartStyle", "borderBlockEndStyle"),
   borderBlockWidth: getPropMapper("borderBlockStartWidth", "borderBlockEndWidth"),
 
-  borderInline: getPropMapper("borderInlineStart", "borderInlineEnd"),
+  borderInline: getPropMapper(
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
   borderInlineColor: getPropMapper("borderInlineStartColor", "borderInlineEndColor"),
   borderInlineStyle: getPropMapper("borderInlineStartStyle", "borderInlineEndStyle"),
   borderInlineWidth: getPropMapper("borderInlineStartWidth", "borderInlineEndWidth"),
 
-  borderTop: getPropMapper("borderBlockStart"),
+  borderTop: getPropMapper("borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"),
   borderTopColor: getPropMapper("borderBlockStartColor"),
   borderTopStyle: getPropMapper("borderBlockStartStyle"),
   borderTopWidth: getPropMapper("borderBlockStartWidth"),
 
-  borderBottom: getPropMapper("borderBlockEnd"),
+  borderBottom: getPropMapper("borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"),
   borderBottomColor: getPropMapper("borderBlockEndColor"),
   borderBottomStyle: getPropMapper("borderBlockEndStyle"),
   borderBottomWidth: getPropMapper("borderBlockEndWidth"),
 
-  borderLeft: getPropMapper("borderInlineStart"),
+  borderLeft: getPropMapper("borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"),
   borderLeftColor: getPropMapper("borderInlineStartColor"),
   borderLeftStyle: getPropMapper("borderInlineStartStyle"),
   borderLeftWidth: getPropMapper("borderInlineStartWidth"),
 
-  borderRight: getPropMapper("borderInlineEnd"),
+  borderRight: getPropMapper("borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"),
   borderRightColor: getPropMapper("borderInlineEndColor"),
   borderRightStyle: getPropMapper("borderInlineEndStyle"),
   borderRightWidth: getPropMapper("borderInlineEndWidth"),
+
+  borderBlockStart: getPropMapper("borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"),
+  borderBlockEnd: getPropMapper("borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"),
+  borderInlineStart: getPropMapper("borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"),
+  borderInlineEnd: getPropMapper("borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"),
 
   borderRadius: getPropMapper(
     "borderStartStartRadius",
@@ -210,9 +244,11 @@ export const valueMappers = {
 /*************************************************************************************************
  * TYPES
  *************************************************************************************************/
-type MapKey = keyof typeof mappedProps
-type MappedProps<K extends MapKey> = keyof ReturnType<typeof mappedProps[K]>
+type MapType = typeof mappedProps
+type MapKey = keyof MapType
+type MappedProps<K extends MapKey> = keyof ReturnType<MapType[K]>
 
-export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T & {
-  [key in MapKey]?: T[Extract<keyof T, MappedProps<key>>]
-}
+export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T
+& { [key in Shared<MapType, OverrideScaledProp>]?: OverrideScaledProp[key] }
+& { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }
+

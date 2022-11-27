@@ -32,7 +32,7 @@ import {
   ConditionCategories,
   ConditionCategory,
 } from "./conditions"
-import { CssAlias } from "./scales/scales.models"
+import { AliasMap, CssAlias, SCALED_ALIAS } from "./scales/scales.models"
 
 /** Get theme override style */
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
@@ -84,7 +84,8 @@ export class StyleManager {
     [ConditionCategory.preference]: false,
     [ConditionCategory.device]: false,
     [ConditionCategory.colorMode]: false,
-    [ConditionCategory.debug]: false,
+    // We always set this to true, to make sure changes in debug mode are applied
+    [ConditionCategory.debug]: true,
   }
   private prevDebugDict: Record<string, Record<string, string>> = {}
   private debugDict: Record<string, Record<string, string>> = {}
@@ -420,7 +421,7 @@ export class StyleManager {
         const innerPropsLen = innerProps.length
         for (let index = 0; index < innerPropsLen; index++) {
           const [propName, propValue] = innerProps[index]
-          this.processCssProp(propName as CssPropKey, propValue, conditions, condition, pseudo, prop)
+          this.processCssProp(propName as CssPropKey, propValue, conditions, condition, pseudo, originalProp ?? prop)
         }
       } else {
         value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
@@ -491,8 +492,11 @@ export class StyleManager {
       if (scaledValue === SCALED_PLACEHOLDER) {
         const propAliasMap = propScale.cssAliasMap
         type AliasKey = keyof typeof propAliasMap
-        const aliasValue = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
+        let aliasValue = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
         if (aliasValue) {
+          if (aliasValue === SCALED_ALIAS && propScale.aliasMap) {
+            aliasValue = (mapAliasToValue(propScale.aliasMap, prop, value) ?? "") as CssAlias
+          }
           scaledValue = aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
         }
       }
@@ -503,9 +507,15 @@ export class StyleManager {
       // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
       if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
         const tokenMap = tokenToVarMap[scaleKey]
-        const varFromToken = tokenMap[value as keyof typeof tokenMap]
+        let varFromToken = tokenMap[value as keyof typeof tokenMap]
         if (varFromToken) {
-          value = `var(${varFromToken})`
+          if (varFromToken === SCALED_ALIAS && propScale.aliasMap) {
+            const aliasValue = mapAliasToValue(propScale.aliasMap, prop, value)
+            varFromToken = tokenMap[aliasValue as keyof typeof tokenMap]
+          }
+          if (varFromToken) {
+            value = `var(${varFromToken})`
+          }
         }
       }
       // Get both the className and varName needed to set a custom value, if possible for this prop
@@ -521,6 +531,18 @@ export class StyleManager {
 /*************************************************************************************************
  * UTILS
  *************************************************************************************************/
+/** Returns a CSS values from an alias map, using a CSS prop key and value */
+function mapAliasToValue(aliasMap: AliasMap, prop: CssPropKey, value: string | number) {
+  const propValue = aliasMap[prop as keyof typeof aliasMap]
+  if (propValue) {
+    if (typeof propValue === "string") {
+      return propValue
+    }
+    return propValue[value as keyof typeof propValue] ?? ""
+  }
+  return ""
+}
+
 /** Takes a nested (group-based) theme overrides object, and flattens it, without groupings */
 function flattenOverrides(overrides?: ThemeOverrides) {
   return !overrides

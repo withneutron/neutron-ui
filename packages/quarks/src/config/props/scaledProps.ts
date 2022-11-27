@@ -7,15 +7,21 @@ import {
   outlineColors,
   outlineOffsets,
   outlineWidths,
-  borderColors,
   borderCombos,
+  borderColors,
+  borderStyles,
   borderWidths,
+  hiddenBorderColors,
+  hiddenBorderStyles,
+  hiddenBorderWidths,
   CssValue,
   animationCombos,
   animationDurations,
   colorCore,
   colorText,
   CssAliasMap,
+  CssAlias,
+  PrefixedKey,
 } from "../scales"
 import {
   CssPropKey,
@@ -28,10 +34,16 @@ import {
 } from "./props.models"
 import { addPrefix } from "../utils"
 
-function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
+function filterMap<M extends CssValueMap, K extends Record<string, unknown>, H extends Record<string, unknown>>(
+  map: M,
+  keys: K,
+  hiddenKeys?: H
+) {
   const output: PickKeys<M, typeof keys> = { ...map }
   Object.keys(map).forEach((key: keyof M) => {
-    if (!keys[key as keyof typeof keys]) {
+    const isKey = keys[key as keyof typeof keys]
+    const isHiddenKey = hiddenKeys?.[key as keyof typeof hiddenKeys]
+    if (!isKey && (!hiddenKeys || !isHiddenKey)) {
       delete output[key as keyof typeof output]
     }
   })
@@ -42,11 +54,12 @@ function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map
 function map<
   S extends Scales,
   V extends Scale,
-  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
->(scales: S, scale: V, keys?: K) {
+  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>,
+  H extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
+>(scales: S, scale: V, keys?: K, hiddenKeys?: H) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
-    return filterMap(map, keys)
+    return filterMap(map, keys, hiddenKeys)
   }
   return map
 }
@@ -118,6 +131,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
       scales[Scale.outline].cssAliasMap
     ),
 
+    border: entries("border", map(scales, Scale.border, borderCombos), scales[Scale.border].cssAliasMap),
     borderBlockStart: entries(
       "borderBlockStart",
       map(scales, Scale.border, borderCombos),
@@ -141,43 +155,64 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
 
     borderBlockStartColor: entries(
       "borderBlockStartColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderBlockEndColor: entries(
       "borderBlockEndColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineStartColor: entries(
       "borderInlineStartColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineEndColor: entries(
       "borderInlineEndColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+
+    borderBlockStartStyle: entries(
+      "borderBlockStartStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderBlockEndStyle: entries(
+      "borderBlockEndStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineStartStyle: entries(
+      "borderInlineStartStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineEndStyle: entries(
+      "borderInlineEndStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
       scales[Scale.border].cssAliasMap
     ),
 
     borderBlockStartWidth: entries(
       "borderBlockStartWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderBlockEndWidth: entries(
       "borderBlockEndWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineStartWidth: entries(
       "borderInlineStartWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineEndWidth: entries(
       "borderInlineEndWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
 
@@ -274,6 +309,7 @@ export const scaledPropScale = {
   outlineColor: Scale.outline,
   outlineOffset: Scale.outline,
 
+  border: Scale.border,
   borderBlockStart: Scale.border,
   borderBlockEnd: Scale.border,
   borderInlineStart: Scale.border,
@@ -283,6 +319,11 @@ export const scaledPropScale = {
   borderBlockEndColor: Scale.border,
   borderInlineStartColor: Scale.border,
   borderInlineEndColor: Scale.border,
+
+  borderBlockStartStyle: Scale.border,
+  borderBlockEndStyle: Scale.border,
+  borderInlineStartStyle: Scale.border,
+  borderInlineEndStyle: Scale.border,
 
   borderBlockStartWidth: Scale.border,
   borderBlockEndWidth: Scale.border,
@@ -329,3 +370,18 @@ export const scaledPropScale = {
   animation: Scale.animation,
   animationDuration: Scale.animation,
 } as const
+
+/** Scaled props that override mapped props */
+export type OverrideScaledProp = {
+  border: PrefixedKey<typeof borderCombos>
+  borderBlock: PrefixedKey<typeof borderCombos>
+  borderInline: PrefixedKey<typeof borderCombos>
+  borderTop: PrefixedKey<typeof borderCombos>
+  borderBlockStart: PrefixedKey<typeof borderCombos>
+  borderBottom: PrefixedKey<typeof borderCombos>
+  borderBlockEnd: PrefixedKey<typeof borderCombos>
+  borderLeft: PrefixedKey<typeof borderCombos>
+  borderInlineStart: PrefixedKey<typeof borderCombos>
+  borderRight: PrefixedKey<typeof borderCombos>
+  borderInlineEnd: PrefixedKey<typeof borderCombos>
+}
