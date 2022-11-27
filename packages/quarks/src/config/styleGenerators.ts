@@ -2,12 +2,13 @@ import {
   CssPropKey,
   mappedProps,
   valueMappers,
-  pseudoClasses,
+  combinedPseudoClasses,
   scaledPropScale,
   pseudoClassAliases,
   CustomVarPropValue,
   sourcePropsIdMap,
   SCALED_PLACEHOLDER,
+  pseudoClasses,
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
@@ -112,6 +113,7 @@ export class StyleManager {
   private name = ""
   private variantName = ""
   private conditionName = ""
+  private pseudoClassName = ""
   private overridesName = ""
 
   constructor(conditions: Conditions, name?: string) {
@@ -132,6 +134,7 @@ export class StyleManager {
     if (this.variantName) scope.push(this.variantName)
     if (this.overridesName) scope.push(this.overridesName)
     if (this.conditionName) scope.push(this.conditionName)
+    if (this.pseudoClassName) scope.push(this.pseudoClassName)
     const scopeName = scope.join("_")
     const suffix = scopeName.length < 4 ? "-" : ""
     return this.getDebugVar(`${scopeName}${suffix}`)
@@ -152,17 +155,34 @@ export class StyleManager {
       const scopes = Object.entries(debugDict)
       scopes.forEach(([scope, debugData]) => {
         hash += stringToHash(scope)
-        this.style[scope] = "▼"
+        this.style[scope] = DEBUG_GROUP_VALUE
         const debugList = Object.entries(debugData)
         debugList.forEach(([debugClass, debugValue]) => {
           hash += stringToHash(debugClass + debugValue)
           this.styleCount++
           const debugKey = this.getDebugVar(`-${debugClass}`)
+          if (this.style[debugKey]) {
+            delete this.style[debugKey]
+          }
           this.style[debugKey] = debugValue
         })
       })
+      this.removeEmptyDebugGroups()
       // Returns a hashed key, to rerender when the debug info changes, but not when it doesn't
       return `${this.name}-${hash}`
+    }
+  }
+
+  private removeEmptyDebugGroups() {
+    const entries = Object.entries(this.style)
+    const len = 0
+    let index = entries.length
+    for (index; index >= len; index--) {
+      const [prevKey, prevValue] = entries[index - 1] ?? []
+      const [_key, value] = entries[index] ?? []
+      if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
+        delete this.style[prevKey]
+      }
     }
   }
 
@@ -362,9 +382,9 @@ export class StyleManager {
         this.conditionName = propName.replace("!", "not-")
         this.processCss(propValue as ConditionalCSS, conditions, propName as InlineConditionKey)
         this.conditionName = ""
-      } else if (pseudoClasses[propName as PseudoClassKey]) {
+      } else if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
         // If the prop is a pseudo-class, process its inner props
-        this.processBaseCss(propValue as BaseCSS, propName as PseudoClassKey, conditions, condition)
+        this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, conditions, condition)
       } else {
         // Else, process the prop's value
         this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition)
@@ -373,7 +393,12 @@ export class StyleManager {
   }
 
   /** Process non-conditional CSS, including pseudo-classes */
-  processBaseCss(baseCss: BaseCSS, pseudo: PseudoClassKey, conditions: Conditions, condition?: InlineConditionKey) {
+  processBaseCss(
+    baseCss: BaseCSS,
+    pseudo: CombinedPseudoClassKey,
+    conditions: Conditions,
+    condition?: InlineConditionKey
+  ) {
     const props = Object.entries(baseCss)
     const propsLen = props.length
     for (let index = 0; index < propsLen; index++) {
@@ -391,7 +416,7 @@ export class StyleManager {
     value: InlineConditionValue,
     conditions: Conditions,
     condition?: InlineConditionKey,
-    pseudo?: PseudoClassKey,
+    pseudo?: CombinedPseudoClassKey,
     originalProp?: CssPropKey
   ) {
     // Check first to see if we have an inline condition `object`!
@@ -430,8 +455,10 @@ export class StyleManager {
             pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
           const pseudosLen = pseudos.length
           for (let index = 0; index < pseudosLen; index++) {
-            const pseudoKey = pseudos[index]
+            const pseudoKey = pseudos[index] as PseudoClassKey
+            this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
             this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
+            this.pseudoClassName = ""
           }
         } else {
           this.addStyle(prop, value, condition, undefined, originalProp ?? prop)
@@ -526,11 +553,17 @@ export class StyleManager {
       if (className && varName) return { className, varName, value }
     }
   }
+
+  static sanitizePseudoKey(key: CombinedPseudoClassKey) {
+    return key.replaceAll(":", "")
+  }
 }
 
 /*************************************************************************************************
  * UTILS
  *************************************************************************************************/
+const DEBUG_GROUP_VALUE = "▼"
+
 /** Returns a CSS values from an alias map, using a CSS prop key and value */
 function mapAliasToValue(aliasMap: AliasMap, prop: CssPropKey, value: string | number) {
   const propValue = aliasMap[prop as keyof typeof aliasMap]
@@ -578,6 +611,7 @@ function stringToHash(source: string) {
  *************************************************************************************************/
 type ResponsiveConditionKey = ResponsiveCondition | typeof BASE
 type PseudoClassKey = keyof typeof pseudoClasses
+type CombinedPseudoClassKey = keyof typeof combinedPseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 

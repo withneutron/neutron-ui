@@ -24,6 +24,15 @@ export const pseudoClassProps = {
   backgroundColor: true,
   backgroundBlendMode: true,
   backgroundImage: true,
+  backgroundPosition: true,
+
+  linearGradient: true,
+  radialGradient: true,
+  conicGradient: true,
+
+  mask: true,
+  borderImage: true,
+  borderSpacing: true,
 
   color: true,
 
@@ -42,6 +51,9 @@ export const pseudoClassProps = {
   // columnRuleColor: true,
   // textShadow: true,
   // transformOrigin: true,
+  // listStyle: true,
+  // listStyleImage: true,
+  // filter: true,
 } as const
 
 export const pointerClassProps = {
@@ -73,7 +85,7 @@ export const pseudoClasses = {
   ":focus-visible": pseudoClassProps,
   ":hover": pointerClassProps,
   ":active": pseudoClassProps,
-}
+} as const
 
 // ALIASES ////////////////////////////////////////////////////////////////////////////////////////
 export const pseudoClassAliases = {
@@ -81,6 +93,11 @@ export const pseudoClassAliases = {
   ":hover, :focus": [":hover", ":focus-visible"],
   ":hover, :focus-visible": [":hover", ":focus-visible"],
   ":interactive": [":hover", ":focus-visible"],
+} as const
+
+export const combinedPseudoClasses = {
+  ...pseudoClasses,
+  ...pseudoClassAliases,
 } as const
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////

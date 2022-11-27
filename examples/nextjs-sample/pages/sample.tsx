@@ -85,6 +85,9 @@ const NuiSection = styled(
     motion: {
       animation: "none",
     },
+    ":interactive": {
+      color: "$tomato3",
+    },
   },
   variants({
     kind: {
@@ -94,7 +97,12 @@ const NuiSection = styled(
       },
       success: {
         bg: "$success3",
+        linearGradient: `${vars.color.success3}, ${vars.color.success1}`,
         color: "$successText3",
+        ":interactive": {
+          linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
+          color: "$primaryText9",
+        },
       },
       warning: {
         bg: "$warning3",
