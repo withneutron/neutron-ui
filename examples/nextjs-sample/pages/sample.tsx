@@ -31,7 +31,9 @@ const BaseSection = styled(
     mr: "$12",
     p: "$32",
     pl: "$16",
-    border: "$primaryMax",
+    border: "$primary",
+    borderTopColor: "$secondaryMin",
+    borderBottomColor: "$tertiaryMax",
     fontFamily: "$code",
     radius: "$1",
     radiusTopRight: "$8",
@@ -48,11 +50,14 @@ const BaseSection = styled(
     ":focus-visible": {
       color: "$primaryText9",
       bg: "$primary9",
-      outline: "$primaryMax",
+      outline: "$secondaryMax",
     },
     ":hover": {
       bg: "$primary9",
       color: "$primaryText9",
+    },
+    ":interactive": {
+      borderColor: "$secondaryMax",
     },
   },
   "BaseSection"
@@ -102,6 +107,8 @@ const NuiSection = styled(
         ":interactive": {
           linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
           color: "$primaryText9",
+          borderColor: "transparent",
+          outlineColor: "$primaryMax",
         },
       },
       warning: {
@@ -113,10 +120,22 @@ const NuiSection = styled(
           lg: "$24",
           base: "$40",
         },
+        ":interactive": {
+          bg: "$warning9",
+          color: "$warningText9",
+          borderColor: "transparent",
+          outlineColor: "$tertiaryMax",
+          outlineWidth: "$widthMax",
+        },
       },
     },
     isChunky: {
-      true: { borderWidth: "$widthMax" },
+      true: {
+        borderWidth: "$widthMax",
+        ":focus-visible": {
+          outlineWidth: "$widthMax",
+        },
+      },
     },
   }),
   "NuiSection"

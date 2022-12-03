@@ -20,8 +20,12 @@ import {
   colorCore,
   colorText,
   CssAliasMap,
-  CssAlias,
   PrefixedKey,
+  outlineStyles,
+  hiddenOutlineColors,
+  hiddenOutlineOffsets,
+  hiddenOutlineStyles,
+  hiddenOutlineWidths,
 } from "../scales"
 import {
   CssPropKey,
@@ -123,11 +127,24 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
 
     outline: entries("outline", map(scales, Scale.outline, outlineCombos), scales[Scale.outline].cssAliasMap),
-    outlineWidth: entries("outlineWidth", map(scales, Scale.outline, outlineWidths), scales[Scale.outline].cssAliasMap),
-    outlineColor: entries("outlineColor", map(scales, Scale.outline, outlineColors), scales[Scale.outline].cssAliasMap),
+    outlineWidth: entries(
+      "outlineWidth",
+      map(scales, Scale.outline, outlineWidths, hiddenOutlineWidths),
+      scales[Scale.outline].cssAliasMap
+    ),
+    outlineColor: entries(
+      "outlineColor",
+      map(scales, Scale.outline, outlineColors, hiddenOutlineColors),
+      scales[Scale.outline].cssAliasMap
+    ),
+    outlineStyle: entries(
+      "outlineStyle",
+      map(scales, Scale.outline, outlineStyles, hiddenOutlineStyles),
+      scales[Scale.outline].cssAliasMap
+    ),
     outlineOffset: entries(
       "outlineOffset",
-      map(scales, Scale.outline, outlineOffsets),
+      map(scales, Scale.outline, outlineOffsets, hiddenOutlineOffsets),
       scales[Scale.outline].cssAliasMap
     ),
 
@@ -307,6 +324,7 @@ export const scaledPropScale = {
   outline: Scale.outline,
   outlineWidth: Scale.outline,
   outlineColor: Scale.outline,
+  outlineStyle: Scale.outline,
   outlineOffset: Scale.outline,
 
   border: Scale.border,
@@ -373,6 +391,7 @@ export const scaledPropScale = {
 
 /** Scaled props that override mapped props */
 export type OverrideScaledProp = {
+  outline: PrefixedKey<typeof outlineCombos>
   border: PrefixedKey<typeof borderCombos>
   borderBlock: PrefixedKey<typeof borderCombos>
   borderInline: PrefixedKey<typeof borderCombos>

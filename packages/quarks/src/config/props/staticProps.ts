@@ -72,6 +72,14 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     animation: values("animation", none),
     animationIterationCount: values("animationIterationCount", options("infinite", "1", "2")),
+    animationDuration: values("animationDuration"),
+    animationDirection: values("animationDirection", options("normal", "reverse", "alternate", "alternate-reverse")),
+    animationFillMode: values("animationFillMode", options("none", "forwards", "backwards", "both")),
+    animationPlayState: values("animationPlayState", options("running", "paused")),
+    animationTimingFunction: values(
+      "animationTimingFunction",
+      options("ease", "ease-in", "ease-out", "ease-in-out", "linear", "step-start", "step-end")
+    ),
 
     background: values("background", transparent),
     backgroundColor: values("backgroundColor", transparent),
@@ -323,7 +331,6 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     boxShadow: values("boxShadow", none),
     rowGap: values("rowGap"),
     columnGap: values("columnGap"),
-    animationDuration: values("animationDuration"),
     lineHeight: values("lineHeight"),
     textUnderlineOffset: values("textUnderlineOffset"),
     letterSpacing: values("letterSpacing"),

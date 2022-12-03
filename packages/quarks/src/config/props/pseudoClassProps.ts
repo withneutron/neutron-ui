@@ -9,6 +9,9 @@ export const pseudoClassProps = {
 
   outline: true,
   outlineColor: true,
+  outlineWidth: true,
+  outlineStyle: true,
+  outlineOffset: true,
 
   borderBlockStart: true,
   borderBlockEnd: true,

@@ -184,6 +184,8 @@ export const mappedProps = {
   borderBottomLeftRadius: getPropMapper("borderEndStartRadius"),
   borderBottomRightRadius: getPropMapper("borderEndEndRadius"),
 
+  outline: getPropMapper("outlineColor", "outlineStyle", "outlineWidth", "outlineOffset"),
+
   gap: getPropMapper("rowGap", "columnGap"),
 
   wordWrap: getPropMapper("overflowWrap"),
@@ -248,7 +250,6 @@ type MapType = typeof mappedProps
 type MapKey = keyof MapType
 type MappedProps<K extends MapKey> = keyof ReturnType<MapType[K]>
 
-export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T
-& { [key in Shared<MapType, OverrideScaledProp>]?: OverrideScaledProp[key] }
-& { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }
-
+export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T & {
+  [key in Shared<MapType, OverrideScaledProp>]?: OverrideScaledProp[key]
+} & { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }

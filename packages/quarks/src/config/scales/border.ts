@@ -1,7 +1,6 @@
-import { CssPropKey } from "../props"
 import { addPrefix, CharHash } from "../utils"
-import { ColorVars, SCALED_ALIAS, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
+import { ColorVars, ThemeScale } from "./scales.models"
+import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `border` theme scale */
 export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
@@ -129,84 +128,78 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     rightWidthDefault: { borderInlineEndWidth: widthDefault.ref },
   } as const
 
-  const primaryPrefix = addPrefix("primary")
-  const primaryMinPrefix = addPrefix("primaryMin")
-  const primaryMaxPrefix = addPrefix("primaryMax")
-  const secondaryPrefix = addPrefix("secondary")
-  const secondaryMinPrefix = addPrefix("secondaryMin")
-  const secondaryMaxPrefix = addPrefix("secondaryMax")
-  const tertiaryPrefix = addPrefix("tertiary")
-  const tertiaryMinPrefix = addPrefix("tertiaryMin")
-  const tertiaryMaxPrefix = addPrefix("tertiaryMax")
+  const { aliasMap, cssAliases } = getAliasMap(
+    {
+      primary: {
+        borderBlockStartColor: "topPrimaryColorBase",
+        borderBlockEndColor: "bottomPrimaryColorBase",
+        borderInlineStartColor: "leftPrimaryColorBase",
+        borderInlineEndColor: "rightPrimaryColorBase",
+      },
+      primaryMin: {
+        borderBlockStartColor: "topPrimaryColorMin",
+        borderBlockEndColor: "bottomPrimaryColorMin",
+        borderInlineStartColor: "leftPrimaryColorMin",
+        borderInlineEndColor: "rightPrimaryColorMin",
+      },
+      primaryMax: {
+        borderBlockStartColor: "topPrimaryColorMax",
+        borderBlockEndColor: "bottomPrimaryColorMax",
+        borderInlineStartColor: "leftPrimaryColorMax",
+        borderInlineEndColor: "rightPrimaryColorMax",
+      },
+      secondary: {
+        borderBlockStartColor: "topSecondaryColorBase",
+        borderBlockEndColor: "bottomSecondaryColorBase",
+        borderInlineStartColor: "leftSecondaryColorBase",
+        borderInlineEndColor: "rightSecondaryColorBase",
+      },
+      secondaryMin: {
+        borderBlockStartColor: "topSecondaryColorMin",
+        borderBlockEndColor: "bottomSecondaryColorMin",
+        borderInlineStartColor: "leftSecondaryColorMin",
+        borderInlineEndColor: "rightSecondaryColorMin",
+      },
+      secondaryMax: {
+        borderBlockStartColor: "topSecondaryColorMax",
+        borderBlockEndColor: "bottomSecondaryColorMax",
+        borderInlineStartColor: "leftSecondaryColorMax",
+        borderInlineEndColor: "rightSecondaryColorMax",
+      },
+      tertiary: {
+        borderBlockStartColor: "topTertiaryColorBase",
+        borderBlockEndColor: "bottomTertiaryColorBase",
+        borderInlineStartColor: "leftTertiaryColorBase",
+        borderInlineEndColor: "rightTertiaryColorBase",
+      },
+      tertiaryMin: {
+        borderBlockStartColor: "topTertiaryColorMin",
+        borderBlockEndColor: "bottomTertiaryColorMin",
+        borderInlineStartColor: "leftTertiaryColorMin",
+        borderInlineEndColor: "rightTertiaryColorMin",
+      },
+      tertiaryMax: {
+        borderBlockStartColor: "topTertiaryColorMax",
+        borderBlockEndColor: "bottomTertiaryColorMax",
+        borderInlineStartColor: "leftTertiaryColorMax",
+        borderInlineEndColor: "rightTertiaryColorMax",
+      },
+    },
+    {
+      borderBlockStartStyle: "topStyleDefault",
+      borderBlockEndStyle: "bottomStyleDefault",
+      borderInlineStartStyle: "leftStyleDefault",
+      borderInlineEndStyle: "rightStyleDefault",
+      borderBlockStartWidth: "topWidthDefault",
+      borderBlockEndWidth: "bottomWidthDefault",
+      borderInlineStartWidth: "leftWidthDefault",
+      borderInlineEndWidth: "rightWidthDefault",
+    }
+  )
 
-  const cssAliasMap = {
-    [primaryPrefix]: SCALED_ALIAS,
-    [primaryMinPrefix]: SCALED_ALIAS,
-    [primaryMaxPrefix]: SCALED_ALIAS,
-    [secondaryPrefix]: SCALED_ALIAS,
-    [secondaryMinPrefix]: SCALED_ALIAS,
-    [secondaryMaxPrefix]: SCALED_ALIAS,
-    [tertiaryPrefix]: SCALED_ALIAS,
-    [tertiaryMinPrefix]: SCALED_ALIAS,
-    [tertiaryMaxPrefix]: SCALED_ALIAS,
-  } as const
+  const cssAliasMap = { ...cssAliases } as const
 
   const themeProps = { ...getThemePropsFromCssMap(baseCssValueMap) } as const
-
-  const aliasMap = {
-    borderBlockStartStyle: addPrefix("topStyleDefault"),
-    borderBlockEndStyle: addPrefix("bottomStyleDefault"),
-    borderInlineStartStyle: addPrefix("leftStyleDefault"),
-    borderInlineEndStyle: addPrefix("rightStyleDefault"),
-    borderBlockStartWidth: addPrefix("topWidthDefault"),
-    borderBlockEndWidth: addPrefix("bottomWidthDefault"),
-    borderInlineStartWidth: addPrefix("leftWidthDefault"),
-    borderInlineEndWidth: addPrefix("rightWidthDefault"),
-    borderBlockStartColor: {
-      [primaryPrefix]: addPrefix("topPrimaryColorBase"),
-      [primaryMinPrefix]: addPrefix("topPrimaryColorMin"),
-      [primaryMaxPrefix]: addPrefix("topPrimaryColorMax"),
-      [secondaryPrefix]: addPrefix("topSecondaryColorBase"),
-      [secondaryMinPrefix]: addPrefix("topSecondaryColorMin"),
-      [secondaryMaxPrefix]: addPrefix("topSecondaryColorMax"),
-      [tertiaryPrefix]: addPrefix("topTertiaryColorBase"),
-      [tertiaryMinPrefix]: addPrefix("topTertiaryColorMin"),
-      [tertiaryMaxPrefix]: addPrefix("topTertiaryColorMax"),
-    },
-    borderBlockEndColor: {
-      [primaryPrefix]: addPrefix("bottomPrimaryColorBase"),
-      [primaryMinPrefix]: addPrefix("bottomPrimaryColorMin"),
-      [primaryMaxPrefix]: addPrefix("bottomPrimaryColorMax"),
-      [secondaryPrefix]: addPrefix("bottomSecondaryColorBase"),
-      [secondaryMinPrefix]: addPrefix("bottomSecondaryColorMin"),
-      [secondaryMaxPrefix]: addPrefix("bottomSecondaryColorMax"),
-      [tertiaryPrefix]: addPrefix("bottomTertiaryColorBase"),
-      [tertiaryMinPrefix]: addPrefix("bottomTertiaryColorMin"),
-      [tertiaryMaxPrefix]: addPrefix("bottomTertiaryColorMax"),
-    },
-    borderInlineStartColor: {
-      [primaryPrefix]: addPrefix("leftPrimaryColorBase"),
-      [primaryMinPrefix]: addPrefix("leftPrimaryColorMin"),
-      [primaryMaxPrefix]: addPrefix("leftPrimaryColorMax"),
-      [secondaryPrefix]: addPrefix("leftSecondaryColorBase"),
-      [secondaryMinPrefix]: addPrefix("leftSecondaryColorMin"),
-      [secondaryMaxPrefix]: addPrefix("leftSecondaryColorMax"),
-      [tertiaryPrefix]: addPrefix("leftTertiaryColorBase"),
-      [tertiaryMinPrefix]: addPrefix("leftTertiaryColorMin"),
-      [tertiaryMaxPrefix]: addPrefix("leftTertiaryColorMax"),
-    },
-    borderInlineEndColor: {
-      [primaryPrefix]: addPrefix("rightPrimaryColorBase"),
-      [primaryMinPrefix]: addPrefix("rightPrimaryColorMin"),
-      [primaryMaxPrefix]: addPrefix("rightPrimaryColorMax"),
-      [secondaryPrefix]: addPrefix("rightSecondaryColorBase"),
-      [secondaryMinPrefix]: addPrefix("rightSecondaryColorMin"),
-      [secondaryMaxPrefix]: addPrefix("rightSecondaryColorMax"),
-      [tertiaryPrefix]: addPrefix("rightTertiaryColorBase"),
-      [tertiaryMinPrefix]: addPrefix("rightTertiaryColorMin"),
-      [tertiaryMaxPrefix]: addPrefix("rightTertiaryColorMax"),
-    },
-  } as const
 
   return {
     vars,
@@ -233,17 +226,7 @@ export const borderCombos = {
   tertiaryMax: true,
 } as const
 
-export const borderColors = {
-  primaryColorBase: true,
-  primaryColorMin: true,
-  primaryColorMax: true,
-  secondaryColorBase: true,
-  secondaryColorMin: true,
-  secondaryColorMax: true,
-  tertiaryColorBase: true,
-  tertiaryColorMin: true,
-  tertiaryColorMax: true,
-} as const
+export const borderColors = { ...borderCombos } as const
 
 export const hiddenBorderColors = {
   ...borderCombos,

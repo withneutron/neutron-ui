@@ -61,8 +61,11 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     transform: value("transform"),
     transformOrigin: value("transformOrigin"),
 
-    animation: value("animation"),
+    animationDelay: value("animationDelay"),
+    animationDuration: value("animationDuration"),
     animationIterationCount: value("animationIterationCount"),
+    animationName: value("animationName"),
+    animationTimingFunction: value("animationTimingFunction"),
 
     transition: value("transition"),
 

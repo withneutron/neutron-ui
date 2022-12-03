@@ -16,7 +16,8 @@ export type CssValueMap = Record<string | number, CssValue>
 export type CssValueMapProps<C extends CssValueMap> = Record<PrefixedKey<C>, [string, string | number][] | null>
 export type CssAliasMap<C extends CssValueMap = CssValueMap> = Record<string | number, CssAlias<keyof Omit<C, symbol>>>
 export type BaseVars<T extends string | number = string | number> = Record<T, ScaleEntry>
-export type AliasMap = Record<string, string | Record<string, string>>
+export type FlatMap = Record<string, string>
+export type AliasMap = Record<string, string | FlatMap>
 
 export type Font = BaseVars<
   "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "body" | "code" | "quote" | "li" | "small" | "em" | "strong"
