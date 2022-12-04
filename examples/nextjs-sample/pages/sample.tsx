@@ -221,7 +221,7 @@ const Sample: NextPage = () => {
           <Heading css={{ type: "$majorTitle" }}>Major Title</Heading>
           <SubHeading css={{ type: "$title" }}>Title</SubHeading>
           <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
-          <Heading css={{ type: "$heading" }}>Heading</Heading>
+          <Heading.H3 css={{ type: "$heading" }}>Heading</Heading.H3>
           <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
           <Text css={{ type: "$body" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
@@ -260,7 +260,7 @@ const Sample: NextPage = () => {
           </NuiSection>
           <SampleGrid>
             <GridBox>1</GridBox>
-            <GridBox>2</GridBox>
+            <GridBox css={{ border: "$primaryMax" }}>2</GridBox>
             <GridBox>3</GridBox>
             <GridBox>4</GridBox>
 
