@@ -39,7 +39,8 @@ export const mappedProps = {
   my: getPropMapper("marginBlockStart", "marginBlockEnd"),
   marginY: getPropMapper("marginBlockStart", "marginBlockEnd"),
 
-  bg: getPropMapper("background"),
+  bg: getPropMapper("backgroundColor"),
+  background: getPropMapper("backgroundColor"),
 
   borderX: getPropMapper("borderInline"),
   borderY: getPropMapper("borderBlock"),

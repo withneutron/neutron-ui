@@ -182,7 +182,6 @@ globalStyle("a", {
 })
 globalStyle("a:focus", {
   boxShadow: `inset 0 1.25em 0 ${color.vars.secondary9.ref}`,
-  // outline: outline.vars.secondaryMax.ref,
   outline: "none",
 })
 globalStyle("a:hover", {

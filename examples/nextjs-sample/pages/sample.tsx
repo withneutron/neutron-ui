@@ -11,6 +11,40 @@ import { styled, Box, Column, Heading, SubHeading, Text, Anchor, Grid, Row, vari
 import { vars } from "@withneutron/quarks"
 import { useEffect, useRef } from "react"
 
+const Base = styled(
+  "aside",
+  {
+    color: "$secondaryText10",
+    outline: "$secondary",
+    radius: "$8",
+    bg: {
+      md: "$primary10",
+      lg: "$primary7",
+      xl: "$primary12",
+      base: "$amber10",
+    },
+    backgroundColor: "$amber10",
+  },
+  "Base"
+)
+const Secondary = styled(
+  Base,
+  {
+    backgroundColor: "$amber10",
+    color: "$amber2",
+  },
+  "Secondary"
+)
+const Tertiary = styled(
+  Secondary,
+  {
+    outline: "initial",
+    bg: "$secondary9",
+    p: "$32",
+  },
+  "Tertiary"
+)
+
 const BaseSection = styled(
   "section",
   {
@@ -56,7 +90,7 @@ const BaseSection = styled(
       bg: "$primary9",
       color: "$primaryText9",
     },
-    ":interactive": {
+    ":interact": {
       borderColor: "$secondaryMax",
     },
   },
@@ -90,7 +124,7 @@ const NuiSection = styled(
     motion: {
       animation: "none",
     },
-    ":interactive": {
+    ":interact": {
       color: "$tomato3",
     },
   },
@@ -104,7 +138,7 @@ const NuiSection = styled(
         bg: "$success3",
         linearGradient: `${vars.color.success3}, ${vars.color.success1}`,
         color: "$successText3",
-        ":interactive": {
+        ":interact": {
           linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
           color: "$primaryText9",
           borderColor: "transparent",
@@ -120,7 +154,7 @@ const NuiSection = styled(
           lg: "$24",
           base: "$40",
         },
-        ":interactive": {
+        ":interact": {
           bg: "$warning9",
           color: "$warningText9",
           borderColor: "transparent",
@@ -252,6 +286,7 @@ const Sample: NextPage = () => {
           >
             Sample box
           </Box.Aside>
+          <Tertiary>Testing 3-level composition</Tertiary>
           <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>

@@ -1,6 +1,6 @@
 import { FilterKeys, PickKeys } from "./props.models"
 
-// Only these props should have interactive state classes/vars generated for them
+// Only these props should have interact state classes/vars generated for them
 // 20
 export const pseudoClassProps = {
   animation: true,
@@ -95,7 +95,7 @@ export const pseudoClassAliases = {
   ":focus": [":focus-visible"],
   ":hover, :focus": [":hover", ":focus-visible"],
   ":hover, :focus-visible": [":hover", ":focus-visible"],
-  ":interactive": [":hover", ":focus-visible"],
+  ":interact": [":hover", ":focus-visible"],
 } as const
 
 export const combinedPseudoClasses = {
@@ -111,9 +111,8 @@ export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
 type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type PseudoClassesWithAliases<T extends PseudoClassObject> = 
-  & T
-  & { ":focus"?: T[":focus-visible"] } 
-  & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
+export type PseudoClassesWithAliases<T extends PseudoClassObject> = T & { ":focus"?: T[":focus-visible"] } & {
+  ":hover, :focus"?: T[":hover"] & T[":focus-visible"]
+} & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } & {
+  ":interact"?: T[":hover"] & T[":focus-visible"]
+}

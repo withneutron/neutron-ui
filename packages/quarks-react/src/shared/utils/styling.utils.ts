@@ -22,7 +22,7 @@ export function variants<V extends Variants = Variants>(variantDefinitions: V | 
   const props = Object.keys(variantDefinitions)
 
   const variantStyles = (variantProps: VariantProps<V>) => {
-    let variantCss: VariantCSS = []
+    const variantCss: VariantCSS = []
     props.forEach(propName => {
       const variant = variantDefinitions[propName]
       const variantValue = String(variantProps[propName])
