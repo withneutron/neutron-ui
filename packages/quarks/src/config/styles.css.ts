@@ -46,6 +46,8 @@ import {
   PrefixedKey,
   CssAliasMap,
   SCALED_ALIAS,
+  borderCombos,
+  outlineCombos,
 } from "./scales"
 import {
   CssPropKey,
@@ -347,10 +349,25 @@ console.log("---- Generated CSS ----")
 console.log(String(classHash.count).padStart(5, " "), "classes.")
 console.log(String(varHash.count).padStart(5, " "), "variables.")
 console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
-
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
+/** Scaled props that override mapped props */
+export type OverrideScaledProp = {
+  outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
+  border: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBlock: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderInline: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderTop: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBottom: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderLeft: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderRight: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBlockStart: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderBlockStart
+  borderBlockEnd: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderBlockEnd
+  borderInlineStart: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderInlineStart
+  borderInlineEnd: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderInlineEnd
+}
+
 // Pseudo-class types
 type A = typeof scaledPropsPC
 type B = typeof customVarPropsPC

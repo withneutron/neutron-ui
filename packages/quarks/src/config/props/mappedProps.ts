@@ -1,6 +1,6 @@
 import { NotShared, Shared } from "../../shared/models"
+import { OverrideScaledProp } from "../styles.css"
 import { CssPropKey } from "./props.models"
-import { OverrideScaledProp } from "./scaledProps"
 
 type PropValue = string | number
 

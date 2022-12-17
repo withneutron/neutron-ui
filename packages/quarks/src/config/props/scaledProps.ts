@@ -388,19 +388,3 @@ export const scaledPropScale = {
   animation: Scale.animation,
   animationDuration: Scale.animation,
 } as const
-
-/** Scaled props that override mapped props */
-export type OverrideScaledProp = {
-  outline: PrefixedKey<typeof outlineCombos>
-  border: PrefixedKey<typeof borderCombos>
-  borderBlock: PrefixedKey<typeof borderCombos>
-  borderInline: PrefixedKey<typeof borderCombos>
-  borderTop: PrefixedKey<typeof borderCombos>
-  borderBlockStart: PrefixedKey<typeof borderCombos>
-  borderBottom: PrefixedKey<typeof borderCombos>
-  borderBlockEnd: PrefixedKey<typeof borderCombos>
-  borderLeft: PrefixedKey<typeof borderCombos>
-  borderInlineStart: PrefixedKey<typeof borderCombos>
-  borderRight: PrefixedKey<typeof borderCombos>
-  borderInlineEnd: PrefixedKey<typeof borderCombos>
-}
