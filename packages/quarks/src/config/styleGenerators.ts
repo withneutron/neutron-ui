@@ -51,12 +51,13 @@ export function style(
   variantCss?: VariantCSS,
   overrides?: CSS | null,
   styleName?: string,
-  manager?: StyleManager
+  manager?: StyleManager,
+  baseClassName?: string
 ) {
   if (manager) {
     manager.setNewStyle(conditions, styleName)
   } else {
-    manager = new StyleManager(conditions, styleName)
+    manager = new StyleManager(conditions, styleName, baseClassName)
   }
 
   // Process defined styles
@@ -97,12 +98,7 @@ export class StyleManager {
     ":hover": {},
     ":active": {},
   }
-  private parentClassDict: ClassDict = {
-    [BASE]: {},
-    ":focus-visible": {},
-    ":hover": {},
-    ":active": {},
-  }
+  private parentClassDicts: ClassDict[] = []
   private styleVarsDict: Record<string, string> = {}
   private styleVars: StyleObj = {}
   private prevStyle: StyleObj = {}
@@ -111,18 +107,24 @@ export class StyleManager {
 
   private conditions: Conditions
   private name = ""
+  private baseClassName = ""
   private variantName = ""
   private conditionName = ""
   private pseudoClassName = ""
   private overridesName = ""
 
-  constructor(conditions: Conditions, name?: string) {
+  constructor(conditions: Conditions, name?: string, baseClassName?: string) {
     this.conditions = conditions
     this.setName(name)
+    this.baseClassName = baseClassName ? `${baseClassName} ` : ""
   }
 
-  private getDebugVar(className: string) {
+  private getDebugVarKey(className: string) {
     return `--${className}`
+  }
+
+  private getDebugClassVarKey(className: string) {
+    return this.getDebugVarKey(`-${className}`)
   }
 
   private get isDebugMode() {
@@ -137,7 +139,7 @@ export class StyleManager {
     if (this.pseudoClassName) scope.push(this.pseudoClassName)
     const scopeName = scope.join("_")
     const suffix = scopeName.length < 4 ? "-" : ""
-    return this.getDebugVar(`${scopeName}${suffix}`)
+    return this.getDebugVarKey(`${scopeName}${suffix}`)
   }
 
   private addDebugInfo(className: string, originalProp: string, originalValue?: string) {
@@ -145,6 +147,12 @@ export class StyleManager {
       if (!this.debugDict[this.debugScope]) this.debugDict[this.debugScope] = {}
       const value = originalValue ? `: ${originalValue}` : ""
       this.debugDict[this.debugScope][className] = `${originalProp}${value}`
+    }
+  }
+
+  private removeDebugClass(className: string) {
+    if (this.isDebugMode) {
+      delete this.prevStyle[this.getDebugClassVarKey(className)]
     }
   }
 
@@ -160,7 +168,7 @@ export class StyleManager {
         debugList.forEach(([debugClass, debugValue]) => {
           hash += stringToHash(debugClass + debugValue)
           this.styleCount++
-          const debugKey = this.getDebugVar(`-${debugClass}`)
+          const debugKey = this.getDebugClassVarKey(debugClass)
           if (this.style[debugKey]) {
             delete this.style[debugKey]
           }
@@ -179,7 +187,7 @@ export class StyleManager {
     let index = entries.length
     for (index; index >= len; index--) {
       const [prevKey, prevValue] = entries[index - 1] ?? []
-      const [_key, value] = entries[index] ?? []
+      const [, value] = entries[index] ?? []
       if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
         delete this.style[prevKey]
       }
@@ -188,6 +196,10 @@ export class StyleManager {
 
   private setName(name?: string) {
     this.name = name ?? getStyleName()
+  }
+
+  private setVariantName(name?: string) {
+    this.variantName = name ? `V_${name}` : ""
   }
 
   setNewStyle(conditions: Conditions, name?: string) {
@@ -229,12 +241,14 @@ export class StyleManager {
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
 
-    // Parent data, to make sure we don't have a conflict with that data
-    const parentData = this.parentClassDict[pseudoClass][propId]
-    const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
-
     // If the parent already has this style, only override if this one has HIGHER priority.
-    const hasParentConflict = parentPriority <= incomingPriority
+    const hasParentConflict = this.parentClassDicts.some(parentDict => {
+      // Parent data, to make sure we don't have a conflict with that data
+      const parentData = parentDict[pseudoClass][propId]
+      const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
+
+      return parentPriority <= incomingPriority
+    })
 
     // If what we've already processed of the current styles have a conflict,
     // only override it if this one has HIGHER OR EQUAL priority.
@@ -245,8 +259,6 @@ export class StyleManager {
       existingData,
       incomingPriority,
       existingPriority,
-      parentData,
-      parentPriority,
       hasParentConflict,
       hasExistingConflict,
     }
@@ -295,8 +307,11 @@ export class StyleManager {
       this.classList.push(className)
     } else {
       // Clear out old style that is getting overwritten, if need be
-      const oldClass = this.classList[index]
-      const oldStyleVar = this.styleVarsDict[oldClass]
+      const oldClassName = this.classList[index]
+      if (oldClassName) {
+        this.removeDebugClass(oldClassName)
+      }
+      const oldStyleVar = this.styleVarsDict[oldClassName]
       if (oldStyleVar) {
         delete this.styleVars[oldStyleVar]
         this.styleCount--
@@ -315,17 +330,17 @@ export class StyleManager {
 
   compile() {
     // Any further usage of this class will be for nested composition
-    this.parentClassDict = {
+    this.parentClassDicts.push({
       [BASE]: { ...this.classDict[BASE] },
       ":focus-visible": { ...this.classDict[":focus-visible"] },
       ":hover": { ...this.classDict[":hover"] },
       ":active": { ...this.classDict[":active"] },
-    }
+    })
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
     const output: { className: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
-      className: outputClass,
+      className: `${this.baseClassName}${outputClass}`,
       styleManager: this,
       style: {},
     }
@@ -359,10 +374,10 @@ export class StyleManager {
   /** Process fully-nestable CSS, in an object keyed by variant name-value pairs */
   processVariantCss(variantCss: VariantCSS, conditions: Conditions) {
     variantCss.forEach(({ key, css }) => {
-      this.variantName = key
+      this.setVariantName(key)
       this.processCss(css, conditions)
     })
-    this.variantName = ""
+    this.setVariantName()
   }
 
   /** Process fully-nestable CSS, including conditions and pseudo-classes */
