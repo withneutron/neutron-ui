@@ -42,8 +42,22 @@ export const mappedProps = {
   bg: getPropMapper("backgroundColor"),
   background: getPropMapper("backgroundColor"),
 
-  borderX: getPropMapper("borderInline"),
-  borderY: getPropMapper("borderBlock"),
+  borderX: getPropMapper(
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
+  borderY: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth"
+  ),
 
   radius: getPropMapper("borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"),
   radiusTop: getPropMapper("borderStartStartRadius", "borderStartEndRadius"),
@@ -66,6 +80,8 @@ export const mappedProps = {
   autoRows: getPropMapper("gridAutoRows"),
   gtRows: getPropMapper("gridTemplateRows"),
   gtColumns: getPropMapper("gridTemplateColumns"),
+
+  typography: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
 
   // Remapped CSS Props
   height: getPropMapper("blockSize"),
@@ -187,11 +203,13 @@ export const mappedProps = {
 
   outline: getPropMapper("outlineColor", "outlineStyle", "outlineWidth", "outlineOffset"),
 
+  font: getPropMapper("fontSize", "fontStyle", "fontFamily", "fontWeight"),
+
+  type: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
+
   gap: getPropMapper("rowGap", "columnGap"),
 
   wordWrap: getPropMapper("overflowWrap"),
-
-  typography: getPropMapper("type"),
 } as const
 
 /*************************************************************************************************

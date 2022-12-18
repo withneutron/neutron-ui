@@ -1,4 +1,4 @@
-import { addPrefix, CharHash } from "../utils"
+import { CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
 import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 

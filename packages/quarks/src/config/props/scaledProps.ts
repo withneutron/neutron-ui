@@ -20,12 +20,13 @@ import {
   colorCore,
   colorText,
   CssAliasMap,
-  PrefixedKey,
   outlineStyles,
   hiddenOutlineColors,
   hiddenOutlineOffsets,
   hiddenOutlineStyles,
   hiddenOutlineWidths,
+  fontCombos,
+  typeCombos,
 } from "../scales"
 import {
   CssPropKey,
@@ -259,7 +260,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     fill: entries("fill", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
     stroke: entries("stroke", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
 
-    font: entries("font", map(scales, Scale.font), scales[Scale.font].cssAliasMap),
+    font: entries("font", map(scales, Scale.font, fontCombos), scales[Scale.font].cssAliasMap),
     fontFamily: entries("fontFamily", map(scales, Scale.fontFamily), scales[Scale.fontFamily].cssAliasMap),
     fontSize: entries("fontSize", map(scales, Scale.fontSize), scales[Scale.fontSize].cssAliasMap),
     fontWeight: entries("fontWeight", map(scales, Scale.fontWeight), scales[Scale.fontWeight].cssAliasMap),
@@ -270,7 +271,7 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
       scales[Scale.textDecoration].cssAliasMap
     ),
 
-    type: entries("type", map(scales, Scale.type), scales[Scale.type].cssAliasMap),
+    type: entries("type", map(scales, Scale.type, typeCombos), scales[Scale.type].cssAliasMap),
     lineHeight: entries("lineHeight", map(scales, Scale.lineHeight), scales[Scale.lineHeight].cssAliasMap),
     letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
     wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),

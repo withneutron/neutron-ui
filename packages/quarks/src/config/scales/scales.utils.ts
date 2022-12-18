@@ -9,6 +9,7 @@ import {
   AliasMap,
   SCALED_ALIAS,
   FlatMap,
+  STATIC_VALUE_PREFIX,
 } from "./scales.models"
 
 /** Converts a set of vars to CSS values (i.e., using the var set's `ref` as a value) */
@@ -59,13 +60,17 @@ export function getAliasMap<A extends AliasMap, F extends FlatMap>(map: A, flatM
       if (!aliasMap[prop]) {
         aliasMap[prop] = {}
       }
-      aliasMap[prop][alias] = addPrefix(target)
+      aliasMap[prop][alias] = target.startsWith(STATIC_VALUE_PREFIX)
+        ? target.replace(STATIC_VALUE_PREFIX, "")
+        : addPrefix(target)
     })
   })
 
   if (flatMap) {
     Object.entries(flatMap).forEach(([prop, target]) => {
-      aliasMap[prop] = addPrefix(target)
+      aliasMap[prop] = target.startsWith(STATIC_VALUE_PREFIX)
+        ? target.replace(STATIC_VALUE_PREFIX, "")
+        : addPrefix(target)
     })
   }
 

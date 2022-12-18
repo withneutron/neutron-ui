@@ -4,6 +4,8 @@ import { ColorNumberKey, ColorPalette, ThemeColor } from "../../shared/models/co
 
 export const SCALED_ALIAS = "SCALED_ALIAS"
 
+export const STATIC_VALUE_PREFIX = "^"
+
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
 export type CssValue = string | Record<string, string | number>

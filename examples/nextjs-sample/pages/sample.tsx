@@ -41,6 +41,7 @@ const Tertiary = styled(
     outline: "initial",
     bg: "$secondary9",
     p: "$32",
+    font: "$em",
   },
   "Tertiary"
 )

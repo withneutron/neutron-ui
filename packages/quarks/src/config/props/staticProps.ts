@@ -274,8 +274,6 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     writingMode: values("writingMode", options("horizontal-tb", "vertical-rl", "vertical-lr")),
 
-    fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
-
     textOverflow: values("textOverflow", options("clip", "ellipsis")),
     textTransform: values("textTransform", options("none", "capitalize", "uppercase", "lowercase")),
 
@@ -335,6 +333,9 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     insetBlockEnd: values("insetBlockEnd"),
     insetInlineStart: values("insetInlineStart"),
     insetInlineEnd: values("insetInlineEnd"),
+    type: values("type"),
+    font: values("font"),
+    fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
     fontFamily: values("fontFamily"),
     fontSize: values("fontSize"),
     fontWeight: values("fontWeight"),

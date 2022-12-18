@@ -48,6 +48,8 @@ import {
   SCALED_ALIAS,
   borderCombos,
   outlineCombos,
+  fontCombos,
+  typeCombos,
 } from "./scales"
 import {
   CssPropKey,
@@ -74,7 +76,7 @@ const color = getColor(varHash)
 const fontSize = getFontSize(varHash)
 const fontWeight = getFontWeight(varHash)
 const fontFamily = getFontFamily(varHash)
-const font = getFont(varHash, fontWeight.vars, fontSize.vars, fontFamily.vars)
+const font = getFont()
 const border = getBorder(varHash, color.vars)
 const outline = getOutline(varHash, color.vars)
 const radius = getRadius(varHash)
@@ -83,7 +85,7 @@ const column = getColumn(varHash, size.vars)
 const row = getRow(varHash, column.vars)
 const lineHeight = getLineHeight(varHash, size.vars)
 const typeSpace = getTypeSpace(varHash)
-const type = getType(font.vars, lineHeight.vars, typeSpace.vars)
+const type = getType()
 const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
@@ -353,6 +355,8 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
  *************************************************************************************************/
 /** Scaled props that override mapped props */
 export type OverrideScaledProp = {
+  font: PrefixedKey<typeof fontCombos> | keyof typeof staticProps.font
+  type: PrefixedKey<typeof typeCombos> | keyof typeof staticProps.type
   outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
   border: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
   borderBlock: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border

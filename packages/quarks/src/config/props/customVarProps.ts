@@ -39,7 +39,8 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     caretColor: value("caretColor"),
     columnRuleColor: value("columnRuleColor"),
 
-    font: value("font"),
+    fontSize: value("fontSize"),
+    fontFamily: value("fontFamily"),
     textDecoration: value("textDecoration"),
     textShadow: value("textShadow"),
 

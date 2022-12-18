@@ -264,6 +264,18 @@ export class StyleManager {
     }
   }
 
+  private getScaledProps(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
+    const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
+    const scaledProp = scaledMap ? scaledMap[prop as keyof typeof scaledMap] : undefined
+    const scaleKey = scaledPropScale[prop as ScaledKey]
+    const propScale = scales[scaleKey]
+    return {
+      scaledProp,
+      scaleKey,
+      propScale,
+    }
+  }
+
   /** Returns an object with boolean values for whether this manager is watching each condition */
   getWatchedConditions() {
     return this.watchCategories
@@ -294,9 +306,7 @@ export class StyleManager {
     )
 
     // Lower-valued priorities take precedence, and cannot be overwritten
-    if (hasExistingConflict || hasParentConflict) {
-      return
-    }
+    if (hasExistingConflict || hasParentConflict) return
 
     const index = existingData?.[0] ?? this.classList.length
 
@@ -397,13 +407,17 @@ export class StyleManager {
         this.conditionName = propName.replace("!", "not-")
         this.processCss(propValue as ConditionalCSS, conditions, propName as InlineConditionKey)
         this.conditionName = ""
-      } else if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
+        continue
+      }
+
+      if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
         // If the prop is a pseudo-class, process its inner props
         this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, conditions, condition)
-      } else {
-        // Else, process the prop's value
-        this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition)
+        continue
       }
+
+      // Otherwise, process the prop's value
+      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition)
     }
   }
 
@@ -453,33 +467,56 @@ export class StyleManager {
           }
         }
       }
-    } else {
-      const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
-      // If it's a mapped prop, run its mapping func, and proceed with the result of that
-      if (mapper) {
-        const innerProps = Object.entries(mapper(value))
-        const innerPropsLen = innerProps.length
-        for (let index = 0; index < innerPropsLen; index++) {
-          const [propName, propValue] = innerProps[index]
-          this.processCssProp(propName as CssPropKey, propValue, conditions, condition, pseudo, originalProp ?? prop)
-        }
-      } else {
-        value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
-        if (pseudo) {
-          const pseudos =
-            pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-          const pseudosLen = pseudos.length
-          for (let index = 0; index < pseudosLen; index++) {
-            const pseudoKey = pseudos[index] as PseudoClassKey
-            this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
-            this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
-            this.pseudoClassName = ""
-          }
-        } else {
-          this.addStyle(prop, value, condition, undefined, originalProp ?? prop)
+      return
+    }
+
+    let scaledOriginalProp: CssPropKey | undefined
+
+    if (originalProp) {
+      const { propScale } = this.getScaledProps(originalProp, pseudo as PseudoCategoryKey)
+      if (propScale?.aliasMap) {
+        const scaledValue = mapAliasToValue(propScale.aliasMap, prop, value)
+        if (scaledValue) {
+          value = scaledValue
+          scaledOriginalProp = prop
         }
       }
     }
+
+    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
+    // If it's a mapped prop, run its mapping func, and proceed with the result of that
+    if (mapper) {
+      const innerProps = Object.entries(mapper(value))
+      const innerPropsLen = innerProps.length
+      for (let index = 0; index < innerPropsLen; index++) {
+        const [propName, propValue] = innerProps[index]
+        this.processCssProp(
+          propName as CssPropKey,
+          propValue,
+          conditions,
+          condition,
+          pseudo,
+          scaledOriginalProp ?? originalProp ?? prop
+        )
+      }
+      return
+    }
+
+    value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
+    if (pseudo) {
+      const pseudos =
+        pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
+      const pseudosLen = pseudos.length
+      for (let index = 0; index < pseudosLen; index++) {
+        const pseudoKey = pseudos[index] as PseudoClassKey
+        this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
+        this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
+        this.pseudoClassName = ""
+      }
+      return
+    }
+
+    this.addStyle(prop, value, condition, undefined, originalProp ?? prop)
   }
 
   /** Adds style to style manager */
@@ -490,25 +527,25 @@ export class StyleManager {
     pseudo?: PseudoClassKey,
     originalProp?: CssPropKey
   ) {
-    const output = this.getStyle(prop, value, pseudo)
-    if (output) {
-      this.add(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value, originalProp, value)
+    const result = this.getStyle(prop, value, pseudo)
+    if (result) {
+      this.add(prop, result.className, condition, pseudo ?? BASE, result.varName, result.value, originalProp, value)
 
       // If this is a combo class with multiple props, make sure we avoid conflicts
-      if (output.props && output.props.length > 0) {
-        output.props.forEach(([comboProp, comboValue]) => {
+      if (result.props && result.props.length > 0) {
+        result.props.forEach(([comboProp, comboValue]) => {
           // This won't actually override the combo prop, but will avoid conflicts
           this.add(
             comboProp as CssPropKey,
-            output.className,
+            result.className,
             condition,
             pseudo ?? BASE,
-            output.varName,
-            output.value,
+            result.varName,
+            result.value,
             originalProp,
             value
           )
-          this.addDebugInfo(`${output.className}__${comboProp}`, comboValue)
+          this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
         })
       }
     }
@@ -520,16 +557,14 @@ export class StyleManager {
     const staticProp = staticMap[prop as keyof typeof staticMap]
     const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
 
-    const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
-    const scaledProp = scaledMap[prop as keyof typeof scaledMap]
+    const { scaledProp, scaleKey, propScale } = this.getScaledProps(prop, pseudo)
     let scaledValue = scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
-
-    const scaleKey = scaledPropScale[prop as ScaledKey]
-    const propScale = scales[scaleKey]
 
     if (staticValue) {
       return { className: staticValue }
-    } else if (scaledValue) {
+    }
+
+    if (scaledValue) {
       // Check to see if this value is an alias
       if (scaledValue === SCALED_PLACEHOLDER) {
         const propAliasMap = propScale.cssAliasMap
@@ -539,34 +574,35 @@ export class StyleManager {
           if (aliasValue === SCALED_ALIAS && propScale.aliasMap) {
             aliasValue = (mapAliasToValue(propScale.aliasMap, prop, value) ?? "") as CssAlias
           }
-          scaledValue = aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
+          scaledValue =
+            scaledProp && aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
         }
       }
       const mapProps = propScale.cssValueMapProps
       const props = mapProps[value as keyof typeof mapProps] as CssPropKey[]
-      if (scaledValue) return { className: scaledValue, props }
-    } else {
-      // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
-      if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
-        const tokenMap = tokenToVarMap[scaleKey]
-        let varFromToken = tokenMap[value as keyof typeof tokenMap]
+      return scaledValue ? { className: scaledValue, props } : undefined
+    }
+
+    // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
+    if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
+      const tokenMap = tokenToVarMap[scaleKey]
+      let varFromToken = tokenMap[value as keyof typeof tokenMap]
+      if (varFromToken) {
+        if (varFromToken === SCALED_ALIAS && propScale.aliasMap) {
+          const aliasValue = mapAliasToValue(propScale.aliasMap, prop, value)
+          varFromToken = tokenMap[aliasValue as keyof typeof tokenMap]
+        }
         if (varFromToken) {
-          if (varFromToken === SCALED_ALIAS && propScale.aliasMap) {
-            const aliasValue = mapAliasToValue(propScale.aliasMap, prop, value)
-            varFromToken = tokenMap[aliasValue as keyof typeof tokenMap]
-          }
-          if (varFromToken) {
-            value = `var(${varFromToken})`
-          }
+          value = `var(${varFromToken})`
         }
       }
-      // Get both the className and varName needed to set a custom value, if possible for this prop
-      const customVarMap = customVarPropMap[pseudo as keyof typeof customVarPropMap]
-      const customVarProp =
-        prop in customVarMap ? (customVarMap[prop as keyof typeof customVarMap] as CustomVarPropValue) : undefined
-      const { className, varName } = customVarProp ?? {}
-      if (className && varName) return { className, varName, value }
     }
+    // Get both the className and varName needed to set a custom value, if possible for this prop
+    const customVarMap = customVarPropMap[pseudo as keyof typeof customVarPropMap]
+    const customVarProp =
+      prop in customVarMap ? (customVarMap[prop as keyof typeof customVarMap] as CustomVarPropValue) : undefined
+    const { className, varName } = customVarProp ?? {}
+    return className && varName ? { className, varName, value } : undefined
   }
 
   static sanitizePseudoKey(key: CombinedPseudoClassKey) {
@@ -579,7 +615,7 @@ export class StyleManager {
  *************************************************************************************************/
 const DEBUG_GROUP_VALUE = "▼"
 
-/** Returns a CSS values from an alias map, using a CSS prop key and value */
+/** Returns a CSS value from an alias map, using a CSS prop key and value */
 function mapAliasToValue(aliasMap: AliasMap, prop: CssPropKey, value: string | number) {
   const propValue = aliasMap[prop as keyof typeof aliasMap]
   if (propValue) {
