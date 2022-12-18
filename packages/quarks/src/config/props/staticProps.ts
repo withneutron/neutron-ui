@@ -85,7 +85,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     backgroundColor: values("backgroundColor", transparent),
     color: values("color", transparent),
 
-    border: values("border", none),
+    border: values("border"),
     borderBlock: values("borderBlock", none),
     borderInline: values("borderInline", none),
     borderTop: values("borderTop", none),
@@ -110,7 +110,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderEndStartRadius: values("borderEndStartRadius"),
     borderEndEndRadius: values("borderEndEndRadius"),
 
-    outline: values("outline", none),
+    outline: values("outline"),
     outlineColor: values("outlineColor", transparent),
     outlineOffset: values("outlineOffset"),
     outlineWidth: values("outlineWidth"),
