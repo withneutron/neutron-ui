@@ -92,7 +92,7 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
     cssValueMapProps: getPropsFromCssMap(cssValueMap),
     cssAliasMap,
     aliasMap,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }
 
 // FILTER KEYS ////////////////////////////////////////////////////////////////

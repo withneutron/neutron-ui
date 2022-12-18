@@ -9,7 +9,7 @@ import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 import { styled, Box, Column, Heading, SubHeading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const Base = styled(
   "aside",
@@ -42,6 +42,7 @@ const Tertiary = styled(
     bg: "$secondary9",
     p: "$32",
     font: "$em",
+    textDecoration: "$highlightError",
   },
   "Tertiary"
 )
@@ -210,10 +211,18 @@ const Sample: NextPage = () => {
   const showStatuses = true
   const showSampleBox = true
   const ref = useRef<HTMLDivElement | null>(null)
+  const [cycle, setCycle] = useState(0)
 
   useEffect(() => {
     // console.log("@@@ ref", ref.current)
   }, [ref.current])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCycle((current: number) => current + 1)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   const sampleControls = (
     <>
@@ -253,12 +262,16 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
-          <Heading css={{ type: "$majorTitle" }}>Major Title</Heading>
+          <Heading css={{ type: "$majorTitle", animation: "$flashSize", transformOrigin: "center left" }}>
+            Major Title
+          </Heading>
           <SubHeading css={{ type: "$title" }}>Title</SubHeading>
-          <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
+          <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
+            Minor Title
+          </SubHeading>
           <Heading.H3 css={{ type: "$heading" }}>Heading</Heading.H3>
           <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
-          <Text css={{ type: "$body" }}>Body</Text>
+          <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
           <Box.Aside
             ref={(element: HTMLDivElement) => {
@@ -282,7 +295,7 @@ const Sample: NextPage = () => {
               radiusBottomLeft: "$6",
               float: "left",
               maxWidth: "$480",
-              animation: "$slideInTop",
+              animation: cycle % 2 ? "$zoomOut" : "$zoomIn",
             }}
           >
             Sample box

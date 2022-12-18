@@ -50,6 +50,8 @@ import {
   outlineCombos,
   fontCombos,
   typeCombos,
+  animationCombos,
+  textDecorationCombos,
 } from "./scales"
 import {
   CssPropKey,
@@ -357,6 +359,8 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 export type OverrideScaledProp = {
   font: PrefixedKey<typeof fontCombos> | keyof typeof staticProps.font
   type: PrefixedKey<typeof typeCombos> | keyof typeof staticProps.type
+  animation: PrefixedKey<typeof animationCombos> | keyof typeof staticProps.animation
+  textDecoration: PrefixedKey<typeof textDecorationCombos> | keyof typeof staticProps.textDecoration
   outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
   border: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
   borderBlock: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border

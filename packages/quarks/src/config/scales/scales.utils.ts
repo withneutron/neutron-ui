@@ -1,3 +1,4 @@
+import { CssPropKey } from "../props"
 import { addPrefix } from "../utils"
 import {
   ThemePropValue,
@@ -75,4 +76,16 @@ export function getAliasMap<A extends AliasMap, F extends FlatMap>(map: A, flatM
   }
 
   return { cssAliases, aliasMap: aliasMap as AliasMap }
+}
+
+/** Returns a CSS value from an alias map, using a CSS prop key and value */
+export function mapAliasToValue(aliasMap: AliasMap, prop: CssPropKey, value: string | number) {
+  const propValue = aliasMap[prop as keyof typeof aliasMap]
+  if (propValue) {
+    if (typeof propValue === "string") {
+      return propValue
+    }
+    return propValue[value as keyof typeof propValue] ?? ""
+  }
+  return ""
 }

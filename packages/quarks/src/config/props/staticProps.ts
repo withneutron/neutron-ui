@@ -36,8 +36,9 @@ function options<T extends string>(...options: T[]) {
   return output
 }
 
-const transparent = options("transparent")
+const noneAll = options("none", "all")
 const noneAuto = options("none", "auto")
+const color = options("currentcolor", "transparent")
 const none = options("none")
 const auto = options("auto")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
@@ -80,10 +81,15 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
       "animationTimingFunction",
       options("ease", "ease-in", "ease-out", "ease-in-out", "linear", "step-start", "step-end")
     ),
+    animationName: values("animationName", none),
+    transform: values("transform"),
+    transformOrigin: values("transformOrigin"),
+    transitionProperty: values("transitionProperty", noneAll),
+    transitionDuration: values("transitionDuration"),
 
-    background: values("background", transparent),
-    backgroundColor: values("backgroundColor", transparent),
-    color: values("color", transparent),
+    background: values("background", color),
+    backgroundColor: values("backgroundColor", color),
+    color: values("color", color),
 
     border: values("border"),
     borderBlock: values("borderBlock", none),
@@ -96,10 +102,10 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderInlineStart: values("borderInlineStart", none),
     borderRight: values("borderRight", none),
     borderInlineEnd: values("borderInlineEnd", none),
-    borderBlockStartColor: values("borderBlockStartColor", transparent),
-    borderBlockEndColor: values("borderBlockEndColor", transparent),
-    borderInlineStartColor: values("borderInlineStartColor", transparent),
-    borderInlineEndColor: values("borderInlineEndColor", transparent),
+    borderBlockStartColor: values("borderBlockStartColor", color),
+    borderBlockEndColor: values("borderBlockEndColor", color),
+    borderInlineStartColor: values("borderInlineStartColor", color),
+    borderInlineEndColor: values("borderInlineEndColor", color),
     borderBlockStartWidth: values("borderBlockStartWidth"),
     borderBlockEndWidth: values("borderBlockEndWidth"),
     borderInlineStartWidth: values("borderInlineStartWidth"),
@@ -111,14 +117,14 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderEndEndRadius: values("borderEndEndRadius"),
 
     outline: values("outline"),
-    outlineColor: values("outlineColor", transparent),
+    outlineColor: values("outlineColor", color),
     outlineOffset: values("outlineOffset"),
     outlineWidth: values("outlineWidth"),
 
-    fill: values("fill", transparent),
-    stroke: values("stroke", transparent),
-    caretColor: values("caretColor", transparent),
-    columnRuleColor: values("columnRuleColor", transparent),
+    fill: values("fill", color),
+    stroke: values("stroke", color),
+    caretColor: values("caretColor", color),
+    columnRuleColor: values("columnRuleColor", color),
 
     userSelect: values("userSelect", options("none", "auto", "text", "contain", "all")),
 
@@ -347,6 +353,12 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     textUnderlineOffset: values("textUnderlineOffset"),
     letterSpacing: values("letterSpacing"),
     wordSpacing: values("wordSpacing"),
+
+    textDecoration: values("textDecoration", none),
+    textDecorationLine: values("textDecorationLine", options("none", "underline", "overline", "line-through", "blink")),
+    textDecorationStyle: values("textDecorationStyle", options("solid", "double", "dotted", "dashed", "wavy")),
+    textDecorationColor: values("textDecorationColor", color),
+    textDecorationThickness: values("textDecorationThickness", auto),
   } as const
 
   if (keys) {

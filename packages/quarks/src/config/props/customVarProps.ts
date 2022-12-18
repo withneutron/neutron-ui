@@ -41,7 +41,9 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
 
     fontSize: value("fontSize"),
     fontFamily: value("fontFamily"),
-    textDecoration: value("textDecoration"),
+    textDecorationLine: value("textDecorationLine"),
+    textDecorationColor: value("textDecorationColor"),
+    textDecorationThickness: value("textDecorationThickness"),
     textShadow: value("textShadow"),
 
     flex: value("flex"),

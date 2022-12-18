@@ -102,8 +102,11 @@ export function getFont() {
     cssValueMapProps: getPropsFromCssMap(cssValueMap),
     cssAliasMap,
     aliasMap,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }
+
+// FILTER KEYS ////////////////////////////////////////////////////////////////
+// Used for generating types that map to only parts of this scale
 
 export const fontCombos = {
   h1: true,

@@ -27,6 +27,36 @@ import {
   hiddenOutlineWidths,
   fontCombos,
   typeCombos,
+  textDecorationCombos,
+  hiddenTextDecorationColors,
+  hiddenTextDecorationLines,
+  hiddenTextDecorationStyles,
+  hiddenTextDecorationThicknesses,
+  textDecorationColors,
+  textDecorationLines,
+  textDecorationStyles,
+  textDecorationThicknesses,
+  animationFillModes,
+  animationIterationCounts,
+  animationNames,
+  animationTimingFunctions,
+  hiddenAnimationDurations,
+  hiddenAnimationFillModes,
+  hiddenAnimationIterationCounts,
+  hiddenAnimationNames,
+  hiddenAnimationTimingFunctions,
+  hiddenOpacities,
+  hiddenTransformOrigins,
+  hiddenTransitionDurations,
+  hiddenTransitionProperties,
+  opacities,
+  transformOrigins,
+  transitionDurations,
+  transitionProperties,
+  pointerEvents,
+  hiddenPointerEvents,
+  hiddenTransforms,
+  transforms,
 } from "../scales"
 import {
   CssPropKey,
@@ -267,8 +297,24 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
 
     textDecoration: entries(
       "textDecoration",
-      map(scales, Scale.textDecoration),
+      map(scales, Scale.textDecoration, textDecorationCombos),
       scales[Scale.textDecoration].cssAliasMap
+    ),
+    textDecorationLine: entries(
+      "textDecorationLine",
+      map(scales, Scale.textDecoration, textDecorationLines, hiddenTextDecorationLines)
+    ),
+    textDecorationStyle: entries(
+      "textDecorationStyle",
+      map(scales, Scale.textDecoration, textDecorationStyles, hiddenTextDecorationStyles)
+    ),
+    textDecorationColor: entries(
+      "textDecorationColor",
+      map(scales, Scale.textDecoration, textDecorationColors, hiddenTextDecorationColors)
+    ),
+    textDecorationThickness: entries(
+      "textDecorationThickness",
+      map(scales, Scale.textDecoration, textDecorationThicknesses, hiddenTextDecorationThicknesses)
     ),
 
     type: entries("type", map(scales, Scale.type, typeCombos), scales[Scale.type].cssAliasMap),
@@ -286,9 +332,59 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     boxShadow: entries("boxShadow", map(scales, Scale.shadow), scales[Scale.shadow].cssAliasMap),
 
     animation: entries("animation", map(scales, Scale.animation, animationCombos), scales[Scale.animation].cssAliasMap),
+    animationName: entries(
+      "animationName",
+      map(scales, Scale.animation, animationNames, hiddenAnimationNames),
+      scales[Scale.animation].cssAliasMap
+    ),
     animationDuration: entries(
       "animationDuration",
-      map(scales, Scale.animation, animationDurations),
+      map(scales, Scale.animation, animationDurations, hiddenAnimationDurations),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationIterationCount: entries(
+      "animationIterationCount",
+      map(scales, Scale.animation, animationIterationCounts, hiddenAnimationIterationCounts),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationTimingFunction: entries(
+      "animationTimingFunction",
+      map(scales, Scale.animation, animationTimingFunctions, hiddenAnimationTimingFunctions),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationFillMode: entries(
+      "animationFillMode",
+      map(scales, Scale.animation, animationFillModes, hiddenAnimationFillModes),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transform: entries(
+      "transform",
+      map(scales, Scale.animation, transforms, hiddenTransforms),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transformOrigin: entries(
+      "transformOrigin",
+      map(scales, Scale.animation, transformOrigins, hiddenTransformOrigins),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transitionProperty: entries(
+      "transitionProperty",
+      map(scales, Scale.animation, transitionProperties, hiddenTransitionProperties),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transitionDuration: entries(
+      "transitionDuration",
+      map(scales, Scale.animation, transitionDurations, hiddenTransitionDurations),
+      scales[Scale.animation].cssAliasMap
+    ),
+    opacity: entries(
+      "opacity",
+      map(scales, Scale.animation, opacities, hiddenOpacities),
+      scales[Scale.animation].cssAliasMap
+    ),
+    pointerEvents: entries(
+      "pointerEvents",
+      map(scales, Scale.animation, pointerEvents, hiddenPointerEvents),
       scales[Scale.animation].cssAliasMap
     ),
   } as const
@@ -375,6 +471,10 @@ export const scaledPropScale = {
   fontWeight: Scale.fontWeight,
 
   textDecoration: Scale.textDecoration,
+  textDecorationLine: Scale.textDecoration,
+  textDecorationStyle: Scale.textDecoration,
+  textDecorationColor: Scale.textDecoration,
+  textDecorationThickness: Scale.textDecoration,
 
   type: Scale.type,
   lineHeight: Scale.lineHeight,
@@ -387,5 +487,15 @@ export const scaledPropScale = {
   boxShadow: Scale.shadow,
 
   animation: Scale.animation,
+  animationName: Scale.animation,
   animationDuration: Scale.animation,
+  animationIterationCount: Scale.animation,
+  animationTimingFunction: Scale.animation,
+  animationFillMode: Scale.animation,
+  transform: Scale.animation,
+  transformOrigin: Scale.animation,
+  transitionProperty: Scale.animation,
+  transitionDuration: Scale.animation,
+  opacity: Scale.animation,
+  pointerEvents: Scale.animation,
 } as const

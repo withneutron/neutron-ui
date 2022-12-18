@@ -210,15 +210,16 @@ export const sourceClassedProps = {
   transitionProperty: true,
   transitionTimingFunction: true,
 
+  textDecorationColor: true,
+  textDecorationLine: true,
+  textDecorationStyle: true,
+  textDecorationThickness: true,
+
   // FOR FUTURE CONSIDERATION
   // "quotes": true,
 
   // "transformStyle": true,
 
-  // "textDecorationColor": true,
-  // "textDecorationLine": true,
-  // "textDecorationStyle": true,
-  // "textDecorationThickness": true,
   // "textEmphasis": true,
   // "textIndent": true,
   // "textOrientation": true,

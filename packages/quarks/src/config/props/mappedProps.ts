@@ -210,6 +210,27 @@ export const mappedProps = {
   gap: getPropMapper("rowGap", "columnGap"),
 
   wordWrap: getPropMapper("overflowWrap"),
+
+  textDecoration: getPropMapper(
+    "textDecorationLine",
+    "textDecorationStyle",
+    "textDecorationColor",
+    "textDecorationThickness"
+  ),
+
+  animation: getPropMapper(
+    "animationName",
+    "animationDuration",
+    "animationIterationCount",
+    "animationTimingFunction",
+    "animationFillMode",
+    "transform",
+    "transformOrigin",
+    "transitionProperty",
+    "transitionDuration",
+    "opacity",
+    "pointerEvents"
+  ),
 } as const
 
 /*************************************************************************************************

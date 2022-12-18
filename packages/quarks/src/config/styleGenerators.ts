@@ -33,7 +33,8 @@ import {
   ConditionCategories,
   ConditionCategory,
 } from "./conditions"
-import { AliasMap, CssAlias, SCALED_ALIAS } from "./scales/scales.models"
+import { CssAlias, SCALED_ALIAS } from "./scales/scales.models"
+import { mapAliasToValue } from "./scales"
 
 /** Get theme override style */
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
@@ -614,18 +615,6 @@ export class StyleManager {
  * UTILS
  *************************************************************************************************/
 const DEBUG_GROUP_VALUE = "▼"
-
-/** Returns a CSS value from an alias map, using a CSS prop key and value */
-function mapAliasToValue(aliasMap: AliasMap, prop: CssPropKey, value: string | number) {
-  const propValue = aliasMap[prop as keyof typeof aliasMap]
-  if (propValue) {
-    if (typeof propValue === "string") {
-      return propValue
-    }
-    return propValue[value as keyof typeof propValue] ?? ""
-  }
-  return ""
-}
 
 /** Takes a nested (group-based) theme overrides object, and flattens it, without groupings */
 function flattenOverrides(overrides?: ThemeOverrides) {
