@@ -7,9 +7,21 @@ import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
-import { styled, Box, Column, Heading, SubHeading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
+import {
+  styled,
+  Box,
+  Column,
+  Heading,
+  SubHeading,
+  Text,
+  Anchor,
+  Grid,
+  Row,
+  variants,
+  useAnimation,
+} from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
-import { useEffect, useRef, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 
 const Base = styled(
   "aside",
@@ -38,11 +50,12 @@ const Secondary = styled(
 const Tertiary = styled(
   Secondary,
   {
-    outline: "initial",
+    outline: "none",
     bg: "$secondary9",
     p: "$32",
     font: "$em",
     textDecoration: "$highlightError",
+    pointerEvents: "all",
   },
   "Tertiary"
 )
@@ -143,7 +156,7 @@ const NuiSection = styled(
         ":interact": {
           linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
           color: "$primaryText9",
-          borderColor: "transparent",
+          border: "none",
           outlineColor: "$primaryMax",
         },
       },
@@ -220,7 +233,7 @@ const Sample: NextPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCycle((current: number) => current + 1)
-    }, 2000)
+    }, 4000)
     return () => clearInterval(interval)
   }, [])
 
@@ -262,9 +275,7 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
-          <Heading css={{ type: "$majorTitle", animation: "$flashSize", transformOrigin: "center left" }}>
-            Major Title
-          </Heading>
+          <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
           <SubHeading css={{ type: "$title" }}>Title</SubHeading>
           <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
             Minor Title
@@ -273,34 +284,14 @@ const Sample: NextPage = () => {
           <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
           <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
-          <Box.Aside
-            ref={(element: HTMLDivElement) => {
-              // console.log("@@@ element", element)
-            }}
+          {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
+          <Tertiary
             style={{
               lineHeight: "200px",
             }}
-            css={{
-              bg: "$primary10",
-              color: "$primaryText10",
-              mt: "$4",
-              mr: "$12",
-              mb: "$24",
-              ml: "$20",
-              p: "$32",
-              pl: "$12",
-              radiusTopLeft: "$3",
-              radiusTopRight: "$8",
-              radiusBottomRight: "$1",
-              radiusBottomLeft: "$6",
-              float: "left",
-              maxWidth: "$480",
-              animation: cycle % 2 ? "$zoomOut" : "$zoomIn",
-            }}
           >
-            Sample box
-          </Box.Aside>
-          <Tertiary>Testing 3-level composition</Tertiary>
+            Testing 3-level composition
+          </Tertiary>
           <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
@@ -331,3 +322,44 @@ const Sample: NextPage = () => {
 }
 
 export default Sample
+
+interface SampleBoxProps {
+  children: ReactNode
+  isVisible?: boolean
+}
+
+function SampleBox(props: SampleBoxProps) {
+  const { animation, isVisible } = useAnimation("$slideOutBottom", "$slideInBottom", props.isVisible)
+  return !isVisible ? null : (
+    <Row
+      css={{
+        animation,
+        position: "fixed",
+        bottom: "$24",
+        justifyContent: "center",
+        w: "100%",
+      }}
+    >
+      <Box.Aside
+        ref={(element: HTMLDivElement) => {
+          // console.log("@@@ element", element)
+        }}
+        css={{
+          bg: "$primary10",
+          color: "$primaryText10",
+          p: "$32",
+          radiusTopLeft: "$3",
+          radiusTopRight: "$8",
+          radiusBottomRight: "$1",
+          radiusBottomLeft: "$6",
+          minWidth: "$320",
+          maxWidth: "$480",
+          boxShadow: "$medium",
+        }}
+      >
+        {props.children}
+      </Box.Aside>
+    </Row>
+  )
+}
+SampleBox.displayName = "SampleBox"

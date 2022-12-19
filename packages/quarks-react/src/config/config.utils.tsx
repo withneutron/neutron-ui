@@ -50,6 +50,7 @@ export function getSemanticLayoutPrimitive<T extends StyledComponent>(Comp: T) {
   output.Main = getSemantic(Comp, "main")
   output.Nav = getSemantic(Comp, "nav")
   output.Section = getSemantic(Comp, "section")
+  output.Span = getSemantic(Comp, "span")
   return output
 }
 

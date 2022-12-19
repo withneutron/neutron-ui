@@ -1,4 +1,4 @@
-import { addPrefix, CharHash } from "../utils"
+import { addPrefix, addStaticValuePrefix, CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
 import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
@@ -183,6 +183,18 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
         borderBlockEndColor: "bottomTertiaryColorMax",
         borderInlineStartColor: "leftTertiaryColorMax",
         borderInlineEndColor: "rightTertiaryColorMax",
+      },
+      [addStaticValuePrefix("none")]: {
+        borderBlockStartColor: addStaticValuePrefix("transparent"),
+        borderBlockEndColor: addStaticValuePrefix("transparent"),
+        borderInlineStartColor: addStaticValuePrefix("transparent"),
+        borderInlineEndColor: addStaticValuePrefix("transparent"),
+      },
+      [addStaticValuePrefix("initial")]: {
+        borderBlockStartColor: addStaticValuePrefix("transparent"),
+        borderBlockEndColor: addStaticValuePrefix("transparent"),
+        borderInlineStartColor: addStaticValuePrefix("transparent"),
+        borderInlineEndColor: addStaticValuePrefix("transparent"),
       },
     },
     {

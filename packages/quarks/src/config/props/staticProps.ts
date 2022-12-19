@@ -43,6 +43,8 @@ const none = options("none")
 const auto = options("auto")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
 const borderStyle = options("dashed", "dotted", "groove")
+const height = options("100%", "100vh", "max-content", "min-content", "auto")
+const width = options("100%", "100vw", "max-content", "min-content", "auto")
 
 type Placeholder = { fakeProp: true }
 
@@ -91,7 +93,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     backgroundColor: values("backgroundColor", color),
     color: values("color", color),
 
-    border: values("border"),
+    border: values("border", none),
     borderBlock: values("borderBlock", none),
     borderInline: values("borderInline", none),
     borderTop: values("borderTop", none),
@@ -106,20 +108,20 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderBlockEndColor: values("borderBlockEndColor", color),
     borderInlineStartColor: values("borderInlineStartColor", color),
     borderInlineEndColor: values("borderInlineEndColor", color),
-    borderBlockStartWidth: values("borderBlockStartWidth"),
-    borderBlockEndWidth: values("borderBlockEndWidth"),
-    borderInlineStartWidth: values("borderInlineStartWidth"),
-    borderInlineEndWidth: values("borderInlineEndWidth"),
+    borderBlockStartWidth: values("borderBlockStartWidth", width),
+    borderBlockEndWidth: values("borderBlockEndWidth", width),
+    borderInlineStartWidth: values("borderInlineStartWidth", width),
+    borderInlineEndWidth: values("borderInlineEndWidth", width),
 
     borderStartStartRadius: values("borderStartStartRadius"),
     borderStartEndRadius: values("borderStartEndRadius"),
     borderEndStartRadius: values("borderEndStartRadius"),
     borderEndEndRadius: values("borderEndEndRadius"),
 
-    outline: values("outline"),
+    outline: values("outline", none),
     outlineColor: values("outlineColor", color),
     outlineOffset: values("outlineOffset"),
-    outlineWidth: values("outlineWidth"),
+    outlineWidth: values("outlineWidth", width),
 
     fill: values("fill", color),
     stroke: values("stroke", color),
@@ -198,7 +200,21 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
         "zoom-in"
       )
     ),
-    pointerEvents: values("pointerEvents", noneAuto),
+    pointerEvents: values(
+      "pointerEvents",
+      options(
+        "auto",
+        "none",
+        "visiblePainted",
+        "visibleFill",
+        "visibleStroke",
+        "visible",
+        "painted",
+        "fill",
+        "stroke",
+        "all"
+      )
+    ),
 
     boxSizing: values("boxSizing", options("border-box", "content-box")),
 
@@ -321,12 +337,12 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     ),
 
     // STANDARD VALUES ONLY //
-    inlineSize: values("inlineSize"),
-    minInlineSize: values("minInlineSize"),
-    maxInlineSize: values("maxInlineSize"),
-    blockSize: values("blockSize"),
-    minBlockSize: values("minBlockSize"),
-    maxBlockSize: values("maxBlockSize"),
+    inlineSize: values("inlineSize", width),
+    minInlineSize: values("minInlineSize", width),
+    maxInlineSize: values("maxInlineSize", width),
+    blockSize: values("blockSize", height),
+    minBlockSize: values("minBlockSize", height),
+    maxBlockSize: values("maxBlockSize", height),
     marginBlockStart: values("marginBlockStart", auto),
     marginBlockEnd: values("marginBlockEnd", auto),
     marginInlineStart: values("marginInlineStart", auto),

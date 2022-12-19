@@ -55,27 +55,27 @@ export function getAliasMap<A extends AliasMap, F extends FlatMap>(map: A, flatM
   const aliasMap = {} as Record<string, any>
 
   Object.entries(map).forEach(([key, values]) => {
-    const alias = addPrefix(key) as string
+    const alias = addPrefixIfNotStatic(key) as string
     cssAliases[alias as PrefixedKey<A>] = SCALED_ALIAS
     Object.entries(values).forEach(([prop, target]) => {
       if (!aliasMap[prop]) {
         aliasMap[prop] = {}
       }
-      aliasMap[prop][alias] = target.startsWith(STATIC_VALUE_PREFIX)
-        ? target.replace(STATIC_VALUE_PREFIX, "")
-        : addPrefix(target)
+      aliasMap[prop][alias] = addPrefixIfNotStatic(target)
     })
   })
 
   if (flatMap) {
     Object.entries(flatMap).forEach(([prop, target]) => {
-      aliasMap[prop] = target.startsWith(STATIC_VALUE_PREFIX)
-        ? target.replace(STATIC_VALUE_PREFIX, "")
-        : addPrefix(target)
+      aliasMap[prop] = addPrefixIfNotStatic(target)
     })
   }
 
   return { cssAliases, aliasMap: aliasMap as AliasMap }
+}
+
+function addPrefixIfNotStatic(text: string) {
+  return text.startsWith(STATIC_VALUE_PREFIX) ? text.replace(STATIC_VALUE_PREFIX, "") : addPrefix(text)
 }
 
 /** Returns a CSS value from an alias map, using a CSS prop key and value */

@@ -1,4 +1,4 @@
-import { CharHash } from "../utils"
+import { addStaticValuePrefix, CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
 import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
@@ -73,6 +73,8 @@ export function getOutline<T extends ColorVars>(hash: CharHash, color: T) {
       tertiary: { outlineColor: "tertiaryColorBase" },
       tertiaryMin: { outlineColor: "tertiaryColorMin" },
       tertiaryMax: { outlineColor: "tertiaryColorMax" },
+      [addStaticValuePrefix("none")]: { outlineColor: addStaticValuePrefix("transparent") },
+      [addStaticValuePrefix("initial")]: { outlineColor: addStaticValuePrefix("transparent") },
     },
     {
       outlineWidth: "widthDefault",
