@@ -1,7 +1,7 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 import { vars } from "@withneutron/quarks"
 
-export const Anchor = styledPrimitive(
+export const Anchor = styled(
   "a",
   {
     fontWeight: "$600",

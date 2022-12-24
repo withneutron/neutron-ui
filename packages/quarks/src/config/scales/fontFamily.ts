@@ -8,7 +8,7 @@ import {
 import { enumKeys } from "../../shared/utils"
 import { CharHash } from "../utils"
 import { ScaleEntry, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 // Font definition
 export const DEFAULT_FONTS: Required<FontFamilySpec> = {
@@ -71,5 +71,6 @@ export function getFontFamily(hash: CharHash) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }

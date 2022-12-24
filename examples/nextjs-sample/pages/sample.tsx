@@ -7,12 +7,61 @@ import { ButtonSamples } from "@/components/sample/ButtonSamples"
 import { Inputs } from "@/components/sample/Inputs"
 import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
-import { styled, Box, Column, Heading, Text, Anchor, Grid, Row, variants } from "@withneutron/quarks-react"
+import {
+  styled,
+  Box,
+  Column,
+  Heading,
+  SubHeading,
+  Text,
+  Anchor,
+  Grid,
+  Row,
+  variants,
+  useAnimation,
+} from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
-import { useEffect, useRef } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
+
+const Base = styled(
+  "aside",
+  {
+    color: "$secondaryText10",
+    outline: "$secondary",
+    radius: "$8",
+    bg: {
+      md: "$primary10",
+      lg: "$primary7",
+      xl: "$primary12",
+      base: "$amber10",
+    },
+    backgroundColor: "$amber10",
+  },
+  "Base"
+)
+const Secondary = styled(
+  Base,
+  {
+    backgroundColor: "$amber10",
+    color: "$amber2",
+  },
+  "Secondary"
+)
+const Tertiary = styled(
+  Secondary,
+  {
+    outline: "none",
+    bg: "$secondary9",
+    p: "$32",
+    font: "$em",
+    textDecoration: "$highlightError",
+    pointerEvents: "all",
+  },
+  "Tertiary"
+)
 
 const BaseSection = styled(
-  "div",
+  "section",
   {
     h: "$80",
     width: `calc(100vw - ${vars.size[120]})`,
@@ -31,7 +80,9 @@ const BaseSection = styled(
     mr: "$12",
     p: "$32",
     pl: "$16",
-    border: "$primaryMax",
+    border: "$primary",
+    borderTopColor: "$secondaryMin",
+    borderBottomColor: "$tertiaryMax",
     fontFamily: "$code",
     radius: "$1",
     radiusTopRight: "$8",
@@ -48,11 +99,14 @@ const BaseSection = styled(
     ":focus-visible": {
       color: "$primaryText9",
       bg: "$primary9",
-      outline: "$primaryMax",
+      outline: "$secondaryMax",
     },
     ":hover": {
       bg: "$primary9",
       color: "$primaryText9",
+    },
+    ":interact": {
+      borderColor: "$secondaryMax",
     },
   },
   "BaseSection"
@@ -61,6 +115,7 @@ const NuiSection = styled(
   BaseSection,
   {
     h: "$320",
+    mx: "$56",
     sm: {
       color: "$magentaText1",
     },
@@ -72,13 +127,20 @@ const NuiSection = styled(
     },
     xl: {
       color: "$aquaText1",
+      mx: "$24",
     },
     dark: {
       outlineWidth: "$widthBase",
       color: "$aquaText1",
     },
+    "!touch": {
+      bg: "$aqua4",
+    },
     motion: {
       animation: "none",
+    },
+    ":interact": {
+      color: "$tomato3",
     },
   },
   variants({
@@ -89,7 +151,14 @@ const NuiSection = styled(
       },
       success: {
         bg: "$success3",
+        linearGradient: `${vars.color.success3}, ${vars.color.success1}`,
         color: "$successText3",
+        ":interact": {
+          linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
+          color: "$primaryText9",
+          border: "none",
+          outlineColor: "$primaryMax",
+        },
       },
       warning: {
         bg: "$warning3",
@@ -100,10 +169,22 @@ const NuiSection = styled(
           lg: "$24",
           base: "$40",
         },
+        ":interact": {
+          bg: "$warning9",
+          color: "$warningText9",
+          borderColor: "transparent",
+          outlineColor: "$tertiaryMax",
+          outlineWidth: "$widthMax",
+        },
       },
     },
     isChunky: {
-      true: { borderWidth: "$widthMax" },
+      true: {
+        borderWidth: "$widthMax",
+        ":focus-visible": {
+          outlineWidth: "$widthMax",
+        },
+      },
     },
   }),
   "NuiSection"
@@ -143,10 +224,18 @@ const Sample: NextPage = () => {
   const showStatuses = true
   const showSampleBox = true
   const ref = useRef<HTMLDivElement | null>(null)
+  const [cycle, setCycle] = useState(0)
 
   useEffect(() => {
-    console.log("@@@ ref", ref.current)
+    // console.log("@@@ ref", ref.current)
   }, [ref.current])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCycle((current: number) => current + 1)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
 
   const sampleControls = (
     <>
@@ -186,45 +275,32 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
-          <Heading.H2 css={{ type: "$majorTitle" }}>Major Title</Heading.H2>
-          <Heading.H2 css={{ type: "$title" }}>Title</Heading.H2>
-          <Heading.H2 css={{ type: "$minorTitle" }}>Minor Title</Heading.H2>
-          <Heading.H2 css={{ type: "$heading" }}>Heading</Heading.H2>
-          <Heading.H2 css={{ type: "$subHeading" }}>Sub-Heading</Heading.H2>
-          <Text css={{ type: "$body" }}>Body</Text>
+          <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
+          <SubHeading css={{ type: "$title" }}>Title</SubHeading>
+          <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
+            Minor Title
+          </SubHeading>
+          <Heading.H3 css={{ type: "$heading" }}>Heading</Heading.H3>
+          <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
+          <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
-          <Box.Aside
-            ref={(element: HTMLDivElement) => {
-              console.log("@@@ element", element)
-            }}
-            css={{
-              bg: "$primary10",
-              color: "$primaryText10",
-              mt: "$4",
-              mr: "$12",
-              mb: "$24",
-              ml: "$20",
-              p: "$32",
-              pl: "$12",
-              radiusTopLeft: "$3",
-              radiusTopRight: "$8",
-              radiusBottomRight: "$1",
-              radiusBottomLeft: "$6",
-              float: "left",
-              maxWidth: "$480",
+          {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
+          <Tertiary
+            style={{
+              lineHeight: "200px",
             }}
           >
-            Sample box
-          </Box.Aside>
+            Testing 3-level composition
+          </Tertiary>
           <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
             NUI-powered sample box
           </NuiSection>
-          <NuiSection kind="warning" tabIndex={0} css={{ h: "$200" }}>
+          <NuiSection as="aside" kind="warning" tabIndex={0} css={{ h: "$200" }}>
             NUI-powered sample box
           </NuiSection>
           <SampleGrid>
             <GridBox>1</GridBox>
-            <GridBox>2</GridBox>
+            <GridBox css={{ border: "$primaryMax" }}>2</GridBox>
             <GridBox>3</GridBox>
             <GridBox>4</GridBox>
 
@@ -246,3 +322,44 @@ const Sample: NextPage = () => {
 }
 
 export default Sample
+
+interface SampleBoxProps {
+  children: ReactNode
+  isVisible?: boolean
+}
+
+function SampleBox(props: SampleBoxProps) {
+  const { animation, isVisible } = useAnimation("$slideOutBottom", "$slideInBottom", props.isVisible)
+  return !isVisible ? null : (
+    <Row
+      css={{
+        animation,
+        position: "fixed",
+        bottom: "$24",
+        justifyContent: "center",
+        w: "100%",
+      }}
+    >
+      <Box.Aside
+        ref={(element: HTMLDivElement) => {
+          // console.log("@@@ element", element)
+        }}
+        css={{
+          bg: "$primary10",
+          color: "$primaryText10",
+          p: "$32",
+          radiusTopLeft: "$3",
+          radiusTopRight: "$8",
+          radiusBottomRight: "$1",
+          radiusBottomLeft: "$6",
+          minWidth: "$320",
+          maxWidth: "$480",
+          boxShadow: "$medium",
+        }}
+      >
+        {props.children}
+      </Box.Aside>
+    </Row>
+  )
+}
+SampleBox.displayName = "SampleBox"

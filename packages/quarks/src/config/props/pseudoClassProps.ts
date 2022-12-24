@@ -1,6 +1,6 @@
 import { FilterKeys, PickKeys } from "./props.models"
 
-// Only these props should have interactive state classes/vars generated for them
+// Only these props should have interact state classes/vars generated for them
 // 20
 export const pseudoClassProps = {
   animation: true,
@@ -9,6 +9,9 @@ export const pseudoClassProps = {
 
   outline: true,
   outlineColor: true,
+  outlineWidth: true,
+  outlineStyle: true,
+  outlineOffset: true,
 
   borderBlockStart: true,
   borderBlockEnd: true,
@@ -24,6 +27,15 @@ export const pseudoClassProps = {
   backgroundColor: true,
   backgroundBlendMode: true,
   backgroundImage: true,
+  backgroundPosition: true,
+
+  linearGradient: true,
+  radialGradient: true,
+  conicGradient: true,
+
+  mask: true,
+  borderImage: true,
+  borderSpacing: true,
 
   color: true,
 
@@ -42,6 +54,9 @@ export const pseudoClassProps = {
   // columnRuleColor: true,
   // textShadow: true,
   // transformOrigin: true,
+  // listStyle: true,
+  // listStyleImage: true,
+  // filter: true,
 } as const
 
 export const pointerClassProps = {
@@ -73,14 +88,19 @@ export const pseudoClasses = {
   ":focus-visible": pseudoClassProps,
   ":hover": pointerClassProps,
   ":active": pseudoClassProps,
-}
+} as const
 
 // ALIASES ////////////////////////////////////////////////////////////////////////////////////////
 export const pseudoClassAliases = {
   ":focus": [":focus-visible"],
   ":hover, :focus": [":hover", ":focus-visible"],
   ":hover, :focus-visible": [":hover", ":focus-visible"],
-  ":interactive": [":hover", ":focus-visible"],
+  ":interact": [":hover", ":focus-visible"],
+} as const
+
+export const combinedPseudoClasses = {
+  ...pseudoClasses,
+  ...pseudoClassAliases,
 } as const
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////
@@ -91,9 +111,8 @@ export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
 type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type PseudoClassesWithAliases<T extends PseudoClassObject> = 
-  & T
-  & { ":focus"?: T[":focus-visible"] } 
-  & { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } 
-  & { ":interactive"?: T[":hover"] & T[":focus-visible"] }
+export type PseudoClassesWithAliases<T extends PseudoClassObject> = T & { ":focus"?: T[":focus-visible"] } & {
+  ":hover, :focus"?: T[":hover"] & T[":focus-visible"]
+} & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } & {
+  ":interact"?: T[":hover"] & T[":focus-visible"]
+}

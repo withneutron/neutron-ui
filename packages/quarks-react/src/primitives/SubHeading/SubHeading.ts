@@ -1,16 +1,16 @@
 import { styled } from "../../config"
 import { getSemanticHeadingPrimitive } from "../../config"
 
-export const Heading = getSemanticHeadingPrimitive(
+export const SubHeading = getSemanticHeadingPrimitive(
   styled(
-    "h1",
+    "h2",
     {
       color: "$defaultHeading",
-      fontSize: "$h1",
-      fontWeight: "$h1",
+      fontSize: "$h2",
+      fontWeight: "$h2",
       lineHeight: "$heading",
-      my: "$20",
+      my: "$16",
     },
-    "Heading"
+    "SubHeading"
   )
 )

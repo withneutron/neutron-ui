@@ -1,12 +1,9 @@
-import { CharHash } from "../utils"
+import { addPrefix, addStaticValuePrefix, CharHash } from "../utils"
 import { ColorVars, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `border` theme scale */
 export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
-  const widthBase = { ...hash.var, value: "2rem" } as const
-  const widthMin = { ...hash.var, value: `calc(${widthBase.ref} - 1rem)` } as const
-  const widthMax = { ...hash.var, value: `calc(${widthBase.ref} + 2rem)` } as const
   const primaryColorBase = { ...hash.var, value: color.primary8.ref } as const
   const primaryColorMin = { ...hash.var, value: color.primary6.ref } as const
   const primaryColorMax = { ...hash.var, value: color.primary9.ref } as const
@@ -17,13 +14,14 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
   const tertiaryColorMin = { ...hash.var, value: color.tertiary4.ref } as const
   const tertiaryColorMax = { ...hash.var, value: color.tertiary9.ref } as const
 
-  const defaultWidth = { ...hash.var, value: widthBase.ref } as const
-  const defaultStyle = { ...hash.var, value: "solid" } as const
+  const styleDefault = { ...hash.var, value: "solid" } as const
+
+  const widthBase = { ...hash.var, value: "2rem" } as const
+  const widthMin = { ...hash.var, value: `calc(${widthBase.ref} - 1rem)` } as const
+  const widthMax = { ...hash.var, value: `calc(${widthBase.ref} + 2rem)` } as const
+  const widthDefault = { ...hash.var, value: widthBase.ref } as const
 
   const sharedVars = {
-    widthBase,
-    widthMin,
-    widthMax,
     primaryColorBase,
     primaryColorMin,
     primaryColorMax,
@@ -33,52 +31,200 @@ export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
     tertiaryColorBase,
     tertiaryColorMin,
     tertiaryColorMax,
-    // Composition combos
-    primary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorBase.ref}` },
-    primaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMin.ref}` },
-    primaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${primaryColorMax.ref}` },
-    secondary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorBase.ref}` },
-    secondaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMin.ref}` },
-    secondaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${secondaryColorMax.ref}` },
-    tertiary: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorBase.ref}` },
-    tertiaryMin: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMin.ref}` },
-    tertiaryMax: { ...hash.var, value: `${defaultWidth.ref} ${defaultStyle.ref} ${tertiaryColorMax.ref}` },
-    // Defaults are not added here, because they are just internal reference vars;
-    // they can only be consumed via the composite combos.
+    widthBase,
+    widthMin,
+    widthMax,
+    widthDefault,
+    styleDefault,
   } as const
 
-  const vars = { ...sharedVars, defaultWidth, defaultStyle } as const
-  const cssValueMap = { ...getCssMapFromVars(sharedVars) } as const
-  const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
+  const vars = { ...sharedVars } as const
+  const baseCssValueMap = { ...getCssMapFromVars(sharedVars) } as const
+  const cssValueMap = {
+    ...baseCssValueMap,
+
+    // COMBO PLACEHOLDERS //
+    primary: "primary",
+    primaryMin: "primaryMin",
+    primaryMax: "primaryMax",
+    secondary: "secondary",
+    secondaryMin: "secondaryMin",
+    secondaryMax: "secondaryMax",
+    tertiary: "tertiary",
+    tertiaryMin: "tertiaryMin",
+    tertiaryMax: "tertiaryMax",
+
+    // COLORS //
+    topPrimaryColorBase: { borderBlockStartColor: primaryColorBase.ref },
+    bottomPrimaryColorBase: { borderBlockEndColor: primaryColorBase.ref },
+    leftPrimaryColorBase: { borderInlineStartColor: primaryColorBase.ref },
+    rightPrimaryColorBase: { borderInlineEndColor: primaryColorBase.ref },
+
+    topPrimaryColorMin: { borderBlockStartColor: primaryColorMin.ref },
+    bottomPrimaryColorMin: { borderBlockEndColor: primaryColorMin.ref },
+    leftPrimaryColorMin: { borderInlineStartColor: primaryColorMin.ref },
+    rightPrimaryColorMin: { borderInlineEndColor: primaryColorMin.ref },
+
+    topPrimaryColorMax: { borderBlockStartColor: primaryColorMax.ref },
+    bottomPrimaryColorMax: { borderBlockEndColor: primaryColorMax.ref },
+    leftPrimaryColorMax: { borderInlineStartColor: primaryColorMax.ref },
+    rightPrimaryColorMax: { borderInlineEndColor: primaryColorMax.ref },
+
+    topSecondaryColorBase: { borderBlockStartColor: secondaryColorBase.ref },
+    bottomSecondaryColorBase: { borderBlockEndColor: secondaryColorBase.ref },
+    leftSecondaryColorBase: { borderInlineStartColor: secondaryColorBase.ref },
+    rightSecondaryColorBase: { borderInlineEndColor: secondaryColorBase.ref },
+
+    topSecondaryColorMin: { borderBlockStartColor: secondaryColorMin.ref },
+    bottomSecondaryColorMin: { borderBlockEndColor: secondaryColorMin.ref },
+    leftSecondaryColorMin: { borderInlineStartColor: secondaryColorMin.ref },
+    rightSecondaryColorMin: { borderInlineEndColor: secondaryColorMin.ref },
+
+    topSecondaryColorMax: { borderBlockStartColor: secondaryColorMax.ref },
+    bottomSecondaryColorMax: { borderBlockEndColor: secondaryColorMax.ref },
+    leftSecondaryColorMax: { borderInlineStartColor: secondaryColorMax.ref },
+    rightSecondaryColorMax: { borderInlineEndColor: secondaryColorMax.ref },
+
+    topTertiaryColorBase: { borderBlockStartColor: tertiaryColorBase.ref },
+    bottomTertiaryColorBase: { borderBlockEndColor: tertiaryColorBase.ref },
+    leftTertiaryColorBase: { borderInlineStartColor: tertiaryColorBase.ref },
+    rightTertiaryColorBase: { borderInlineEndColor: tertiaryColorBase.ref },
+
+    topTertiaryColorMin: { borderBlockStartColor: tertiaryColorMin.ref },
+    bottomTertiaryColorMin: { borderBlockEndColor: tertiaryColorMin.ref },
+    leftTertiaryColorMin: { borderInlineStartColor: tertiaryColorMin.ref },
+    rightTertiaryColorMin: { borderInlineEndColor: tertiaryColorMin.ref },
+
+    topTertiaryColorMax: { borderBlockStartColor: tertiaryColorMax.ref },
+    bottomTertiaryColorMax: { borderBlockEndColor: tertiaryColorMax.ref },
+    leftTertiaryColorMax: { borderInlineStartColor: tertiaryColorMax.ref },
+    rightTertiaryColorMax: { borderInlineEndColor: tertiaryColorMax.ref },
+
+    // STYLES //
+    topStyleDefault: { borderBlockStartStyle: styleDefault.ref },
+    bottomStyleDefault: { borderBlockEndStyle: styleDefault.ref },
+    leftStyleDefault: { borderInlineStartStyle: styleDefault.ref },
+    rightStyleDefault: { borderInlineEndStyle: styleDefault.ref },
+
+    // WIDTHS //
+    topWidthBase: { borderBlockStartWidth: widthBase.ref },
+    bottomWidthBase: { borderBlockEndWidth: widthBase.ref },
+    leftWidthBase: { borderInlineStartWidth: widthBase.ref },
+    rightWidthBase: { borderInlineEndWidth: widthBase.ref },
+
+    topWidthMin: { borderBlockStartWidth: widthMin.ref },
+    bottomWidthMin: { borderBlockEndWidth: widthMin.ref },
+    leftWidthMin: { borderInlineStartWidth: widthMin.ref },
+    rightWidthMin: { borderInlineEndWidth: widthMin.ref },
+
+    topWidthMax: { borderBlockStartWidth: widthMax.ref },
+    bottomWidthMax: { borderBlockEndWidth: widthMax.ref },
+    leftWidthMax: { borderInlineStartWidth: widthMax.ref },
+    rightWidthMax: { borderInlineEndWidth: widthMax.ref },
+
+    topWidthDefault: { borderBlockStartWidth: widthDefault.ref },
+    bottomWidthDefault: { borderBlockEndWidth: widthDefault.ref },
+    leftWidthDefault: { borderInlineStartWidth: widthDefault.ref },
+    rightWidthDefault: { borderInlineEndWidth: widthDefault.ref },
+  } as const
+
+  const { aliasMap, cssAliases } = getAliasMap(
+    {
+      primary: {
+        borderBlockStartColor: "topPrimaryColorBase",
+        borderBlockEndColor: "bottomPrimaryColorBase",
+        borderInlineStartColor: "leftPrimaryColorBase",
+        borderInlineEndColor: "rightPrimaryColorBase",
+      },
+      primaryMin: {
+        borderBlockStartColor: "topPrimaryColorMin",
+        borderBlockEndColor: "bottomPrimaryColorMin",
+        borderInlineStartColor: "leftPrimaryColorMin",
+        borderInlineEndColor: "rightPrimaryColorMin",
+      },
+      primaryMax: {
+        borderBlockStartColor: "topPrimaryColorMax",
+        borderBlockEndColor: "bottomPrimaryColorMax",
+        borderInlineStartColor: "leftPrimaryColorMax",
+        borderInlineEndColor: "rightPrimaryColorMax",
+      },
+      secondary: {
+        borderBlockStartColor: "topSecondaryColorBase",
+        borderBlockEndColor: "bottomSecondaryColorBase",
+        borderInlineStartColor: "leftSecondaryColorBase",
+        borderInlineEndColor: "rightSecondaryColorBase",
+      },
+      secondaryMin: {
+        borderBlockStartColor: "topSecondaryColorMin",
+        borderBlockEndColor: "bottomSecondaryColorMin",
+        borderInlineStartColor: "leftSecondaryColorMin",
+        borderInlineEndColor: "rightSecondaryColorMin",
+      },
+      secondaryMax: {
+        borderBlockStartColor: "topSecondaryColorMax",
+        borderBlockEndColor: "bottomSecondaryColorMax",
+        borderInlineStartColor: "leftSecondaryColorMax",
+        borderInlineEndColor: "rightSecondaryColorMax",
+      },
+      tertiary: {
+        borderBlockStartColor: "topTertiaryColorBase",
+        borderBlockEndColor: "bottomTertiaryColorBase",
+        borderInlineStartColor: "leftTertiaryColorBase",
+        borderInlineEndColor: "rightTertiaryColorBase",
+      },
+      tertiaryMin: {
+        borderBlockStartColor: "topTertiaryColorMin",
+        borderBlockEndColor: "bottomTertiaryColorMin",
+        borderInlineStartColor: "leftTertiaryColorMin",
+        borderInlineEndColor: "rightTertiaryColorMin",
+      },
+      tertiaryMax: {
+        borderBlockStartColor: "topTertiaryColorMax",
+        borderBlockEndColor: "bottomTertiaryColorMax",
+        borderInlineStartColor: "leftTertiaryColorMax",
+        borderInlineEndColor: "rightTertiaryColorMax",
+      },
+      [addStaticValuePrefix("none")]: {
+        borderBlockStartColor: addStaticValuePrefix("transparent"),
+        borderBlockEndColor: addStaticValuePrefix("transparent"),
+        borderInlineStartColor: addStaticValuePrefix("transparent"),
+        borderInlineEndColor: addStaticValuePrefix("transparent"),
+      },
+      [addStaticValuePrefix("initial")]: {
+        borderBlockStartColor: addStaticValuePrefix("transparent"),
+        borderBlockEndColor: addStaticValuePrefix("transparent"),
+        borderInlineStartColor: addStaticValuePrefix("transparent"),
+        borderInlineEndColor: addStaticValuePrefix("transparent"),
+      },
+    },
+    {
+      borderBlockStartStyle: "topStyleDefault",
+      borderBlockEndStyle: "bottomStyleDefault",
+      borderInlineStartStyle: "leftStyleDefault",
+      borderInlineEndStyle: "rightStyleDefault",
+      borderBlockStartWidth: "topWidthDefault",
+      borderBlockEndWidth: "bottomWidthDefault",
+      borderInlineStartWidth: "leftWidthDefault",
+      borderInlineEndWidth: "rightWidthDefault",
+    }
+  )
+
+  const cssAliasMap = { ...cssAliases } as const
+
+  const themeProps = { ...getThemePropsFromCssMap(baseCssValueMap) } as const
 
   return {
     vars,
     themeProps,
     cssValueMap,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
+    cssAliasMap,
+    aliasMap,
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap>
 }
 
 // FILTER KEYS ////////////////////////////////////////////////////////////////
 // Used for generating types that map to only parts of this scale
-
-export const borderWidths = {
-  widthBase: true,
-  widthMin: true,
-  widthMax: true,
-  defaultWidth: true,
-} as const
-
-export const borderColors = {
-  primaryColorBase: true,
-  primaryColorMin: true,
-  primaryColorMax: true,
-  secondaryColorBase: true,
-  secondaryColorMin: true,
-  secondaryColorMax: true,
-  tertiaryColorBase: true,
-  tertiaryColorMin: true,
-  tertiaryColorMax: true,
-} as const
 
 export const borderCombos = {
   primary: true,
@@ -90,4 +236,85 @@ export const borderCombos = {
   tertiary: true,
   tertiaryMin: true,
   tertiaryMax: true,
+} as const
+
+export const borderColors = { ...borderCombos } as const
+
+export const hiddenBorderColors = {
+  ...borderCombos,
+  topPrimaryColorBase: true,
+  bottomPrimaryColorBase: true,
+  leftPrimaryColorBase: true,
+  rightPrimaryColorBase: true,
+  topPrimaryColorMin: true,
+  bottomPrimaryColorMin: true,
+  leftPrimaryColorMin: true,
+  rightPrimaryColorMin: true,
+  topPrimaryColorMax: true,
+  bottomPrimaryColorMax: true,
+  leftPrimaryColorMax: true,
+  rightPrimaryColorMax: true,
+  topSecondaryColorBase: true,
+  bottomSecondaryColorBase: true,
+  leftSecondaryColorBase: true,
+  rightSecondaryColorBase: true,
+  topSecondaryColorMin: true,
+  bottomSecondaryColorMin: true,
+  leftSecondaryColorMin: true,
+  rightSecondaryColorMin: true,
+  topSecondaryColorMax: true,
+  bottomSecondaryColorMax: true,
+  leftSecondaryColorMax: true,
+  rightSecondaryColorMax: true,
+  topTertiaryColorBase: true,
+  bottomTertiaryColorBase: true,
+  leftTertiaryColorBase: true,
+  rightTertiaryColorBase: true,
+  topTertiaryColorMin: true,
+  bottomTertiaryColorMin: true,
+  leftTertiaryColorMin: true,
+  rightTertiaryColorMin: true,
+  topTertiaryColorMax: true,
+  bottomTertiaryColorMax: true,
+  leftTertiaryColorMax: true,
+  rightTertiaryColorMax: true,
+} as const
+
+export const borderStyles = {
+  styleDefault: true,
+} as const
+
+export const hiddenBorderStyles = {
+  ...borderCombos,
+  topStyleDefault: true,
+  bottomStyleDefault: true,
+  leftStyleDefault: true,
+  rightStyleDefault: true,
+} as const
+
+export const borderWidths = {
+  widthBase: true,
+  widthMin: true,
+  widthMax: true,
+  widthDefault: true,
+} as const
+
+export const hiddenBorderWidths = {
+  ...borderCombos,
+  topWidthBase: true,
+  bottomWidthBase: true,
+  leftWidthBase: true,
+  rightWidthBase: true,
+  topWidthMin: true,
+  bottomWidthMin: true,
+  leftWidthMin: true,
+  rightWidthMin: true,
+  topWidthMax: true,
+  bottomWidthMax: true,
+  leftWidthMax: true,
+  rightWidthMax: true,
+  topWidthDefault: true,
+  bottomWidthDefault: true,
+  leftWidthDefault: true,
+  rightWidthDefault: true,
 } as const

@@ -1,4 +1,4 @@
-import { CSS, mergeCss } from "@withneutron/quarks"
+import { CSS, VariantCSS } from "@withneutron/quarks"
 
 type StringBoolean = "true" | "false"
 
@@ -22,16 +22,20 @@ export function variants<V extends Variants = Variants>(variantDefinitions: V | 
   const props = Object.keys(variantDefinitions)
 
   const variantStyles = (variantProps: VariantProps<V>) => {
-    let css: CSS = {}
+    const variantCss: VariantCSS = []
     props.forEach(propName => {
       const variant = variantDefinitions[propName]
       const variantValue = String(variantProps[propName])
-      const style = variant[variantValue]
-      if (style) {
-        css = mergeCss(css, style)
+      const css = variant[variantValue]
+      if (css) {
+        const keyValue = variantValue === "true" ? "" : `-${variantValue}`
+        variantCss.push({
+          key: `${propName}${keyValue}`,
+          css,
+        })
       }
     })
-    return css
+    return variantCss
   }
 
   // Save these props for later, to filter them out of props that get passed to the DOM

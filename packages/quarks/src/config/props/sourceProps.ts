@@ -134,8 +134,6 @@ export const sourceClassedProps = {
   pointerEvents: true,
 
   animation: true,
-  animationDuration: true,
-  animationIterationCount: true,
 
   lineHeight: true,
 
@@ -197,20 +195,31 @@ export const sourceClassedProps = {
 
   writingMode: true,
 
+  // Spread shorthand props
+  animationName: true,
+  animationDuration: true,
+  animationIterationCount: true,
+  animationDelay: true,
+  animationDirection: true,
+  animationFillMode: true,
+  animationPlayState: true,
+  animationTimingFunction: true,
+
+  transitionDelay: true,
+  transitionDuration: true,
+  transitionProperty: true,
+  transitionTimingFunction: true,
+
+  textDecorationColor: true,
+  textDecorationLine: true,
+  textDecorationStyle: true,
+  textDecorationThickness: true,
+
   // FOR FUTURE CONSIDERATION
   // "quotes": true,
 
-  // "transitionDelay": true,
-  // "transitionDuration": true,
-  // "transitionProperty": true,
-  // "transitionTimingFunction": true,
-
   // "transformStyle": true,
 
-  // "textDecorationColor": true,
-  // "textDecorationLine": true,
-  // "textDecorationStyle": true,
-  // "textDecorationThickness": true,
   // "textEmphasis": true,
   // "textIndent": true,
   // "textOrientation": true,

@@ -2,17 +2,24 @@ import { THEME_PREFIX, VarData } from "../utils"
 import { BodyFontFamily, HeadingFontFamily, CodeFontFamily } from "../../shared/models"
 import { ColorNumberKey, ColorPalette, ThemeColor } from "../../shared/models/colorGen.models"
 
+export const SCALED_ALIAS = "SCALED_ALIAS"
+
+export const STATIC_VALUE_PREFIX = "^"
+
 // TYPES //////////////////////////////////////////////////////////////////////
 export type ThemePropValue = string
 export type CssValue = string | Record<string, string | number>
-export type CssAlias<T extends string | number = string | number> = `${typeof THEME_PREFIX}${T}`
+export type CssAlias<T extends string | number = string | number> = `${typeof THEME_PREFIX}${T}` | typeof SCALED_ALIAS
 export type ScaleEntry = VarData & {
   value: CssValue
 }
 export type ThemeProps = Record<string | number, ThemePropValue>
 export type CssValueMap = Record<string | number, CssValue>
+export type CssValueMapProps<C extends CssValueMap> = Record<PrefixedKey<C>, [string, string | number][] | null>
 export type CssAliasMap<C extends CssValueMap = CssValueMap> = Record<string | number, CssAlias<keyof Omit<C, symbol>>>
 export type BaseVars<T extends string | number = string | number> = Record<T, ScaleEntry>
+export type FlatMap = Record<string, string>
+export type AliasMap = Record<string, string | FlatMap>
 
 export type Font = BaseVars<
   "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "body" | "code" | "quote" | "li" | "small" | "em" | "strong"
@@ -146,6 +153,8 @@ export interface ThemeScale<
   themeProps: T
   /** Used to generate static CSS classes, and the prop values that reference them */
   cssValueMap: C
+  /** Used to match combo classes with the CSS props in that combo */
+  cssValueMapProps: CssValueMapProps<C>
   /**
    * Used to generate aliases for some CSS classes
    *
@@ -155,6 +164,14 @@ export interface ThemeScale<
   cssAliasMap?: A
   /** Used for building keyframe-based animations */
   keyframes?: K
+  /**
+   * Used for mapping aliases based on the prop used (i.e., in cases where the same value,
+   * given to different props, could give different results).
+   *
+   * This is particularly useful with mapped props, if the mapped prop is a shorthand with
+   * different value types, such as the `border` prop.
+   */
+  aliasMap?: AliasMap
 }
 
 export enum Scale {
@@ -183,7 +200,7 @@ export type Scales = {
   [key in Scale]: ThemeScale
 }
 
-export type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${keyof Omit<
-  T,
+export type PrefixedKey<T extends Record<string | number | symbol, unknown>> = `${typeof THEME_PREFIX}${Exclude<
+  keyof T,
   symbol
 >}`

@@ -1,15 +1,15 @@
-import { CharHash } from "../utils"
+import { addStaticValuePrefix, CharHash } from "../utils"
 import { ThemeScale, Keyframes } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `animation` theme scale */
 export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
   const spin = keyframeHash.name
   const spinAndPause = keyframeHash.name
   const flashSize = keyframeHash.name
-  const bounceTop = keyframeHash.name
+  const bounceUp = keyframeHash.name
   const bounceRight = keyframeHash.name
-  const bounceBottom = keyframeHash.name
+  const bounceDown = keyframeHash.name
   const bounceLeft = keyframeHash.name
   const keyframes: Keyframes = {
     [spin]: {
@@ -26,7 +26,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
       "0%, to": { transform: "scale3d(1, 1, 1)" },
       "50%": { transform: "scale3d(1.12, 1.12, 1)" },
     },
-    [bounceTop]: {
+    [bounceUp]: {
       "0%, 10%, 26.5%, 50%, to": {
         animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
@@ -68,7 +68,7 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
         transform: "translate3d(4px, 0, 0) scaleX(1.02)",
       },
     },
-    [bounceBottom]: {
+    [bounceDown]: {
       "0%, 10%, 26.5%, 50%, to": {
         animationTimingFunction: "cubic-bezier(.215, .61, .355, 1)",
         transform: "translate3d(0, 0, 0)",
@@ -123,84 +123,140 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     bounceDuration: { ...hash.var, value: "2.5s" },
   } as const
 
-  const transition = `opacity ${vars.defaultDuration.ref}, transform ${vars.defaultDuration.ref}` as const
-  const baseIn = { transition } as const
-  const hidden = {
-    opacity: "0",
-    pointerEvents: "none",
+  const transition = {
+    transitionProperty: addStaticValuePrefix("opacity, transform"),
+    transitionDuration: "defaultDuration",
   } as const
-  const slideTop = "translate3d(0,-100%,0)" as const
-  const slideRight = "translate3d(-100%,0,0)" as const
-  const slideBottom = "translate3d(0,100%,0)" as const
-  const slideLeft = "translate3d(100%,0,0)" as const
+  const hidden = {
+    opacity: addStaticValuePrefix("0"),
+    pointerEvents: addStaticValuePrefix("none"),
+  } as const
 
   const cssValueMap = {
     ...getCssMapFromVars(vars),
+    spinName: spin,
+    spinAndPauseName: spinAndPause,
+    flashSizeName: flashSize,
+    bounceUpName: bounceUp,
+    bounceRightName: bounceRight,
+    bounceDownName: bounceDown,
+    bounceLeftName: bounceLeft,
+    // Combo aliases
+    spin: "spin",
+    spinAndPause: "spinAndPause",
+    flashSize: "flashSize",
+    bounceUp: "bounceUp",
+    bounceRight: "bounceRight",
+    bounceDown: "bounceDown",
+    bounceLeft: "bounceLeft",
+    slideInTop: "slideInTop",
+    slideOutTop: "slideOutTop",
+    slideInRight: "slideInRight",
+    slideOutRight: "slideOutRight",
+    slideInBottom: "slideInBottom",
+    slideOutBottom: "slideOutBottom",
+    slideInLeft: "slideInLeft",
+    slideOutLeft: "slideOutLeft",
+    fadeIn: "fadeIn",
+    fadeOut: "fadeOut",
+    zoomIn: "zoomIn",
+    zoomOut: "zoomOut",
+  } as const
+
+  const { aliasMap, cssAliases } = getAliasMap({
     // Animations
     spin: {
-      animation: `${spin} ${vars.spinDuration.ref} infinite ease-in-out both`,
+      animationName: "spinName",
+      animationDuration: "spinDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
     },
     spinAndPause: {
-      animation: `${spinAndPause} ${vars.spinAndPauseDuration.ref} infinite ease-in-out both`,
+      animationName: "spinAndPauseName",
+      animationDuration: "spinAndPauseDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
     },
     flashSize: {
-      animation: `${flashSize} ${vars.flashSizeDuration.ref} 2 ease-in-out both`,
+      animationName: "flashSizeName",
+      animationDuration: "flashSizeDuration",
+      animationIterationCount: addStaticValuePrefix("2"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
     },
-    bounceTop: {
-      animation: `${bounceTop} ${vars.bounceDuration.ref} infinite ease-in-out both`,
-      transformOrigin: "center bottom",
+    bounceUp: {
+      animationName: "bounceUpName",
+      animationDuration: "bounceDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
+      transformOrigin: addStaticValuePrefix("center bottom"),
     },
     bounceRight: {
-      animation: `${bounceRight} ${vars.bounceDuration.ref} infinite ease-in-out both`,
-      transformOrigin: "left center",
+      animationName: "bounceRightName",
+      animationDuration: "bounceDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
+      transformOrigin: addStaticValuePrefix("left center"),
     },
-    bounceBottom: {
-      animation: `${bounceBottom} ${vars.bounceDuration.ref} infinite ease-in-out both`,
-      transformOrigin: "center top",
+    bounceDown: {
+      animationName: "bounceDownName",
+      animationDuration: "bounceDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
+      transformOrigin: addStaticValuePrefix("center top"),
     },
     bounceLeft: {
-      animation: `${bounceLeft} ${vars.bounceDuration.ref} infinite ease-in-out both`,
-      transformOrigin: "right center",
+      animationName: "bounceLeftName",
+      animationDuration: "bounceDuration",
+      animationIterationCount: addStaticValuePrefix("infinite"),
+      animationTimingFunction: addStaticValuePrefix("ease-in-out"),
+      animationFillMode: addStaticValuePrefix("both"),
+      transformOrigin: addStaticValuePrefix("right center"),
     },
     // Animated Transitions
-    slideInTop: baseIn,
+    slideInTop: transition,
     slideOutTop: {
       ...hidden,
-      transform: slideTop,
-      transition,
+      ...transition,
+      transform: addStaticValuePrefix("translate3d(0,-100%,0)"),
     },
-    slideInRight: baseIn,
+    slideInRight: transition,
     slideOutRight: {
       ...hidden,
-      transform: slideRight,
-      transition,
+      ...transition,
+      transform: addStaticValuePrefix("translate3d(-100%,0,0)"),
     },
-    slideInBottom: baseIn,
+    slideInBottom: transition,
     slideOutBottom: {
       ...hidden,
-      transform: slideBottom,
-      transition,
+      ...transition,
+      transform: addStaticValuePrefix("translate3d(0,100%,0)"),
     },
-    slideInLeft: baseIn,
+    slideInLeft: transition,
     slideOutLeft: {
       ...hidden,
-      transform: slideLeft,
-      transition,
+      ...transition,
+      transform: addStaticValuePrefix("translate3d(100%,0,0)"),
     },
-
-    fadeIn: baseIn,
+    fadeIn: transition,
     fadeOut: {
       ...hidden,
-      transition,
+      ...transition,
     },
-
-    zoomIn: baseIn,
+    zoomIn: transition,
     zoomOut: {
       ...hidden,
-      transform: "scale3d(.5,.5,1)",
-      transition,
+      ...transition,
+      transform: addStaticValuePrefix("scale3d(.5,.5,1)"),
     },
-  } as const
+  })
+
+  const cssAliasMap = { ...cssAliases } as const
 
   const themeProps = { ...getThemePropsFromCssMap(cssValueMap) } as const
 
@@ -208,30 +264,23 @@ export function getAnimation(hash: CharHash, keyframeHash: CharHash) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
+    cssAliasMap,
+    aliasMap,
     keyframes,
-  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, Record<any, any>, typeof keyframes>
+  } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap, typeof cssAliasMap, typeof keyframes>
 }
 
 // FILTER KEYS ////////////////////////////////////////////////////////////////
 // Used for generating types that map to only parts of this scale
 
-export const animationDurations = {
-  fastDuration: true,
-  slowDuration: true,
-  defaultDuration: true,
-  spinDuration: true,
-  spinAndPauseDuration: true,
-  flashSizeDuration: true,
-  bounceDuration: true,
-} as const
-
 export const animationCombos = {
   spin: true,
   spinAndPause: true,
   flashSize: true,
-  bounceTop: true,
+  bounceUp: true,
   bounceRight: true,
-  bounceBottom: true,
+  bounceDown: true,
   bounceLeft: true,
   slideInTop: true,
   slideOutTop: true,
@@ -246,3 +295,52 @@ export const animationCombos = {
   zoomIn: true,
   zoomOut: true,
 } as const
+
+export const animationDurations = {
+  fastDuration: true,
+  slowDuration: true,
+  defaultDuration: true,
+  spinDuration: true,
+  spinAndPauseDuration: true,
+  flashSizeDuration: true,
+  bounceDuration: true,
+} as const
+export const hiddenAnimationDurations = { ...animationCombos } as const
+
+export const animationNames = {
+  spinName: true,
+  spinAndPauseName: true,
+  flashSizeName: true,
+  bounceUpName: true,
+  bounceRightName: true,
+  bounceDownName: true,
+  bounceLeftName: true,
+} as const
+export const hiddenAnimationNames = { ...animationCombos } as const
+
+export const animationIterationCounts = {} as const
+export const hiddenAnimationIterationCounts = { ...animationCombos } as const
+
+export const animationTimingFunctions = {} as const
+export const hiddenAnimationTimingFunctions = { ...animationCombos } as const
+
+export const animationFillModes = {} as const
+export const hiddenAnimationFillModes = { ...animationCombos } as const
+
+export const transforms = {} as const
+export const hiddenTransforms = { ...animationCombos } as const
+
+export const transformOrigins = {} as const
+export const hiddenTransformOrigins = { ...animationCombos } as const
+
+export const transitionProperties = {} as const
+export const hiddenTransitionProperties = { ...animationCombos } as const
+
+export const transitionDurations = { defaultDuration: true } as const
+export const hiddenTransitionDurations = { ...animationCombos } as const
+
+export const opacities = {} as const
+export const hiddenOpacities = { ...animationCombos } as const
+
+export const pointerEvents = {} as const
+export const hiddenPointerEvents = { ...animationCombos } as const

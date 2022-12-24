@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getThemePropsFromCssMap } from "./scales.utils"
+import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `fontSize` theme scale */
 export function getFontSize(hash: CharHash) {
@@ -54,5 +54,6 @@ export function getFontSize(hash: CharHash) {
     vars,
     themeProps,
     cssValueMap,
+    cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
 }

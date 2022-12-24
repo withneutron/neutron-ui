@@ -39,8 +39,11 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     caretColor: value("caretColor"),
     columnRuleColor: value("columnRuleColor"),
 
-    font: value("font"),
-    textDecoration: value("textDecoration"),
+    fontSize: value("fontSize"),
+    fontFamily: value("fontFamily"),
+    textDecorationLine: value("textDecorationLine"),
+    textDecorationColor: value("textDecorationColor"),
+    textDecorationThickness: value("textDecorationThickness"),
     textShadow: value("textShadow"),
 
     flex: value("flex"),
@@ -61,8 +64,11 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     transform: value("transform"),
     transformOrigin: value("transformOrigin"),
 
-    animation: value("animation"),
+    animationDelay: value("animationDelay"),
+    animationDuration: value("animationDuration"),
     animationIterationCount: value("animationIterationCount"),
+    animationName: value("animationName"),
+    animationTimingFunction: value("animationTimingFunction"),
 
     transition: value("transition"),
 

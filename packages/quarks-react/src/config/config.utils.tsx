@@ -1,4 +1,4 @@
-import { forwardRef, RefObject, ForwardRefRenderFunction, ComponentPropsWithoutRef } from "react"
+import { ForwardRefRenderFunction } from "react"
 import {
   SemanticLayoutPrimitive,
   SemanticTextPrimitive,
@@ -6,18 +6,34 @@ import {
   SemanticUniversalPrimitive,
 } from "../shared/models"
 
-type StyledRef = ((instance: HTMLElement | null) => void) | RefObject<HTMLElement> | null | undefined
 type StyledComponent = ForwardRefRenderFunction<any, any>
 
-function getSemantic<T extends StyledComponent>(Comp: T, tag?: keyof JSX.IntrinsicElements) {
-  const AnyComp = Comp as any
-  const WrappedComponent = !tag
-    ? AnyComp
-    : (props: ComponentPropsWithoutRef<T>, ref?: StyledRef) => <AnyComp as={tag} ref={ref} {...props} />
+function getSemantic<T extends StyledComponent>(Comp: T, as: keyof JSX.IntrinsicElements) {
+  // Creates a proxy component that sets a default polymorphic `as` prop,
+  // and displays the semantic tag name in React dev tools.
+  const proxy = new Proxy(Comp, {
+    get: function (targetComp: T, prop, ...rest) {
+      if (prop === "type") {
+        const sourceType = targetComp[prop as keyof T] as any
+        // Use a proxy to decorate the `displayName` as well
+        return new Proxy(sourceType, {
+          get: function (type: any, typeProp, ...typeRest) {
+            if (typeProp === "displayName") {
+              return type.displayName ?? `${type.render?.displayName ?? "Semantic"}.${as}`
+            }
+            return Reflect.get(type, typeProp, ...typeRest)
+          },
+        })
+      }
 
-  const suffix = tag ? `.${tag}` : ""
-  WrappedComponent.displayName = `${AnyComp.displayName || "Styled"}${suffix}`
-  return forwardRef(WrappedComponent) as any as T
+      if (prop === "defaultProps") {
+        return { as, isSemantic: true }
+      }
+
+      return Reflect.get(targetComp, prop, ...rest)
+    },
+  })
+  return proxy as T
 }
 
 /** Generates a series of typed, semantic layout primitives associated with an input component */
@@ -34,6 +50,7 @@ export function getSemanticLayoutPrimitive<T extends StyledComponent>(Comp: T) {
   output.Main = getSemantic(Comp, "main")
   output.Nav = getSemantic(Comp, "nav")
   output.Section = getSemantic(Comp, "section")
+  output.Span = getSemantic(Comp, "span")
   return output
 }
 

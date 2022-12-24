@@ -1,5 +1,7 @@
+import { Shared, NotShared } from "../shared/models"
 import { conditionsMap } from "./conditions"
 import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
+import { CSS } from "./styles.css"
 
 export const BASE = "base"
 
@@ -8,9 +10,6 @@ type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer
 
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
 type CustomString = string & { hack?: unknown }
-
-type Shared<A extends Record<string, any>, B extends Record<string, any>> = Extract<keyof A, keyof B>
-type NotShared<A extends Record<string, any>, B extends Record<string, any>> = Exclude<keyof A, keyof B>
 
 type MapObject = {
   [key in CssPropKey]?: { [k: string | number]: unknown }
@@ -82,3 +81,5 @@ export type InlineConditionValue = string | { [k in InlineConditionKey]?: string
 export type InlineConditionCss<T> = {
   [k in keyof T]: InlineCondition<T[k]>
 }
+
+export type VariantCSS = Array<{ key: string, css: CSS }>

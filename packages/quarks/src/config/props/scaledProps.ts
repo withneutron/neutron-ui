@@ -7,15 +7,56 @@ import {
   outlineColors,
   outlineOffsets,
   outlineWidths,
-  borderColors,
   borderCombos,
+  borderColors,
+  borderStyles,
   borderWidths,
+  hiddenBorderColors,
+  hiddenBorderStyles,
+  hiddenBorderWidths,
   CssValue,
   animationCombos,
   animationDurations,
   colorCore,
   colorText,
   CssAliasMap,
+  outlineStyles,
+  hiddenOutlineColors,
+  hiddenOutlineOffsets,
+  hiddenOutlineStyles,
+  hiddenOutlineWidths,
+  fontCombos,
+  typeCombos,
+  textDecorationCombos,
+  hiddenTextDecorationColors,
+  hiddenTextDecorationLines,
+  hiddenTextDecorationStyles,
+  hiddenTextDecorationThicknesses,
+  textDecorationColors,
+  textDecorationLines,
+  textDecorationStyles,
+  textDecorationThicknesses,
+  animationFillModes,
+  animationIterationCounts,
+  animationNames,
+  animationTimingFunctions,
+  hiddenAnimationDurations,
+  hiddenAnimationFillModes,
+  hiddenAnimationIterationCounts,
+  hiddenAnimationNames,
+  hiddenAnimationTimingFunctions,
+  hiddenOpacities,
+  hiddenTransformOrigins,
+  hiddenTransitionDurations,
+  hiddenTransitionProperties,
+  opacities,
+  transformOrigins,
+  transitionDurations,
+  transitionProperties,
+  pointerEvents,
+  hiddenPointerEvents,
+  hiddenTransforms,
+  transforms,
 } from "../scales"
 import {
   CssPropKey,
@@ -28,10 +69,16 @@ import {
 } from "./props.models"
 import { addPrefix } from "../utils"
 
-function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map: M, keys: K) {
+function filterMap<M extends CssValueMap, K extends Record<string, unknown>, H extends Record<string, unknown>>(
+  map: M,
+  keys: K,
+  hiddenKeys?: H
+) {
   const output: PickKeys<M, typeof keys> = { ...map }
   Object.keys(map).forEach((key: keyof M) => {
-    if (!keys[key as keyof typeof keys]) {
+    const isKey = keys[key as keyof typeof keys]
+    const isHiddenKey = hiddenKeys?.[key as keyof typeof hiddenKeys]
+    if (!isKey && (!hiddenKeys || !isHiddenKey)) {
       delete output[key as keyof typeof output]
     }
   })
@@ -42,11 +89,12 @@ function filterMap<M extends CssValueMap, K extends Record<string, unknown>>(map
 function map<
   S extends Scales,
   V extends Scale,
-  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
->(scales: S, scale: V, keys?: K) {
+  K extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>,
+  H extends Record<string, unknown> = Record<keyof S[V]["cssValueMap"], unknown>
+>(scales: S, scale: V, keys?: K, hiddenKeys?: H) {
   const map = scales[scale].cssValueMap as S[V]["cssValueMap"]
   if (keys) {
-    return filterMap(map, keys)
+    return filterMap(map, keys, hiddenKeys)
   }
   return map
 }
@@ -110,14 +158,28 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     insetInlineEnd: entries("insetInlineEnd", map(scales, Scale.space), scales[Scale.space].cssAliasMap),
 
     outline: entries("outline", map(scales, Scale.outline, outlineCombos), scales[Scale.outline].cssAliasMap),
-    outlineWidth: entries("outlineWidth", map(scales, Scale.outline, outlineWidths), scales[Scale.outline].cssAliasMap),
-    outlineColor: entries("outlineColor", map(scales, Scale.outline, outlineColors), scales[Scale.outline].cssAliasMap),
+    outlineWidth: entries(
+      "outlineWidth",
+      map(scales, Scale.outline, outlineWidths, hiddenOutlineWidths),
+      scales[Scale.outline].cssAliasMap
+    ),
+    outlineColor: entries(
+      "outlineColor",
+      map(scales, Scale.outline, outlineColors, hiddenOutlineColors),
+      scales[Scale.outline].cssAliasMap
+    ),
+    outlineStyle: entries(
+      "outlineStyle",
+      map(scales, Scale.outline, outlineStyles, hiddenOutlineStyles),
+      scales[Scale.outline].cssAliasMap
+    ),
     outlineOffset: entries(
       "outlineOffset",
-      map(scales, Scale.outline, outlineOffsets),
+      map(scales, Scale.outline, outlineOffsets, hiddenOutlineOffsets),
       scales[Scale.outline].cssAliasMap
     ),
 
+    border: entries("border", map(scales, Scale.border, borderCombos), scales[Scale.border].cssAliasMap),
     borderBlockStart: entries(
       "borderBlockStart",
       map(scales, Scale.border, borderCombos),
@@ -141,43 +203,64 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
 
     borderBlockStartColor: entries(
       "borderBlockStartColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderBlockEndColor: entries(
       "borderBlockEndColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineStartColor: entries(
       "borderInlineStartColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineEndColor: entries(
       "borderInlineEndColor",
-      map(scales, Scale.border, borderColors),
+      map(scales, Scale.border, borderColors, hiddenBorderColors),
+      scales[Scale.border].cssAliasMap
+    ),
+
+    borderBlockStartStyle: entries(
+      "borderBlockStartStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderBlockEndStyle: entries(
+      "borderBlockEndStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineStartStyle: entries(
+      "borderInlineStartStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
+      scales[Scale.border].cssAliasMap
+    ),
+    borderInlineEndStyle: entries(
+      "borderInlineEndStyle",
+      map(scales, Scale.border, borderStyles, hiddenBorderStyles),
       scales[Scale.border].cssAliasMap
     ),
 
     borderBlockStartWidth: entries(
       "borderBlockStartWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderBlockEndWidth: entries(
       "borderBlockEndWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineStartWidth: entries(
       "borderInlineStartWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
     borderInlineEndWidth: entries(
       "borderInlineEndWidth",
-      map(scales, Scale.border, borderWidths),
+      map(scales, Scale.border, borderWidths, hiddenBorderWidths),
       scales[Scale.border].cssAliasMap
     ),
 
@@ -207,18 +290,34 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     fill: entries("fill", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
     stroke: entries("stroke", map(scales, Scale.color, colorCore), scales[Scale.color].cssAliasMap),
 
-    font: entries("font", map(scales, Scale.font), scales[Scale.font].cssAliasMap),
+    font: entries("font", map(scales, Scale.font, fontCombos), scales[Scale.font].cssAliasMap),
     fontFamily: entries("fontFamily", map(scales, Scale.fontFamily), scales[Scale.fontFamily].cssAliasMap),
     fontSize: entries("fontSize", map(scales, Scale.fontSize), scales[Scale.fontSize].cssAliasMap),
     fontWeight: entries("fontWeight", map(scales, Scale.fontWeight), scales[Scale.fontWeight].cssAliasMap),
 
     textDecoration: entries(
       "textDecoration",
-      map(scales, Scale.textDecoration),
+      map(scales, Scale.textDecoration, textDecorationCombos),
       scales[Scale.textDecoration].cssAliasMap
     ),
+    textDecorationLine: entries(
+      "textDecorationLine",
+      map(scales, Scale.textDecoration, textDecorationLines, hiddenTextDecorationLines)
+    ),
+    textDecorationStyle: entries(
+      "textDecorationStyle",
+      map(scales, Scale.textDecoration, textDecorationStyles, hiddenTextDecorationStyles)
+    ),
+    textDecorationColor: entries(
+      "textDecorationColor",
+      map(scales, Scale.textDecoration, textDecorationColors, hiddenTextDecorationColors)
+    ),
+    textDecorationThickness: entries(
+      "textDecorationThickness",
+      map(scales, Scale.textDecoration, textDecorationThicknesses, hiddenTextDecorationThicknesses)
+    ),
 
-    type: entries("type", map(scales, Scale.type), scales[Scale.type].cssAliasMap),
+    type: entries("type", map(scales, Scale.type, typeCombos), scales[Scale.type].cssAliasMap),
     lineHeight: entries("lineHeight", map(scales, Scale.lineHeight), scales[Scale.lineHeight].cssAliasMap),
     letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
     wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
@@ -233,9 +332,59 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
     boxShadow: entries("boxShadow", map(scales, Scale.shadow), scales[Scale.shadow].cssAliasMap),
 
     animation: entries("animation", map(scales, Scale.animation, animationCombos), scales[Scale.animation].cssAliasMap),
+    animationName: entries(
+      "animationName",
+      map(scales, Scale.animation, animationNames, hiddenAnimationNames),
+      scales[Scale.animation].cssAliasMap
+    ),
     animationDuration: entries(
       "animationDuration",
-      map(scales, Scale.animation, animationDurations),
+      map(scales, Scale.animation, animationDurations, hiddenAnimationDurations),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationIterationCount: entries(
+      "animationIterationCount",
+      map(scales, Scale.animation, animationIterationCounts, hiddenAnimationIterationCounts),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationTimingFunction: entries(
+      "animationTimingFunction",
+      map(scales, Scale.animation, animationTimingFunctions, hiddenAnimationTimingFunctions),
+      scales[Scale.animation].cssAliasMap
+    ),
+    animationFillMode: entries(
+      "animationFillMode",
+      map(scales, Scale.animation, animationFillModes, hiddenAnimationFillModes),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transform: entries(
+      "transform",
+      map(scales, Scale.animation, transforms, hiddenTransforms),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transformOrigin: entries(
+      "transformOrigin",
+      map(scales, Scale.animation, transformOrigins, hiddenTransformOrigins),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transitionProperty: entries(
+      "transitionProperty",
+      map(scales, Scale.animation, transitionProperties, hiddenTransitionProperties),
+      scales[Scale.animation].cssAliasMap
+    ),
+    transitionDuration: entries(
+      "transitionDuration",
+      map(scales, Scale.animation, transitionDurations, hiddenTransitionDurations),
+      scales[Scale.animation].cssAliasMap
+    ),
+    opacity: entries(
+      "opacity",
+      map(scales, Scale.animation, opacities, hiddenOpacities),
+      scales[Scale.animation].cssAliasMap
+    ),
+    pointerEvents: entries(
+      "pointerEvents",
+      map(scales, Scale.animation, pointerEvents, hiddenPointerEvents),
       scales[Scale.animation].cssAliasMap
     ),
   } as const
@@ -272,8 +421,10 @@ export const scaledPropScale = {
   outline: Scale.outline,
   outlineWidth: Scale.outline,
   outlineColor: Scale.outline,
+  outlineStyle: Scale.outline,
   outlineOffset: Scale.outline,
 
+  border: Scale.border,
   borderBlockStart: Scale.border,
   borderBlockEnd: Scale.border,
   borderInlineStart: Scale.border,
@@ -283,6 +434,11 @@ export const scaledPropScale = {
   borderBlockEndColor: Scale.border,
   borderInlineStartColor: Scale.border,
   borderInlineEndColor: Scale.border,
+
+  borderBlockStartStyle: Scale.border,
+  borderBlockEndStyle: Scale.border,
+  borderInlineStartStyle: Scale.border,
+  borderInlineEndStyle: Scale.border,
 
   borderBlockStartWidth: Scale.border,
   borderBlockEndWidth: Scale.border,
@@ -315,6 +471,10 @@ export const scaledPropScale = {
   fontWeight: Scale.fontWeight,
 
   textDecoration: Scale.textDecoration,
+  textDecorationLine: Scale.textDecoration,
+  textDecorationStyle: Scale.textDecoration,
+  textDecorationColor: Scale.textDecoration,
+  textDecorationThickness: Scale.textDecoration,
 
   type: Scale.type,
   lineHeight: Scale.lineHeight,
@@ -327,5 +487,15 @@ export const scaledPropScale = {
   boxShadow: Scale.shadow,
 
   animation: Scale.animation,
+  animationName: Scale.animation,
   animationDuration: Scale.animation,
+  animationIterationCount: Scale.animation,
+  animationTimingFunction: Scale.animation,
+  animationFillMode: Scale.animation,
+  transform: Scale.animation,
+  transformOrigin: Scale.animation,
+  transitionProperty: Scale.animation,
+  transitionDuration: Scale.animation,
+  opacity: Scale.animation,
+  pointerEvents: Scale.animation,
 } as const

@@ -1,8 +1,8 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 import { getSemanticLayoutPrimitive } from "../../config"
 
 export const Row = getSemanticLayoutPrimitive(
-  styledPrimitive(
+  styled(
     "section",
     {
       display: "flex",

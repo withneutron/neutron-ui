@@ -45,6 +45,13 @@ import {
   ThemeProps,
   PrefixedKey,
   CssAliasMap,
+  SCALED_ALIAS,
+  borderCombos,
+  outlineCombos,
+  fontCombos,
+  typeCombos,
+  animationCombos,
+  textDecorationCombos,
 } from "./scales"
 import {
   CssPropKey,
@@ -71,7 +78,7 @@ const color = getColor(varHash)
 const fontSize = getFontSize(varHash)
 const fontWeight = getFontWeight(varHash)
 const fontFamily = getFontFamily(varHash)
-const font = getFont(varHash, fontWeight.vars, fontSize.vars, fontFamily.vars)
+const font = getFont()
 const border = getBorder(varHash, color.vars)
 const outline = getOutline(varHash, color.vars)
 const radius = getRadius(varHash)
@@ -80,7 +87,7 @@ const column = getColumn(varHash, size.vars)
 const row = getRow(varHash, column.vars)
 const lineHeight = getLineHeight(varHash, size.vars)
 const typeSpace = getTypeSpace(varHash)
-const type = getType(font.vars, lineHeight.vars, typeSpace.vars)
+const type = getType()
 const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
@@ -179,7 +186,6 @@ globalStyle("a", {
 })
 globalStyle("a:focus", {
   boxShadow: `inset 0 1.25em 0 ${color.vars.secondary9.ref}`,
-  // outline: outline.vars.secondaryMax.ref,
   outline: "none",
 })
 globalStyle("a:hover", {
@@ -284,6 +290,23 @@ const scaledPropsPC = generatePseudoClassCss<typeof scaledProps>((pseudoClass: s
   )
 )
 
+// STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
+/** Generate CSS props that are based on scales */
+const staticProps = generateStaticPropsCss((value: CssRule) => {
+  const className = classHash.name
+  globalStyle(getSelector(className), value)
+  return className
+})
+
+/** Generate CSS props that are _pseudo class based_, and based on scales */
+const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
+  generateStaticPropsCss((value: CssRule) => {
+    const className = classHash.name
+    globalStyle(getSelector(className, pseudoClass), value)
+    return className
+  }, keys)
+)
+
 // CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
 /** Generate vars and classes for custom props */
 const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
@@ -310,23 +333,7 @@ const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys
 
 const customVarPropsPC = generatePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
 
-// STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
-/** Generate CSS props that are based on scales */
-const staticProps = generateStaticPropsCss((value: CssRule) => {
-  const className = classHash.name
-  globalStyle(getSelector(className), value)
-  return className
-})
-
-/** Generate CSS props that are _pseudo class based_, and based on scales */
-const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: string, keys: FilterKeys) =>
-  generateStaticPropsCss((value: CssRule) => {
-    const className = classHash.name
-    globalStyle(getSelector(className, pseudoClass), value)
-    return className
-  }, keys)
-)
-
+// PROP MAPS //////////////////////////////////////////////////////////////////////////////////////
 export const scaledPropMap = {
   ...scaledPropsPC,
   [BASE]: scaledProps,
@@ -345,10 +352,29 @@ console.log("---- Generated CSS ----")
 console.log(String(classHash.count).padStart(5, " "), "classes.")
 console.log(String(varHash.count).padStart(5, " "), "variables.")
 console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
-
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/
+/** Scaled props that override mapped props */
+export type OverrideScaledProp = {
+  font: PrefixedKey<typeof fontCombos> | keyof typeof staticProps.font
+  type: PrefixedKey<typeof typeCombos> | keyof typeof staticProps.type
+  animation: PrefixedKey<typeof animationCombos> | keyof typeof staticProps.animation
+  textDecoration: PrefixedKey<typeof textDecorationCombos> | keyof typeof staticProps.textDecoration
+  outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
+  border: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBlock: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderInline: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderTop: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBottom: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderLeft: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderRight: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.border
+  borderBlockStart: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderBlockStart
+  borderBlockEnd: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderBlockEnd
+  borderInlineStart: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderInlineStart
+  borderInlineEnd: PrefixedKey<typeof borderCombos> | keyof typeof staticProps.borderInlineEnd
+}
+
 // Pseudo-class types
 type A = typeof scaledPropsPC
 type B = typeof customVarPropsPC
@@ -435,7 +461,7 @@ function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, a
   if (aliases) {
     Object.entries(aliases).forEach(([token, alias]) => {
       const keyFromAlias = removePrefix(alias)
-      output[token as keyof typeof output] = vars[keyFromAlias].name
+      output[token as keyof typeof output] = keyFromAlias === SCALED_ALIAS ? SCALED_ALIAS : vars[keyFromAlias].name
       return output
     })
   }

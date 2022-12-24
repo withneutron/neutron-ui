@@ -1,3 +1,3 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 
-export const FlexListItem = styledPrimitive("li", {}, "FlexListItem")
+export const FlexListItem = styled("li", {}, "FlexListItem")

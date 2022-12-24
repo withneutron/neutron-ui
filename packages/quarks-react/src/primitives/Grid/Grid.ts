@@ -1,9 +1,9 @@
-import { styledPrimitive } from "../../config"
+import { styled } from "../../config"
 import { Box } from "../Box/Box"
 import { getSemanticLayoutPrimitive } from "../../config"
 
 export const Grid = getSemanticLayoutPrimitive(
-  styledPrimitive(
+  styled(
     Box,
     {
       display: "grid",

@@ -22,12 +22,12 @@ export type SemanticLayoutPrimitive<T extends ForwardRefRenderFunction<any, any>
   Nav: T
   /** SECTION: Defines a generic, block-rendered section in a document */
   Section: T
+  /** SPAN: Defines a generic, inline-rendered section in a document */
+  Span: T
   // /** DETAILS: Defines additional details that the user can view or hide */
   // Details: T
   // /** FIGURE: Specifies self-contained content, like illustrations, diagrams, photos, code listings, etc */
   // Figure: T
-  // /** SPAN: Defines a generic, inline-rendered section in a document */
-  // Span: T
 }
 
 export type SemanticTextPrimitive<T extends ForwardRefRenderFunction<any, any>> = T & {

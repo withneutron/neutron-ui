@@ -1,3 +1,5 @@
+import { NotShared, Shared } from "../../shared/models"
+import { OverrideScaledProp } from "../styles.css"
 import { CssPropKey } from "./props.models"
 
 type PropValue = string | number
@@ -37,10 +39,25 @@ export const mappedProps = {
   my: getPropMapper("marginBlockStart", "marginBlockEnd"),
   marginY: getPropMapper("marginBlockStart", "marginBlockEnd"),
 
-  bg: getPropMapper("background"),
+  bg: getPropMapper("backgroundColor"),
+  background: getPropMapper("backgroundColor"),
 
-  borderX: getPropMapper("borderInline"),
-  borderY: getPropMapper("borderBlock"),
+  borderX: getPropMapper(
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
+  borderY: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth"
+  ),
 
   radius: getPropMapper("borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"),
   radiusTop: getPropMapper("borderStartStartRadius", "borderStartEndRadius"),
@@ -63,6 +80,8 @@ export const mappedProps = {
   autoRows: getPropMapper("gridAutoRows"),
   gtRows: getPropMapper("gridTemplateRows"),
   gtColumns: getPropMapper("gridTemplateColumns"),
+
+  typography: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
 
   // Remapped CSS Props
   height: getPropMapper("blockSize"),
@@ -89,7 +108,20 @@ export const mappedProps = {
   left: getPropMapper("insetInlineStart"),
   right: getPropMapper("insetInlineEnd"),
 
-  border: getPropMapper("borderBlockStart", "borderBlockEnd", "borderInlineStart", "borderInlineEnd"),
+  border: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth",
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
   borderColor: getPropMapper(
     "borderBlockStartColor",
     "borderBlockEndColor",
@@ -109,35 +141,54 @@ export const mappedProps = {
     "borderInlineEndWidth"
   ),
 
-  borderBlock: getPropMapper("borderBlockStart", "borderBlockEnd"),
+  borderBlock: getPropMapper(
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth"
+  ),
   borderBlockColor: getPropMapper("borderBlockStartColor", "borderBlockEndColor"),
   borderBlockStyle: getPropMapper("borderBlockStartStyle", "borderBlockEndStyle"),
   borderBlockWidth: getPropMapper("borderBlockStartWidth", "borderBlockEndWidth"),
 
-  borderInline: getPropMapper("borderInlineStart", "borderInlineEnd"),
+  borderInline: getPropMapper(
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth"
+  ),
   borderInlineColor: getPropMapper("borderInlineStartColor", "borderInlineEndColor"),
   borderInlineStyle: getPropMapper("borderInlineStartStyle", "borderInlineEndStyle"),
   borderInlineWidth: getPropMapper("borderInlineStartWidth", "borderInlineEndWidth"),
 
-  borderTop: getPropMapper("borderBlockStart"),
+  borderTop: getPropMapper("borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"),
   borderTopColor: getPropMapper("borderBlockStartColor"),
   borderTopStyle: getPropMapper("borderBlockStartStyle"),
   borderTopWidth: getPropMapper("borderBlockStartWidth"),
 
-  borderBottom: getPropMapper("borderBlockEnd"),
+  borderBottom: getPropMapper("borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"),
   borderBottomColor: getPropMapper("borderBlockEndColor"),
   borderBottomStyle: getPropMapper("borderBlockEndStyle"),
   borderBottomWidth: getPropMapper("borderBlockEndWidth"),
 
-  borderLeft: getPropMapper("borderInlineStart"),
+  borderLeft: getPropMapper("borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"),
   borderLeftColor: getPropMapper("borderInlineStartColor"),
   borderLeftStyle: getPropMapper("borderInlineStartStyle"),
   borderLeftWidth: getPropMapper("borderInlineStartWidth"),
 
-  borderRight: getPropMapper("borderInlineEnd"),
+  borderRight: getPropMapper("borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"),
   borderRightColor: getPropMapper("borderInlineEndColor"),
   borderRightStyle: getPropMapper("borderInlineEndStyle"),
   borderRightWidth: getPropMapper("borderInlineEndWidth"),
+
+  borderBlockStart: getPropMapper("borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"),
+  borderBlockEnd: getPropMapper("borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"),
+  borderInlineStart: getPropMapper("borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"),
+  borderInlineEnd: getPropMapper("borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"),
 
   borderRadius: getPropMapper(
     "borderStartStartRadius",
@@ -150,11 +201,36 @@ export const mappedProps = {
   borderBottomLeftRadius: getPropMapper("borderEndStartRadius"),
   borderBottomRightRadius: getPropMapper("borderEndEndRadius"),
 
+  outline: getPropMapper("outlineColor", "outlineStyle", "outlineWidth", "outlineOffset"),
+
+  font: getPropMapper("fontSize", "fontStyle", "fontFamily", "fontWeight"),
+
+  type: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
+
   gap: getPropMapper("rowGap", "columnGap"),
 
   wordWrap: getPropMapper("overflowWrap"),
 
-  typography: getPropMapper("type"),
+  textDecoration: getPropMapper(
+    "textDecorationLine",
+    "textDecorationStyle",
+    "textDecorationColor",
+    "textDecorationThickness"
+  ),
+
+  animation: getPropMapper(
+    "animationName",
+    "animationDuration",
+    "animationIterationCount",
+    "animationTimingFunction",
+    "animationFillMode",
+    "transform",
+    "transformOrigin",
+    "transitionProperty",
+    "transitionDuration",
+    "opacity",
+    "pointerEvents"
+  ),
 } as const
 
 /*************************************************************************************************
@@ -210,9 +286,10 @@ export const valueMappers = {
 /*************************************************************************************************
  * TYPES
  *************************************************************************************************/
-type MapKey = keyof typeof mappedProps
-type MappedProps<K extends MapKey> = keyof ReturnType<typeof mappedProps[K]>
+type MapType = typeof mappedProps
+type MapKey = keyof MapType
+type MappedProps<K extends MapKey> = keyof ReturnType<MapType[K]>
 
 export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T & {
-  [key in MapKey]?: T[Extract<keyof T, MappedProps<key>>]
-}
+  [key in Shared<MapType, OverrideScaledProp>]?: OverrideScaledProp[key]
+} & { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }

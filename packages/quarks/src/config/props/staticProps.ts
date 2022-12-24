@@ -36,12 +36,16 @@ function options<T extends string>(...options: T[]) {
   return output
 }
 
-const transparent = options("transparent")
+const noneAll = options("none", "all")
 const noneAuto = options("none", "auto")
+const color = options("currentcolor", "transparent")
 const none = options("none")
 const auto = options("auto")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
 const borderStyle = options("dashed", "dotted", "groove")
+const height = options("100%", "100vh", "fit-content", "max-content", "min-content", "auto")
+const width = options("100%", "100vw", "fit-content", "max-content", "min-content", "auto")
+const borderWidth = options("thin", "medium", "thick")
 
 type Placeholder = { fakeProp: true }
 
@@ -72,19 +76,58 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     animation: values("animation", none),
     animationIterationCount: values("animationIterationCount", options("infinite", "1", "2")),
+    animationDuration: values("animationDuration"),
+    animationDirection: values("animationDirection", options("normal", "reverse", "alternate", "alternate-reverse")),
+    animationFillMode: values("animationFillMode", options("none", "forwards", "backwards", "both")),
+    animationPlayState: values("animationPlayState", options("running", "paused")),
+    animationTimingFunction: values(
+      "animationTimingFunction",
+      options("ease", "ease-in", "ease-out", "ease-in-out", "linear", "step-start", "step-end")
+    ),
+    animationName: values("animationName", none),
+    transform: values("transform"),
+    transformOrigin: values("transformOrigin"),
+    transitionProperty: values("transitionProperty", noneAll),
+    transitionDuration: values("transitionDuration"),
 
-    background: values("background", transparent),
-    backgroundColor: values("backgroundColor", transparent),
-    color: values("color", transparent),
-    outlineColor: values("outlineColor", transparent),
-    borderBlockStartColor: values("borderBlockStartColor", transparent),
-    borderBlockEndColor: values("borderBlockEndColor", transparent),
-    borderInlineStartColor: values("borderInlineStartColor", transparent),
-    borderInlineEndColor: values("borderInlineEndColor", transparent),
-    fill: values("fill", transparent),
-    stroke: values("stroke", transparent),
-    caretColor: values("caretColor", transparent),
-    columnRuleColor: values("columnRuleColor", transparent),
+    background: values("background", color),
+    backgroundColor: values("backgroundColor", color),
+    color: values("color", color),
+
+    border: values("border", none),
+    borderBlock: values("borderBlock", none),
+    borderInline: values("borderInline", none),
+    borderTop: values("borderTop", none),
+    borderBlockStart: values("borderBlockStart", none),
+    borderBottom: values("borderBottom", none),
+    borderBlockEnd: values("borderBlockEnd", none),
+    borderLeft: values("borderLeft", none),
+    borderInlineStart: values("borderInlineStart", none),
+    borderRight: values("borderRight", none),
+    borderInlineEnd: values("borderInlineEnd", none),
+    borderBlockStartColor: values("borderBlockStartColor", color),
+    borderBlockEndColor: values("borderBlockEndColor", color),
+    borderInlineStartColor: values("borderInlineStartColor", color),
+    borderInlineEndColor: values("borderInlineEndColor", color),
+    borderBlockStartWidth: values("borderBlockStartWidth", borderWidth),
+    borderBlockEndWidth: values("borderBlockEndWidth", borderWidth),
+    borderInlineStartWidth: values("borderInlineStartWidth", borderWidth),
+    borderInlineEndWidth: values("borderInlineEndWidth", borderWidth),
+
+    borderStartStartRadius: values("borderStartStartRadius"),
+    borderStartEndRadius: values("borderStartEndRadius"),
+    borderEndStartRadius: values("borderEndStartRadius"),
+    borderEndEndRadius: values("borderEndEndRadius"),
+
+    outline: values("outline", none),
+    outlineColor: values("outlineColor", color),
+    outlineOffset: values("outlineOffset"),
+    outlineWidth: values("outlineWidth", borderWidth),
+
+    fill: values("fill", color),
+    stroke: values("stroke", color),
+    caretColor: values("caretColor", color),
+    columnRuleColor: values("columnRuleColor", color),
 
     userSelect: values("userSelect", options("none", "auto", "text", "contain", "all")),
 
@@ -158,7 +201,21 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
         "zoom-in"
       )
     ),
-    pointerEvents: values("pointerEvents", noneAuto),
+    pointerEvents: values(
+      "pointerEvents",
+      options(
+        "auto",
+        "none",
+        "visiblePainted",
+        "visibleFill",
+        "visibleStroke",
+        "visible",
+        "painted",
+        "fill",
+        "stroke",
+        "all"
+      )
+    ),
 
     boxSizing: values("boxSizing", options("border-box", "content-box")),
 
@@ -240,8 +297,6 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     writingMode: values("writingMode", options("horizontal-tb", "vertical-rl", "vertical-lr")),
 
-    fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
-
     textOverflow: values("textOverflow", options("clip", "ellipsis")),
     textTransform: values("textTransform", options("none", "capitalize", "uppercase", "lowercase")),
 
@@ -283,12 +338,12 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     ),
 
     // STANDARD VALUES ONLY //
-    inlineSize: values("inlineSize"),
-    minInlineSize: values("minInlineSize"),
-    maxInlineSize: values("maxInlineSize"),
-    blockSize: values("blockSize"),
-    minBlockSize: values("minBlockSize"),
-    maxBlockSize: values("maxBlockSize"),
+    inlineSize: values("inlineSize", width),
+    minInlineSize: values("minInlineSize", width),
+    maxInlineSize: values("maxInlineSize", width),
+    blockSize: values("blockSize", height),
+    minBlockSize: values("minBlockSize", height),
+    maxBlockSize: values("maxBlockSize", height),
     marginBlockStart: values("marginBlockStart", auto),
     marginBlockEnd: values("marginBlockEnd", auto),
     marginInlineStart: values("marginInlineStart", auto),
@@ -301,33 +356,26 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     insetBlockEnd: values("insetBlockEnd"),
     insetInlineStart: values("insetInlineStart"),
     insetInlineEnd: values("insetInlineEnd"),
+    type: values("type"),
+    font: values("font"),
+    fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
     fontFamily: values("fontFamily"),
     fontSize: values("fontSize"),
     fontWeight: values("fontWeight"),
-    borderBlockStart: values("borderBlockStart"),
-    borderBlockStartWidth: values("borderBlockStartWidth"),
-    borderBlockEnd: values("borderBlockEnd"),
-    borderBlockEndWidth: values("borderBlockEndWidth"),
-    borderInlineStart: values("borderInlineStart"),
-    borderInlineStartWidth: values("borderInlineStartWidth"),
-    borderInlineEnd: values("borderInlineEnd"),
-    borderInlineEndWidth: values("borderInlineEndWidth"),
-    borderStartStartRadius: values("borderStartStartRadius"),
-    borderStartEndRadius: values("borderStartEndRadius"),
-    borderEndStartRadius: values("borderEndStartRadius"),
-    borderEndEndRadius: values("borderEndEndRadius"),
-    outline: values("outline", none),
-    outlineOffset: values("outlineOffset"),
-    outlineWidth: values("outlineWidth"),
     zIndex: values("zIndex"),
     boxShadow: values("boxShadow", none),
     rowGap: values("rowGap"),
     columnGap: values("columnGap"),
-    animationDuration: values("animationDuration"),
     lineHeight: values("lineHeight"),
     textUnderlineOffset: values("textUnderlineOffset"),
     letterSpacing: values("letterSpacing"),
     wordSpacing: values("wordSpacing"),
+
+    textDecoration: values("textDecoration", none),
+    textDecorationLine: values("textDecorationLine", options("none", "underline", "overline", "line-through", "blink")),
+    textDecorationStyle: values("textDecorationStyle", options("solid", "double", "dotted", "dashed", "wavy")),
+    textDecorationColor: values("textDecorationColor", color),
+    textDecorationThickness: values("textDecorationThickness", auto),
   } as const
 
   if (keys) {

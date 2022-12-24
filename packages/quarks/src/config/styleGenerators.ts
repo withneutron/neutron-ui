@@ -2,12 +2,13 @@ import {
   CssPropKey,
   mappedProps,
   valueMappers,
-  pseudoClasses,
+  combinedPseudoClasses,
   scaledPropScale,
   pseudoClassAliases,
   CustomVarPropValue,
   sourcePropsIdMap,
   SCALED_PLACEHOLDER,
+  pseudoClasses,
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
@@ -22,7 +23,7 @@ import {
   tokenToVarMap,
   ConditionalCSS,
 } from "./styles.css"
-import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey } from "./styles.models"
+import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey, VariantCSS } from "./styles.models"
 import {
   conditionKeys,
   conditionsMap,
@@ -32,7 +33,8 @@ import {
   ConditionCategories,
   ConditionCategory,
 } from "./conditions"
-import { CssAlias } from "./scales/scales.models"
+import { CssAlias, SCALED_ALIAS } from "./scales/scales.models"
+import { mapAliasToValue } from "./scales"
 
 /** Get theme override style */
 export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
@@ -47,30 +49,36 @@ export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) 
 export function style(
   css: CSS,
   conditions: Conditions,
+  variantCss?: VariantCSS,
   overrides?: CSS | null,
   styleName?: string,
-  manager?: StyleManager
+  manager?: StyleManager,
+  baseClassName?: string
 ) {
   if (manager) {
     manager.setNewStyle(conditions, styleName)
   } else {
-    manager = new StyleManager(conditions, styleName)
+    manager = new StyleManager(conditions, styleName, baseClassName)
   }
 
   // Process defined styles
-  processCss(css, manager, conditions)
+  manager.processCss(css, conditions)
+
+  // Process variants, if any.
+  if (variantCss) {
+    manager.processVariantCss(variantCss, conditions)
+  }
 
   // Process style overrides, if any. This is useful for runtime overrides
   if (overrides) {
-    manager.setToOverrideMode()
-    processCss(overrides, manager, conditions)
+    manager.processOverridesCss(overrides, conditions)
   }
 
   return manager.compile()
 }
 
 /*************************************************************************************************
- * CLASSES
+ * StyleManager Class Definition
  *************************************************************************************************/
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
@@ -79,9 +87,11 @@ export class StyleManager {
     [ConditionCategory.preference]: false,
     [ConditionCategory.device]: false,
     [ConditionCategory.colorMode]: false,
-    [ConditionCategory.debug]: false,
+    // We always set this to true, to make sure changes in debug mode are applied
+    [ConditionCategory.debug]: true,
   }
-  private debugList: [string, string][] = []
+  private prevDebugDict: Record<string, Record<string, string>> = {}
+  private debugDict: Record<string, Record<string, string>> = {}
   private classList: string[] = []
   private classDict: ClassDict = {
     [BASE]: {},
@@ -89,49 +99,120 @@ export class StyleManager {
     ":hover": {},
     ":active": {},
   }
-  private parentClassDict: ClassDict = {
-    [BASE]: {},
-    ":focus-visible": {},
-    ":hover": {},
-    ":active": {},
-  }
-  private styleDict: Record<string, string> = {}
+  private parentClassDicts: ClassDict[] = []
+  private styleVarsDict: Record<string, string> = {}
+  private styleVars: StyleObj = {}
+  private prevStyle: StyleObj = {}
   private style: StyleObj = {}
   private styleCount = 0
 
   private conditions: Conditions
-  private name: string
+  private name = ""
+  private baseClassName = ""
+  private variantName = ""
+  private conditionName = ""
+  private pseudoClassName = ""
+  private overridesName = ""
 
-  constructor(conditions: Conditions, name?: string) {
+  constructor(conditions: Conditions, name?: string, baseClassName?: string) {
     this.conditions = conditions
-    this.name = name ?? getStyleName()
+    this.setName(name)
+    this.baseClassName = baseClassName ? `${baseClassName} ` : ""
   }
 
-  private getDebugVar(className: string) {
+  private getDebugVarKey(className: string) {
     return `--${className}`
   }
 
-  debug() {
-    if (this.conditions.debug) {
-      this.styleCount += this.debugList.length
-      const scopeName = this.getDebugVar(`-${this.name}`)
-      this.style[scopeName] = ""
-      this.debugList.forEach(([debugClass, debugValue]) => {
-        this.style[scopeName] += `${debugClass} `
-        this.style[this.getDebugVar(`--${debugClass}`)] = debugValue
-      })
-    }
-    this.debugList = []
+  private getDebugClassVarKey(className: string) {
+    return this.getDebugVarKey(`-${className}`)
   }
 
-  setNewStyle(conditions: Conditions, name?: string) {
-    this.conditions = conditions
+  private get isDebugMode() {
+    return !!this.conditions.debug
+  }
+
+  private get debugScope() {
+    const scope: string[] = [this.name]
+    if (this.variantName) scope.push(this.variantName)
+    if (this.overridesName) scope.push(this.overridesName)
+    if (this.conditionName) scope.push(this.conditionName)
+    if (this.pseudoClassName) scope.push(this.pseudoClassName)
+    const scopeName = scope.join("_")
+    const suffix = scopeName.length < 4 ? "-" : ""
+    return this.getDebugVarKey(`${scopeName}${suffix}`)
+  }
+
+  private addDebugInfo(className: string, originalProp: string, originalValue?: string) {
+    if (this.isDebugMode) {
+      if (!this.debugDict[this.debugScope]) this.debugDict[this.debugScope] = {}
+      const value = originalValue ? `: ${originalValue}` : ""
+      this.debugDict[this.debugScope][className] = `${originalProp}${value}`
+    }
+  }
+
+  private removeDebugClass(className: string) {
+    if (this.isDebugMode) {
+      delete this.prevStyle[this.getDebugClassVarKey(className)]
+    }
+  }
+
+  private compileDebugInfo() {
+    if (this.isDebugMode) {
+      let hash = ""
+      const debugDict = { ...this.debugDict, ...this.prevDebugDict }
+      const scopes = Object.entries(debugDict)
+      scopes.forEach(([scope, debugData]) => {
+        hash += stringToHash(scope)
+        this.style[scope] = DEBUG_GROUP_VALUE
+        const debugList = Object.entries(debugData)
+        debugList.forEach(([debugClass, debugValue]) => {
+          hash += stringToHash(debugClass + debugValue)
+          this.styleCount++
+          const debugKey = this.getDebugClassVarKey(debugClass)
+          if (this.style[debugKey]) {
+            delete this.style[debugKey]
+          }
+          this.style[debugKey] = debugValue
+        })
+      })
+      this.removeEmptyDebugGroups()
+      // Returns a hashed key, to rerender when the debug info changes, but not when it doesn't
+      return `${this.name}-${hash}`
+    }
+  }
+
+  private removeEmptyDebugGroups() {
+    const entries = Object.entries(this.style)
+    const len = 0
+    let index = entries.length
+    for (index; index >= len; index--) {
+      const [prevKey, prevValue] = entries[index - 1] ?? []
+      const [, value] = entries[index] ?? []
+      if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
+        delete this.style[prevKey]
+      }
+    }
+  }
+
+  private setName(name?: string) {
     this.name = name ?? getStyleName()
   }
 
-  setToOverrideMode() {
-    this.debug()
-    this.name = `${this.name}_css`
+  private setVariantName(name?: string) {
+    this.variantName = name ? `V_${name}` : ""
+  }
+
+  setNewStyle(conditions: Conditions, name?: string) {
+    if (this.isDebugMode) {
+      // Make sure we sequence the debug info in the correct order
+      this.prevStyle = this.style
+      this.style = {}
+      this.prevDebugDict = this.debugDict
+      this.debugDict = {}
+    }
+    this.conditions = conditions
+    this.setName(name)
   }
 
   /**
@@ -161,12 +242,14 @@ export class StyleManager {
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
 
-    // Parent data, to make sure we don't have a conflict with that data
-    const parentData = this.parentClassDict[pseudoClass][propId]
-    const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
-
     // If the parent already has this style, only override if this one has HIGHER priority.
-    const hasParentConflict = parentPriority <= incomingPriority
+    const hasParentConflict = this.parentClassDicts.some(parentDict => {
+      // Parent data, to make sure we don't have a conflict with that data
+      const parentData = parentDict[pseudoClass][propId]
+      const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
+
+      return parentPriority <= incomingPriority
+    })
 
     // If what we've already processed of the current styles have a conflict,
     // only override it if this one has HIGHER OR EQUAL priority.
@@ -177,10 +260,20 @@ export class StyleManager {
       existingData,
       incomingPriority,
       existingPriority,
-      parentData,
-      parentPriority,
       hasParentConflict,
       hasExistingConflict,
+    }
+  }
+
+  private getScaledProps(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
+    const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
+    const scaledProp = scaledMap ? scaledMap[prop as keyof typeof scaledMap] : undefined
+    const scaleKey = scaledPropScale[prop as ScaledKey]
+    const propScale = scales[scaleKey]
+    return {
+      scaledProp,
+      scaleKey,
+      propScale,
     }
   }
 
@@ -213,10 +306,8 @@ export class StyleManager {
       pseudoClass
     )
 
-    // Lower-valued priorities take precedent, and cannot be overwritten
-    if (hasExistingConflict || hasParentConflict) {
-      return
-    }
+    // Lower-valued priorities take precedence, and cannot be overwritten
+    if (hasExistingConflict || hasParentConflict) return
 
     const index = existingData?.[0] ?? this.classList.length
 
@@ -225,55 +316,306 @@ export class StyleManager {
 
     if (existingData === undefined) {
       this.classList.push(className)
-      this.debugList.push([className, `${originalProp}: ${originalValue}\n`])
     } else {
-      // Clear out old style that got overwritten, if need be
-      const oldClass = this.classList[index]
-      const oldStyleVar = this.styleDict[oldClass]
+      // Clear out old style that is getting overwritten, if need be
+      const oldClassName = this.classList[index]
+      if (oldClassName) {
+        this.removeDebugClass(oldClassName)
+      }
+      const oldStyleVar = this.styleVarsDict[oldClassName]
       if (oldStyleVar) {
-        delete this.style[oldStyleVar]
+        delete this.styleVars[oldStyleVar]
         this.styleCount--
       }
       this.classList[index] = className
-      this.debugList[index] = [className, `${originalProp}: ${originalValue}\n`]
     }
+
+    this.addDebugInfo(className, originalProp ?? prop, originalValue ?? value)
+
     if (varName && value) {
       this.styleCount++
-      this.styleDict[className] = varName
-      this.style[varName] = value
+      this.styleVarsDict[className] = varName
+      this.styleVars[varName] = value
     }
   }
 
   compile() {
     // Any further usage of this class will be for nested composition
-    this.parentClassDict = {
+    this.parentClassDicts.push({
       [BASE]: { ...this.classDict[BASE] },
       ":focus-visible": { ...this.classDict[":focus-visible"] },
       ":hover": { ...this.classDict[":hover"] },
       ":active": { ...this.classDict[":active"] },
-    }
+    })
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
-    const output: { className: string; styleManager: StyleManager; style?: StyleObj } = {
-      className: outputClass,
+    const output: { className: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
+      className: `${this.baseClassName}${outputClass}`,
       styleManager: this,
+      style: {},
     }
 
-    // Handle debug
-    this.debug()
+    // Generate debug info
+    output.key = this.compileDebugInfo()
 
+    // Generate inline styles
     if (this.styleCount > 0) {
-      output.style = this.style
+      if (this.isDebugMode) {
+        const style = { ...this.style, ...this.prevStyle }
+        output.style = { ...style }
+        output.style["--Variables"] = "▼"
+        Object.entries(this.styleVars).forEach(([key, value]) => (output.style[key] = value))
+      } else {
+        output.style = this.styleVars
+      }
     }
 
     return output
+  }
+
+  // PROCESSING FUNCTIONS ///////////////////////////////////////////////////////////////////////////
+  /** Process fully-nestable CSS, in an object keyed by variant name-value pairs */
+  processOverridesCss(overridesCss: CSS, conditions: Conditions) {
+    this.overridesName = "css"
+    this.processCss(overridesCss, conditions)
+    this.overridesName = ""
+  }
+
+  /** Process fully-nestable CSS, in an object keyed by variant name-value pairs */
+  processVariantCss(variantCss: VariantCSS, conditions: Conditions) {
+    variantCss.forEach(({ key, css }) => {
+      this.setVariantName(key)
+      this.processCss(css, conditions)
+    })
+    this.setVariantName()
+  }
+
+  /** Process fully-nestable CSS, including conditions and pseudo-classes */
+  processCss(css: CSS, conditions: Conditions, condition?: InlineConditionKey) {
+    const props = Object.entries(css)
+    // Loop through each prop of css
+    const propsLen = props.length
+    for (let index = 0; index < propsLen; index++) {
+      const [propName, propValue] = props[index]
+      // If the prop is a condition, process its inner props, including its inner pseudo-classes
+      if (conditionsMap[propName as ConditionKey]) {
+        // Register that this style set depends on this condition being watched
+        this.watchCondition(propName as ConditionKey)
+        // Skip if the condition is currently false
+        if (!conditions[propName as ConditionKey]) continue
+        // Otherwise, proceed
+        this.conditionName = propName.replace("!", "not-")
+        this.processCss(propValue as ConditionalCSS, conditions, propName as InlineConditionKey)
+        this.conditionName = ""
+        continue
+      }
+
+      if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
+        // If the prop is a pseudo-class, process its inner props
+        this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, conditions, condition)
+        continue
+      }
+
+      // Otherwise, process the prop's value
+      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition)
+    }
+  }
+
+  /** Process non-conditional CSS, including pseudo-classes */
+  processBaseCss(
+    baseCss: BaseCSS,
+    pseudo: CombinedPseudoClassKey,
+    conditions: Conditions,
+    condition?: InlineConditionKey
+  ) {
+    const props = Object.entries(baseCss)
+    const propsLen = props.length
+    for (let index = 0; index < propsLen; index++) {
+      const [propName, propValue] = props[index]
+      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
+    }
+  }
+
+  /**
+   * Process a single CSS prop + value, including mapped props (which may be spread into multiple props),
+   * and inline-conditional values, which need to be processed based on current conditions.
+   */
+  processCssProp(
+    prop: CssPropKey,
+    value: InlineConditionValue,
+    conditions: Conditions,
+    condition?: InlineConditionKey,
+    pseudo?: CombinedPseudoClassKey,
+    originalProp?: CssPropKey
+  ) {
+    // Check first to see if we have an inline condition `object`!
+    if (typeof value === "object") {
+      // If inline conditions include a base value, process that first
+      if (value[BASE] !== undefined) {
+        this.processCssProp(prop, value[BASE], conditions, BASE, pseudo)
+      }
+      const conditionKeysLen = conditionKeys.length
+      for (let index = 0; index < conditionKeysLen; index++) {
+        const conditionKey = conditionKeys[index]
+        const innerValue = value[conditionKey]
+        if (innerValue !== undefined) {
+          this.watchCondition(conditionKey)
+          if (conditions[conditionKey] === true) {
+            this.conditionName = conditionKey.replace("!", "not-")
+            this.processCssProp(prop, innerValue, conditions, conditionKey as InlineConditionKey, pseudo)
+            this.conditionName = ""
+          }
+        }
+      }
+      return
+    }
+
+    let scaledOriginalProp: CssPropKey | undefined
+
+    if (originalProp) {
+      const { propScale } = this.getScaledProps(originalProp, pseudo as PseudoCategoryKey)
+      if (propScale?.aliasMap) {
+        const scaledValue = mapAliasToValue(propScale.aliasMap, prop, value)
+        if (scaledValue) {
+          value = scaledValue
+          scaledOriginalProp = prop
+        }
+      }
+    }
+
+    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
+    // If it's a mapped prop, run its mapping func, and proceed with the result of that
+    if (mapper) {
+      const innerProps = Object.entries(mapper(value))
+      const innerPropsLen = innerProps.length
+      for (let index = 0; index < innerPropsLen; index++) {
+        const [propName, propValue] = innerProps[index]
+        this.processCssProp(
+          propName as CssPropKey,
+          propValue,
+          conditions,
+          condition,
+          pseudo,
+          scaledOriginalProp ?? originalProp ?? prop
+        )
+      }
+      return
+    }
+
+    value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
+    if (pseudo) {
+      const pseudos =
+        pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
+      const pseudosLen = pseudos.length
+      for (let index = 0; index < pseudosLen; index++) {
+        const pseudoKey = pseudos[index] as PseudoClassKey
+        this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
+        this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
+        this.pseudoClassName = ""
+      }
+      return
+    }
+
+    this.addStyle(prop, value, condition, undefined, originalProp ?? prop)
+  }
+
+  /** Adds style to style manager */
+  addStyle(
+    prop: CssPropKey,
+    value: string,
+    condition?: InlineConditionKey,
+    pseudo?: PseudoClassKey,
+    originalProp?: CssPropKey
+  ) {
+    const result = this.getStyle(prop, value, pseudo)
+    if (result) {
+      this.add(prop, result.className, condition, pseudo ?? BASE, result.varName, result.value, originalProp, value)
+
+      // If this is a combo class with multiple props, make sure we avoid conflicts
+      if (result.props && result.props.length > 0) {
+        result.props.forEach(([comboProp, comboValue]) => {
+          // This won't actually override the combo prop, but will avoid conflicts
+          this.add(
+            comboProp as CssPropKey,
+            result.className,
+            condition,
+            pseudo ?? BASE,
+            result.varName,
+            result.value,
+            originalProp,
+            value
+          )
+          this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
+        })
+      }
+    }
+  }
+
+  /** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
+  getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
+    const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
+    const staticProp = staticMap[prop as keyof typeof staticMap]
+    const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
+
+    const { scaledProp, scaleKey, propScale } = this.getScaledProps(prop, pseudo)
+    let scaledValue = scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
+
+    if (staticValue) {
+      return { className: staticValue }
+    }
+
+    if (scaledValue) {
+      // Check to see if this value is an alias
+      if (scaledValue === SCALED_PLACEHOLDER) {
+        const propAliasMap = propScale.cssAliasMap
+        type AliasKey = keyof typeof propAliasMap
+        let aliasValue = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
+        if (aliasValue) {
+          if (aliasValue === SCALED_ALIAS && propScale.aliasMap) {
+            aliasValue = (mapAliasToValue(propScale.aliasMap, prop, value) ?? "") as CssAlias
+          }
+          scaledValue =
+            scaledProp && aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
+        }
+      }
+      const mapProps = propScale.cssValueMapProps
+      const props = mapProps[value as keyof typeof mapProps] as CssPropKey[]
+      return scaledValue ? { className: scaledValue, props } : undefined
+    }
+
+    // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
+    if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
+      const tokenMap = tokenToVarMap[scaleKey]
+      let varFromToken = tokenMap[value as keyof typeof tokenMap]
+      if (varFromToken) {
+        if (varFromToken === SCALED_ALIAS && propScale.aliasMap) {
+          const aliasValue = mapAliasToValue(propScale.aliasMap, prop, value)
+          varFromToken = tokenMap[aliasValue as keyof typeof tokenMap]
+        }
+        if (varFromToken) {
+          value = `var(${varFromToken})`
+        }
+      }
+    }
+    // Get both the className and varName needed to set a custom value, if possible for this prop
+    const customVarMap = customVarPropMap[pseudo as keyof typeof customVarPropMap]
+    const customVarProp =
+      prop in customVarMap ? (customVarMap[prop as keyof typeof customVarMap] as CustomVarPropValue) : undefined
+    const { className, varName } = customVarProp ?? {}
+    return className && varName ? { className, varName, value } : undefined
+  }
+
+  static sanitizePseudoKey(key: CombinedPseudoClassKey) {
+    return key.replaceAll(":", "")
   }
 }
 
 /*************************************************************************************************
  * UTILS
  *************************************************************************************************/
+const DEBUG_GROUP_VALUE = "▼"
+
 /** Takes a nested (group-based) theme overrides object, and flattens it, without groupings */
 function flattenOverrides(overrides?: ThemeOverrides) {
   return !overrides
@@ -286,168 +628,22 @@ function flattenOverrides(overrides?: ThemeOverrides) {
       }, {} as any) as Record<string, string | number>)
 }
 
-// PROCESSING FUNCTIONS ///////////////////////////////////////////////////////////////////////////
-/** Process fully-nestable CSS, including conditions and pseudo-classes */
-function processCss(css: CSS, manager: StyleManager, conditions: Conditions, condition?: InlineConditionKey) {
-  const props = Object.entries(css)
-  // Loop through each prop of css
-  const propsLen = props.length
-  for (let index = 0; index < propsLen; index++) {
-    const [propName, propValue] = props[index]
-    // If the prop is a condition, process its inner props, including its inner pseudo-classes
-    if (conditionsMap[propName as ConditionKey]) {
-      // Register that this style set depends on this condition being watched
-      manager.watchCondition(propName as ConditionKey)
-      // Skip if the condition is currently false
-      if (!conditions[propName as ConditionKey]) continue
-      // Otherwise, proceed
-      processCss(propValue as ConditionalCSS, manager, conditions, propName as InlineConditionKey)
-    } else if (pseudoClasses[propName as PseudoClassKey]) {
-      // If the prop is a pseudo-class, process its inner props
-      processBaseCss(propValue as BaseCSS, manager, propName as PseudoClassKey, conditions, condition)
-    } else {
-      // Else, process the prop's value
-      processCssProp(propName as CssPropKey, propValue as InlineConditionValue, manager, conditions, condition)
-    }
-  }
-}
-
-/** Process non-conditional CSS, including pseudo-classes */
-function processBaseCss(
-  baseCss: BaseCSS,
-  manager: StyleManager,
-  pseudo: PseudoClassKey,
-  conditions: Conditions,
-  condition?: InlineConditionKey
-) {
-  const props = Object.entries(baseCss)
-  const propsLen = props.length
-  for (let index = 0; index < propsLen; index++) {
-    const [propName, propValue] = props[index]
-    processCssProp(propName as CssPropKey, propValue as InlineConditionValue, manager, conditions, condition, pseudo)
-  }
-}
-
-/**
- * Process a single CSS prop + value, including mapped props (which may be spread into multiple props),
- * and inline-conditional values, which need to be processed based on current conditions.
- */
-function processCssProp(
-  prop: CssPropKey,
-  value: InlineConditionValue,
-  manager: StyleManager,
-  conditions: Conditions,
-  condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey,
-  originalProp?: CssPropKey
-) {
-  // Check first to see if we have an inline condition `object`!
-  if (typeof value === "object") {
-    // If inline conditions include a base value, process that first
-    if (value[BASE] !== undefined) {
-      processCssProp(prop, value[BASE], manager, conditions, BASE, pseudo)
-    }
-    const conditionKeysLen = conditionKeys.length
-    for (let index = 0; index < conditionKeysLen; index++) {
-      const conditionKey = conditionKeys[index]
-      const innerValue = value[conditionKey]
-      if (innerValue !== undefined) {
-        manager.watchCondition(conditionKey)
-        if (conditions[conditionKey] === true) {
-          processCssProp(prop, innerValue, manager, conditions, conditionKey as InlineConditionKey, pseudo)
-        }
-      }
-    }
-  } else {
-    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
-    // If it's a mapped prop, run its mapping func, and proceed with the result of that
-    if (mapper) {
-      const innerProps = Object.entries(mapper(value))
-      const innerPropsLen = innerProps.length
-      for (let index = 0; index < innerPropsLen; index++) {
-        const [propName, propValue] = innerProps[index]
-        processCssProp(propName as CssPropKey, propValue, manager, conditions, condition, pseudo, prop)
-      }
-    } else {
-      value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
-      if (pseudo) {
-        const pseudos =
-          pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-        const pseudosLen = pseudos.length
-        for (let index = 0; index < pseudosLen; index++) {
-          const pseudoKey = pseudos[index]
-          addStyle(prop, value as string, manager, condition, pseudoKey, originalProp ?? prop)
-        }
-      } else {
-        addStyle(prop, value, manager, condition, undefined, originalProp ?? prop)
-      }
-    }
-  }
-}
-
-/** Adds style to style manager */
-function addStyle(
-  prop: CssPropKey,
-  value: string,
-  manager: StyleManager,
-  condition?: InlineConditionKey,
-  pseudo?: PseudoClassKey,
-  originalProp?: CssPropKey
-) {
-  const output = getStyle(prop, value, pseudo)
-  if (output) {
-    manager.add(prop, output.className, condition, pseudo ?? BASE, output.varName, output.value, originalProp, value)
-  }
-}
-
-/** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
-function getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
-  const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
-  const staticProp = staticMap[prop as keyof typeof staticMap]
-  const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
-
-  const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
-  const scaledProp = scaledMap[prop as keyof typeof scaledMap]
-  let scaledValue = scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
-
-  const scaleKey = scaledPropScale[prop as ScaledKey]
-  const propScale = scales[scaleKey]
-
-  if (staticValue) {
-    return { className: staticValue }
-  } else if (scaledValue) {
-    // Check to see if this value is an alias
-    if (scaledValue === SCALED_PLACEHOLDER) {
-      const propAliasMap = propScale.cssAliasMap
-      type AliasKey = keyof typeof propAliasMap
-      const aliasValue = propAliasMap ? (propAliasMap[value as AliasKey] as CssAlias) : undefined
-      if (aliasValue) {
-        scaledValue = aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
-      }
-    }
-    if (scaledValue) return { className: scaledValue }
-  } else {
-    // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
-    if (propScale?.themeProps[value as keyof typeof propScale.themeProps]) {
-      const tokenMap = tokenToVarMap[scaleKey]
-      const varFromToken = tokenMap[value as keyof typeof tokenMap]
-      if (varFromToken) {
-        value = `var(${varFromToken})`
-      }
-    }
-    // Get both the className and varName needed to set a custom value, if possible for this prop
-    const customVarMap = customVarPropMap[pseudo as keyof typeof customVarPropMap]
-    const customVarProp =
-      prop in customVarMap ? (customVarMap[prop as keyof typeof customVarMap] as CustomVarPropValue) : undefined
-    const { className, varName } = customVarProp ?? {}
-    if (className && varName) return { className, varName, value }
-  }
-}
-
 let styleId = 0
 function getStyleName() {
   styleId++
   return `style-${styleId}`
+}
+
+function stringToHash(source: string) {
+  const length = source.length
+  let hash = 0
+  if (length > 0) {
+    let index = 0
+    for (index = 0; index < length; index++) {
+      hash += source.charCodeAt(index)
+    }
+  }
+  return hash
 }
 
 /*************************************************************************************************
@@ -455,6 +651,7 @@ function getStyleName() {
  *************************************************************************************************/
 type ResponsiveConditionKey = ResponsiveCondition | typeof BASE
 type PseudoClassKey = keyof typeof pseudoClasses
+type CombinedPseudoClassKey = keyof typeof combinedPseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
