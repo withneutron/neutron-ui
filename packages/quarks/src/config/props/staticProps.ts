@@ -43,8 +43,9 @@ const none = options("none")
 const auto = options("auto")
 const overflow = options("visible", "hidden", "clip", "scroll", "auto")
 const borderStyle = options("dashed", "dotted", "groove")
-const height = options("100%", "100vh", "max-content", "min-content", "auto")
-const width = options("100%", "100vw", "max-content", "min-content", "auto")
+const height = options("100%", "100vh", "fit-content", "max-content", "min-content", "auto")
+const width = options("100%", "100vw", "fit-content", "max-content", "min-content", "auto")
+const borderWidth = options("thin", "medium", "thick")
 
 type Placeholder = { fakeProp: true }
 
@@ -108,10 +109,10 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     borderBlockEndColor: values("borderBlockEndColor", color),
     borderInlineStartColor: values("borderInlineStartColor", color),
     borderInlineEndColor: values("borderInlineEndColor", color),
-    borderBlockStartWidth: values("borderBlockStartWidth", width),
-    borderBlockEndWidth: values("borderBlockEndWidth", width),
-    borderInlineStartWidth: values("borderInlineStartWidth", width),
-    borderInlineEndWidth: values("borderInlineEndWidth", width),
+    borderBlockStartWidth: values("borderBlockStartWidth", borderWidth),
+    borderBlockEndWidth: values("borderBlockEndWidth", borderWidth),
+    borderInlineStartWidth: values("borderInlineStartWidth", borderWidth),
+    borderInlineEndWidth: values("borderInlineEndWidth", borderWidth),
 
     borderStartStartRadius: values("borderStartStartRadius"),
     borderStartEndRadius: values("borderStartEndRadius"),
@@ -121,7 +122,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     outline: values("outline", none),
     outlineColor: values("outlineColor", color),
     outlineOffset: values("outlineOffset"),
-    outlineWidth: values("outlineWidth", width),
+    outlineWidth: values("outlineWidth", borderWidth),
 
     fill: values("fill", color),
     stroke: values("stroke", color),
