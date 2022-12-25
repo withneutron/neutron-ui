@@ -18,7 +18,15 @@ function MyApp({ Component, pageProps }: AppProps) {
       isMobile={isMobile}
       isDebugMode={isDebugMode}
     >
-      <QuarksProvider defaultColorMode={colorMode} isMobile={isMobile} isDebugMode={isDebugMode}>
+      <QuarksProvider
+        defaultColorMode={colorMode}
+        isMobile={isMobile}
+        isDebugMode={isDebugMode}
+        queryOverrides={{
+          sm: 680,
+          md: 1024,
+        }}
+      >
         <Style />
         <Head>
           <title>Next.js + Neutron UI +++</title>
