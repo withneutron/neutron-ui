@@ -456,7 +456,8 @@ export class StyleManager {
   ) {
     const props = Object.entries(baseCss)
     const propsLen = props.length
-    for (let index = 0; index < propsLen; index++) {
+    let index = 0
+    for (index; index < propsLen; index++) {
       const [propName, propValue] = props[index]
       this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
     }
@@ -481,7 +482,8 @@ export class StyleManager {
         this.processCssProp(prop, value[BASE], conditions, BASE, pseudo)
       }
       const conditionKeysLen = conditionKeys.length
-      for (let index = 0; index < conditionKeysLen; index++) {
+      let index = 0
+      for (index; index < conditionKeysLen; index++) {
         const conditionKey = conditionKeys[index]
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
@@ -514,7 +516,8 @@ export class StyleManager {
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
       const innerPropsLen = innerProps.length
-      for (let index = 0; index < innerPropsLen; index++) {
+      let index = 0
+      for (index; index < innerPropsLen; index++) {
         const [propName, propValue] = innerProps[index]
         this.processCssProp(
           propName as CssPropKey,
@@ -533,7 +536,8 @@ export class StyleManager {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
       const pseudosLen = pseudos.length
-      for (let index = 0; index < pseudosLen; index++) {
+      let index = 0
+      for (index; index < pseudosLen; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
         this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
