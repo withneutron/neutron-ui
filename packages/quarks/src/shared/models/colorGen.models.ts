@@ -1,4 +1,4 @@
-import { m } from "./encodedColors.models"
+import { m as colorMatrix } from "./encodedColors.models"
 
 // CONSTANTS //////////////////////////////////////////////////////////////////////////////////////
 
@@ -112,7 +112,7 @@ export const SEGMENT_SIZE = {
 } as const
 
 /** Encoded matrix of luminance values per hue, per mode */
-export const COLOR_MATRIX = m
+export const COLOR_MATRIX = colorMatrix
 
 export const DECODE_DIFF = -26
 

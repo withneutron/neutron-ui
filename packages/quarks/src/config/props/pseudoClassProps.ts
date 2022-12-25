@@ -44,6 +44,10 @@ export const pseudoClassProps = {
   transform: true,
 
   transition: true,
+  transitionProperty: true,
+  transitionDuration: true,
+  transitionDelay: true,
+  transitionTimingFunction: true,
 
   opacity: true,
 
@@ -111,8 +115,15 @@ export type PseudoClassKeysWithAliases = PseudoClassKeys | PseudoClassAliasKeys
 
 type PseudoClassObject = { readonly [k in PseudoClassKeys]?: Record<string, unknown> }
 
-export type PseudoClassesWithAliases<T extends PseudoClassObject> = T & { ":focus"?: T[":focus-visible"] } & {
-  ":hover, :focus"?: T[":hover"] & T[":focus-visible"]
-} & { ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"] } & {
-  ":interact"?: T[":hover"] & T[":focus-visible"]
+type InnerPseudoFocus<T extends PseudoClassObject> = { ":focus"?: T[":focus-visible"] }
+type InnerPseudoHoverFocus<T extends PseudoClassObject> = { ":hover, :focus"?: T[":hover"] & T[":focus-visible"] }
+type InnerPseudoHoverFocusVisible<T extends PseudoClassObject> = {
+  ":hover, :focus-visible"?: T[":hover"] & T[":focus-visible"]
 }
+type InnerPseudoInteract<T extends PseudoClassObject> = { ":interact"?: T[":hover"] & T[":focus-visible"] }
+
+export type PseudoClassesWithAliases<T extends PseudoClassObject> = T &
+  InnerPseudoFocus<T> &
+  InnerPseudoHoverFocus<T> &
+  InnerPseudoHoverFocusVisible<T> &
+  InnerPseudoInteract<T>

@@ -7,12 +7,13 @@ export const Anchor = styled(
     fontWeight: "$600",
     radius: "$0",
     textDecoration: "none",
-    transition: `box-shadow ${vars.animation.fastDuration}, color ${vars.animation.fastDuration}`,
+    transitionProperty: "box-shadow, color",
+    transitionDuration: `${vars.animation.fastDuration}, ${vars.animation.fastDuration}`,
     ":focus": {
       outline: "none",
     },
     ":hover": {
-      transition: `box-shadow ${vars.animation.defaultDuration}, color ${vars.animation.defaultDuration}`,
+      transitionDuration: `${vars.animation.defaultDuration}, ${vars.animation.defaultDuration}`,
     },
   },
   "Anchor"

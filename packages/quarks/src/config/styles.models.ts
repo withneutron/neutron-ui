@@ -5,7 +5,7 @@ import { CSS } from "./styles.css"
 
 export const BASE = "base"
 
-type CustomVarHint = "__Enter any valid CSS__"
+type CustomVarHint = "<Any valid CSS>"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
 
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
@@ -82,4 +82,4 @@ export type InlineConditionCss<T> = {
   [k in keyof T]: InlineCondition<T[k]>
 }
 
-export type VariantCSS = Array<{ key: string, css: CSS }>
+export type VariantCSS = Array<{ key: string; css: CSS }>
