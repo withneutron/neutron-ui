@@ -71,6 +71,10 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     animationTimingFunction: value("animationTimingFunction"),
 
     transition: value("transition"),
+    transitionProperty: value("transitionProperty"),
+    transitionDuration: value("transitionDuration"),
+    transitionDelay: value("transitionDelay"),
+    transitionTimingFunction: value("transitionTimingFunction"),
 
     opacity: value("opacity"),
 

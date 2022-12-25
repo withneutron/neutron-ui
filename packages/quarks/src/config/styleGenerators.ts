@@ -9,6 +9,10 @@ import {
   sourcePropsIdMap,
   SCALED_PLACEHOLDER,
   pseudoClasses,
+  NthChildKeys,
+  nthChildCheckers,
+  isCustomNthChild,
+  getIndexErrorMessage,
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
@@ -53,12 +57,12 @@ export function style(
   overrides?: CSS | null,
   styleName?: string,
   manager?: StyleManager,
-  baseClassName?: string
+  props?: StyleMangerProps
 ) {
   if (manager) {
     manager.setNewStyle(conditions, styleName)
   } else {
-    manager = new StyleManager(conditions, styleName, baseClassName)
+    manager = new StyleManager(conditions, styleName, props)
   }
 
   // Process defined styles
@@ -114,10 +118,16 @@ export class StyleManager {
   private pseudoClassName = ""
   private overridesName = ""
 
-  constructor(conditions: Conditions, name?: string, baseClassName?: string) {
+  private index: number | undefined
+  private length: number | undefined
+
+  constructor(conditions: Conditions, name?: string, props?: StyleMangerProps) {
+    const { className, index, length } = props ?? {}
     this.conditions = conditions
     this.setName(name)
-    this.baseClassName = baseClassName ? `${baseClassName} ` : ""
+    this.baseClassName = className ? `${className} ` : ""
+    this.index = index
+    this.length = length
   }
 
   private getDebugVarKey(className: string) {
@@ -396,7 +406,8 @@ export class StyleManager {
     const props = Object.entries(css)
     // Loop through each prop of css
     const propsLen = props.length
-    for (let index = 0; index < propsLen; index++) {
+    let index = 0
+    for (index; index < propsLen; index++) {
       const [propName, propValue] = props[index]
       // If the prop is a condition, process its inner props, including its inner pseudo-classes
       if (conditionsMap[propName as ConditionKey]) {
@@ -411,9 +422,23 @@ export class StyleManager {
         continue
       }
 
+      // If the prop is a pseudo-class, process its inner props
       if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
-        // If the prop is a pseudo-class, process its inner props
         this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, conditions, condition)
+        continue
+      }
+
+      // If the prop is an nth-child pseudo selector, process its inner props
+      if (nthChildCheckers[propName as NthChildKeys] || isCustomNthChild(propName as NthChildKeys)) {
+        const checker = nthChildCheckers[propName as NthChildKeys] || nthChildCheckers[BASE]
+        if (this.index === undefined) {
+          console.error(getIndexErrorMessage(propName as NthChildKeys))
+          continue
+        }
+        const isMatchingNthChild = checker(this.index, propName as NthChildKeys, this.length)
+        if (isMatchingNthChild) {
+          this.processCss(propValue as ConditionalCSS, conditions)
+        }
         continue
       }
 
@@ -431,7 +456,8 @@ export class StyleManager {
   ) {
     const props = Object.entries(baseCss)
     const propsLen = props.length
-    for (let index = 0; index < propsLen; index++) {
+    let index = 0
+    for (index; index < propsLen; index++) {
       const [propName, propValue] = props[index]
       this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
     }
@@ -456,7 +482,8 @@ export class StyleManager {
         this.processCssProp(prop, value[BASE], conditions, BASE, pseudo)
       }
       const conditionKeysLen = conditionKeys.length
-      for (let index = 0; index < conditionKeysLen; index++) {
+      let index = 0
+      for (index; index < conditionKeysLen; index++) {
         const conditionKey = conditionKeys[index]
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
@@ -489,7 +516,8 @@ export class StyleManager {
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
       const innerPropsLen = innerProps.length
-      for (let index = 0; index < innerPropsLen; index++) {
+      let index = 0
+      for (index; index < innerPropsLen; index++) {
         const [propName, propValue] = innerProps[index]
         this.processCssProp(
           propName as CssPropKey,
@@ -508,7 +536,8 @@ export class StyleManager {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
       const pseudosLen = pseudos.length
-      for (let index = 0; index < pseudosLen; index++) {
+      let index = 0
+      for (index; index < pseudosLen; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
         this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
@@ -668,3 +697,9 @@ export type ThemeOverrides = {
 type StyleObj = Record<string, string>
 
 type Conditions = Partial<Record<ConditionKey, boolean>>
+
+type StyleMangerProps = {
+  className?: string
+  index?: number
+  length?: number
+}

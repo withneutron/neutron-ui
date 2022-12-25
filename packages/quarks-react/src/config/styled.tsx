@@ -58,7 +58,7 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
     ref?: ForwardedRef<R>
   ) {
     const conditions = useStyleConditions()
-    const { as: polyAs, css: propsCss, styleManager, isSemantic, className: baseClassName, ...rest } = props
+    const { as: polyAs, css: propsCss, styleManager, isSemantic, className, index, length, ...rest } = props
 
     // Make sure this ref only changes if the output changed
     const previousVariantProps = useRef<Record<string, any>>(getVariantProps(variants.props, rest))
@@ -84,8 +84,8 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
     )
 
     const { styleManager: innerStyleManger, ...styleProps } = useMemo(
-      () => style(css, conditions, variantCss, propsCss, styleName, styleManager, baseClassName),
-      [conditions, variantCss, propsCss, styleManager]
+      () => style(css, conditions, variantCss, propsCss, styleName, styleManager, { className, index, length }),
+      [conditions, variantCss, propsCss, styleManager, className, index, length]
     )
     const innerProps = {} as typeof props
 

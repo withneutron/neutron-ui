@@ -211,6 +211,26 @@ const GridBox = styled(
     fontWeight: "$600",
     justifyContent: "center",
     alignItems: "center",
+    ":even": {
+      bg: "$secondary9",
+      color: "$secondaryText9",
+    },
+    ":odd": {
+      bg: "$tertiary9",
+      color: "$tertiaryText9",
+    },
+    ":nth-child(-n+3)": {
+      bg: "$secondary9",
+      color: "$secondaryText9",
+    },
+    ":first": {
+      bg: "$primary9",
+      color: "$primaryText9",
+    },
+    ":last": {
+      bg: "$magenta9",
+      color: "$magentaText9",
+    },
   },
   "GridBox"
 )
@@ -276,12 +296,12 @@ const Sample: NextPage = () => {
       {showSampleBox && (
         <>
           <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
-          <SubHeading css={{ type: "$title" }}>Title</SubHeading>
+          <Heading css={{ type: "$title" }}>Title</Heading>
           <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
             Minor Title
           </SubHeading>
-          <Heading.H3 css={{ type: "$heading" }}>Heading</Heading.H3>
-          <SubHeading css={{ type: "$subHeading" }}>Sub-Heading</SubHeading>
+          <Heading.H3>Heading</Heading.H3>
+          <SubHeading>Sub-Heading</SubHeading>
           <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
           <Text css={{ type: "$caption" }}>Caption</Text>
           {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
@@ -299,20 +319,16 @@ const Sample: NextPage = () => {
             NUI-powered sample box
           </NuiSection>
           <SampleGrid>
-            <GridBox>1</GridBox>
-            <GridBox css={{ border: "$primaryMax" }}>2</GridBox>
-            <GridBox>3</GridBox>
-            <GridBox>4</GridBox>
-
-            <GridBox>5</GridBox>
-            <GridBox>6</GridBox>
-            <GridBox>7</GridBox>
-            <GridBox>8</GridBox>
-
-            <GridBox>9</GridBox>
-            <GridBox>10</GridBox>
-            <GridBox>11</GridBox>
-            <GridBox>12</GridBox>
+            {Array.apply(null, Array(12)).map((_v, index: number) => (
+              <GridBox
+                key={index}
+                index={index}
+                length={12}
+                css={{ outline: index === 1 ? "$secondaryMax" : undefined }}
+              >
+                {index + 1}
+              </GridBox>
+            ))}
           </SampleGrid>
         </>
       )}
