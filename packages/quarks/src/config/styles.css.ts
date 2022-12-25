@@ -62,6 +62,7 @@ import {
   generateStaticPropsCss,
   generatePseudoClassCss,
   PseudoClassesWithAliases,
+  NthChildKeys,
 } from "./props"
 import { getSelector } from "./styles.utils"
 import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
@@ -422,12 +423,13 @@ type ScaledProps = CssFromMap<typeof scaledProps>
 type CustomVarProps = CssFromCustomVars<typeof customVarProps>
 type StaticProps = CssFromMap<typeof staticProps>
 
-/** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
-export type BaseCSS = InlineConditionCss<MergedCssProps<ScaledProps, CustomVarProps, StaticProps>> &
-  PseudoClassesWithAliases<ICMergePCCssProps>
+type CssProps = MergedCssProps<ScaledProps, CustomVarProps, StaticProps>
+type NthChildClasses = { [key in NthChildKeys]?: CssProps }
 
-type BaseConditionalCSS = MergedCssProps<ScaledProps, CustomVarProps, StaticProps> &
-  PseudoClassesWithAliases<MergePCCssProps>
+/** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
+export type BaseCSS = InlineConditionCss<CssProps> & PseudoClassesWithAliases<ICMergePCCssProps> & NthChildClasses
+
+type BaseConditionalCSS = CssProps & PseudoClassesWithAliases<MergePCCssProps> & NthChildClasses
 
 /** Style object for root-level conditions, including pseudo-classes */
 export type ConditionalCSS = { [k in ConditionKey]?: BaseConditionalCSS }
