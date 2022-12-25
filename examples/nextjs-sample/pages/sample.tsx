@@ -216,8 +216,8 @@ const GridBox = styled(
       color: "$secondaryText9",
     },
     ":odd": {
-      bg: "$tertiary9",
-      color: "$tertiaryText9",
+      bg: "$primary9",
+      color: "$primaryText9",
     },
     ":nth-child(-n+3)": {
       bg: "$secondary9",
@@ -228,7 +228,12 @@ const GridBox = styled(
       color: "$primaryText9",
     },
     ":last": {
-      bg: "$magenta9",
+      bg: {
+        base: "$magenta9",
+        md: "$grass9",
+        lg: "$indigo9",
+        xl: "$plum9",
+      },
       color: "$magentaText9",
     },
   },
