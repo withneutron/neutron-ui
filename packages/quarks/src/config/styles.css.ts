@@ -424,7 +424,7 @@ type CustomVarProps = CssFromCustomVars<typeof customVarProps>
 type StaticProps = CssFromMap<typeof staticProps>
 
 type CssProps = MergedCssProps<ScaledProps, CustomVarProps, StaticProps>
-type NthChildClasses = { [key in NthChildKeys]?: CssProps }
+type NthChildClasses = { [key in NthChildKeys]?: InlineConditionCss<CssProps> }
 
 /** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
 export type BaseCSS = InlineConditionCss<CssProps> & PseudoClassesWithAliases<ICMergePCCssProps> & NthChildClasses
