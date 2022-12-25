@@ -136,7 +136,7 @@ const NuiSection = styled(
     "!touch": {
       bg: "$aqua4",
     },
-    motion: {
+    lowMotion: {
       animation: "none",
     },
     ":interact": {
@@ -240,6 +240,10 @@ const GridBox = styled(
   "GridBox"
 )
 
+const MQTester = styled(Text, {
+  display: "none",
+})
+
 const Sample: NextPage = () => {
   const showColorPalette = true
   const showTypography = true
@@ -300,6 +304,19 @@ const Sample: NextPage = () => {
       </Head>
       {showSampleBox && (
         <>
+          <Row.Header
+            css={{
+              gap: "$8",
+            }}
+          >
+            <SubHeading>BP:</SubHeading>
+            <MQTester css={{ display: "inline-block", xl: { display: "none" } }}>Base (base)</MQTester>
+            <MQTester css={{ xl: { display: "inline-block", lg: { display: "none" } } }}>Extra Large (xl)</MQTester>
+            <MQTester css={{ lg: { display: "inline-block", md: { display: "none" } } }}>Large (lg)</MQTester>
+            <MQTester css={{ md: { display: "inline-block", sm: { display: "none" } } }}>Medium (md)</MQTester>
+            <MQTester css={{ sm: { display: "inline-block" } }}>Small (sm)</MQTester>
+          </Row.Header>
+
           <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
           <Heading css={{ type: "$title" }}>Title</Heading>
           <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>

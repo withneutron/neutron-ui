@@ -16,7 +16,7 @@
  * $  -> Theme object OR theme token OR compound theme value.
  * :  -> CSS pseudo-classes for interaction state OR for structural targeting.
  * !  -> Inverted breakpoint (mobile-first) OR inverted media query.
- *       E.g. `!reducedMotion` matches when the user agent does NOT request reduced motion.
+ *       E.g. `!lowMotion` matches when the user agent does NOT request reduced motion.
  *************************************************************************************************/
 
 import { globalStyle, globalKeyframes } from "@vanilla-extract/css"

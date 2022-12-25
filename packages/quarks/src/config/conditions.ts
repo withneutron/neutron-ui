@@ -1,20 +1,27 @@
 import { ColorMode } from "../shared/models"
 import { BASE } from "./styles.models"
 
-const sm = "395.9987654321"
-const md = "659.9987654321"
-const lg = "999.9987654321"
-const xl = "1299.9987654321"
-const unit = "px"
+const sm = 495.9987654321
+const md = 799.9987654321
+const lg = 1359.9987654321
+const xl = 1899.9987654321
+const unit = "rem"
+const unitModifier = 0.0625
+
+export function getQueryFromBreakpoint(breakpoint: number) {
+  return `screen and (max-width: ${breakpoint * unitModifier}${unit})`
+}
 
 export const responsiveConditionsMap = {
-  sm: `screen and (max-width: ${sm}${unit})`,
-  md: `screen and (max-width: ${md}${unit})`,
-  lg: `screen and (max-width: ${lg}${unit})`,
-  xl: `screen and (max-width: ${xl}${unit})`,
+  sm: getQueryFromBreakpoint(sm),
+  md: getQueryFromBreakpoint(md),
+  lg: getQueryFromBreakpoint(lg),
+  xl: getQueryFromBreakpoint(xl),
 } as const
 
 export type ResponsiveCondition = keyof typeof responsiveConditionsMap
+export type BreakpointOverrides = { [k in ResponsiveCondition]?: number }
+
 export const responsiveConditionsPriority = {
   sm: 0,
   md: 1,
@@ -26,9 +33,9 @@ export const responsiveConditionsPriority = {
 export const queryConditionsMap = {
   ...responsiveConditionsMap,
 
-  contrast: "(prefers-contrast: more)",
-  motion: "(prefers-reduced-motion)",
-  data: "(prefers-reduced-data)",
+  hightContrast: "(prefers-contrast: more)",
+  lowMotion: "(prefers-reduced-motion)",
+  lowData: "(prefers-reduced-data)",
   touch: "(hover: none)",
   pointer: "(hover: hover) and (pointer: fine)",
   tv: "(hover: hover) and (pointer: coarse)",
@@ -52,9 +59,9 @@ export const conditionsMap = {
    */
   ...queryConditionsMap,
 
-  "!contrast": "(prefers-contrast: more)",
-  "!motion": "(prefers-reduced-motion)",
-  "!data": "(prefers-reduced-data)",
+  "!hightContrast": "(prefers-contrast: more)",
+  "!lowMotion": "(prefers-reduced-motion)",
+  "!lowData": "(prefers-reduced-data)",
   "!touch": "(hover: none)",
   "!pointer": "(hover: hover) and (pointer: fine)",
   "!tv": "(hover: hover) and (pointer: coarse)",
@@ -72,9 +79,9 @@ export function mapConditions(conditions: QueryConditions, colorMode: ColorMode,
   return {
     ...conditions,
 
-    "!contrast": !conditions.contrast,
-    "!motion": !conditions.motion,
-    "!data": !conditions.data,
+    "!hightContrast": !conditions.hightContrast,
+    "!lowMotion": !conditions.lowMotion,
+    "!lowData": !conditions.lowData,
     "!touch": !conditions.touch,
     "!pointer": !conditions.pointer,
     "!tv": !conditions.tv,
@@ -99,12 +106,12 @@ export const ConditionCategories: { [k in ConditionKeys]: ConditionCategory } = 
   md: ConditionCategory.responsive,
   lg: ConditionCategory.responsive,
   xl: ConditionCategory.responsive,
-  contrast: ConditionCategory.preference,
-  motion: ConditionCategory.preference,
-  data: ConditionCategory.preference,
-  "!contrast": ConditionCategory.preference,
-  "!motion": ConditionCategory.preference,
-  "!data": ConditionCategory.preference,
+  hightContrast: ConditionCategory.preference,
+  lowMotion: ConditionCategory.preference,
+  lowData: ConditionCategory.preference,
+  "!hightContrast": ConditionCategory.preference,
+  "!lowMotion": ConditionCategory.preference,
+  "!lowData": ConditionCategory.preference,
   touch: ConditionCategory.device,
   pointer: ConditionCategory.device,
   tv: ConditionCategory.device,

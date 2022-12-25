@@ -9,6 +9,8 @@ import {
   mapConditions,
   QueryConditions,
   queryConditionsMap,
+  BreakpointOverrides,
+  getQueryFromBreakpoint,
 } from "@withneutron/quarks"
 
 export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
@@ -40,14 +42,21 @@ interface QuarksProviderProps {
   defaultColorMode?: ColorMode
   isMobile?: boolean
   isDebugMode?: boolean
+  queryOverrides?: BreakpointOverrides
 }
 
 export function QuarksProvider(props: QuarksProviderProps): ReactElement {
-  const { children, defaultColorMode = DEFAULT_COLOR_MODE, isMobile = false, isDebugMode = false } = props
+  const {
+    children,
+    defaultColorMode = DEFAULT_COLOR_MODE,
+    isMobile = false,
+    isDebugMode = false,
+    queryOverrides,
+  } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
-  const conditions = useConditions(colorMode, isMobile, isDebugMode)
+  const conditions = useConditions(colorMode, isMobile, isDebugMode, queryOverrides)
   const isTouchDevice = conditions.touch
 
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -80,14 +89,15 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
   )
 }
 
-function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = false) {
-  const sm = useMediaQuery(queryConditionsMap.sm, false)
-  const md = useMediaQuery(queryConditionsMap.md, false)
-  const lg = useMediaQuery(queryConditionsMap.lg, false)
-  const xl = useMediaQuery(queryConditionsMap.xl, false)
-  const contrast = useMediaQuery(queryConditionsMap.contrast, false)
-  const motion = useMediaQuery(queryConditionsMap.motion, false)
-  const data = useMediaQuery(queryConditionsMap.data, false)
+function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = false, overrides?: BreakpointOverrides) {
+  overrides = overrides ?? {}
+  const sm = useMediaQuery(overrides.sm ? getQueryFromBreakpoint(overrides.sm) : queryConditionsMap.sm, false)
+  const md = useMediaQuery(overrides.md ? getQueryFromBreakpoint(overrides.md) : queryConditionsMap.md, false)
+  const lg = useMediaQuery(overrides.lg ? getQueryFromBreakpoint(overrides.lg) : queryConditionsMap.lg, false)
+  const xl = useMediaQuery(overrides.xl ? getQueryFromBreakpoint(overrides.xl) : queryConditionsMap.xl, false)
+  const hightContrast = useMediaQuery(queryConditionsMap.hightContrast, false)
+  const lowMotion = useMediaQuery(queryConditionsMap.lowMotion, false)
+  const lowData = useMediaQuery(queryConditionsMap.lowData, false)
   const touch = useMediaQuery(queryConditionsMap.touch, isMobile)
   const pointer = useMediaQuery(queryConditionsMap.pointer, false)
   const tv = useMediaQuery(queryConditionsMap.tv, false)
@@ -96,9 +106,9 @@ function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = fal
     md,
     lg,
     xl,
-    contrast,
-    motion,
-    data,
+    hightContrast,
+    lowMotion,
+    lowData,
     touch,
     pointer,
     tv,

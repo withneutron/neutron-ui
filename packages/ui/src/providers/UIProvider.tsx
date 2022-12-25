@@ -182,9 +182,9 @@ function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = fal
   const md = useMediaQuery(queryConditionsMap.md, false)
   const lg = useMediaQuery(queryConditionsMap.lg, false)
   const xl = useMediaQuery(queryConditionsMap.xl, false)
-  const contrast = useMediaQuery(queryConditionsMap.contrast, false)
-  const motion = useMediaQuery(queryConditionsMap.motion, false)
-  const data = useMediaQuery(queryConditionsMap.data, false)
+  const hightContrast = useMediaQuery(queryConditionsMap.hightContrast, false)
+  const lowMotion = useMediaQuery(queryConditionsMap.lowMotion, false)
+  const lowData = useMediaQuery(queryConditionsMap.lowData, false)
   const touch = useMediaQuery(queryConditionsMap.touch, isMobile)
   const pointer = useMediaQuery(queryConditionsMap.pointer, false)
   const tv = useMediaQuery(queryConditionsMap.tv, false)
@@ -193,9 +193,9 @@ function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = fal
     md,
     lg,
     xl,
-    contrast,
-    motion,
-    data,
+    hightContrast,
+    lowMotion,
+    lowData,
     touch,
     pointer,
     tv,
