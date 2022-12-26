@@ -1,6 +1,6 @@
 import { CharHash } from "../utils"
 import { BaseVars, ThemeScale } from "./scales.models"
-import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
+import { getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
 /** Generator function for `column` theme scale */
 export function getColumn<T extends BaseVars>(hash: CharHash, size: T) {

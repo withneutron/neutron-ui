@@ -1,28 +1,60 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2016.array.include",
+      "es2017.object",
+      "es2017.intl",
+      "es2019.array",
+      "esnext"
+    ],
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
     "esModuleInterop": true,
-    "module": "esnext",
     "moduleResolution": "node",
+    "allowJs": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@/components/*": ["components/*"],
-      "@/utils/*": ["shared/utils/*"],
-      "@/config/*": ["config/*"],
-      "@/ui": ["config/ui"],
+      "@/*": [
+        "*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/utils/*": [
+        "shared/utils/*"
+      ],
+      "@/config/*": [
+        "config/*"
+      ],
+      "@/ui": [
+        "config/ui"
+      ]
     },
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

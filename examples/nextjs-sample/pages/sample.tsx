@@ -1,11 +1,5 @@
 import * as React from "react"
 import type { NextPage } from "next"
-import { appDarkTheme, appTheme } from "@/ui"
-import { Cards } from "@/components/sample/Cards"
-import { Tags } from "@/components/sample/Tags"
-import { ButtonSamples } from "@/components/sample/ButtonSamples"
-import { Inputs } from "@/components/sample/Inputs"
-import { Statuses } from "@/components/sample/Statuses"
 import Head from "next/head"
 import {
   styled,
@@ -14,7 +8,6 @@ import {
   Heading,
   SubHeading,
   Text,
-  Anchor,
   Grid,
   Row,
   variants,
@@ -245,18 +238,11 @@ const MQTester = styled(Text, {
 })
 
 const Sample: NextPage = () => {
-  const showColorPalette = true
-  const showTypography = true
-  const showButtons = true
-  const showInputs = true
-  const showTags = true
-  const showStatuses = true
-  const showSampleBox = true
   const ref = useRef<HTMLDivElement | null>(null)
   const [cycle, setCycle] = useState(0)
 
   useEffect(() => {
-    // console.log("@@@ ref", ref.current)
+    console.log("@@@ ref", ref.current)
   }, [ref.current])
 
   useEffect(() => {
@@ -266,35 +252,6 @@ const Sample: NextPage = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const sampleControls = (
-    <>
-      {showColorPalette && <Cards title="Color Palette" theme={appTheme} darkTheme={appDarkTheme} />}
-      <Box
-        css={{
-          mt: "$20",
-          mx: "auto",
-          maxWidth: "960rem",
-        }}
-      >
-        {showTypography && (
-          <>
-            <Heading>
-              <Anchor href="#">&quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit&quot;</Anchor>
-            </Heading>
-            <Text>
-              Lorem &apos;ipsum&apos; dolor sit amet -- consectetur adipiscing elit. Donec scelerisque quis est non
-              pharetra. &quot;Etiam&quot; at lacus arcu. Nullam vitae <Anchor href="#">varius nisl semper</Anchor> nulla
-              ac ipsum ultricies hendrerit sit amet metus.
-            </Text>
-          </>
-        )}
-        {showButtons && <ButtonSamples />}
-        {showInputs && <Inputs />}
-      </Box>
-      {showTags && <Tags />}
-      {showStatuses && <Statuses />}
-    </>
-  )
   return (
     <Column.Article>
       <Head>
@@ -302,59 +259,49 @@ const Sample: NextPage = () => {
         <meta name="description" content="Sample of various NeutronUI components" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {showSampleBox && (
-        <>
-          <Row.Header
-            css={{
-              gap: "$8",
-            }}
-          >
-            <SubHeading>BP:</SubHeading>
-            <MQTester css={{ display: "inline-block", xl: { display: "none" } }}>Base (base)</MQTester>
-            <MQTester css={{ xl: { display: "inline-block", lg: { display: "none" } } }}>Extra Large (xl)</MQTester>
-            <MQTester css={{ lg: { display: "inline-block", md: { display: "none" } } }}>Large (lg)</MQTester>
-            <MQTester css={{ md: { display: "inline-block", sm: { display: "none" } } }}>Medium (md)</MQTester>
-            <MQTester css={{ sm: { display: "inline-block" } }}>Small (sm)</MQTester>
-          </Row.Header>
+      <Row.Header
+        css={{
+          gap: "$8",
+        }}
+      >
+        <SubHeading>BP:</SubHeading>
+        <MQTester css={{ display: "inline-block", xl: { display: "none" } }}>Base (base)</MQTester>
+        <MQTester css={{ xl: { display: "inline-block", lg: { display: "none" } } }}>Extra Large (xl)</MQTester>
+        <MQTester css={{ lg: { display: "inline-block", md: { display: "none" } } }}>Large (lg)</MQTester>
+        <MQTester css={{ md: { display: "inline-block", sm: { display: "none" } } }}>Medium (md)</MQTester>
+        <MQTester css={{ sm: { display: "inline-block" } }}>Small (sm)</MQTester>
+      </Row.Header>
 
-          <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
-          <Heading css={{ type: "$title" }}>Title</Heading>
-          <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
-            Minor Title
-          </SubHeading>
-          <Heading.H3>Heading</Heading.H3>
-          <SubHeading>Sub-Heading</SubHeading>
-          <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
-          <Text css={{ type: "$caption" }}>Caption</Text>
-          {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
-          <Tertiary
-            style={{
-              lineHeight: "200px",
-            }}
-          >
-            Testing 3-level composition
-          </Tertiary>
-          <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
-            NUI-powered sample box
-          </NuiSection>
-          <NuiSection as="aside" kind="warning" tabIndex={0} css={{ h: "$200" }}>
-            NUI-powered sample box
-          </NuiSection>
-          <SampleGrid>
-            {Array.apply(null, Array(12)).map((_v, index: number) => (
-              <GridBox
-                key={index}
-                index={index}
-                length={12}
-                css={{ outline: index === 1 ? "$secondaryMax" : undefined }}
-              >
-                {index + 1}
-              </GridBox>
-            ))}
-          </SampleGrid>
-        </>
-      )}
-      {!showSampleBox && sampleControls}
+      <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
+      <Heading css={{ type: "$title" }}>Title</Heading>
+      <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
+        Minor Title
+      </SubHeading>
+      <Heading.H3>Heading</Heading.H3>
+      <SubHeading>Sub-Heading</SubHeading>
+      <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
+      <Text css={{ type: "$caption" }}>Caption</Text>
+      {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
+      <Tertiary
+        style={{
+          lineHeight: "200px",
+        }}
+      >
+        Testing 3-level composition
+      </Tertiary>
+      <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
+        NUI-powered sample box
+      </NuiSection>
+      <NuiSection as="aside" kind="warning" tabIndex={0} css={{ h: "$200" }}>
+        NUI-powered sample box
+      </NuiSection>
+      <SampleGrid>
+        {Array.apply(null, Array(12)).map((_v, index: number) => (
+          <GridBox key={index} index={index} length={12} css={{ outline: index === 1 ? "$secondaryMax" : undefined }}>
+            {index + 1}
+          </GridBox>
+        ))}
+      </SampleGrid>
     </Column.Article>
   )
 }
@@ -380,7 +327,7 @@ function SampleBox(props: SampleBoxProps) {
     >
       <Box.Aside
         ref={(element: HTMLDivElement) => {
-          // console.log("@@@ element", element)
+          console.log("@@@ element", element)
         }}
         css={{
           bg: "$primary10",

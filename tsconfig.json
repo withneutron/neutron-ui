@@ -26,12 +26,6 @@
       "@withneutron/ui": ["packages/ui/src/index.ts"]
     }
   },
-  "include": [
-    "manualTypes.d.ts",
-    "./jest.setup.ts",
-    "packages/**/*",
-    "examples/**/*",
-    "storybook/**/*",
-  ],
+  "include": ["manualTypes.d.ts", "./jest.setup.ts", "packages/**/*", "examples/**/*", "storybook/**/*"],
   "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.d.ts"]
 }
