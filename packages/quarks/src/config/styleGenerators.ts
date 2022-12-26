@@ -479,7 +479,7 @@ export class StyleManager {
     if (typeof value === "object") {
       // If inline conditions include a base value, process that first
       if (value[BASE] !== undefined) {
-        this.processCssProp(prop, value[BASE], conditions, BASE, pseudo)
+        this.processCssProp(prop, value[BASE] as InlineConditionValue, conditions, BASE, pseudo)
       }
       const conditionKeysLen = conditionKeys.length
       let index = 0
@@ -490,7 +490,13 @@ export class StyleManager {
           this.watchCondition(conditionKey)
           if (conditions[conditionKey] === true) {
             this.conditionName = conditionKey.replace("!", "not-")
-            this.processCssProp(prop, innerValue, conditions, conditionKey as InlineConditionKey, pseudo)
+            this.processCssProp(
+              prop,
+              innerValue as InlineConditionValue,
+              conditions,
+              conditionKey as InlineConditionKey,
+              pseudo
+            )
             this.conditionName = ""
           }
         }
@@ -563,7 +569,8 @@ export class StyleManager {
 
       // If this is a combo class with multiple props, make sure we avoid conflicts
       if (result.props && result.props.length > 0) {
-        result.props.forEach(([comboProp, comboValue]) => {
+        result.props.forEach(resultProp => {
+          const [comboProp, comboValue] = resultProp
           // This won't actually override the combo prop, but will avoid conflicts
           this.add(
             comboProp as CssPropKey,

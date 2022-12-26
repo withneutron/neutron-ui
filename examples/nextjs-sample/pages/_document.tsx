@@ -1,26 +1,10 @@
-import NextDoc, { Html, Head, Main, NextScript, DocumentContext, DocumentProps } from "next/document"
-import {
-  appFontLinks,
-  appGlobalStyles,
-  getCssText,
-  appTheme,
-  appDarkTheme,
-  getInitialProps,
-  InitialProps,
-  getHtmlProps,
-  FontLinks,
-} from "@/ui"
+import NextDoc, { Html, Head, Main, NextScript, DocumentContext } from "next/document"
 
-function Document(props: DocumentProps & { initialProps: InitialProps }) {
-  // Global styles
-  appGlobalStyles()
-
+function Document() {
   return (
-    <Html {...getHtmlProps(props.initialProps, appTheme, appDarkTheme)}>
+    <Html>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <FontLinks links={appFontLinks} />
-        <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
         <meta charSet="utf-8" />
       </Head>
       <body>
@@ -33,11 +17,7 @@ function Document(props: DocumentProps & { initialProps: InitialProps }) {
 
 Document.getInitialProps = async (ctx: DocumentContext) => {
   const docProps = await NextDoc.getInitialProps(ctx)
-  const initialProps = getInitialProps(ctx)
-  return {
-    ...docProps,
-    initialProps,
-  }
+  return docProps
 }
 
 export default Document
