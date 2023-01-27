@@ -14,6 +14,7 @@ export const DEFAULT_PALETTE = 2
 // export const DEFAULT_HUE = 224
 // export const DEFAULT_PALETTE = 2
 
+const DEFAULT_SATURATIONS: [number, number, number] = [87, 50, 5]
 export const DEFAULT_NEUTRAL_SATURATION = 7
 export const MAX_NEUTRAL_SATURATION = 40
 
@@ -177,7 +178,7 @@ export enum FlavorColorName {
   magenta = "magenta",
 }
 
-// Transluscent colors
+// Translucent colors
 export enum AlphaColorName {
   primaryAlpha = "primaryAlpha",
   secondaryAlpha = "secondaryAlpha",
@@ -192,15 +193,14 @@ export type ColorNumberKey = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 export type TextColor<Base extends string> = `${Base}Text`
 export type ScaleColor<Base extends string> = `${Base}${ColorNumberKey}`
 
+type ColorObject = {
+  hue: number
+  saturation?: number
+  isNeutral?: boolean
+}
+
 /** Source color can either be a hue, or a hue + saturation object */
-export type SourceColor =
-  | number
-  | `${ScaleColorName}`
-  | {
-      hue: number
-      saturation?: number
-      isNeutral?: boolean
-    }
+export type SourceColor = number | `${ScaleColorName}` | ColorObject
 
 /** Used for non-scaled colors in the palette */
 export type StaticSourceColor = {
@@ -210,9 +210,11 @@ export type StaticSourceColor = {
   contrast: number
 }
 
-export type ColorGenOptions = { [k in CoreColorName]: SourceColor } &
-  { [k in StaticColorName]?: StaticSourceColor } &
-  { [k in StatusColorName | FlavorColorName]?: SourceColor }
+type SemanticColors = { [k in CoreColorName]: ColorObject }
+
+export type ColorGenOptions = { [k in CoreColorName]: SourceColor } & { [k in StaticColorName]?: StaticSourceColor } & {
+  [k in StatusColorName | FlavorColorName]?: SourceColor
+}
 
 export type ScaleColorName = CoreColorName | StatusColorName | FlavorColorName | AlphaColorName
 export type TextColorName = TextColor<ScaleColorName>
@@ -223,4 +225,96 @@ export type ThemeColor = `${StaticColorName}` | ScaleColor<ScaleColorName> | Sca
 
 export type ColorPalette<T = string> = {
   [key in ThemeColor]: T
+}
+
+// Complimentary Colors ///////////////////////////////////////////////////////////////////////////
+function shiftHue(hue: number, shift: number) {
+  if (shift > 359) {
+    throw new Error("Shift parameter must be less than 360")
+  }
+  const sum = shift + hue
+  return sum > 360 ? sum - 360 : sum
+}
+
+function getColorPalettes(
+  hue: number,
+  saturations: [number, number, number]
+): [SemanticColors, SemanticColors, SemanticColors] {
+  const colors: SemanticColors[] = []
+  const isTealish = 110 <= hue && hue <= 208
+  const isGreenish = 60 <= hue && hue < 110
+  const isYellowish = 35 <= hue && hue < 85
+  const isRedToned = 279 <= hue || hue < 16
+
+  // Tetrad
+  const tetradSecondary = shiftHue(hue, 180)
+  const tetradSecondaryVariant = shiftHue(hue, 90)
+  // Triad
+  const triadSecondary = shiftHue(hue, 120)
+  const triadSecondaryVariant = shiftHue(hue, 240)
+  // Split Complements
+  const splitSecondary = shiftHue(hue, 150)
+  const splitSecondaryVariant = shiftHue(hue, 210)
+
+  // PALETTE 1: Pure Tetrad
+  colors.push({
+    primary: { hue, saturation: saturations[0] },
+    secondary: {
+      hue: isTealish ? triadSecondaryVariant : tetradSecondary,
+      saturation: saturations[1],
+    },
+    tertiary: {
+      hue: isTealish ? triadSecondaryVariant : tetradSecondary,
+      saturation: saturations[2],
+      isNeutral: true,
+    },
+  } as SemanticColors)
+  // PALETTE 2: Pure Triad
+  colors.push({
+    primary: { hue, saturation: saturations[0] },
+    secondary: {
+      hue: isGreenish || isRedToned ? triadSecondary : tetradSecondaryVariant,
+      saturation: saturations[1],
+    },
+    tertiary: {
+      hue: isGreenish || isRedToned ? triadSecondary : tetradSecondaryVariant,
+      saturation: saturations[2],
+      isNeutral: true,
+    },
+  } as SemanticColors)
+  // PALETTE 3: Pure Split Complements
+  colors.push({
+    primary: { hue, saturation: saturations[0] },
+    secondary: {
+      hue: isYellowish ? splitSecondaryVariant : isRedToned ? triadSecondaryVariant : splitSecondary,
+      saturation: saturations[1],
+    },
+    tertiary: {
+      hue: isYellowish ? splitSecondaryVariant : isRedToned ? triadSecondaryVariant : splitSecondary,
+      saturation: saturations[2],
+      isNeutral: true,
+    },
+  } as SemanticColors)
+
+  return colors as [SemanticColors, SemanticColors, SemanticColors]
+}
+
+/** Get a set of 3 complementary color palettes, from one base hue */
+export function getComplementaryHues(
+  hue: number,
+  saturations: [number, number, number] = DEFAULT_SATURATIONS
+): [SemanticColors, SemanticColors, SemanticColors] {
+  if (hue < 0 || hue > 360) {
+    throw new Error("Parameter `hue` must be a number between 0 and 360")
+  }
+  return getColorPalettes(hue, saturations)
+}
+
+/** Generates a set of complementary colors from one base hue. */
+export function generatePaletteFromHue(
+  hue: number,
+  variant: 1 | 2 | 3 = 1,
+  saturations: [number, number, number] = DEFAULT_SATURATIONS
+): SemanticColors {
+  return getComplementaryHues(hue, saturations)[variant - 1]
 }
