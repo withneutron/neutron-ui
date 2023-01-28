@@ -252,14 +252,8 @@ export class StyleManager {
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
 
-    // If the parent already has this style, only override if this one has HIGHER priority.
-    const hasParentConflict = this.parentClassDicts.some(parentDict => {
-      // Parent data, to make sure we don't have a conflict with that data
-      const parentData = parentDict[pseudoClass][propId]
-      const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
-
-      return parentPriority <= incomingPriority
-    })
+    // If the parent already has this style, don't override it.
+    const hasParentConflict = this.parentClassDicts.some(p => !!p[pseudoClass][propId])
 
     // If what we've already processed of the current styles have a conflict,
     // only override it if this one has HIGHER OR EQUAL priority.
