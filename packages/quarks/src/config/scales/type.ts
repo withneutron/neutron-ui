@@ -31,8 +31,6 @@ export function getType() {
       minorTitle: {
         font: "h5",
         lineHeight: "heading",
-        letterSpacing: "loose",
-        textTransform: addStaticValuePrefix("uppercase"),
       },
       heading: {
         font: "h3",
@@ -41,8 +39,6 @@ export function getType() {
       subHeading: {
         font: "h4",
         lineHeight: "heading",
-        letterSpacing: "remMax",
-        textTransform: addStaticValuePrefix("uppercase"),
       },
       body: {
         font: "body",

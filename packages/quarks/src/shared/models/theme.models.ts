@@ -572,6 +572,12 @@ export interface FontLinkData extends FontFamilyData {
 
 export type FontFamily = typeof bodyFonts | typeof headingFonts | typeof codeFonts
 
+export const DEFAULT_FONTS: Required<FontFamilySpec> = {
+  body: "sourceSansPro",
+  button: "sourceSansPro",
+  heading: "montserrat",
+  code: "firaCode",
+}
 export interface HtmlHeadLink {
   href: string
   crossOrigin?: "anonymous" | "use-credentials"
@@ -602,7 +608,7 @@ export interface HtmlHeadLink {
     | string
 }
 
-export interface ThemeFonts {
+export type ThemeFonts = {
   body: string
   button: string
   heading: string

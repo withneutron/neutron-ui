@@ -1,18 +1,7 @@
 import * as React from "react"
 import type { NextPage } from "next"
 import Head from "next/head"
-import {
-  styled,
-  Box,
-  Column,
-  Heading,
-  SubHeading,
-  Text,
-  Grid,
-  Row,
-  variants,
-  useAnimation,
-} from "@withneutron/quarks-react"
+import { styled, Box, Column, Heading, SubHeading, Text, Grid, Row, variants } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
 import { ReactNode, useEffect, useRef, useState } from "react"
 
@@ -23,9 +12,9 @@ const Base = styled(
     outline: "$secondary",
     radius: "$8",
     bg: {
-      md: "$primary10",
-      lg: "$primary7",
-      xl: "$primary12",
+      md: "$tertiary10",
+      lg: "$tertiary7",
+      xl: "$tertiary12",
       base: "$amber10",
     },
     backgroundColor: "$amber10",
@@ -73,7 +62,7 @@ const BaseSection = styled(
     mr: "$12",
     p: "$32",
     pl: "$16",
-    border: "$primary",
+    border: "$tertiary",
     borderTopColor: "$secondaryMin",
     borderBottomColor: "$tertiaryMax",
     fontFamily: "$code",
@@ -148,9 +137,9 @@ const NuiSection = styled(
         color: "$successText3",
         ":interact": {
           linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
-          color: "$primaryText9",
+          color: "$tertiaryText9",
           border: "none",
-          outlineColor: "$primaryMax",
+          outlineColor: "$tertiaryMax",
         },
       },
       warning: {
@@ -186,7 +175,7 @@ const NuiSection = styled(
 const SampleGrid = styled(
   Grid,
   {
-    bg: "$primary2",
+    bg: "$tertiary2",
     gtColumns: "$fit200",
     autoRows: "$80",
     gap: "$12",
@@ -197,8 +186,8 @@ const SampleGrid = styled(
 const GridBox = styled(
   Row,
   {
-    bg: "$primary4",
-    color: "$primaryText4",
+    bg: "$tertiary4",
+    color: "$tertiaryText4",
     p: "$12",
     fontSize: "$21",
     fontWeight: "$600",
@@ -209,16 +198,16 @@ const GridBox = styled(
       color: "$secondaryText9",
     },
     ":odd": {
-      bg: "$primary9",
-      color: "$primaryText9",
+      bg: "$tertiary9",
+      color: "$tertiaryText9",
     },
     ":nth-child(-n+3)": {
       bg: "$secondary9",
       color: "$secondaryText9",
     },
     ":first": {
-      bg: "$primary9",
-      color: "$primaryText9",
+      bg: "$tertiary9",
+      color: "$tertiaryText9",
     },
     ":last": {
       bg: {
@@ -266,20 +255,18 @@ const Sample: NextPage = () => {
       >
         <SubHeading>BP:</SubHeading>
         <MQTester css={{ display: "inline-block", xl: { display: "none" } }}>Base (base)</MQTester>
-        <MQTester css={{ xl: { display: "inline-block", lg: { display: "none" } } }}>Extra Large (xl)</MQTester>
-        <MQTester css={{ lg: { display: "inline-block", md: { display: "none" } } }}>Large (lg)</MQTester>
-        <MQTester css={{ md: { display: "inline-block", sm: { display: "none" } } }}>Medium (md)</MQTester>
+        <MQTester css={{ xl: { display: "inline-block" }, lg: { display: "none" } }}>Extra Large (xl)</MQTester>
+        <MQTester css={{ lg: { display: "inline-block" }, md: { display: "none" } }}>Large (lg)</MQTester>
+        <MQTester css={{ md: { display: "inline-block" }, sm: { display: "none" } }}>Medium (md)</MQTester>
         <MQTester css={{ sm: { display: "inline-block" } }}>Small (sm)</MQTester>
       </Row.Header>
 
-      <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
+      <Heading css={{ type: "$majorTitle", width: "max-content" }}>Major Title</Heading>
       <Heading css={{ type: "$title" }}>Title</Heading>
-      <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
-        Minor Title
-      </SubHeading>
+      <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
       <Heading.H3>Heading</Heading.H3>
       <SubHeading>Sub-Heading</SubHeading>
-      <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
+      <Text css={{ type: "$body", textDecoration: "$highlightError" }}>Body</Text>
       <Text css={{ type: "$caption" }}>Caption</Text>
       {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
       <Tertiary
@@ -314,11 +301,9 @@ interface SampleBoxProps {
 }
 
 function SampleBox(props: SampleBoxProps) {
-  const { animation, isVisible } = useAnimation("$slideOutBottom", "$slideInBottom", props.isVisible)
-  return !isVisible ? null : (
+  return (
     <Row
       css={{
-        animation,
         position: "fixed",
         bottom: "$24",
         justifyContent: "center",

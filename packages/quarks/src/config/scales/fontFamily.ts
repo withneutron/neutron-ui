@@ -1,26 +1,9 @@
-import {
-  FontFamilySpec,
-  SystemFontFamily,
-  BodyFontFamily,
-  HeadingFontFamily,
-  CodeFontFamily,
-} from "../../shared/models"
+import { SystemFontFamily, BodyFontFamily, HeadingFontFamily, CodeFontFamily, DEFAULT_FONTS } from "../../shared/models"
 import { enumKeys } from "../../shared/utils"
 import { CharHash } from "../utils"
 import { ScaleEntry, ThemeScale } from "./scales.models"
 import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
-// Font definition
-export const DEFAULT_FONTS: Required<FontFamilySpec> = {
-  // body: "sourceSansPro",
-  // button: "sourceSansPro",
-  // heading: "montserrat",
-  // code: "firaCode",
-  body: "openSans",
-  button: "inconsolata",
-  heading: "inconsolata",
-  code: "inconsolata",
-}
 /** Generator function for `fontFamily` theme scale */
 export function getFontFamily(hash: CharHash) {
   const baseVars = {

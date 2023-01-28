@@ -126,7 +126,7 @@ globalStyle("html, body", {
 })
 globalStyle("html", { fontSize: "6.25%" })
 globalStyle("body", {
-  background: color.vars.primary2.ref,
+  background: color.vars.tertiary2.ref,
   color: color.vars.defaultBody.ref,
   fontSize: "16em",
   fontWeight: fontWeight.vars.p.ref,
@@ -150,7 +150,7 @@ globalStyle("*", {
   boxSizing: "border-box",
 })
 globalStyle("*::placeholder", {
-  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
+  color: color.vars[getTextColor(CoreColorName.tertiary, 9)].ref,
 })
 globalStyle("body, a, p, li, strong, em, b, i, button", {
   fontFamily: fontFamily.vars.body.ref,
@@ -179,29 +179,29 @@ globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
   fontSize: fontSize.vars.p.ref,
 })
 globalStyle("a", {
-  color: color.vars.secondary9.ref,
+  color: color.vars.primary9.ref,
   fontWeight: fontWeight.vars[600].ref,
   borderRadius: radius.vars.field.ref,
   textDecoration: "underline",
-  boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.secondary5.ref}`,
+  boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.primary5.ref}`,
 })
 globalStyle("a:focus", {
-  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary9.ref}`,
+  boxShadow: `inset 0 1.25em 0 ${color.vars.primary9.ref}`,
   outline: "none",
 })
 globalStyle("a:hover", {
-  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary5.ref}`,
-  color: color.vars.secondary12.ref,
+  boxShadow: `inset 0 1.25em 0 ${color.vars.primary5.ref}`,
+  color: color.vars.primary12.ref,
 })
 globalStyle("a:focus, a:focus code", {
-  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
+  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 globalStyle("li > a, nav a, button a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a", {
   boxShadow: "none",
 })
 globalStyle("blockquote, pre", {
-  background: color.vars.primary3.ref,
-  color: color.vars[getTextColor(CoreColorName.primary, 3)].ref,
+  background: color.vars.tertiary3.ref,
+  color: color.vars[getTextColor(CoreColorName.tertiary, 3)].ref,
   marginInline: 0,
   paddingInline: space.vars[32].ref,
   paddingBlock: space.vars[20].ref,
@@ -249,8 +249,8 @@ globalStyle("strong", {
   fontWeight: fontWeight.vars.p.ref,
 })
 globalStyle("::selection", {
-  background: color.vars.secondary9.ref,
-  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
+  background: color.vars.primary9.ref,
+  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 
 /** Get a series of selectors from a template (replaces instances of `&`) */
