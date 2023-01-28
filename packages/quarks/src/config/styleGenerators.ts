@@ -196,7 +196,7 @@ export class StyleManager {
     const entries = Object.entries(this.style)
     const len = 0
     let index = entries.length
-    for (index; index >= len; index--) {
+    for (; index >= len; index--) {
       const [prevKey, prevValue] = entries[index - 1] ?? []
       const [, value] = entries[index] ?? []
       if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
@@ -399,9 +399,8 @@ export class StyleManager {
   processCss(css: CSS, conditions: Conditions, condition?: InlineConditionKey) {
     const props = Object.entries(css)
     // Loop through each prop of css
-    const propsLen = props.length
     let index = 0
-    for (index; index < propsLen; index++) {
+    for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
       // If the prop is a condition, process its inner props, including its inner pseudo-classes
       if (conditionsMap[propName as ConditionKey]) {
@@ -449,9 +448,8 @@ export class StyleManager {
     condition?: InlineConditionKey
   ) {
     const props = Object.entries(baseCss)
-    const propsLen = props.length
     let index = 0
-    for (index; index < propsLen; index++) {
+    for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
       this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
     }
@@ -475,9 +473,8 @@ export class StyleManager {
       if (value[BASE] !== undefined) {
         this.processCssProp(prop, value[BASE] as InlineConditionValue, conditions, BASE, pseudo)
       }
-      const conditionKeysLen = conditionKeys.length
       let index = 0
-      for (index; index < conditionKeysLen; index++) {
+      for (; index < conditionKeys.length; index++) {
         const conditionKey = conditionKeys[index]
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
@@ -515,9 +512,8 @@ export class StyleManager {
     // If it's a mapped prop, run its mapping func, and proceed with the result of that
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
-      const innerPropsLen = innerProps.length
       let index = 0
-      for (index; index < innerPropsLen; index++) {
+      for (; index < innerProps.length; index++) {
         const [propName, propValue] = innerProps[index]
         this.processCssProp(
           propName as CssPropKey,
@@ -535,9 +531,8 @@ export class StyleManager {
     if (pseudo) {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-      const pseudosLen = pseudos.length
       let index = 0
-      for (index; index < pseudosLen; index++) {
+      for (; index < pseudos.length; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
         this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
