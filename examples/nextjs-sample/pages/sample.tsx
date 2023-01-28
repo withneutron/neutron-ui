@@ -255,13 +255,13 @@ const Sample: NextPage = () => {
         <MediaQueryName css={{ display: { sm: "inline-block" } }}>Small (sm)</MediaQueryName>
       </Row.Header>
 
-      <Heading css={{ type: "$majorTitle", width: "max-content" }}>Major Title</Heading>
-      <Heading css={{ type: "$title" }}>Title</Heading>
-      <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
+      <Heading css={{ typo: "$majorTitle", width: "max-content" }}>Major Title</Heading>
+      <Heading css={{ typo: "$title" }}>Title</Heading>
+      <SubHeading css={{ typo: "$minorTitle" }}>Minor Title</SubHeading>
       <Heading.H3>Heading</Heading.H3>
       <SubHeading>Sub-Heading</SubHeading>
-      <Text css={{ type: "$body", textDecoration: "$highlightError" }}>Body</Text>
-      <Text css={{ type: "$caption" }}>Caption</Text>
+      <Text css={{ typo: "$body", textDecoration: "$highlightError" }}>Body</Text>
+      <Text css={{ typo: "$caption" }}>Caption</Text>
       {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
       <Tertiary>Testing 3-level composition</Tertiary>
       <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>

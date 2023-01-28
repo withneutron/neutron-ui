@@ -45,7 +45,7 @@ export const sourceClassedProps = {
   fontSize: true,
   fontWeight: true,
   fontStyle: true,
-  type: true,
+  typo: true,
 
   borderBlockStart: true,
   borderBlockStartColor: true,

@@ -26,7 +26,7 @@ import {
   hiddenOutlineStyles,
   hiddenOutlineWidths,
   fontCombos,
-  typeCombos,
+  typoCombos,
   textDecorationCombos,
   hiddenTextDecorationColors,
   hiddenTextDecorationLines,
@@ -317,14 +317,14 @@ export function generateScaledPropsCss<S extends Scales, K extends FilterKeys>(
       map(scales, Scale.textDecoration, textDecorationThicknesses, hiddenTextDecorationThicknesses)
     ),
 
-    type: entries("type", map(scales, Scale.type, typeCombos), scales[Scale.type].cssAliasMap),
+    typo: entries("typo", map(scales, Scale.typo, typoCombos), scales[Scale.typo].cssAliasMap),
     lineHeight: entries("lineHeight", map(scales, Scale.lineHeight), scales[Scale.lineHeight].cssAliasMap),
-    letterSpacing: entries("letterSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
-    wordSpacing: entries("wordSpacing", map(scales, Scale.typeSpace), scales[Scale.typeSpace].cssAliasMap),
+    letterSpacing: entries("letterSpacing", map(scales, Scale.typoSpace), scales[Scale.typoSpace].cssAliasMap),
+    wordSpacing: entries("wordSpacing", map(scales, Scale.typoSpace), scales[Scale.typoSpace].cssAliasMap),
     textUnderlineOffset: entries(
       "textUnderlineOffset",
-      map(scales, Scale.typeSpace),
-      scales[Scale.typeSpace].cssAliasMap
+      map(scales, Scale.typoSpace),
+      scales[Scale.typoSpace].cssAliasMap
     ),
 
     zIndex: entries("zIndex", map(scales, Scale.zIndex), scales[Scale.zIndex].cssAliasMap),
@@ -476,11 +476,11 @@ export const scaledPropScale = {
   textDecorationColor: Scale.textDecoration,
   textDecorationThickness: Scale.textDecoration,
 
-  type: Scale.type,
+  typo: Scale.typo,
   lineHeight: Scale.lineHeight,
-  letterSpacing: Scale.typeSpace,
-  wordSpacing: Scale.typeSpace,
-  textUnderlineOffset: Scale.typeSpace,
+  letterSpacing: Scale.typoSpace,
+  wordSpacing: Scale.typoSpace,
+  textUnderlineOffset: Scale.typoSpace,
 
   zIndex: Scale.zIndex,
 

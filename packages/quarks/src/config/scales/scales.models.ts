@@ -191,8 +191,8 @@ export enum Scale {
   size = "size",
   space = "space",
   textDecoration = "textDecoration",
-  typeSpace = "typeSpace",
-  type = "type",
+  typoSpace = "typoSpace",
+  typo = "typo",
   zIndex = "zIndex",
 }
 

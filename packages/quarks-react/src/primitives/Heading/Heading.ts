@@ -6,7 +6,7 @@ export const Heading = getSemanticHeadingPrimitive(
     "h1",
     {
       color: "$defaultHeading",
-      type: "$heading",
+      typo: "$heading",
       my: "$20",
     },
     "Heading"

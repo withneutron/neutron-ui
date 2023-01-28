@@ -1,9 +1,8 @@
-import { addStaticValuePrefix } from "../utils"
 import { ThemeScale } from "./scales.models"
 import { getAliasMap, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
-/** Generator function for `type` theme scale */
-export function getType() {
+/** Generator function for `typo` theme scale */
+export function getTypo() {
   const vars = {} as const
 
   // These keys will get mapped into classes with multiple CSS properties
@@ -71,7 +70,7 @@ export function getType() {
 // FILTER KEYS ////////////////////////////////////////////////////////////////
 // Used for generating types that map to only parts of this scale
 
-export const typeCombos = {
+export const typoCombos = {
   majorTitle: true,
   title: true,
   minorTitle: true,

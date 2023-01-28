@@ -29,8 +29,8 @@ import {
   getRow,
   getZIndex,
   getLineHeight,
-  getTypeSpace,
-  getType,
+  getTypoSpace,
+  getTypo,
   getTextDecoration,
   getShadow,
   getFontSize,
@@ -49,7 +49,7 @@ import {
   borderCombos,
   outlineCombos,
   fontCombos,
-  typeCombos,
+  typoCombos,
   animationCombos,
   textDecorationCombos,
 } from "./scales"
@@ -87,8 +87,8 @@ const zIndex = getZIndex(varHash)
 const column = getColumn(varHash, size.vars)
 const row = getRow(varHash, column.vars)
 const lineHeight = getLineHeight(varHash, size.vars)
-const typeSpace = getTypeSpace(varHash)
-const type = getType()
+const typoSpace = getTypoSpace(varHash)
+const typo = getTypo()
 const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
@@ -110,8 +110,8 @@ export const scales = {
   size,
   space,
   textDecoration,
-  typeSpace,
-  type,
+  typoSpace,
+  typo,
   zIndex,
 } as const
 
@@ -220,7 +220,7 @@ globalStyle(mapSelectorsToTemplate("&, & > *", ...headings), {
 globalStyle("h1, h1 > *", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
-  letterSpacing: typeSpace.vars.tightest.ref,
+  letterSpacing: typoSpace.vars.tightest.ref,
 })
 globalStyle("h2, h2 > *", {
   fontSize: fontSize.vars.h2.ref,
@@ -359,7 +359,7 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /** Scaled props that override mapped props */
 export type OverrideScaledProp = {
   font: PrefixedKey<typeof fontCombos> | keyof typeof staticProps.font
-  type: PrefixedKey<typeof typeCombos> | keyof typeof staticProps.type
+  typo: PrefixedKey<typeof typoCombos> | keyof typeof staticProps.typo
   animation: PrefixedKey<typeof animationCombos> | keyof typeof staticProps.animation
   textDecoration: PrefixedKey<typeof textDecorationCombos> | keyof typeof staticProps.textDecoration
   outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
@@ -494,8 +494,8 @@ export const vars = {
   size: getVars(size.vars),
   space: getVars(space.vars),
   textDecoration: getVars(textDecoration.vars),
-  typeSpace: getVars(typeSpace.vars),
-  type: getVars(type.vars),
+  typoSpace: getVars(typoSpace.vars),
+  typo: getVars(typo.vars),
   zIndex: getVars(zIndex.vars),
 } as const
 
@@ -516,8 +516,8 @@ export const theme = {
   size: getThemeProps(size.themeProps),
   space: getThemeProps(space.themeProps),
   textDecoration: getThemeProps(textDecoration.themeProps),
-  typeSpace: getThemeProps(typeSpace.themeProps),
-  type: getThemeProps(type.themeProps),
+  typoSpace: getThemeProps(typoSpace.themeProps),
+  typo: getThemeProps(typo.themeProps),
   zIndex: getThemeProps(zIndex.themeProps),
 } as const
 
@@ -545,8 +545,8 @@ export const tokenToVarMap = {
   size: getTokenToVarsMap(size.vars, size.cssAliasMap),
   space: getTokenToVarsMap(space.vars, space.cssAliasMap),
   textDecoration: getTokenToVarsMap(textDecoration.vars, textDecoration.cssAliasMap),
-  typeSpace: getTokenToVarsMap(typeSpace.vars, typeSpace.cssAliasMap),
-  type: getTokenToVarsMap(type.vars, type.cssAliasMap),
+  typoSpace: getTokenToVarsMap(typoSpace.vars, typoSpace.cssAliasMap),
+  typo: getTokenToVarsMap(typo.vars, typo.cssAliasMap),
   zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
