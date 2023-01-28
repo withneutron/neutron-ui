@@ -8,39 +8,23 @@ import {
   memo,
   useEffect,
   useMemo,
-  useRef,
 } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
 import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
-import { getVariantKeys } from "./styled.utils"
-
-type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
-  ComponentPropsWithRef<T>,
-  "css" | "styleManager"
->
-
-type VariantFunction<T extends Record<string, any>> = { props: string[] } & ((variants: T) => VariantCSS)
-
-type BaseStyledProps<V extends Record<string, any> | undefined> = V extends Record<string, any>
-  ? { css?: CSS; styleManager?: StyleManager } & V
-  : { css?: CSS; styleManager?: StyleManager }
-
-const variantPlaceholder: any = () => undefined
-variantPlaceholder.props = []
 
 /** Used to style any React component of basic HTML element */
-export function styled<C extends ComponentType, V extends Record<string, any>>(
+export function styled<C extends ComponentType, V extends Variants | undefined = undefined>(
   component: C,
   css: CSS,
-  variantsOrStyleName?: string | VariantFunction<V>,
+  variantsCssOrStyleName?: string | V,
   styleName?: string
 ) {
-  styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
-  const hasVariants = typeof variantsOrStyleName === "function"
-  const variants = hasVariants ? variantsOrStyleName : variantPlaceholder
-  const variantKeys = hasVariants ? getVariantKeys(variants) : []
+  styleName = typeof variantsCssOrStyleName === "string" ? variantsCssOrStyleName : styleName
+  const hasVariants = !!variantsCssOrStyleName && typeof variantsCssOrStyleName !== "string"
+  const variantsDefinition = hasVariants ? variantsCssOrStyleName : undefined
+  const variantKeys: string[] = hasVariants ? Object.keys(variantsCssOrStyleName) : []
   const hasVariantKeys = variantKeys.length > 0
 
   function styledComponent<T extends ComponentType, R>(
@@ -58,24 +42,23 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
     ref?: ForwardedRef<R>
   ) {
     const conditions = useStyleConditions()
-    const { as: polyAs, css: propsCss, styleManager, isSemantic, className, index, length, ...rest } = props
+    const { as: polyAs, css: propsCss, styleManager, isSemantic, className, index, length, ...mainProps } = props
 
-    // Make sure this ref only changes if the output changed
-    const previousVariantProps = useRef<Record<string, any>>(getVariantProps(variants.props, rest))
-    const previousVariantCss = useRef<VariantCSS>()
-    const variantCss = useMemo(() => {
-      if (previousVariantCss.current) {
-        // If our variant props haven't changed, then return the existing reference
-        const arePropsMatching = areVariantPropsEqual(variants.props, rest, previousVariantProps.current)
-        if (arePropsMatching) {
-          return previousVariantCss.current
+    // Get any variants that are valid, based on our incoming mainProps
+    const variantCss: VariantCSS = []
+    if (hasVariants && variantsDefinition) {
+      let i = 0
+      for (; i < variantKeys.length; i++) {
+        const variant = variantsDefinition[variantKeys[i] as VariantKey]
+        const variantValue = mainProps[variantKeys[i] as VariantKey]
+          ? String(mainProps[variantKeys[i] as VariantKey])
+          : undefined
+        if (variantValue && variant[variantValue]) {
+          const keyValue = variantValue === "true" ? "" : `-${variantValue}`
+          variantCss.push({ key: `${variantKeys[i]}${keyValue}`, css: variant[variantValue] })
         }
       }
-      const output = variants(rest as any as V)
-      previousVariantProps.current = getVariantProps(variants.props, rest)
-      previousVariantCss.current = output
-      return output
-    }, [rest])
+    }
 
     const isIntrinsic = typeof component === "string"
     const Element = useMemo(
@@ -85,7 +68,7 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
 
     const { styleManager: innerStyleManger, ...styleProps } = useMemo(
       () => style(css, conditions, variantCss, propsCss, styleName, styleManager, { className, index, length }),
-      [conditions, variantCss, propsCss, styleManager, className, index, length]
+      [conditions, propsCss, styleManager, className, index, length]
     )
     const innerProps = {} as typeof props
 
@@ -95,12 +78,12 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
 
     if (hasVariants && hasVariantKeys) {
       variantKeys.forEach(key => {
-        delete rest[key]
+        delete mainProps[key as keyof typeof mainProps]
       })
     }
 
     useEffect(() => {
-      if (rest.style && !styleManager) {
+      if (mainProps.style && !styleManager) {
         const isStringPolyAs = typeof polyAs === "string" && polyAs
         const polySuffix = isStringPolyAs && isSemantic ? `.${capitalizeFirstLetter(polyAs)}` : ""
         const polyTail = isStringPolyAs && !isSemantic ? ` (as ${polyAs})` : ""
@@ -111,7 +94,7 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
       }
     }, [])
 
-    return <Element as={isIntrinsic ? undefined : polyAs} ref={ref} {...rest} {...styleProps} {...innerProps} />
+    return <Element as={isIntrinsic ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} {...innerProps} />
   }
   styledComponent.displayName = styleName
   return memo(forwardRef(styledComponent)) as any as typeof styledComponent
@@ -119,28 +102,40 @@ export function styled<C extends ComponentType, V extends Record<string, any>>(
 
 /** Used to create styling primitives, like `Row`, `Column`, etc.
  * The output component will include semantic HTML variants, such as `Component.Aside`. */
-export function styledPrimitive<C extends ComponentType, V extends Record<string, any>>(
+export function styledPrimitive<C extends ComponentType, V extends Variants>(
   component: C,
   css: CSS,
-  variantsOrStyleName?: string | VariantFunction<V>,
+  variantsCssOrStyleName?: string | V,
   styleName?: string
 ) {
-  styleName = typeof variantsOrStyleName === "string" ? variantsOrStyleName : styleName
+  styleName = typeof variantsCssOrStyleName === "string" ? variantsCssOrStyleName : styleName
   const primitive =
-    typeof variantsOrStyleName === "function"
-      ? styled(component, css, variantsOrStyleName, styleName)
+    typeof variantsCssOrStyleName === "object"
+      ? styled(component, css, variantsCssOrStyleName, styleName)
       : styled(component, css, styleName)
   return getSemanticUniversalPrimitive(primitive)
 }
 
-function getVariantProps(propKeys: string[], props: Record<string, any>) {
-  const output = {} as Record<string, any>
-  propKeys.forEach(prop => {
-    output[prop] = props[prop]
-  })
-  return output
-}
+// TYPES //////////////////////////////////////////////////////////////////////////////////////////
 
-function areVariantPropsEqual(propKeys: string[], current: Record<string, any>, previous: Record<string, any>) {
-  return propKeys.every(prop => previous[prop] === current[prop])
+type BooleanString = "true" | "false"
+
+type Variants = {
+  [name: string]: { [value: string]: CSS }
 }
+type VariantKey = keyof Variants
+
+type VariantProps<V extends Variants | undefined = undefined> = V extends Variants
+  ? {
+      [prop in keyof V]?: keyof V[prop] extends BooleanString ? boolean : keyof V[prop]
+    }
+  : undefined
+
+type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
+  ComponentPropsWithRef<T>,
+  "css" | "styleManager"
+>
+
+type BaseStyledProps<V extends Variants | undefined = undefined> = V extends Variants
+  ? { css?: CSS; styleManager?: StyleManager } & VariantProps<V>
+  : { css?: CSS; styleManager?: StyleManager }

@@ -1,7 +1,7 @@
 import * as React from "react"
 import type { NextPage } from "next"
 import Head from "next/head"
-import { styled, Box, Column, Heading, SubHeading, Text, Grid, Row } from "@withneutron/quarks-react"
+import { styled, Box, Column, Heading, SubHeading, Text, Grid, Row, useAnimation } from "@withneutron/quarks-react"
 import { vars } from "@withneutron/quarks"
 import { ReactNode, useEffect, useRef, useState } from "react"
 
@@ -229,6 +229,10 @@ const Sample: NextPage = () => {
   const [cycle, setCycle] = useState(0)
 
   useEffect(() => {
+    console.log("@@@ ref", ref.current)
+  }, [ref.current])
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setCycle((current: number) => current + 1)
     }, 4000)
@@ -255,15 +259,23 @@ const Sample: NextPage = () => {
         <MediaQueryName css={{ display: { sm: "inline-block" } }}>Small (sm)</MediaQueryName>
       </Row.Header>
 
-      <Heading css={{ type: "$majorTitle", width: "max-content" }}>Major Title</Heading>
+      <Heading css={{ type: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
       <Heading css={{ type: "$title" }}>Title</Heading>
-      <SubHeading css={{ type: "$minorTitle" }}>Minor Title</SubHeading>
+      <SubHeading css={{ type: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
+        Minor Title
+      </SubHeading>
       <Heading.H3>Heading</Heading.H3>
       <SubHeading>Sub-Heading</SubHeading>
-      <Text css={{ type: "$body", textDecoration: "$highlightError" }}>Body</Text>
+      <Text css={{ type: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
       <Text css={{ type: "$caption" }}>Caption</Text>
       {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
-      <Tertiary>Testing 3-level composition</Tertiary>
+      <Tertiary
+        style={{
+          lineHeight: "200px",
+        }}
+      >
+        Testing 3-level composition
+      </Tertiary>
       <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
         NUI-powered sample box
       </NuiSection>
@@ -289,9 +301,11 @@ interface SampleBoxProps {
 }
 
 function SampleBox(props: SampleBoxProps) {
-  return (
+  const { animation, isVisible } = useAnimation("$slideOutBottom", "$slideInBottom", props.isVisible)
+  return !isVisible ? null : (
     <Row
       css={{
+        animation,
         position: "fixed",
         bottom: "$24",
         justifyContent: "center",
@@ -299,6 +313,9 @@ function SampleBox(props: SampleBoxProps) {
       }}
     >
       <Box.Aside
+        ref={(element: HTMLDivElement) => {
+          console.log("@@@ element", element)
+        }}
         css={{
           bg: "$primary10",
           color: "$primaryText10",
