@@ -139,7 +139,7 @@ export function getLengthErrorMessage(nthChildKey: NthChildKeys) {
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-type CustomNthChild = `:nth-child(${string | number})` & { hack?: unknown }
+type CustomNthChild = `:nth-child(${string | number})`
 export type NthChildKeys =
   | ":first"
   | ":first-child"
@@ -147,5 +147,5 @@ export type NthChildKeys =
   | ":last-child"
   | ":even"
   | ":odd"
-  | ":nth-child(<nth>)"
+  | ":nth-child(<nth>) "
   | CustomNthChild

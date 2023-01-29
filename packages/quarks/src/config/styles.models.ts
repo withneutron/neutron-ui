@@ -9,7 +9,19 @@ type CustomVarHint = "<Any valid CSS>"
 type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
 
 // This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-type CustomString = string & { hack?: unknown }
+type SymbolCssValueString = "." | "(" | "-" | "+" | " " | "#" | ","
+type BroadCssValueString = string | number | SymbolCssValueString
+
+type CustomString =
+  | `${number}`
+  | `${SymbolCssValueString}${number}`
+  | `${number}${SymbolCssValueString}`
+  | `${SymbolCssValueString}${number}${SymbolCssValueString}`
+  | `${BroadCssValueString} ${BroadCssValueString}`
+  | `(${BroadCssValueString})`
+  | `(${BroadCssValueString})${BroadCssValueString}`
+  | `${BroadCssValueString}(${BroadCssValueString})`
+  | `${BroadCssValueString}(${BroadCssValueString})${BroadCssValueString}`
 
 type MapObject = {
   [key in CssPropKey]?: { [k: string | number]: unknown }

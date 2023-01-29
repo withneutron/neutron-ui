@@ -17,10 +17,10 @@ import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
 
 /** Used to style any React component of basic HTML element */
-export function styled<C extends ComponentType, V extends Variants | undefined = undefined>(
+export function styled<C extends ComponentType, V extends Variants | undefined>(
   component: C,
   css: CSS,
-  variants?: string | StrictVariants<V>,
+  variants?: string | V,
   styleName?: string
 ) {
   styleName = typeof variants === "string" ? variants : styleName
@@ -91,7 +91,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined =
 
 /** Used to create styling primitives, like `Row`, `Column`, etc.
  * The output component will include semantic HTML variants, such as `Component.Aside`. */
-export function styledPrimitive<C extends ComponentType, V extends Variants>(
+export function styledPrimitive<C extends ComponentType, V extends Variants | undefined>(
   component: C,
   css: CSS,
   variants?: string | V,
@@ -151,22 +151,15 @@ type Variants = {
 }
 type VariantKey = keyof Variants
 
-/** Used to strictly enforce CSS typing in variant definitions */
-type StrictVariants<V extends Variants | undefined = Variants> = {
-  [name in keyof V]: { [value in keyof V[name]]: CSS }
+type VariantProps<V extends Variants> = {
+  [prop in keyof V]?: keyof V[prop] extends BooleanString ? boolean : keyof V[prop]
 }
-
-type VariantProps<V extends Variants | undefined = undefined> = V extends Variants
-  ? {
-      [prop in keyof V]?: keyof V[prop] extends BooleanString ? boolean : keyof V[prop]
-    }
-  : undefined
 
 type StylelessComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = Omit<
   ComponentPropsWithRef<T>,
   "css" | "styleManager"
 >
 
-type BaseStyledProps<V extends Variants | undefined = undefined> = V extends Variants
+type BaseStyledProps<V extends Variants | undefined> = V extends Variants
   ? { css?: CSS; styleManager?: StyleManager } & VariantProps<V>
   : { css?: CSS; styleManager?: StyleManager }
