@@ -4,22 +4,15 @@ import { useState, useEffect } from "react"
 export function useAnimation(
   hideAnimation: CSS["animation"],
   showAnimation: CSS["animation"],
-  shouldHide = false,
+  shouldBeVisible = false,
   hideDelay = 230
 ) {
   const [animation, setAnimation] = useState<CSS["animation"]>(hideAnimation)
-  const [isVisible, setIsVisible] = useState(true)
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setAnimation(showAnimation)
-    }, 20)
-    return () => clearTimeout(timeout)
-  }, [])
+  const [isVisible, setIsVisible] = useState(shouldBeVisible)
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
-    if (shouldHide) {
+    if (!shouldBeVisible) {
       setAnimation(hideAnimation)
       timeout = setTimeout(() => setIsVisible(false), hideDelay)
     } else {
@@ -27,7 +20,7 @@ export function useAnimation(
       timeout = setTimeout(() => setAnimation(showAnimation), 20)
     }
     return () => clearTimeout(timeout)
-  }, [shouldHide])
+  }, [shouldBeVisible])
 
   return {
     animation,
