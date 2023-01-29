@@ -1,11 +1,17 @@
+import { getThemeFonts } from "@withneutron/quarks"
 import NextDoc, { Html, Head, Main, NextScript, DocumentContext } from "next/document"
+
+const { links } = getThemeFonts()
 
 function Document() {
   return (
     <Html>
       <Head>
-        <link rel="icon" href="/favicon.ico" />
         <meta charSet="utf-8" />
+        <link rel="icon" href="/favicon.ico" />
+        {links.map((props, key) => (
+          <link key={key} {...props} />
+        ))}
       </Head>
       <body>
         <Main />

@@ -356,7 +356,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     insetBlockEnd: values("insetBlockEnd"),
     insetInlineStart: values("insetInlineStart"),
     insetInlineEnd: values("insetInlineEnd"),
-    type: values("type"),
+    typo: values("typo"),
     font: values("font"),
     fontStyle: values("fontStyle", options("normal", "italic", "oblique")),
     fontFamily: values("fontFamily"),

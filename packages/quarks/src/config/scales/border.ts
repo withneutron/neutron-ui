@@ -4,15 +4,15 @@ import { getAliasMap, getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCs
 
 /** Generator function for `border` theme scale */
 export function getBorder<T extends ColorVars>(hash: CharHash, color: T) {
-  const primaryColorBase = { ...hash.var, value: color.primary8.ref } as const
-  const primaryColorMin = { ...hash.var, value: color.primary6.ref } as const
-  const primaryColorMax = { ...hash.var, value: color.primary9.ref } as const
-  const secondaryColorBase = { ...hash.var, value: color.secondary8.ref } as const
-  const secondaryColorMin = { ...hash.var, value: color.secondary6.ref } as const
-  const secondaryColorMax = { ...hash.var, value: color.secondary9.ref } as const
-  const tertiaryColorBase = { ...hash.var, value: color.tertiary7.ref } as const
-  const tertiaryColorMin = { ...hash.var, value: color.tertiary4.ref } as const
-  const tertiaryColorMax = { ...hash.var, value: color.tertiary9.ref } as const
+  const primaryColorBase = { ...hash.var, value: color.primary9.ref } as const
+  const primaryColorMin = { ...hash.var, value: color.primary7.ref } as const
+  const primaryColorMax = { ...hash.var, value: color.primary10.ref } as const
+  const secondaryColorBase = { ...hash.var, value: color.secondary9.ref } as const
+  const secondaryColorMin = { ...hash.var, value: color.secondary7.ref } as const
+  const secondaryColorMax = { ...hash.var, value: color.secondary10.ref } as const
+  const tertiaryColorBase = { ...hash.var, value: color.tertiary9.ref } as const
+  const tertiaryColorMin = { ...hash.var, value: color.tertiary7.ref } as const
+  const tertiaryColorMax = { ...hash.var, value: color.tertiary10.ref } as const
 
   const styleDefault = { ...hash.var, value: "solid" } as const
 

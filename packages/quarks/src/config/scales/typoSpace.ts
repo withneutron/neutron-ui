@@ -2,8 +2,8 @@ import { CharHash } from "../utils"
 import { ThemeScale } from "./scales.models"
 import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "./scales.utils"
 
-/** Generator function for `typeSpace` theme scale */
-export function getTypeSpace(hash: CharHash) {
+/** Generator function for `typoSpace` theme scale */
+export function getTypoSpace(hash: CharHash) {
   const emBase = { ...hash.var, value: "0em" } as const
   const remBase = { ...hash.var, value: "0rem" } as const
   const chBase = { ...hash.var, value: "0ch" } as const

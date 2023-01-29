@@ -16,7 +16,7 @@ import {
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
-  vars,
+  token,
   darkVarMap,
   CSS,
   BaseCSS,
@@ -196,7 +196,7 @@ export class StyleManager {
     const entries = Object.entries(this.style)
     const len = 0
     let index = entries.length
-    for (index; index >= len; index--) {
+    for (; index >= len; index--) {
       const [prevKey, prevValue] = entries[index - 1] ?? []
       const [, value] = entries[index] ?? []
       if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
@@ -252,14 +252,8 @@ export class StyleManager {
     const incomingPriority = responsiveConditionsPriority[condition]
     const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
 
-    // If the parent already has this style, only override if this one has HIGHER priority.
-    const hasParentConflict = this.parentClassDicts.some(parentDict => {
-      // Parent data, to make sure we don't have a conflict with that data
-      const parentData = parentDict[pseudoClass][propId]
-      const parentPriority = parentData?.[1] ?? responsiveConditionsPriority[BASE] + 1
-
-      return parentPriority <= incomingPriority
-    })
+    // If the parent already has this style, don't override it.
+    const hasParentConflict = this.parentClassDicts.some(p => !!p[pseudoClass][propId])
 
     // If what we've already processed of the current styles have a conflict,
     // only override it if this one has HIGHER OR EQUAL priority.
@@ -360,8 +354,9 @@ export class StyleManager {
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
-    const output: { className: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
-      className: `${this.baseClassName}${outputClass}`,
+    const className = `${this.baseClassName}${outputClass}`
+    const output: { className?: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
+      className: className ? className : undefined,
       styleManager: this,
       style: {},
     }
@@ -405,9 +400,8 @@ export class StyleManager {
   processCss(css: CSS, conditions: Conditions, condition?: InlineConditionKey) {
     const props = Object.entries(css)
     // Loop through each prop of css
-    const propsLen = props.length
     let index = 0
-    for (index; index < propsLen; index++) {
+    for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
       // If the prop is a condition, process its inner props, including its inner pseudo-classes
       if (conditionsMap[propName as ConditionKey]) {
@@ -455,9 +449,8 @@ export class StyleManager {
     condition?: InlineConditionKey
   ) {
     const props = Object.entries(baseCss)
-    const propsLen = props.length
     let index = 0
-    for (index; index < propsLen; index++) {
+    for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
       this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
     }
@@ -481,9 +474,8 @@ export class StyleManager {
       if (value[BASE] !== undefined) {
         this.processCssProp(prop, value[BASE] as InlineConditionValue, conditions, BASE, pseudo)
       }
-      const conditionKeysLen = conditionKeys.length
       let index = 0
-      for (index; index < conditionKeysLen; index++) {
+      for (; index < conditionKeys.length; index++) {
         const conditionKey = conditionKeys[index]
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
@@ -521,9 +513,8 @@ export class StyleManager {
     // If it's a mapped prop, run its mapping func, and proceed with the result of that
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
-      const innerPropsLen = innerProps.length
       let index = 0
-      for (index; index < innerPropsLen; index++) {
+      for (; index < innerProps.length; index++) {
         const [propName, propValue] = innerProps[index]
         this.processCssProp(
           propName as CssPropKey,
@@ -541,9 +532,8 @@ export class StyleManager {
     if (pseudo) {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-      const pseudosLen = pseudos.length
       let index = 0
-      for (index; index < pseudosLen; index++) {
+      for (; index < pseudos.length; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
         this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
@@ -693,11 +683,11 @@ type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
 type ClassDict = { [p in PseudoCategoryKey]: { [c: number]: [number, number] } }
 
-type Vars = typeof vars
+type Token = typeof token
 
 export type ThemeOverrides = {
-  [key in keyof Vars]?: {
-    [innerKey in keyof Vars[key]]?: string
+  [key in keyof Token]?: {
+    [innerKey in keyof Token[key]]?: string
   }
 }
 

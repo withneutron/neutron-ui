@@ -205,7 +205,7 @@ export const mappedProps = {
 
   font: getPropMapper("fontSize", "fontStyle", "fontFamily", "fontWeight"),
 
-  type: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
+  typo: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
 
   gap: getPropMapper("rowGap", "columnGap"),
 

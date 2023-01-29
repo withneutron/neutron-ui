@@ -2,36 +2,29 @@ import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
 import App from "next/app"
 import "@withneutron/quarks/styles"
-import { Box, QuarksProvider } from "@withneutron/quarks-react"
+import { Grid, QuarksProvider } from "@withneutron/quarks-react"
+import { token } from "@withneutron/quarks"
+import { AppHeader } from "../components/AppHeader"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { locale, colorMode, isMobile, isDebugMode, ...props } = pageProps
 
   return (
-    <QuarksProvider
-      defaultColorMode={colorMode}
-      isMobile={isMobile}
-      isDebugMode={isDebugMode}
-      queryOverrides={{
-        sm: 680,
-        md: 1024,
-      }}
-    >
+    <QuarksProvider defaultColorMode={colorMode} isMobile={isMobile} isDebugMode={isDebugMode}>
       <Head>
-        <title>Next.js + Neutron UI +++</title>
+        <title>Neutron UI — Sample Next.js App</title>
         <meta name="description" content="Sample Next.js app, using NeutronUI" />
       </Head>
-      <Box
+      <Grid.Main
         css={{
-          p: {
-            base: "$80",
-            md: "$40",
-            sm: "$20",
-          },
+          gtRows: `${token.row.$80} 1fr`,
+          h: "100vh",
+          w: "100%",
         }}
       >
+        <AppHeader />
         <Component {...props} />
-      </Box>
+      </Grid.Main>
     </QuarksProvider>
   )
 }

@@ -1,4 +1,4 @@
 import { styled } from "../../config"
-import { getListStyles } from ".."
+import { getListStyles, getListVariants } from ".."
 
-export const OList = styled("ol", getListStyles(), "OList")
+export const OList = styled("ol", getListStyles(), getListVariants(), "OList")

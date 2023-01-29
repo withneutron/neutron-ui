@@ -6,8 +6,14 @@ export const SubHeading = getSemanticHeadingPrimitive(
     "h2",
     {
       color: "$defaultHeading",
-      type: "$subHeading",
-      my: "$16",
+      typo: "$subHeading",
+    },
+    {
+      flat: {
+        true: {
+          mb: "$0",
+        },
+      },
     },
     "SubHeading"
   )

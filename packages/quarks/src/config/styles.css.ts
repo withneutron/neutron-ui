@@ -29,8 +29,8 @@ import {
   getRow,
   getZIndex,
   getLineHeight,
-  getTypeSpace,
-  getType,
+  getTypoSpace,
+  getTypo,
   getTextDecoration,
   getShadow,
   getFontSize,
@@ -49,7 +49,7 @@ import {
   borderCombos,
   outlineCombos,
   fontCombos,
-  typeCombos,
+  typoCombos,
   animationCombos,
   textDecorationCombos,
 } from "./scales"
@@ -87,8 +87,8 @@ const zIndex = getZIndex(varHash)
 const column = getColumn(varHash, size.vars)
 const row = getRow(varHash, column.vars)
 const lineHeight = getLineHeight(varHash, size.vars)
-const typeSpace = getTypeSpace(varHash)
-const type = getType()
+const typoSpace = getTypoSpace(varHash)
+const typo = getTypo()
 const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
@@ -110,8 +110,8 @@ export const scales = {
   size,
   space,
   textDecoration,
-  typeSpace,
-  type,
+  typoSpace,
+  typo,
   zIndex,
 } as const
 
@@ -126,7 +126,7 @@ globalStyle("html, body", {
 })
 globalStyle("html", { fontSize: "6.25%" })
 globalStyle("body", {
-  background: color.vars.primary2.ref,
+  background: color.vars.tertiary2.ref,
   color: color.vars.defaultBody.ref,
   fontSize: "16em",
   fontWeight: fontWeight.vars.p.ref,
@@ -150,7 +150,7 @@ globalStyle("*", {
   boxSizing: "border-box",
 })
 globalStyle("*::placeholder", {
-  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
+  color: color.vars[getTextColor(CoreColorName.tertiary, 9)].ref,
 })
 globalStyle("body, a, p, li, strong, em, b, i, button", {
   fontFamily: fontFamily.vars.body.ref,
@@ -178,67 +178,89 @@ globalStyle("ul", {
 globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
   fontSize: fontSize.vars.p.ref,
 })
-globalStyle("a", {
-  color: color.vars.secondary9.ref,
-  fontWeight: fontWeight.vars[600].ref,
-  borderRadius: radius.vars.field.ref,
-  textDecoration: "underline",
-  boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.secondary5.ref}`,
+globalStyle("p", {
+  marginBlockStart: space.vars[0].ref,
+  marginBlockEnd: space.vars[16].ref,
 })
-globalStyle("a:focus", {
-  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary9.ref}`,
+globalStyle("p:last-child", {
+  marginBlockEnd: space.vars[0].ref,
+})
+globalStyle("a", {
+  color: color.vars.primary9.ref,
+  fontWeight: fontWeight.vars[600].ref,
+  textDecoration: "none",
+  boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.primary5.ref}`,
+  transitionProperty: "box-shadow, color",
+  transitionDuration: `${animation.vars.fastDuration.ref}, ${animation.vars.fastDuration.ref}`,
+})
+globalStyle("a:focus-visible", {
+  boxShadow: `inset 0 1.25em 0 ${color.vars.primary9.ref}`,
   outline: "none",
 })
 globalStyle("a:hover", {
-  boxShadow: `inset 0 1.25em 0 ${color.vars.secondary5.ref}`,
-  color: color.vars.secondary12.ref,
+  boxShadow: `inset 0 1.25em 0 ${color.vars.primary5.ref}`,
+  color: color.vars.primary12.ref,
+  transitionDuration: `${animation.vars.defaultDuration.ref}, ${animation.vars.defaultDuration.ref}`,
 })
-globalStyle("a:focus, a:focus code", {
-  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
+globalStyle("a:focus-visible, a:focus-visible code", {
+  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 globalStyle("li > a, nav a, button a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a", {
   boxShadow: "none",
 })
 globalStyle("blockquote, pre", {
-  background: color.vars.primary3.ref,
-  color: color.vars[getTextColor(CoreColorName.primary, 3)].ref,
+  background: color.vars.tertiary3.ref,
+  color: color.vars[getTextColor(CoreColorName.tertiary, 3)].ref,
   marginInline: 0,
   paddingInline: space.vars[32].ref,
   paddingBlock: space.vars[20].ref,
   borderRadius: radius.vars.rounded.ref,
 })
+globalStyle("h1, h2", {
+  marginBlockStart: space.vars[24].ref,
+  marginBlockEnd: space.vars[8].ref,
+})
+globalStyle("h3, h4, h5, h6", {
+  marginBlockStart: space.vars[16].ref,
+  marginBlockEnd: space.vars[8].ref,
+})
 const headings = ["h1", "h2", "h3", "h4", "h5", "h6"]
-globalStyle(mapSelectorsToTemplate("&:first-child", ...headings), {
-  marginTop: space.vars[0].ref,
+const titleSelectors = [
+  mapSelectorsToTemplate("&:first-child", ...headings),
+  mapSelectorsToTemplate("h1 + &", ...["h2", "h3", "h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h2 + &", ...["h3", "h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h3 + &", ...["h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h4 + &", ...["h5", "h6"]),
+  mapSelectorsToTemplate("h5 + &", "h6"),
+]
+globalStyle(titleSelectors.join(", "), {
+  marginBlockStart: space.vars[0].ref,
 })
-globalStyle(mapSelectorsToTemplate("& + &", ...headings), {
-  marginTop: space.vars[0].ref,
-})
-globalStyle(mapSelectorsToTemplate("&, & > *", ...headings), {
+globalStyle(mapSelectorsToTemplate("&, & > a, & > span", ...headings), {
   fontFamily: fontFamily.vars.heading.ref,
 })
-globalStyle("h1, h1 > *", {
+globalStyle("h1, h1 > a, h1 > span", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
-  letterSpacing: typeSpace.vars.tightest.ref,
+  letterSpacing: typoSpace.vars.tightest.ref,
 })
-globalStyle("h2, h2 > *", {
+globalStyle("h2, h2 > a, h2 > span", {
   fontSize: fontSize.vars.h2.ref,
   fontWeight: fontWeight.vars.h2.ref,
 })
-globalStyle("h3, h3 > *", {
+globalStyle("h3, h3 > a, h3 > span", {
   fontSize: fontSize.vars.h3.ref,
   fontWeight: fontWeight.vars.h3.ref,
 })
-globalStyle("h4, h4 > *", {
+globalStyle("h4, h4 > a, h4 > span", {
   fontSize: fontSize.vars.h4.ref,
   fontWeight: fontWeight.vars.h4.ref,
 })
-globalStyle("h5, h5 > *", {
+globalStyle("h5, h5 > a, h5 > span", {
   fontSize: fontSize.vars.h5.ref,
   fontWeight: fontWeight.vars.h5.ref,
 })
-globalStyle("h6, h6 > *", {
+globalStyle("h6, h6 > a, h6 > span", {
   fontSize: fontSize.vars.h6.ref,
   fontWeight: fontWeight.vars.h6.ref,
 })
@@ -249,8 +271,8 @@ globalStyle("strong", {
   fontWeight: fontWeight.vars.p.ref,
 })
 globalStyle("::selection", {
-  background: color.vars.secondary9.ref,
-  color: color.vars[getTextColor(CoreColorName.secondary, 9)].ref,
+  background: color.vars.primary9.ref,
+  color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 
 /** Get a series of selectors from a template (replaces instances of `&`) */
@@ -359,7 +381,7 @@ console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /** Scaled props that override mapped props */
 export type OverrideScaledProp = {
   font: PrefixedKey<typeof fontCombos> | keyof typeof staticProps.font
-  type: PrefixedKey<typeof typeCombos> | keyof typeof staticProps.type
+  typo: PrefixedKey<typeof typoCombos> | keyof typeof staticProps.typo
   animation: PrefixedKey<typeof animationCombos> | keyof typeof staticProps.animation
   textDecoration: PrefixedKey<typeof textDecorationCombos> | keyof typeof staticProps.textDecoration
   outline: PrefixedKey<typeof outlineCombos> | keyof typeof staticProps.outline
@@ -443,14 +465,14 @@ export type CSS = BaseCSS & ConditionalCSS
 export const varMap = {} as Record<string, string | number>
 export const darkVarMap = {} as Record<string, string | number>
 
-function getVars<V extends BaseVars>(vars: V, map = varMap) {
+function getTokensFromVars<V extends BaseVars>(vars: V, map = varMap) {
   return Object.entries(vars).reduce((output, [key, { name, value }]) => {
-    output[key as keyof typeof output] = `var(${name})`
+    output[addPrefix(key) as PrefixedKey<V>] = `var(${name})`
     if (typeof value === "string") {
       map[name] = value
     }
     return output
-  }, {} as { [k in keyof V]: string })
+  }, {} as { [k in PrefixedKey<V>]: string })
 }
 
 function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, aliases?: A) {
@@ -477,28 +499,30 @@ function getThemeProps<T extends ThemeProps>(props: T) {
   }, {} as { [k in keyof T]: string })
 }
 
-export const vars = {
-  animation: getVars(animation.vars),
-  border: getVars(border.vars),
-  color: getVars(color.vars),
-  column: getVars(column.vars),
-  font: getVars(font.vars),
-  fontFamily: getVars(fontFamily.vars),
-  fontSize: getVars(fontSize.vars),
-  fontWeight: getVars(fontWeight.vars),
-  lineHeight: getVars(lineHeight.vars),
-  outline: getVars(outline.vars),
-  radius: getVars(radius.vars),
-  row: getVars(row.vars),
-  shadow: getVars(shadow.vars),
-  size: getVars(size.vars),
-  space: getVars(space.vars),
-  textDecoration: getVars(textDecoration.vars),
-  typeSpace: getVars(typeSpace.vars),
-  type: getVars(type.vars),
-  zIndex: getVars(zIndex.vars),
+/** Maps theme tokens to CSS variables that hold these token values */
+export const token = {
+  animation: getTokensFromVars(animation.vars),
+  border: getTokensFromVars(border.vars),
+  color: getTokensFromVars(color.vars),
+  column: getTokensFromVars(column.vars),
+  font: getTokensFromVars(font.vars),
+  fontFamily: getTokensFromVars(fontFamily.vars),
+  fontSize: getTokensFromVars(fontSize.vars),
+  fontWeight: getTokensFromVars(fontWeight.vars),
+  lineHeight: getTokensFromVars(lineHeight.vars),
+  outline: getTokensFromVars(outline.vars),
+  radius: getTokensFromVars(radius.vars),
+  row: getTokensFromVars(row.vars),
+  shadow: getTokensFromVars(shadow.vars),
+  size: getTokensFromVars(size.vars),
+  space: getTokensFromVars(space.vars),
+  textDecoration: getTokensFromVars(textDecoration.vars),
+  typoSpace: getTokensFromVars(typoSpace.vars),
+  typo: getTokensFromVars(typo.vars),
+  zIndex: getTokensFromVars(zIndex.vars),
 } as const
 
+/** Alternative way to use theme tokens, instead of string values */
 export const theme = {
   animation: getThemeProps(animation.themeProps),
   border: getThemeProps(border.themeProps),
@@ -516,8 +540,8 @@ export const theme = {
   size: getThemeProps(size.themeProps),
   space: getThemeProps(space.themeProps),
   textDecoration: getThemeProps(textDecoration.themeProps),
-  typeSpace: getThemeProps(typeSpace.themeProps),
-  type: getThemeProps(type.themeProps),
+  typoSpace: getThemeProps(typoSpace.themeProps),
+  typo: getThemeProps(typo.themeProps),
   zIndex: getThemeProps(zIndex.themeProps),
 } as const
 
@@ -545,12 +569,12 @@ export const tokenToVarMap = {
   size: getTokenToVarsMap(size.vars, size.cssAliasMap),
   space: getTokenToVarsMap(space.vars, space.cssAliasMap),
   textDecoration: getTokenToVarsMap(textDecoration.vars, textDecoration.cssAliasMap),
-  typeSpace: getTokenToVarsMap(typeSpace.vars, typeSpace.cssAliasMap),
-  type: getTokenToVarsMap(type.vars, type.cssAliasMap),
+  typoSpace: getTokenToVarsMap(typoSpace.vars, typoSpace.cssAliasMap),
+  typo: getTokenToVarsMap(typo.vars, typo.cssAliasMap),
   zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
-export const darkColor = getVars(color.darkVars!, darkVarMap)
-export const darkShadow = getVars(shadow.darkVars!, darkVarMap)
+export const darkColor = getTokensFromVars(color.darkVars!, darkVarMap)
+export const darkShadow = getTokensFromVars(shadow.darkVars!, darkVarMap)
 
 globalStyle(":root", varMap)

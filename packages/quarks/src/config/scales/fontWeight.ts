@@ -20,10 +20,10 @@ export function getFontWeight(hash: CharHash) {
 
   const sharedVars = {
     ...baseVars,
-    h1: { ...hash.var, value: baseVars[600].ref },
+    h1: { ...hash.var, value: baseVars[500].ref },
     h2: { ...hash.var, value: baseVars[700].ref },
     h3: { ...hash.var, value: baseVars[600].ref },
-    h4: { ...hash.var, value: baseVars[900].ref },
+    h4: { ...hash.var, value: baseVars[800].ref },
     h5: { ...hash.var, value: baseVars[600].ref },
     h6: { ...hash.var, value: baseVars[800].ref },
     p,
