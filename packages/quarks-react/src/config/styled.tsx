@@ -8,6 +8,8 @@ import {
   memo,
   useEffect,
   useMemo,
+  useRef,
+  useState,
 } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
@@ -45,20 +47,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined =
     const { as: polyAs, css: propsCss, styleManager, isSemantic, className, index, length, ...mainProps } = props
 
     // Get any variants that are valid, based on our incoming mainProps
-    const variantCss: VariantCSS = []
-    if (hasVariants && variantsDefinition) {
-      let i = 0
-      for (; i < variantKeys.length; i++) {
-        const variant = variantsDefinition[variantKeys[i] as VariantKey]
-        const variantValue = mainProps[variantKeys[i] as VariantKey]
-          ? String(mainProps[variantKeys[i] as VariantKey])
-          : undefined
-        if (variantValue && variant[variantValue]) {
-          const keyValue = variantValue === "true" ? "" : `-${variantValue}`
-          variantCss.push({ key: `${variantKeys[i]}${keyValue}`, css: variant[variantValue] })
-        }
-      }
-    }
+    const variantCss = useVariants(mainProps, hasVariants, variantKeys, variantsDefinition)
 
     const isIntrinsic = typeof component === "string"
     const Element = useMemo(
@@ -68,7 +57,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined =
 
     const { styleManager: innerStyleManger, ...styleProps } = useMemo(
       () => style(css, conditions, variantCss, propsCss, styleName, styleManager, { className, index, length }),
-      [conditions, propsCss, styleManager, className, index, length]
+      [conditions, variantCss, propsCss, styleManager, className, index, length]
     )
     const innerProps = {} as typeof props
 
@@ -114,6 +103,45 @@ export function styledPrimitive<C extends ComponentType, V extends Variants>(
       ? styled(component, css, variantsCssOrStyleName, styleName)
       : styled(component, css, styleName)
   return getSemanticUniversalPrimitive(primitive)
+}
+
+// HOOKS //////////////////////////////////////////////////////////////////////////////////////////
+function useVariants<P extends Record<string, any>, V extends Variants>(
+  props: P,
+  hasVariants: boolean,
+  variantKeys: string[],
+  variantsDefinition?: NonNullable<V>
+) {
+  const [variantCss, setVariantCss] = useState<VariantCSS>([])
+  const [cacheKey, setCacheKey] = useState("")
+  const prevDefinition = useRef(variantsDefinition)
+  const hasChanged = variantsDefinition !== prevDefinition.current
+
+  // Process new values
+  if (hasVariants && variantsDefinition) {
+    const newVariantCss: VariantCSS = []
+    let newCacheKey = ""
+    let i = 0
+    for (; i < variantKeys.length; i++) {
+      const variant = variantsDefinition[variantKeys[i] as VariantKey]
+      const variantValue = props[variantKeys[i] as VariantKey] ? String(props[variantKeys[i] as VariantKey]) : undefined
+      if (variantValue && variant[variantValue]) {
+        const keyValue = variantValue === "true" ? "" : `-${variantValue}`
+        const key = `${variantKeys[i]}${keyValue}`
+        newCacheKey += key
+        newVariantCss.push({ key, css: variant[variantValue] })
+      }
+    }
+
+    // Only update reference if variant values have changed
+    if (hasChanged || newCacheKey !== cacheKey) {
+      setVariantCss(newVariantCss)
+      setCacheKey(newCacheKey)
+      prevDefinition.current = variantsDefinition
+    }
+  }
+
+  return variantCss
 }
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////
