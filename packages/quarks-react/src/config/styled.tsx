@@ -20,13 +20,13 @@ import { ComponentType } from "../shared/models"
 export function styled<C extends ComponentType, V extends Variants | undefined = undefined>(
   component: C,
   css: CSS,
-  variantsCssOrStyleName?: string | V,
+  variants?: string | StrictVariants<V>,
   styleName?: string
 ) {
-  styleName = typeof variantsCssOrStyleName === "string" ? variantsCssOrStyleName : styleName
-  const hasVariants = !!variantsCssOrStyleName && typeof variantsCssOrStyleName !== "string"
-  const variantsDefinition = hasVariants ? variantsCssOrStyleName : undefined
-  const variantKeys: string[] = hasVariants ? Object.keys(variantsCssOrStyleName) : []
+  styleName = typeof variants === "string" ? variants : styleName
+  const hasVariants = !!variants && typeof variants !== "string"
+  const variantsDefinition = hasVariants ? variants : undefined
+  const variantKeys: string[] = hasVariants ? Object.keys(variants) : []
   const hasVariantKeys = variantKeys.length > 0
 
   function styledComponent<T extends ComponentType, R>(
@@ -94,14 +94,12 @@ export function styled<C extends ComponentType, V extends Variants | undefined =
 export function styledPrimitive<C extends ComponentType, V extends Variants>(
   component: C,
   css: CSS,
-  variantsCssOrStyleName?: string | V,
+  variants?: string | V,
   styleName?: string
 ) {
-  styleName = typeof variantsCssOrStyleName === "string" ? variantsCssOrStyleName : styleName
+  styleName = typeof variants === "string" ? variants : styleName
   const primitive =
-    typeof variantsCssOrStyleName === "object"
-      ? styled(component, css, variantsCssOrStyleName, styleName)
-      : styled(component, css, styleName)
+    typeof variants === "object" ? styled(component, css, variants, styleName) : styled(component, css, styleName)
   return getSemanticUniversalPrimitive(primitive)
 }
 
@@ -152,6 +150,11 @@ type Variants = {
   [name: string]: { [value: string]: CSS }
 }
 type VariantKey = keyof Variants
+
+/** Used to strictly enforce CSS typing in variant definitions */
+type StrictVariants<V extends Variants | undefined = Variants> = {
+  [name in keyof V]: { [value in keyof V[name]]: CSS }
+}
 
 type VariantProps<V extends Variants | undefined = undefined> = V extends Variants
   ? {
