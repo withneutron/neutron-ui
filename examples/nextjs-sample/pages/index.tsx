@@ -2,7 +2,7 @@ import type { NextPage } from "next"
 import Head from "next/head"
 import { styled, Column, Heading, SubHeading, Grid, Row, ListItem, List } from "@withneutron/quarks-react"
 import { Button } from "../components/Button"
-import { token } from "@withneutron/quarks"
+import { CSS, token } from "@withneutron/quarks"
 import { useState } from "react"
 import { SidePanel } from "../components/SidePanel"
 
@@ -113,5 +113,5 @@ function getColors(index: number) {
   const name = colorKey[key as keyof typeof colorKey]
   const bg = name ? `$${name}${number}` : "$tertiary3"
   const color = name ? `$${name}Text${number}` : "$tertiaryText3"
-  return { bg, color }
+  return { bg, color } as CSS
 }
