@@ -3,15 +3,7 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2016.array.include",
-      "es2017.object",
-      "es2017.intl",
-      "es2019.array",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "es2016.array.include", "es2017.object", "es2017.intl", "es2019.array", "esnext"],
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "declaration": true,
@@ -31,30 +23,12 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "*"
-      ],
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/utils/*": [
-        "shared/utils/*"
-      ],
-      "@/config/*": [
-        "config/*"
-      ],
-      "@/ui": [
-        "config/ui"
-      ]
+      "@/*": ["*"],
+      "@/components/*": ["components/*"],
+      "@/utils/*": ["shared/utils/*"]
     },
     "incremental": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

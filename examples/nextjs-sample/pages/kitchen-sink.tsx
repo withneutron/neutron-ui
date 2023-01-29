@@ -2,7 +2,7 @@ import * as React from "react"
 import type { NextPage } from "next"
 import Head from "next/head"
 import { styled, Box, Column, Heading, SubHeading, Text, Grid, Row, useAnimation } from "@withneutron/quarks-react"
-import { vars } from "@withneutron/quarks"
+import { token } from "@withneutron/quarks"
 import { ReactNode, useEffect, useRef, useState } from "react"
 
 const Base = styled(
@@ -46,7 +46,7 @@ const BaseSection = styled(
   "section",
   {
     h: "$80",
-    width: `calc(100vw - ${vars.size[120]})`,
+    width: `calc(100vw - ${token.size.$120})`,
     bg: {
       sm: "$magenta1",
       md: "$amber1",
@@ -133,10 +133,10 @@ const NuiSection = styled(
       },
       success: {
         bg: "$success3",
-        linearGradient: `${vars.color.success3}, ${vars.color.success1}`,
+        linearGradient: `${token.color.$success3}, ${token.color.$success1}`,
         color: "$successText3",
         ":interact": {
-          linearGradient: `${vars.color.success9}, ${vars.color.success6}`,
+          linearGradient: `${token.color.$success9}, ${token.color.$success6}`,
           color: "$tertiaryText9",
           border: "none",
           outlineColor: "$tertiaryMax",
@@ -240,7 +240,15 @@ const Sample: NextPage = () => {
   }, [])
 
   return (
-    <Column.Article>
+    <Column.Article
+      css={{
+        p: {
+          base: "$80",
+          md: "$40",
+          sm: "$20",
+        },
+      }}
+    >
       <Head>
         <title>UI Lib + Design System Sample</title>
         <meta name="description" content="Sample of various NeutronUI components" />
@@ -259,13 +267,12 @@ const Sample: NextPage = () => {
         <MediaQueryName css={{ display: { sm: "inline-block" } }}>Small (sm)</MediaQueryName>
       </Row.Header>
 
-      <Heading css={{ typo: "$majorTitle", animation: "$flashSize", width: "max-content" }}>Major Title</Heading>
-      <Heading css={{ typo: "$title" }}>Title</Heading>
-      <SubHeading css={{ typo: "$minorTitle", animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>
-        Minor Title
-      </SubHeading>
-      <Heading.H3>Heading</Heading.H3>
-      <SubHeading>Sub-Heading</SubHeading>
+      <header>
+        <Heading css={{ typo: "$mainHeading", animation: "$flashSize", width: "max-content" }}>Main Heading</Heading>
+        <Heading.H2>Heading</Heading.H2>
+      </header>
+      <SubHeading.H3 css={{ animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>Sub-Heading</SubHeading.H3>
+      <SubHeading.H4 css={{ typo: "$minorHeading" }}>Minor Heading</SubHeading.H4>
       <Text css={{ typo: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
       <Text css={{ typo: "$caption" }}>Caption</Text>
       {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
