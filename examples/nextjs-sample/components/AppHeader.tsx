@@ -22,8 +22,8 @@ export function AppHeader() {
       <Row.Nav css={{ gap: "$32", alignItems: "center" }}>
         <FlexList css={{ gap: "$24" }}>
           <FlexListItem>
-            <Anchor as={Link} href="/sample">
-              Sample
+            <Anchor as={Link} href="/">
+              Home
             </Anchor>
           </FlexListItem>
           <FlexListItem>
