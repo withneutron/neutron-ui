@@ -28,7 +28,7 @@ export function getFontSize(hash: CharHash) {
     // Typo elements
     h1: { ...hash.var, value: baseVars[44].ref },
     h2,
-    h3: { ...hash.var, value: baseVars[25].ref },
+    h3: { ...hash.var, value: baseVars[21].ref },
     h4: { ...hash.var, value: baseVars[21].ref },
     h5: { ...hash.var, value: baseVars[18].ref },
     h6: { ...hash.var, value: baseVars[16].ref },

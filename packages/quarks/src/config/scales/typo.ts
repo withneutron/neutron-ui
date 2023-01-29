@@ -8,34 +8,29 @@ export function getTypo() {
   // These keys will get mapped into classes with multiple CSS properties
   const cssValueMap = {
     // Composition combos, for class generation
-    majorTitle: "majorTitle",
-    title: "title",
-    minorTitle: "minorTitle",
+    mainHeading: "mainHeading",
     heading: "heading",
     subHeading: "subHeading",
+    minorHeading: "minorHeading",
     body: "body",
     caption: "caption",
   } as const
 
   const { aliasMap, cssAliases } = getAliasMap(
     {
-      majorTitle: {
+      mainHeading: {
         font: "h1",
         lineHeight: "heading",
       },
-      title: {
+      heading: {
         font: "h2",
         lineHeight: "heading",
       },
-      minorTitle: {
-        font: "h5",
-        lineHeight: "heading",
-      },
-      heading: {
+      subHeading: {
         font: "h3",
         lineHeight: "heading",
       },
-      subHeading: {
+      minorHeading: {
         font: "h4",
         lineHeight: "heading",
       },
@@ -71,11 +66,10 @@ export function getTypo() {
 // Used for generating types that map to only parts of this scale
 
 export const typoCombos = {
-  majorTitle: true,
-  title: true,
-  minorTitle: true,
+  mainHeading: true,
   heading: true,
   subHeading: true,
+  minorHeading: true,
   body: true,
   caption: true,
 } as const

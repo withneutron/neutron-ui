@@ -16,7 +16,7 @@ import {
 } from "./props"
 import { ColorMode } from "../shared/models"
 import {
-  vars,
+  token,
   darkVarMap,
   CSS,
   BaseCSS,
@@ -354,8 +354,9 @@ export class StyleManager {
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
-    const output: { className: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
-      className: `${this.baseClassName}${outputClass}`,
+    const className = `${this.baseClassName}${outputClass}`
+    const output: { className?: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
+      className: className ? className : undefined,
       styleManager: this,
       style: {},
     }
@@ -682,11 +683,11 @@ type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
 type ClassDict = { [p in PseudoCategoryKey]: { [c: number]: [number, number] } }
 
-type Vars = typeof vars
+type Token = typeof token
 
 export type ThemeOverrides = {
-  [key in keyof Vars]?: {
-    [innerKey in keyof Vars[key]]?: string
+  [key in keyof Token]?: {
+    [innerKey in keyof Token[key]]?: string
   }
 }
 

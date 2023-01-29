@@ -178,22 +178,31 @@ globalStyle("ul", {
 globalStyle("a, p, li, pre, code, strong, em, b, i, blockquote", {
   fontSize: fontSize.vars.p.ref,
 })
+globalStyle("p", {
+  marginBlockStart: space.vars[0].ref,
+  marginBlockEnd: space.vars[16].ref,
+})
+globalStyle("p:last-child", {
+  marginBlockEnd: space.vars[0].ref,
+})
 globalStyle("a", {
   color: color.vars.primary9.ref,
   fontWeight: fontWeight.vars[600].ref,
-  borderRadius: radius.vars.field.ref,
-  textDecoration: "underline",
+  textDecoration: "none",
   boxShadow: `inset 0 -3${STYLE_UNIT} 0 ${color.vars.primary5.ref}`,
+  transitionProperty: "box-shadow, color",
+  transitionDuration: `${animation.vars.fastDuration.ref}, ${animation.vars.fastDuration.ref}`,
 })
-globalStyle("a:focus", {
+globalStyle("a:focus-visible", {
   boxShadow: `inset 0 1.25em 0 ${color.vars.primary9.ref}`,
   outline: "none",
 })
 globalStyle("a:hover", {
   boxShadow: `inset 0 1.25em 0 ${color.vars.primary5.ref}`,
   color: color.vars.primary12.ref,
+  transitionDuration: `${animation.vars.defaultDuration.ref}, ${animation.vars.defaultDuration.ref}`,
 })
-globalStyle("a:focus, a:focus code", {
+globalStyle("a:focus-visible, a:focus-visible code", {
   color: color.vars[getTextColor(CoreColorName.primary, 9)].ref,
 })
 globalStyle("li > a, nav a, button a, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a", {
@@ -207,38 +216,51 @@ globalStyle("blockquote, pre", {
   paddingBlock: space.vars[20].ref,
   borderRadius: radius.vars.rounded.ref,
 })
+globalStyle("h1, h2", {
+  marginBlockStart: space.vars[24].ref,
+  marginBlockEnd: space.vars[8].ref,
+})
+globalStyle("h3, h4, h5, h6", {
+  marginBlockStart: space.vars[16].ref,
+  marginBlockEnd: space.vars[8].ref,
+})
 const headings = ["h1", "h2", "h3", "h4", "h5", "h6"]
-globalStyle(mapSelectorsToTemplate("&:first-child", ...headings), {
-  marginTop: space.vars[0].ref,
+const titleSelectors = [
+  mapSelectorsToTemplate("&:first-child", ...headings),
+  mapSelectorsToTemplate("h1 + &", ...["h2", "h3", "h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h2 + &", ...["h3", "h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h3 + &", ...["h4", "h5", "h6"]),
+  mapSelectorsToTemplate("h4 + &", ...["h5", "h6"]),
+  mapSelectorsToTemplate("h5 + &", "h6"),
+]
+globalStyle(titleSelectors.join(", "), {
+  marginBlockStart: space.vars[0].ref,
 })
-globalStyle(mapSelectorsToTemplate("& + &", ...headings), {
-  marginTop: space.vars[0].ref,
-})
-globalStyle(mapSelectorsToTemplate("&, & > *", ...headings), {
+globalStyle(mapSelectorsToTemplate("&, & > a, & > span", ...headings), {
   fontFamily: fontFamily.vars.heading.ref,
 })
-globalStyle("h1, h1 > *", {
+globalStyle("h1, h1 > a, h1 > span", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
   letterSpacing: typoSpace.vars.tightest.ref,
 })
-globalStyle("h2, h2 > *", {
+globalStyle("h2, h2 > a, h2 > span", {
   fontSize: fontSize.vars.h2.ref,
   fontWeight: fontWeight.vars.h2.ref,
 })
-globalStyle("h3, h3 > *", {
+globalStyle("h3, h3 > a, h3 > span", {
   fontSize: fontSize.vars.h3.ref,
   fontWeight: fontWeight.vars.h3.ref,
 })
-globalStyle("h4, h4 > *", {
+globalStyle("h4, h4 > a, h4 > span", {
   fontSize: fontSize.vars.h4.ref,
   fontWeight: fontWeight.vars.h4.ref,
 })
-globalStyle("h5, h5 > *", {
+globalStyle("h5, h5 > a, h5 > span", {
   fontSize: fontSize.vars.h5.ref,
   fontWeight: fontWeight.vars.h5.ref,
 })
-globalStyle("h6, h6 > *", {
+globalStyle("h6, h6 > a, h6 > span", {
   fontSize: fontSize.vars.h6.ref,
   fontWeight: fontWeight.vars.h6.ref,
 })
@@ -443,14 +465,14 @@ export type CSS = BaseCSS & ConditionalCSS
 export const varMap = {} as Record<string, string | number>
 export const darkVarMap = {} as Record<string, string | number>
 
-function getVars<V extends BaseVars>(vars: V, map = varMap) {
+function getTokensFromVars<V extends BaseVars>(vars: V, map = varMap) {
   return Object.entries(vars).reduce((output, [key, { name, value }]) => {
-    output[key as keyof typeof output] = `var(${name})`
+    output[addPrefix(key) as PrefixedKey<V>] = `var(${name})`
     if (typeof value === "string") {
       map[name] = value
     }
     return output
-  }, {} as { [k in keyof V]: string })
+  }, {} as { [k in PrefixedKey<V>]: string })
 }
 
 function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, aliases?: A) {
@@ -477,28 +499,30 @@ function getThemeProps<T extends ThemeProps>(props: T) {
   }, {} as { [k in keyof T]: string })
 }
 
-export const vars = {
-  animation: getVars(animation.vars),
-  border: getVars(border.vars),
-  color: getVars(color.vars),
-  column: getVars(column.vars),
-  font: getVars(font.vars),
-  fontFamily: getVars(fontFamily.vars),
-  fontSize: getVars(fontSize.vars),
-  fontWeight: getVars(fontWeight.vars),
-  lineHeight: getVars(lineHeight.vars),
-  outline: getVars(outline.vars),
-  radius: getVars(radius.vars),
-  row: getVars(row.vars),
-  shadow: getVars(shadow.vars),
-  size: getVars(size.vars),
-  space: getVars(space.vars),
-  textDecoration: getVars(textDecoration.vars),
-  typoSpace: getVars(typoSpace.vars),
-  typo: getVars(typo.vars),
-  zIndex: getVars(zIndex.vars),
+/** Maps theme tokens to CSS variables that hold these token values */
+export const token = {
+  animation: getTokensFromVars(animation.vars),
+  border: getTokensFromVars(border.vars),
+  color: getTokensFromVars(color.vars),
+  column: getTokensFromVars(column.vars),
+  font: getTokensFromVars(font.vars),
+  fontFamily: getTokensFromVars(fontFamily.vars),
+  fontSize: getTokensFromVars(fontSize.vars),
+  fontWeight: getTokensFromVars(fontWeight.vars),
+  lineHeight: getTokensFromVars(lineHeight.vars),
+  outline: getTokensFromVars(outline.vars),
+  radius: getTokensFromVars(radius.vars),
+  row: getTokensFromVars(row.vars),
+  shadow: getTokensFromVars(shadow.vars),
+  size: getTokensFromVars(size.vars),
+  space: getTokensFromVars(space.vars),
+  textDecoration: getTokensFromVars(textDecoration.vars),
+  typoSpace: getTokensFromVars(typoSpace.vars),
+  typo: getTokensFromVars(typo.vars),
+  zIndex: getTokensFromVars(zIndex.vars),
 } as const
 
+/** Alternative way to use theme tokens, instead of string values */
 export const theme = {
   animation: getThemeProps(animation.themeProps),
   border: getThemeProps(border.themeProps),
@@ -550,7 +574,7 @@ export const tokenToVarMap = {
   zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
-export const darkColor = getVars(color.darkVars!, darkVarMap)
-export const darkShadow = getVars(shadow.darkVars!, darkVarMap)
+export const darkColor = getTokensFromVars(color.darkVars!, darkVarMap)
+export const darkShadow = getTokensFromVars(shadow.darkVars!, darkVarMap)
 
 globalStyle(":root", varMap)

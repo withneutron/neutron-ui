@@ -62,7 +62,7 @@ export function generateThemeColors<T = string>(
     const isMapped = typeof inputValue === "string"
     const isInputObject = typeof inputValue === "object"
     const isStatic = isInputObject && "contrast" in inputValue
-    const isNeutral = isInputObject && "isNeutral" in inputValue
+    const isNeutral = isInputObject && "isNeutral" in inputValue && inputValue.isNeutral
 
     let hue = isInputObject ? inputValue.hue : (inputValue as number)
     let saturation = isInputObject ? inputValue.saturation ?? 100 : 100
@@ -190,9 +190,12 @@ export function generateThemeColors<T = string>(
      */
     const alphaColorKey = AlphaColorName[`${colorKey}${ALPHA_KEY}` as keyof typeof AlphaColorName]
     if (alphaColorKey) {
+      const minLuminance = isDark ? 0 : 100
+      const maxLuminance = isDark ? 100 : 0
+      const luminance = colorKey === "min" ? minLuminance : colorKey === "max" ? maxLuminance : 50
       ALPHA_VALUES.forEach((alpha, index) => {
         const alphaKey = (index + 1) as ColorNumberKey
-        setValue(numerize(alphaColorKey, alphaKey), colors, getHSL(hue, saturation, 50, alpha), alphaKey)
+        setValue(numerize(alphaColorKey, alphaKey), colors, getHSL(hue, saturation, luminance, alpha), alphaKey)
       })
     }
   })
