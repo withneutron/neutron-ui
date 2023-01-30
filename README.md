@@ -20,6 +20,7 @@ The source code for this app can be found in the `examples/nextjs-sample/` folde
 ## Troubleshooting
 
 If you see this error...
-`Failed to replace env in config: ${NPM_AUTH_TOKEN}`
-
+```
+Failed to replace env in config: ${NPM_AUTH_TOKEN}
+```
 ...then make sure you [create an NPM token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-granular-access-tokens-on-the-website), and add it to your shell's env variables as `NPM_AUTH_TOKEN` (and refresh your shell's profile).
