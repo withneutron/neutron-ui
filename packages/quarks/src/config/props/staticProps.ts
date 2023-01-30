@@ -371,6 +371,8 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     letterSpacing: values("letterSpacing"),
     wordSpacing: values("wordSpacing"),
 
+    listStyle: values("listStyle", none),
+
     textDecoration: values("textDecoration", none),
     textDecorationLine: values("textDecorationLine", options("none", "underline", "overline", "line-through", "blink")),
     textDecorationStyle: values("textDecorationStyle", options("solid", "double", "dotted", "dashed", "wavy")),
