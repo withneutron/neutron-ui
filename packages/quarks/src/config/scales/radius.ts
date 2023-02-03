@@ -18,6 +18,8 @@ export function getRadius(hash: CharHash) {
     8: { ...hash.var, value: `calc(${base.ref} * 2)` },
     10: { ...hash.var, value: `calc(${base.ref} * 2.5)` },
     12: { ...hash.var, value: `calc(${base.ref} * 3)` },
+    16: { ...hash.var, value: `calc(${base.ref} * 4)` },
+    24: { ...hash.var, value: `calc(${base.ref} * 6)` },
     40: { ...hash.var, value: `calc(${base.ref} * 10)` },
     80: { ...hash.var, value: `calc(${base.ref} * 20)` },
     // Shapes

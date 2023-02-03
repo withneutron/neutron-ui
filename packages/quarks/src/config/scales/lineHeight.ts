@@ -5,14 +5,16 @@ import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "
 /** Generator function for `lineHeight` theme scale */
 export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
   const base = { ...hash.var, value: "1.65" } as const
-  const modifier = { ...hash.var, value: "0" } as const
+  const modifier = { ...hash.var, value: "0rem" } as const
   const lh20 = { ...hash.var, value: `calc(${size[20].ref} + ${modifier.ref})` } as const
   const field = { ...hash.var, value: lh20.ref } as const
   const body = { ...hash.var, value: `calc(${base.ref} + ${modifier.ref})` } as const
 
   const sharedVars = {
     4: { ...hash.var, value: `calc(${size[4].ref} + ${modifier.ref})` },
+    6: { ...hash.var, value: `calc(${size[4].ref} + ${size[2].ref} + ${modifier.ref})` },
     8: { ...hash.var, value: `calc(${size[8].ref} + ${modifier.ref})` },
+    10: { ...hash.var, value: `calc(${size[8].ref} + ${size[2].ref} + ${modifier.ref})` },
     12: { ...hash.var, value: `calc(${size[12].ref} + ${modifier.ref})` },
     16: { ...hash.var, value: `calc(${size[16].ref} + ${modifier.ref})` },
     20: lh20,
