@@ -1,6 +1,6 @@
 {
   "name": "nextjs-sample",
-  "version": "0.1.1",
+  "version": "0.0.0",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A sample Next.js app using NeutronUI",
   "private": true,
@@ -11,8 +11,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@withneutron/quarks": "^0.1.0",
-    "@withneutron/quarks-react": "^0.1.0",
+    "@withneutron/quarks": "^0.0.6",
+    "@withneutron/quarks-react": "^0.0.6",
     "next": "12.1.5",
     "react": "17.0.2",
     "react-dom": "17.0.2",

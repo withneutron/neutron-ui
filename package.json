@@ -1,6 +1,6 @@
 {
   "name": "neutron-ui",
-  "version": "0.1.1",
+  "version": "0.0.0",
   "description": "A highly accessible and easily customizable UI library.",
   "main": "index.js",
   "repository": "https://github.com/withneutron/neutron-ui.git",
@@ -36,7 +36,6 @@
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
-  "dependencies": {},
   "scripts": {
     "dev:cra": "yarn workspace cra-sample dev",
     "dev:astro": "yarn workspace astro-sample dev",
@@ -61,6 +60,7 @@
     "size": "yarn build && size-limit",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "publish:lib": "lerna publish --registry=https://npm.pkg.github.com/"
   }
 }
