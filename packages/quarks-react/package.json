@@ -1,6 +1,6 @@
 {
   "name": "@withneutron/quarks-react",
-  "version": "0.1.1",
+  "version": "0.0.0",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A small, but mighty, (React) styling library for modern app development",
   "main": "dist/quarks-react.js",
@@ -8,7 +8,10 @@
   "jsnext:main": "dist/quarks-react.es.js",
   "types": "dist/quarks-react.d.ts",
   "typings": "dist/quarks-react.d.ts",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "private": false,
   "directories": {
     "dist": "dist",
     "test": "__tests__"
