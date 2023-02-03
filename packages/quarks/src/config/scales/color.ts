@@ -142,6 +142,8 @@ export const colorCore = {
 
 export const colorText = {
   ...colorCore,
+  defaultBody: true,
+  defaultHeading: true,
   primaryText1: true,
   primaryText2: true,
   primaryText3: true,
