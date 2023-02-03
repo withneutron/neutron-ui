@@ -6,7 +6,7 @@
   "repository": "https://github.com/withneutron/neutron-ui.git",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "private": false,
+  "private": true,
   "workspaces": [
     "packages/*",
     "examples/*"
