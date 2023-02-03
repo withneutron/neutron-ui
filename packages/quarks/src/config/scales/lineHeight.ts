@@ -12,7 +12,9 @@ export function getLineHeight<T extends BaseVars>(hash: CharHash, size: T) {
 
   const sharedVars = {
     4: { ...hash.var, value: `calc(${size[4].ref} + ${modifier.ref})` },
+    6: { ...hash.var, value: `calc(${size[4].ref} + ${size[2].ref} + ${modifier.ref})` },
     8: { ...hash.var, value: `calc(${size[8].ref} + ${modifier.ref})` },
+    10: { ...hash.var, value: `calc(${size[8].ref} + ${size[2].ref} + ${modifier.ref})` },
     12: { ...hash.var, value: `calc(${size[12].ref} + ${modifier.ref})` },
     16: { ...hash.var, value: `calc(${size[16].ref} + ${modifier.ref})` },
     20: lh20,
