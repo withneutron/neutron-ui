@@ -19,8 +19,12 @@ export default defineConfig({
           if (name === "style.css") return "quarks.css"
           return name ?? "custom.js"
         },
+        sourcemapExcludeSources: true,
       },
     },
+    sourcemap: true,
+    // Reduce bloat from legacy polyfills.
+    target: "esnext",
   },
   optimizeDeps: {
     esbuildOptions: {

@@ -23,8 +23,14 @@ export default defineConfig({
           if (name === "style.css") return "quarks-react.css"
           return name ?? "custom.js"
         },
+        // Since we publish our ./src folder, there's no point
+        // in bloating sourcemaps with another copy of it.
+        sourcemapExcludeSources: true,
       },
     },
+    sourcemap: true,
+    // Reduce bloat from legacy polyfills.
+    target: "esnext",
   },
   optimizeDeps: {
     esbuildOptions: {
