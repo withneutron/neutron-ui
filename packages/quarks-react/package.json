@@ -1,6 +1,6 @@
 {
   "name": "@withneutron/quarks-react",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A small, but mighty, (React) styling library for modern app development",
   "main": "dist/quarks-react.js",
@@ -58,7 +58,7 @@
     "react-dom": "17.0.2"
   },
   "dependencies": {
-    "@withneutron/quarks": "^0.0.0",
+    "@withneutron/quarks": "^0.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
