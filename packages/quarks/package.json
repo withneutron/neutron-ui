@@ -1,6 +1,6 @@
 {
   "name": "@withneutron/quarks",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A small, but mighty, styling library for modern app development",
   "main": "dist/quarks.js",
