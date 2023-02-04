@@ -21,6 +21,9 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     backgroundBlendMode: value("backgroundBlendMode"),
     backgroundPosition: value("backgroundPosition"),
     backgroundImage: value("backgroundImage"),
+    backgroundSize: value("backgroundSize"),
+    backgroundRepeat: value("backgroundRepeat"),
+
     // These are technically remapped, but we want the inline var assignment to only need to
     // include the actual gradient, not the type. This will keep those assignments shorter!
     linearGradient: value("backgroundImage", v => `linear-gradient(${v})`),
@@ -148,7 +151,7 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
   return props
 }
 
-type Colors = KeysFromScale<ReturnType<typeof getColor>["cssValueMap"]>
+export type Colors = KeysFromScale<ReturnType<typeof getColor>["cssValueMap"]>
 
 export type CustomVarPropHints = {
   background: Colors
@@ -158,4 +161,12 @@ export type CustomVarPropHints = {
   stroke: Colors
   caretColor: Colors
   columnRuleColor: Colors
+  borderColor: Colors
+  borderBlockColor: Colors
+  borderInlineColor: Colors
+  borderTopColor: Colors
+  borderBottomColor: Colors
+  borderLeftColor: Colors
+  borderRightColor: Colors
+  outlineColor: Colors
 }

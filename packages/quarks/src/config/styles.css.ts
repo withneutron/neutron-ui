@@ -64,7 +64,7 @@ import {
   PseudoClassesWithAliases,
   NthChildKeys,
 } from "./props"
-import { getSelector } from "./styles.utils"
+import { getSelector } from "./utils"
 import { CssFromMap, CssFromCustomVars, MergedCssProps, ConditionKey, InlineConditionCss, BASE } from "./styles.models"
 import { CoreColorName, STYLE_UNIT } from "../shared/models/"
 import { getTextColor } from "../shared/utils/"

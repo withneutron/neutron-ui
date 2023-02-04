@@ -182,6 +182,8 @@ export const sourceClassedProps = {
   all: true,
 
   backgroundBlendMode: true,
+  backgroundSize: true,
+  backgroundRepeat: true,
 
   boxSizing: true,
 

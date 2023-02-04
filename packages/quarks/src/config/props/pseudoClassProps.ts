@@ -86,7 +86,7 @@ export function generatePseudoClassCss<O extends Record<string, unknown>>(
 }
 
 // PSEUDO CLASS OBJECTS ///////////////////////////////////////////////////////////////////////////
-// NOTE: IF YOU ADD A PROP HERE, YOU MUST ALSO ADD IT IN `classDict` IN `styleGenerators.ts`
+// NOTE: IF YOU ADD A PROP HERE, YOU MUST ALSO ADD IT IN `classDict` IN `StyleManager.ts`
 export const pseudoClasses = {
   // NOTE: We don't include :disabled, because logic for that exists in JS anyway
   ":focus-visible": pseudoClassProps,

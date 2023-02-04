@@ -11,7 +11,10 @@ import {
   queryConditionsMap,
   BreakpointOverrides,
   getQueryFromBreakpoint,
+  ThemeOverrides,
+  SemanticColorOverrides,
 } from "@withneutron/quarks"
+import { useThemeStyle } from "../hooks"
 
 export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
   Object.keys(conditionsMap).reduce((output, key) => {
@@ -43,6 +46,8 @@ interface QuarksProviderProps {
   isMobile?: boolean
   isDebugMode?: boolean
   queryOverrides?: BreakpointOverrides
+  themeOverrides?: ThemeOverrides
+  semanticColorOverrides?: SemanticColorOverrides
 }
 
 export function QuarksProvider(props: QuarksProviderProps): ReactElement {
@@ -52,8 +57,11 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
     isMobile = false,
     isDebugMode = false,
     queryOverrides,
+    themeOverrides,
+    semanticColorOverrides,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
+  useThemeStyle(colorMode, themeOverrides, semanticColorOverrides)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
   const conditions = useConditions(colorMode, isMobile, isDebugMode, queryOverrides)

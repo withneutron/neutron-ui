@@ -50,7 +50,7 @@ export function getTextColor(color: ScaleColorName, numberKey?: ColorNumberKey):
 
 /** Generates a color mode-based palette */
 export function generateThemeColors<T = string>(
-  inputColors: ColorGenOptions,
+  inputColors: Partial<ColorGenOptions>,
   mode: ColorMode,
   setValue: ColorSetter<T>
 ): ColorPalette<T> {

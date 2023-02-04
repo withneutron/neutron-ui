@@ -14,10 +14,8 @@ import {
   isCustomNthChild,
   getIndexErrorMessage,
 } from "./props"
-import { ColorMode } from "../shared/models"
 import {
   token,
-  darkVarMap,
   CSS,
   BaseCSS,
   customVarPropMap,
@@ -39,47 +37,6 @@ import {
 } from "./conditions"
 import { CssAlias, SCALED_ALIAS } from "./scales/scales.models"
 import { mapAliasToValue } from "./scales"
-
-/** Get theme override style */
-export function getTheme(colorMode?: ColorMode, userOverrides?: ThemeOverrides) {
-  const overrides = {
-    ...(colorMode === "dark" ? darkVarMap : {}),
-    ...flattenOverrides(userOverrides),
-  }
-  return overrides
-}
-
-/** Converts a CSS style object into a set of pre-generated CSS class names, and possibly a style object */
-export function style(
-  css: CSS,
-  conditions: Conditions,
-  variantCss?: VariantCSS,
-  overrides?: CSS | null,
-  styleName?: string,
-  manager?: StyleManager,
-  props?: StyleMangerProps
-) {
-  if (manager) {
-    manager.setNewStyle(conditions, styleName)
-  } else {
-    manager = new StyleManager(conditions, styleName, props)
-  }
-
-  // Process defined styles
-  manager.processCss(css, conditions)
-
-  // Process variants, if any.
-  if (variantCss) {
-    manager.processVariantCss(variantCss, conditions)
-  }
-
-  // Process style overrides, if any. This is useful for runtime overrides
-  if (overrides) {
-    manager.processOverridesCss(overrides, conditions)
-  }
-
-  return manager.compile()
-}
 
 /*************************************************************************************************
  * StyleManager Class Definition
@@ -642,18 +599,6 @@ export class StyleManager {
  *************************************************************************************************/
 const DEBUG_GROUP_VALUE = "▼"
 
-/** Takes a nested (group-based) theme overrides object, and flattens it, without groupings */
-function flattenOverrides(overrides?: ThemeOverrides) {
-  return !overrides
-    ? {}
-    : (Object.values(overrides).reduce((output, rules) => {
-        Object.entries(rules).forEach(([varName, value]) => {
-          output[varName] = value
-        })
-        return output
-      }, {} as any) as Record<string, string | number>)
-}
-
 let styleId = 0
 function getStyleName() {
   styleId++
@@ -693,9 +638,9 @@ export type ThemeOverrides = {
 
 type StyleObj = Record<string, string>
 
-type Conditions = Partial<Record<ConditionKey, boolean>>
+export type Conditions = Partial<Record<ConditionKey, boolean>>
 
-type StyleMangerProps = {
+export type StyleMangerProps = {
   className?: string
   index?: number
   length?: number

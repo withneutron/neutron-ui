@@ -208,7 +208,7 @@ export type StaticSourceColor = {
   contrast: number
 }
 
-type SemanticColors = { [k in CoreColorName]: ColorObject }
+export type SemanticColors = { [k in CoreColorName]: ColorObject }
 
 export type ColorGenOptions = { [k in CoreColorName]: SourceColor } & { [k in StaticColorName]?: StaticSourceColor } & {
   [k in StatusColorName | FlavorColorName]?: SourceColor
