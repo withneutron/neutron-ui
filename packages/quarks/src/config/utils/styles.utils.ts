@@ -38,11 +38,11 @@ export function getThemeOverrides(
           ...(semanticColorOverrides ? getColorOverrides(colorMode, semanticColorOverrides) : {}),
         }
 
-  const theme = {
+  const style = {
     ...(colorMode === "dark" ? darkVarMap : {}),
     ...flattenOverrides(overrides),
   }
-  return theme
+  return { overrides: overrides ?? {}, style }
 }
 
 /** Converts a CSS style object into a set of pre-generated CSS class names, and possibly a style object */

@@ -574,6 +574,40 @@ export const tokenToVarMap = {
   zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
+function getTokenToValuesMap<G extends keyof typeof tokenToVarMap, M extends typeof tokenToVarMap[G]>(
+  _group: G,
+  tokenMap: M
+) {
+  const output = {} as { [k in keyof M]: string }
+  Object.entries(tokenMap).forEach(([token, varName]) => {
+    output[token as keyof typeof output] = String(varMap[varName])
+    return output
+  })
+  return output
+}
+
+export const tokenValue = {
+  animation: getTokenToValuesMap("animation", tokenToVarMap.animation),
+  border: getTokenToValuesMap("border", tokenToVarMap.border),
+  color: getTokenToValuesMap("color", tokenToVarMap.color),
+  column: getTokenToValuesMap("column", tokenToVarMap.column),
+  font: getTokenToValuesMap("font", tokenToVarMap.font),
+  fontFamily: getTokenToValuesMap("fontFamily", tokenToVarMap.fontFamily),
+  fontSize: getTokenToValuesMap("fontSize", tokenToVarMap.fontSize),
+  fontWeight: getTokenToValuesMap("fontWeight", tokenToVarMap.fontWeight),
+  lineHeight: getTokenToValuesMap("lineHeight", tokenToVarMap.lineHeight),
+  outline: getTokenToValuesMap("outline", tokenToVarMap.outline),
+  radius: getTokenToValuesMap("radius", tokenToVarMap.radius),
+  row: getTokenToValuesMap("row", tokenToVarMap.row),
+  shadow: getTokenToValuesMap("shadow", tokenToVarMap.shadow),
+  size: getTokenToValuesMap("size", tokenToVarMap.size),
+  space: getTokenToValuesMap("space", tokenToVarMap.space),
+  textDecoration: getTokenToValuesMap("textDecoration", tokenToVarMap.textDecoration),
+  typoSpace: getTokenToValuesMap("typoSpace", tokenToVarMap.typoSpace),
+  typo: getTokenToValuesMap("typo", tokenToVarMap.typo),
+  zIndex: getTokenToValuesMap("zIndex", tokenToVarMap.zIndex),
+} as const
+
 export const darkColor = getTokensFromVars(color.darkVars!, darkVarMap)
 export const darkShadow = getTokensFromVars(shadow.darkVars!, darkVarMap)
 

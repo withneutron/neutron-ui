@@ -13,6 +13,7 @@ import {
   getQueryFromBreakpoint,
   ThemeOverrides,
   SemanticColorOverrides,
+  tokenValue,
 } from "@withneutron/quarks"
 import { useThemeStyle } from "../hooks"
 
@@ -30,6 +31,7 @@ export interface QuarksContextProps {
   setColorMode: (mode: ColorMode) => void
   toggleColorMode: () => void
   isTouchDevice: boolean
+  tokenValue: typeof tokenValue
 }
 
 export const QuarksContext = createContext<QuarksContextProps>({
@@ -38,6 +40,7 @@ export const QuarksContext = createContext<QuarksContextProps>({
   setColorMode: () => undefined,
   toggleColorMode: () => undefined,
   isTouchDevice: false,
+  tokenValue,
 })
 
 interface QuarksProviderProps {
@@ -61,7 +64,7 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
     semanticColorOverrides,
   } = props
   const [colorMode, setColorMode] = useState<ColorMode>(defaultColorMode)
-  useThemeStyle(colorMode, themeOverrides, semanticColorOverrides)
+  const tokenValue = useThemeStyle(colorMode, themeOverrides, semanticColorOverrides)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
   const conditions = useConditions(colorMode, isMobile, isDebugMode, queryOverrides)
@@ -90,6 +93,7 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
         setColorMode,
         toggleColorMode,
         isTouchDevice,
+        tokenValue,
       }}
     >
       <CssConditionsContext.Provider value={conditions}>{children}</CssConditionsContext.Provider>
