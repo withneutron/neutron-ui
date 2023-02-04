@@ -378,6 +378,13 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
     textDecorationStyle: values("textDecorationStyle", options("solid", "double", "dotted", "dashed", "wavy")),
     textDecorationColor: values("textDecorationColor", color),
     textDecorationThickness: values("textDecorationThickness", auto),
+
+    backgroundSize: values("backgroundSize", options("contain", "cover")),
+
+    backgroundRepeat: values(
+      "backgroundRepeat",
+      options("repeat-x", "repeat-y", "repeat", "space", "round", "no-repeat")
+    ),
   } as const
 
   if (keys) {
