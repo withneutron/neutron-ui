@@ -83,6 +83,7 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     textDecorationColor: value("textDecorationColor"),
     textDecorationThickness: value("textDecorationThickness"),
     textShadow: value("textShadow"),
+    letterSpacing: value("letterSpacing"),
 
     flex: value("flex"),
     flexGrow: value("flexGrow"),

@@ -18,10 +18,12 @@ export function getTypoSpace(hash: CharHash) {
     chBase,
     chMin: { ...hash.var, value: `calc(${chBase.ref} - .15ch)` },
     chMax: { ...hash.var, value: `calc(${chBase.ref} + .15ch)` },
-    tightest: { ...hash.var, value: `calc(${remBase.ref} - 1rem)` },
+
+    tightest: { ...hash.var, value: `calc(${remBase.ref} - 67rem)` },
     tight: { ...hash.var, value: `calc(${remBase.ref} - .33rem)` },
     regular: { ...hash.var, value: remBase.ref },
-    loose: { ...hash.var, value: `calc(${remBase.ref} + .67rem)` },
+    loose: { ...hash.var, value: `calc(${remBase.ref} + .5rem)` },
+    loosest: { ...hash.var, value: `calc(${remBase.ref} + .75rem)` },
   } as const
 
   const vars = sharedVars

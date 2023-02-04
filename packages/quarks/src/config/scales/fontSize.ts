@@ -6,8 +6,12 @@ import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "
 export function getFontSize(hash: CharHash) {
   const base = { ...hash.var, value: "16rem" } as const
   const baseVars = {
+    12: { ...hash.var, value: `calc(${base.ref} - 4rem)` },
+    13: { ...hash.var, value: `calc(${base.ref} - 3rem)` },
     14: { ...hash.var, value: `calc(${base.ref} - 2rem)` },
+    15: { ...hash.var, value: `calc(${base.ref} - 1rem)` },
     16: { ...hash.var, value: base.ref },
+    17: { ...hash.var, value: `calc(${base.ref} + 1rem)` },
     18: { ...hash.var, value: `calc(${base.ref} + 2rem)` },
     21: { ...hash.var, value: `calc(${base.ref} + 5rem)` },
     25: { ...hash.var, value: `calc(${base.ref} + 9rem)` },
@@ -16,7 +20,7 @@ export function getFontSize(hash: CharHash) {
     44: { ...hash.var, value: `calc(${base.ref} + 28rem)` },
     56: { ...hash.var, value: `calc(${base.ref} + 40rem)` },
     72: { ...hash.var, value: `calc(${base.ref} + 56rem)` },
-  }
+  } as const
 
   const h2 = { ...hash.var, value: baseVars[30].ref } as const
   const p = { ...hash.var, value: baseVars[16].ref } as const
