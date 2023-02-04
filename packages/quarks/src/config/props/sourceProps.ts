@@ -192,6 +192,7 @@ export const sourceClassedProps = {
   caretColor: true,
   columnRuleColor: true,
 
+  scrollBehavior: true,
   scrollSnapAlign: true,
   scrollSnapType: true,
 

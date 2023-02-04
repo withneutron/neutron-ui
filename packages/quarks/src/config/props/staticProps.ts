@@ -320,6 +320,7 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
 
     filter: values("filter", none),
 
+    scrollBehavior: values("scrollBehavior", options("auto", "smooth")),
     scrollSnapAlign: values("scrollSnapAlign", options("none", "start", "end", "center")),
     scrollSnapType: values(
       "scrollSnapType",
