@@ -45,7 +45,7 @@ const overflow = options("visible", "hidden", "clip", "scroll", "auto")
 const borderStyle = options("dashed", "dotted", "groove")
 const height = options("100%", "100vh", "fit-content", "max-content", "min-content", "auto")
 const width = options("100%", "100vw", "fit-content", "max-content", "min-content", "auto")
-const borderWidth = options("thin", "medium", "thick")
+const borderWidth = options("thin", "medium", "thick", "0")
 
 type Placeholder = { fakeProp: true }
 

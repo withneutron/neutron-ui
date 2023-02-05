@@ -23,12 +23,19 @@ export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
 0px 8px 12px hsl(${color.shadowBase.ref} / .02),
 0px 17px 25.5px hsl(${color.shadowBase.ref} / .04)`,
   } as const
+  const highHeavy = {
+    ...hash.var,
+    value: `0px 5px 20px hsl(${color.shadowBase.ref} / .04),
+0px 10px 50px hsl(${color.shadowBase.ref} / .08),
+0px 20px 100px hsl(${color.shadowBase.ref} / .16)`,
+  } as const
 
   const vars = {
     low,
     medium,
     high,
     highSoft,
+    highHeavy,
   } as const
   const darkVars = {
     low: { ...low, value: `0px 1.5px 2.3px hsl(${color.shadowBase.ref} / .38)` },
@@ -48,6 +55,12 @@ export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
       value: `0px 8.6px 12.9px hsl(${color.shadowBase.ref} / .18),
     0px 19.1px 28.7px hsl(${color.shadowBase.ref} / .30),
     0px 40.8px 61.2px hsl(${color.shadowBase.ref} / .44)`,
+    },
+    highHeavy: {
+      ...highHeavy,
+      value: `0px 8.6px 20px hsl(${color.shadowBase.ref} / .2),
+    0px 19.1px 50px hsl(${color.shadowBase.ref} / .35),
+    0px 40.8px 100px hsl(${color.shadowBase.ref} / .5)`,
     },
   } as const
   const cssValueMap = { ...getCssMapFromVars(vars) } as const

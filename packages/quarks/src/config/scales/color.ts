@@ -41,7 +41,7 @@ export function getColor(hash: CharHash) {
     }
   )
 
-  const shadowBase = { ...hash.var, value: "53 0% 7%" }
+  const shadowBase = { ...hash.var, value: "0 0% 0%" }
 
   const lightScale = {
     shadowBase,
@@ -52,6 +52,7 @@ export function getColor(hash: CharHash) {
     panel: { ...hash.var, value: lightPalette.min.ref },
     shadowLight: { ...hash.var, value: `hsl(${shadowBase.ref} / .05)` },
     shadowHeavy: { ...hash.var, value: `hsl(${shadowBase.ref} / .15)` },
+    shadowHeaviest: { ...hash.var, value: `hsl(${shadowBase.ref} / .25)` },
     ...lightPalette,
   } as const
 
@@ -64,6 +65,7 @@ export function getColor(hash: CharHash) {
     panel: { ...lightScale.panel, value: lightScale.tertiary3.ref },
     shadowLight: { ...lightScale.shadowLight, value: `hsl(${shadowBase.ref} / .2)` },
     shadowHeavy: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / .35)` },
+    shadowHeaviest: { ...lightScale.shadowHeavy, value: `hsl(${shadowBase.ref} / .5)` },
     ...generateThemeColors<ScaleEntry>(
       DEFAULT_SOURCE_COLORS,
       "dark",
