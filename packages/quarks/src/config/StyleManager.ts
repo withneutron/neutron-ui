@@ -13,6 +13,7 @@ import {
   nthChildCheckers,
   isCustomNthChild,
   getIndexErrorMessage,
+  directionalProps,
 } from "./props"
 import {
   token,
@@ -44,6 +45,7 @@ import { mapAliasToValue } from "./scales"
 /** Class to manage tracking, updating, and compilation of styles */
 export class StyleManager {
   private watchCategories: { [k in ConditionCategory]: boolean } = {
+    [ConditionCategory.locale]: false,
     [ConditionCategory.responsive]: false,
     [ConditionCategory.preference]: false,
     [ConditionCategory.device]: false,
@@ -466,6 +468,13 @@ export class StyleManager {
       }
     }
 
+    const directionalMapper =
+      prop in directionalProps ? directionalProps[prop as keyof typeof directionalProps] : undefined
+    // If it's a directional prop, run its mapping func, and proceed with the result of that
+    if (directionalMapper) {
+      value = directionalMapper(value, !!conditions.rtl)
+    }
+
     const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
     // If it's a mapped prop, run its mapping func, and proceed with the result of that
     if (mapper) {
@@ -485,7 +494,9 @@ export class StyleManager {
       return
     }
 
+    // If there are any special mappers for this value, apply them now
     value = valueMappers[prop as keyof typeof valueMappers]?.(value) ?? value
+
     if (pseudo) {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]

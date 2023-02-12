@@ -43,7 +43,22 @@ export const queryConditionsMap = {
 
 export type QueryConditions = Record<keyof typeof queryConditionsMap, boolean>
 
+export const directionalConditions = {
+  ltr: true,
+  rtl: true,
+} as const
+
+/** Internationalized reading direction */
+export type Direction = keyof typeof directionalConditions
+
 export const conditionsMap = {
+  ...directionalConditions,
+
+  light: "COLOR_MODE === light",
+  dark: "COLOR_MODE === dark",
+
+  debug: "debugmode",
+
   /**
    * For all conditions below, create a `ConditionsContext` at our base provider,
    * which tracks all these conditions centrally. That avoids us repeating queries
@@ -65,19 +80,22 @@ export const conditionsMap = {
   "!touch": "(hover: none)",
   "!pointer": "(hover: hover) and (pointer: fine)",
   "!tv": "(hover: hover) and (pointer: coarse)",
-
-  light: "COLOR_MODE === light",
-  dark: "COLOR_MODE === dark",
-
-  debug: "debugmode",
 } as const
 
 export type ConditionKeys = keyof typeof conditionsMap
 export const conditionKeys = Object.keys(conditionsMap) as Array<ConditionKeys>
 
-export function mapConditions(conditions: QueryConditions, colorMode: ColorMode, debug = false) {
+export function mapConditions(
+  conditions: QueryConditions,
+  colorMode: ColorMode,
+  debug = false,
+  direction: Direction = "ltr"
+) {
   return {
     ...conditions,
+
+    ltr: direction === "ltr",
+    rtl: direction === "rtl",
 
     "!hightContrast": !conditions.hightContrast,
     "!lowMotion": !conditions.lowMotion,
@@ -94,6 +112,7 @@ export function mapConditions(conditions: QueryConditions, colorMode: ColorMode,
 }
 
 export enum ConditionCategory {
+  locale = "locale",
   responsive = "responsive",
   preference = "preference",
   device = "device",
@@ -102,6 +121,8 @@ export enum ConditionCategory {
 }
 
 export const ConditionCategories: { [k in ConditionKeys]: ConditionCategory } = {
+  ltr: ConditionCategory.locale,
+  rtl: ConditionCategory.locale,
   sm: ConditionCategory.responsive,
   md: ConditionCategory.responsive,
   lg: ConditionCategory.responsive,

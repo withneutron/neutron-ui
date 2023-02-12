@@ -14,8 +14,11 @@ import {
   ThemeOverrides,
   SemanticColorOverrides,
   tokenValue,
+  Direction,
 } from "@withneutron/quarks"
 import { useThemeStyle } from "../hooks"
+import { useMutationObserver } from "../hooks/useMutationObserver"
+import { isSSR } from "../shared/utils"
 
 export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
   Object.keys(conditionsMap).reduce((output, key) => {
@@ -67,7 +70,7 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
   const tokenValue = useThemeStyle(colorMode, themeOverrides, semanticColorOverrides)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
-  const conditions = useConditions(colorMode, isMobile, isDebugMode, queryOverrides)
+  const conditions = useContextConditions(colorMode, isMobile, isDebugMode, queryOverrides)
   const isTouchDevice = conditions.touch
 
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -101,7 +104,12 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
   )
 }
 
-function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = false, overrides?: BreakpointOverrides) {
+function useContextConditions(
+  colorMode: ColorMode,
+  isMobile = false,
+  isDebugMode = false,
+  overrides?: BreakpointOverrides
+) {
   overrides = overrides ?? {}
   const sm = useMediaQuery(overrides.sm ? getQueryFromBreakpoint(overrides.sm) : queryConditionsMap.sm, false)
   const md = useMediaQuery(overrides.md ? getQueryFromBreakpoint(overrides.md) : queryConditionsMap.md, false)
@@ -125,5 +133,22 @@ function useConditions(colorMode: ColorMode, isMobile = false, isDebugMode = fal
     pointer,
     tv,
   }
-  return mapConditions(conditions, colorMode, isDebugMode)
+
+  const [direction, setDirection] = useState<Direction>(
+    isSSR ? "ltr" : document.documentElement.dir === "rtl" ? "rtl" : "ltr"
+  )
+  useMutationObserver({
+    target: isSSR ? null : document.documentElement,
+    callback: mutations => {
+      mutations.forEach(mutation => {
+        const dir = ((mutation.target as HTMLElement).dir ?? "ltr") as Direction
+        setDirection(dir)
+      })
+    },
+    options: {
+      attributes: true,
+      attributeFilter: ["dir"],
+    },
+  })
+  return mapConditions(conditions, colorMode, isDebugMode, direction)
 }

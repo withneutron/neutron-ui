@@ -1,7 +1,18 @@
 import * as React from "react"
 import type { NextPage } from "next"
 import Head from "next/head"
-import { styled, Box, Column, Heading, SubHeading, Text, Grid, Row, useAnimation } from "@withneutron/quarks-react"
+import {
+  styled,
+  Box,
+  Column,
+  Heading,
+  SubHeading,
+  Text,
+  Grid,
+  Row,
+  useAnimation,
+  useRTL,
+} from "@withneutron/quarks-react"
 import { token } from "@withneutron/quarks"
 import { ReactNode, useEffect, useRef, useState } from "react"
 
@@ -35,7 +46,7 @@ const Tertiary = styled(
     outline: "none",
     bg: "$secondary9",
     p: "$32",
-    font: "$em",
+    fontWeight: "$500",
     textDecoration: "$highlightError",
     pointerEvents: "all",
   },
@@ -227,6 +238,7 @@ const MediaQueryName = styled(Text, { display: "none" }, "MediaQueryName")
 const Sample: NextPage = () => {
   const ref = useRef<HTMLDivElement | null>(null)
   const [cycle, setCycle] = useState(0)
+  const arrow = useRTL("⇦", "⇨")
 
   useEffect(() => {
     console.log("@@@ ref", ref.current)
@@ -286,6 +298,7 @@ const Sample: NextPage = () => {
         }}
       >
         Testing 3-level composition
+        <Box.Span css={{ float: "left", mr: "$12" }}>{arrow}</Box.Span>
       </Tertiary>
       <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
         NUI-powered sample box

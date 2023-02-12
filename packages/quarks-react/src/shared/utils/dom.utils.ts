@@ -1,3 +1,5 @@
+import type { RefObject } from "react"
+
 export const isSSR = !(typeof window !== "undefined" && window.document?.createElement)
 
 type Ref<T> = React.ForwardedRef<T | null> | undefined
@@ -18,4 +20,11 @@ export function mergeRefs<T extends HTMLElement | null = HTMLElement>(refs: Ref<
       }
     })
   }
+}
+
+export function getRefElement<T>(element?: RefObject<Element> | T): Element | T | undefined | null {
+  if (element && typeof element === "object" && "current" in element) {
+    return element.current
+  }
+  return element
 }
