@@ -20,8 +20,8 @@ export function useThemeStyle(
       .join(";")
 
     // Apply the new style to the <html> tag
-    if (!isSSR && document) {
-      document.getElementsByTagName("html")[0].setAttribute("style", styleString)
+    if (!isSSR && document?.documentElement) {
+      document.documentElement.setAttribute("style", styleString)
     }
 
     // Generate the up-to-date `tokenValue`
