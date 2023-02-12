@@ -33,6 +33,7 @@ export const pseudoClassProps = {
   radialGradient: true,
   conicGradient: true,
 
+  filter: true,
   mask: true,
   borderImage: true,
   borderSpacing: true,
