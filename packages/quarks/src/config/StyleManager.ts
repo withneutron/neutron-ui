@@ -24,7 +24,6 @@ import {
   staticPropMap,
   scales,
   tokenToVarMap,
-  ConditionalCSS,
 } from "./styles.css"
 import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey, VariantCSS } from "./styles.models"
 import {
@@ -340,44 +339,45 @@ export class StyleManager {
 
   // PROCESSING FUNCTIONS ///////////////////////////////////////////////////////////////////////////
   /** Process fully-nestable CSS, in an object keyed by variant name-value pairs */
-  processOverridesCss(overridesCss: CSS, conditions: Conditions) {
+  processOverridesCss(overridesCss: CSS) {
     this.overridesName = "css"
-    this.processCss(overridesCss, conditions)
+    this.processCss(overridesCss)
     this.overridesName = ""
   }
 
   /** Process fully-nestable CSS, in an object keyed by variant name-value pairs */
-  processVariantCss(variantCss: VariantCSS, conditions: Conditions) {
+  processVariantCss(variantCss: VariantCSS) {
     variantCss.forEach(({ key, css }) => {
       this.setVariantName(key)
-      this.processCss(css, conditions)
+      this.processCss(css)
     })
     this.setVariantName()
   }
 
   /** Process fully-nestable CSS, including conditions and pseudo-classes */
-  processCss(css: CSS, conditions: Conditions, condition?: InlineConditionKey) {
+  processCss(css: CSS, condition?: InlineConditionKey) {
     const props = Object.entries(css)
     // Loop through each prop of css
     let index = 0
     for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
+
       // If the prop is a condition, process its inner props, including its inner pseudo-classes
       if (conditionsMap[propName as ConditionKey]) {
         // Register that this style set depends on this condition being watched
         this.watchCondition(propName as ConditionKey)
         // Skip if the condition is currently false
-        if (!conditions[propName as ConditionKey]) continue
+        if (!this.conditions[propName as ConditionKey]) continue
         // Otherwise, proceed
         this.conditionName = propName.replace("!", "not-")
-        this.processCss(propValue as ConditionalCSS, conditions, propName as InlineConditionKey)
+        this.processCss(propValue as CSS, propName as InlineConditionKey)
         this.conditionName = ""
         continue
       }
 
       // If the prop is a pseudo-class, process its inner props
       if (combinedPseudoClasses[propName as CombinedPseudoClassKey]) {
-        this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, conditions, condition)
+        this.processBaseCss(propValue as BaseCSS, propName as CombinedPseudoClassKey, condition)
         continue
       }
 
@@ -390,28 +390,23 @@ export class StyleManager {
         }
         const isMatchingNthChild = checker(this.index, propName as NthChildKeys, this.length)
         if (isMatchingNthChild) {
-          this.processCss(propValue as ConditionalCSS, conditions)
+          this.processCss(propValue as CSS)
         }
         continue
       }
 
       // Otherwise, process the prop's value
-      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition)
+      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, condition)
     }
   }
 
   /** Process non-conditional CSS, including pseudo-classes */
-  processBaseCss(
-    baseCss: BaseCSS,
-    pseudo: CombinedPseudoClassKey,
-    conditions: Conditions,
-    condition?: InlineConditionKey
-  ) {
+  processBaseCss(baseCss: BaseCSS, pseudo: CombinedPseudoClassKey, condition?: InlineConditionKey) {
     const props = Object.entries(baseCss)
     let index = 0
     for (; index < props.length; index++) {
       const [propName, propValue] = props[index]
-      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, conditions, condition, pseudo)
+      this.processCssProp(propName as CssPropKey, propValue as InlineConditionValue, condition, pseudo)
     }
   }
 
@@ -422,7 +417,6 @@ export class StyleManager {
   processCssProp(
     prop: CssPropKey,
     value: InlineConditionValue,
-    conditions: Conditions,
     condition?: InlineConditionKey,
     pseudo?: CombinedPseudoClassKey,
     originalProp?: CssPropKey
@@ -431,7 +425,7 @@ export class StyleManager {
     if (typeof value === "object") {
       // If inline conditions include a base value, process that first
       if (value[BASE] !== undefined) {
-        this.processCssProp(prop, value[BASE] as InlineConditionValue, conditions, BASE, pseudo)
+        this.processCssProp(prop, value[BASE] as InlineConditionValue, BASE, pseudo)
       }
       let index = 0
       for (; index < conditionKeys.length; index++) {
@@ -439,15 +433,9 @@ export class StyleManager {
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
           this.watchCondition(conditionKey)
-          if (conditions[conditionKey] === true) {
+          if (this.conditions[conditionKey] === true) {
             this.conditionName = conditionKey.replace("!", "not-")
-            this.processCssProp(
-              prop,
-              innerValue as InlineConditionValue,
-              conditions,
-              conditionKey as InlineConditionKey,
-              pseudo
-            )
+            this.processCssProp(prop, innerValue as InlineConditionValue, conditionKey as InlineConditionKey, pseudo)
             this.conditionName = ""
           }
         }
@@ -472,7 +460,7 @@ export class StyleManager {
       prop in directionalProps ? directionalProps[prop as keyof typeof directionalProps] : undefined
     // If it's a directional prop, run its mapping func, and proceed with the result of that
     if (directionalMapper) {
-      value = directionalMapper(value, !!conditions.rtl)
+      value = directionalMapper(value, !!this.conditions.rtl)
     }
 
     const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
@@ -485,7 +473,6 @@ export class StyleManager {
         this.processCssProp(
           propName as CssPropKey,
           propValue,
-          conditions,
           condition,
           pseudo,
           scaledOriginalProp ?? originalProp ?? prop

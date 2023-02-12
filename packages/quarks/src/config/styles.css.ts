@@ -451,10 +451,8 @@ type NthChildClasses = { [key in NthChildKeys]?: InlineConditionCss<CssProps> }
 /** Style object, including pseudo-classes and INLINE conditions, but excluding root-level conditions */
 export type BaseCSS = InlineConditionCss<CssProps> & PseudoClassesWithAliases<ICMergePCCssProps> & NthChildClasses
 
-type BaseConditionalCSS = CssProps & PseudoClassesWithAliases<MergePCCssProps> & NthChildClasses
-
 /** Style object for root-level conditions, including pseudo-classes */
-export type ConditionalCSS = { [k in ConditionKey]?: BaseConditionalCSS }
+export type ConditionalCSS = { [k in ConditionKey]?: BaseCSS & ConditionalCSS }
 
 /** Full type of Neutron UI style objects, including pseudo-classes and conditions */
 export type CSS = BaseCSS & ConditionalCSS

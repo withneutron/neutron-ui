@@ -49,6 +49,23 @@ const Tertiary = styled(
     fontWeight: "$500",
     textDecoration: "$highlightError",
     pointerEvents: "all",
+    rtl: {
+      bg: { md: "$amber9", lg: "$tomato9", xl: "$secondary9" },
+    },
+    ltr: {
+      md: {
+        bg: "$tertiary10",
+        outline: "$tertiary",
+      },
+      lg: {
+        bg: "$secondary10",
+        outline: "$secondary",
+      },
+      xl: {
+        bg: "$primary10",
+        outline: "$primary",
+      },
+    },
   },
   "Tertiary"
 )

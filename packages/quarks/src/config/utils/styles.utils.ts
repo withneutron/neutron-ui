@@ -62,16 +62,16 @@ export function style(
   }
 
   // Process defined styles
-  manager.processCss(css, conditions)
+  manager.processCss(css)
 
   // Process variants, if any.
   if (variantCss) {
-    manager.processVariantCss(variantCss, conditions)
+    manager.processVariantCss(variantCss)
   }
 
   // Process style overrides, if any. This is useful for runtime overrides
   if (overrides) {
-    manager.processOverridesCss(overrides, conditions)
+    manager.processOverridesCss(overrides)
   }
 
   return manager.compile()
