@@ -258,7 +258,7 @@ const Sample: NextPage = () => {
   const arrow = useRTL("⇦", "⇨")
 
   useEffect(() => {
-    console.log("@@@ ref", ref.current)
+    console.debug("@@@ ref", ref.current)
   }, [ref.current])
 
   useEffect(() => {
@@ -297,7 +297,8 @@ const Sample: NextPage = () => {
         <MediaQueryName css={{ display: { xl: "inline-block", lg: "none" } }}>Extra Large (xl)</MediaQueryName>
         <MediaQueryName css={{ display: { lg: "inline-block", md: "none" } }}>Large (lg)</MediaQueryName>
         <MediaQueryName css={{ display: { md: "inline-block", sm: "none" } }}>Medium (md)</MediaQueryName>
-        <MediaQueryName css={{ display: { sm: "inline-block" } }}>Small (sm)</MediaQueryName>
+        <MediaQueryName css={{ display: { sm: "inline-block", xs: "none" } }}>Small (sm)</MediaQueryName>
+        <MediaQueryName css={{ display: { xs: "inline-block" } }}>Extra Small (xs)</MediaQueryName>
       </Row.Header>
 
       <header>
@@ -355,7 +356,7 @@ function SampleBox(props: SampleBoxProps) {
     >
       <Box.Aside
         ref={(element: HTMLDivElement) => {
-          console.log("@@@ element", element)
+          console.debug("@@@ element", element)
         }}
         css={{
           bg: "$primary10",

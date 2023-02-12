@@ -6,19 +6,13 @@ import {
   ConditionKeys,
   conditionsMap,
   DEFAULT_COLOR_MODE,
-  mapConditions,
-  QueryConditions,
-  queryConditionsMap,
   BreakpointOverrides,
-  getQueryFromBreakpoint,
   ThemeOverrides,
   SemanticColorOverrides,
   tokenValue,
-  Direction,
 } from "@withneutron/quarks"
 import { useThemeStyle } from "../hooks"
-import { useMutationObserver } from "../hooks/useMutationObserver"
-import { isSSR } from "../shared/utils"
+import { useContextConditions } from "./QuarksProvider.utils"
 
 export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
   Object.keys(conditionsMap).reduce((output, key) => {
@@ -102,53 +96,4 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
       <CssConditionsContext.Provider value={conditions}>{children}</CssConditionsContext.Provider>
     </QuarksContext.Provider>
   )
-}
-
-function useContextConditions(
-  colorMode: ColorMode,
-  isMobile = false,
-  isDebugMode = false,
-  overrides?: BreakpointOverrides
-) {
-  overrides = overrides ?? {}
-  const sm = useMediaQuery(overrides.sm ? getQueryFromBreakpoint(overrides.sm) : queryConditionsMap.sm, false)
-  const md = useMediaQuery(overrides.md ? getQueryFromBreakpoint(overrides.md) : queryConditionsMap.md, false)
-  const lg = useMediaQuery(overrides.lg ? getQueryFromBreakpoint(overrides.lg) : queryConditionsMap.lg, false)
-  const xl = useMediaQuery(overrides.xl ? getQueryFromBreakpoint(overrides.xl) : queryConditionsMap.xl, false)
-  const hightContrast = useMediaQuery(queryConditionsMap.hightContrast, false)
-  const lowMotion = useMediaQuery(queryConditionsMap.lowMotion, false)
-  const lowData = useMediaQuery(queryConditionsMap.lowData, false)
-  const touch = useMediaQuery(queryConditionsMap.touch, isMobile)
-  const pointer = useMediaQuery(queryConditionsMap.pointer, false)
-  const tv = useMediaQuery(queryConditionsMap.tv, false)
-  const conditions: QueryConditions = {
-    sm,
-    md,
-    lg,
-    xl,
-    hightContrast,
-    lowMotion,
-    lowData,
-    touch,
-    pointer,
-    tv,
-  }
-
-  const [direction, setDirection] = useState<Direction>(
-    isSSR ? "ltr" : document.documentElement.dir === "rtl" ? "rtl" : "ltr"
-  )
-  useMutationObserver({
-    target: isSSR ? null : document.documentElement,
-    callback: mutations => {
-      mutations.forEach(mutation => {
-        const dir = ((mutation.target as HTMLElement).dir ?? "ltr") as Direction
-        setDirection(dir)
-      })
-    },
-    options: {
-      attributes: true,
-      attributeFilter: ["dir"],
-    },
-  })
-  return mapConditions(conditions, colorMode, isDebugMode, direction)
 }

@@ -10,22 +10,12 @@ const DEFAULT_OPTIONS = {
   characterDataOldValue: true,
 }
 
-interface Props {
-  target: RefObject<Element> | Element | Node | null
-  callback: MutationCallback
-  options?: MutationObserverInit
-}
-
-export const useMutationObserver = ({ target, callback, options = DEFAULT_OPTIONS }: Props): void => {
-  const observer = useMemo(
-    () =>
-      !isSSR
-        ? new MutationObserver((mutationRecord, mutationObserver) => {
-            callback?.(mutationRecord, mutationObserver)
-          })
-        : null,
-    [callback]
-  )
+export const useMutationObserver = (
+  target: RefObject<Element> | Element | Node | null,
+  callback: MutationCallback,
+  options: MutationObserverInit = DEFAULT_OPTIONS
+): void => {
+  const observer = useMemo(() => (!isSSR ? new MutationObserver(callback) : null), [callback])
 
   useEffect(() => {
     const element = getRefElement(target)
