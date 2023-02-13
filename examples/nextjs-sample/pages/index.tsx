@@ -97,7 +97,7 @@ const Doodad = styled("li", {
   justifyContent: "center",
   bg: "$tertiary3",
   radius: "$4",
-  listStyle: "unset",
+  listStyle: "none",
   typo: "$subHeading",
 })
 

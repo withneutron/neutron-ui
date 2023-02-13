@@ -81,7 +81,7 @@ export const mappedProps = {
   gtRows: getPropMapper("gridTemplateRows"),
   gtColumns: getPropMapper("gridTemplateColumns"),
 
-  typography: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
+  typography: getPropMapper("font", "lineHeight", "textTransform", "fontStyle"),
 
   // Remapped CSS Props
   height: getPropMapper("blockSize"),
@@ -205,7 +205,7 @@ export const mappedProps = {
 
   font: getPropMapper("fontSize", "fontStyle", "fontFamily", "fontWeight"),
 
-  typo: getPropMapper("font", "lineHeight", "letterSpacing", "textTransform", "fontStyle"),
+  typo: getPropMapper("font", "lineHeight", "textTransform", "fontStyle"),
 
   gap: getPropMapper("rowGap", "columnGap"),
 

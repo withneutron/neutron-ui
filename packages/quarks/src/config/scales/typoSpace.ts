@@ -19,7 +19,7 @@ export function getTypoSpace(hash: CharHash) {
     chMin: { ...hash.var, value: `calc(${chBase.ref} - .15ch)` },
     chMax: { ...hash.var, value: `calc(${chBase.ref} + .15ch)` },
 
-    tightest: { ...hash.var, value: `calc(${remBase.ref} - 67rem)` },
+    tightest: { ...hash.var, value: `calc(${remBase.ref} - .67rem)` },
     tight: { ...hash.var, value: `calc(${remBase.ref} - .33rem)` },
     regular: { ...hash.var, value: remBase.ref },
     loose: { ...hash.var, value: `calc(${remBase.ref} + .5rem)` },

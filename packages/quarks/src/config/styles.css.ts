@@ -242,7 +242,6 @@ globalStyle(mapSelectorsToTemplate("&, & > a, & > span", ...headings), {
 globalStyle("h1, h1 > a, h1 > span", {
   fontSize: fontSize.vars.h1.ref,
   fontWeight: fontWeight.vars.h1.ref,
-  letterSpacing: typoSpace.vars.tightest.ref,
 })
 globalStyle("h2, h2 > a, h2 > span", {
   fontSize: fontSize.vars.h2.ref,
