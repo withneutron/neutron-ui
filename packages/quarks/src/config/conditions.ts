@@ -1,11 +1,10 @@
 import { ColorMode } from "../shared/models"
-import { BASE } from "./styles.models"
 
-const xs = 599.9987654321
-const sm = 799.9987654321
-const md = 1099.9987654321
-const lg = 1399.9987654321
 const xl = 1699.9987654321
+const lg = 1399.9987654321
+const md = 1099.9987654321
+const sm = 799.9987654321
+const xs = 599.9987654321
 const unit = "rem"
 const unitModifier = 0.0625
 
@@ -14,32 +13,23 @@ export function getQueryFromBreakpoint(breakpoint: number) {
 }
 
 export const observerConditionsMap = {
-  xs,
-  sm,
-  md,
-  lg,
   xl,
+  lg,
+  md,
+  sm,
+  xs,
 } as const
 
 export const responsiveConditionsMap = {
-  xs: getQueryFromBreakpoint(xs),
-  sm: getQueryFromBreakpoint(sm),
-  md: getQueryFromBreakpoint(md),
-  lg: getQueryFromBreakpoint(lg),
   xl: getQueryFromBreakpoint(xl),
+  lg: getQueryFromBreakpoint(lg),
+  md: getQueryFromBreakpoint(md),
+  sm: getQueryFromBreakpoint(sm),
+  xs: getQueryFromBreakpoint(xs),
 } as const
 
 export type ResponsiveCondition = keyof typeof responsiveConditionsMap
 export type BreakpointOverrides = { [k in ResponsiveCondition]?: number }
-
-export const responsiveConditionsPriority = {
-  xs: 0,
-  sm: 1,
-  md: 2,
-  lg: 3,
-  xl: 4,
-  [BASE]: 5,
-} as const
 
 export const queryConditionsMap = {
   ...responsiveConditionsMap,
@@ -85,6 +75,12 @@ export const conditionsMap = {
    */
   ...queryConditionsMap,
 
+  "!xl": true,
+  "!lg": true,
+  "!md": true,
+  "!sm": true,
+  "!xs": true,
+
   "!hightContrast": "(prefers-contrast: more)",
   "!lowMotion": "(prefers-reduced-motion)",
   "!lowData": "(prefers-reduced-data)",
@@ -104,6 +100,12 @@ export function mapConditions(
 ) {
   return {
     ...conditions,
+
+    "!xl": !conditions.xl,
+    "!lg": !conditions.lg,
+    "!md": !conditions.md,
+    "!sm": !conditions.sm,
+    "!xs": !conditions.xs,
 
     ltr: direction === "ltr",
     rtl: direction === "rtl",
@@ -134,11 +136,16 @@ export enum ConditionCategory {
 export const ConditionCategories: { [k in ConditionKeys]: ConditionCategory } = {
   ltr: ConditionCategory.locale,
   rtl: ConditionCategory.locale,
-  xs: ConditionCategory.responsive,
-  sm: ConditionCategory.responsive,
-  md: ConditionCategory.responsive,
-  lg: ConditionCategory.responsive,
   xl: ConditionCategory.responsive,
+  lg: ConditionCategory.responsive,
+  md: ConditionCategory.responsive,
+  sm: ConditionCategory.responsive,
+  xs: ConditionCategory.responsive,
+  "!xl": ConditionCategory.responsive,
+  "!lg": ConditionCategory.responsive,
+  "!md": ConditionCategory.responsive,
+  "!sm": ConditionCategory.responsive,
+  "!xs": ConditionCategory.responsive,
   hightContrast: ConditionCategory.preference,
   lowMotion: ConditionCategory.preference,
   lowData: ConditionCategory.preference,

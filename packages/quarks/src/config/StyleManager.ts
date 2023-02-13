@@ -26,15 +26,7 @@ import {
   tokenToVarMap,
 } from "./styles.css"
 import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey, VariantCSS } from "./styles.models"
-import {
-  conditionKeys,
-  conditionsMap,
-  ResponsiveCondition,
-  responsiveConditionsPriority,
-  responsiveConditionsMap,
-  ConditionCategories,
-  ConditionCategory,
-} from "./conditions"
+import { conditionKeys, conditionsMap, ConditionCategories, ConditionCategory } from "./conditions"
 import { CssAlias, SCALED_ALIAS } from "./scales/scales.models"
 import { mapAliasToValue } from "./scales"
 
@@ -183,48 +175,12 @@ export class StyleManager {
     this.setName(name)
   }
 
-  /**
-   * Get the responsive condition from a style line that defines that style
-   * for one or more conditions.
-   */
-  private getResponsiveConditionFromInline(inlineCondition: InlineConditionKey) {
-    return responsiveConditionsMap[inlineCondition as ResponsiveCondition]
-      ? (inlineCondition as ResponsiveConditionKey)
-      : BASE
-  }
-
   private getPropId(prop: CssPropKey) {
     const propId = sourcePropsIdMap[prop as keyof typeof sourcePropsIdMap]
     if (propId === undefined) {
       throw new Error(`Invalid prop "${prop}" passed into '${sourcePropsIdMap}'`)
     }
     return propId
-  }
-
-  private getBaseState(prop: CssPropKey, inlineCondition: InlineConditionKey, pseudoClass: PseudoCategoryKey) {
-    const condition = this.getResponsiveConditionFromInline(inlineCondition)
-    const propId = this.getPropId(prop)
-
-    // Existing data, to make sure we don't have a conflict
-    const existingData = this.classDict[pseudoClass][propId]
-    const incomingPriority = responsiveConditionsPriority[condition]
-    const existingPriority = existingData?.[1] ?? responsiveConditionsPriority[BASE]
-
-    // If the parent already has this style, don't override it.
-    const hasParentConflict = this.parentClassDicts.some(p => !!p[pseudoClass][propId])
-
-    // If what we've already processed of the current styles have a conflict,
-    // only override it if this one has HIGHER OR EQUAL priority.
-    const hasExistingConflict = existingPriority < incomingPriority
-
-    return {
-      propId,
-      existingData,
-      incomingPriority,
-      existingPriority,
-      hasParentConflict,
-      hasExistingConflict,
-    }
   }
 
   private getScaledProps(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
@@ -252,31 +208,26 @@ export class StyleManager {
   }
 
   /** Add a style to the style set */
-  add(
+  private add(
     prop: CssPropKey,
     className: string,
-    inlineCondition: InlineConditionKey = BASE,
     pseudoClass: PseudoCategoryKey = BASE,
     varName?: string,
     value?: string,
     originalProp?: CssPropKey,
     originalValue?: string
   ) {
-    const { propId, existingData, incomingPriority, hasExistingConflict, hasParentConflict } = this.getBaseState(
-      prop,
-      inlineCondition,
-      pseudoClass
-    )
+    const propId = this.getPropId(prop)
+
+    // If the parent already has this style, don't override it.
+    const hasParentConflict = this.parentClassDicts.some(p => p[pseudoClass][propId] !== undefined)
 
     // Lower-valued priorities take precedence, and cannot be overwritten
-    if (hasExistingConflict || hasParentConflict) return
+    if (hasParentConflict) return
 
-    const index = existingData?.[0] ?? this.classList.length
+    const index = this.classDict[pseudoClass][propId] ?? this.classList.length
 
-    // Make sure we keep the tracked priority up-to-date
-    this.classDict[pseudoClass][propId] = [index, incomingPriority]
-
-    if (existingData === undefined) {
+    if (this.classDict[pseudoClass][propId] === undefined) {
       this.classList.push(className)
     } else {
       // Clear out old style that is getting overwritten, if need be
@@ -291,6 +242,9 @@ export class StyleManager {
       }
       this.classList[index] = className
     }
+
+    // Make sure we keep the tracked priority up-to-date
+    this.classDict[pseudoClass][propId] = index
 
     this.addDebugInfo(className, originalProp ?? prop, originalValue ?? value)
 
@@ -491,26 +445,20 @@ export class StyleManager {
       for (; index < pseudos.length; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
-        this.addStyle(prop, value as string, condition, pseudoKey, originalProp ?? prop)
+        this.addStyle(prop, value as string, pseudoKey, originalProp ?? prop)
         this.pseudoClassName = ""
       }
       return
     }
 
-    this.addStyle(prop, value, condition, undefined, originalProp ?? prop)
+    this.addStyle(prop, value, undefined, originalProp ?? prop)
   }
 
   /** Adds style to style manager */
-  addStyle(
-    prop: CssPropKey,
-    value: string,
-    condition?: InlineConditionKey,
-    pseudo?: PseudoClassKey,
-    originalProp?: CssPropKey
-  ) {
+  private addStyle(prop: CssPropKey, value: string, pseudo?: PseudoClassKey, originalProp?: CssPropKey) {
     const result = this.getStyle(prop, value, pseudo)
     if (result) {
-      this.add(prop, result.className, condition, pseudo ?? BASE, result.varName, result.value, originalProp, value)
+      this.add(prop, result.className, pseudo ?? BASE, result.varName, result.value, originalProp, value)
 
       // If this is a combo class with multiple props, make sure we avoid conflicts
       if (result.props && result.props.length > 0) {
@@ -520,7 +468,6 @@ export class StyleManager {
           this.add(
             comboProp as CssPropKey,
             result.className,
-            condition,
             pseudo ?? BASE,
             result.varName,
             result.value,
@@ -618,13 +565,12 @@ function stringToHash(source: string) {
 /*************************************************************************************************
  * TYPES
  *************************************************************************************************/
-type ResponsiveConditionKey = ResponsiveCondition | typeof BASE
 type PseudoClassKey = keyof typeof pseudoClasses
 type CombinedPseudoClassKey = keyof typeof combinedPseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
 type ScaledKey = keyof typeof scaledPropMap[typeof BASE]
 
-type ClassDict = { [p in PseudoCategoryKey]: { [c: number]: [number, number] } }
+type ClassDict = { [p in PseudoCategoryKey]: { [c: number]: number } }
 
 type Token = typeof token
 

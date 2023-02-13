@@ -5,7 +5,7 @@
  *
  * Create a global style for `[dir]` that sets the `direction: ___;` css property
  *
- * Convert padding, marging, and other shorthand props (border, etc) to their
+ * Convert padding, margin, and other shorthand props (border, etc) to their
  * 4 directional counterparts, in the resolver, to reduce number of classes we generate.
  *
  * Make sure `initial` and (for inherited props) `inherit` values are available to
@@ -402,21 +402,6 @@ export type OverrideScaledProp = {
 type A = typeof scaledPropsPC
 type B = typeof customVarPropsPC
 type C = typeof staticPropsPC
-
-type FocusVisible = {
-  ":focus-visible"?: MergedCssProps<
-    CssFromMap<A[":focus-visible"]>,
-    CssFromCustomVars<B[":focus-visible"]>,
-    CssFromMap<C[":focus-visible"]>
-  >
-}
-type Hover = {
-  ":hover"?: MergedCssProps<CssFromMap<A[":hover"]>, CssFromCustomVars<B[":hover"]>, CssFromMap<C[":hover"]>>
-}
-type Active = {
-  ":active"?: MergedCssProps<CssFromMap<A[":active"]>, CssFromCustomVars<B[":active"]>, CssFromMap<C[":active"]>>
-}
-type MergePCCssProps = FocusVisible & Hover & Active
 
 // Inline-conditional, pseudo-class types
 type ICFocusVisible = {

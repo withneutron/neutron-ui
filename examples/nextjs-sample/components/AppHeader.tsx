@@ -16,6 +16,12 @@ export function AppHeader() {
         py: "$12",
         alignItems: "center",
         justifyContent: "space-between",
+        gap: "$16",
+        xs: {
+          flexDirection: "column",
+          justifyContent: "center",
+          py: "$24",
+        },
       }}
     >
       <Logo />

@@ -23,10 +23,10 @@ const Base = styled(
     outline: "$secondary",
     radius: "$8",
     bg: {
-      md: "$tertiary10",
-      lg: "$tertiary7",
-      xl: "$tertiary12",
       base: "$amber10",
+      xl: "$tertiary12",
+      lg: "$tertiary7",
+      md: "$tertiary10",
     },
     backgroundColor: "$amber10",
   },
@@ -50,20 +50,22 @@ const Tertiary = styled(
     textDecoration: "$highlightError",
     pointerEvents: "all",
     rtl: {
-      bg: { md: "$amber9", lg: "$tomato9", xl: "$secondary9" },
+      bg: { xl: "$secondary9", lg: "$tomato9", md: "$amber9" },
     },
     ltr: {
-      md: {
-        bg: "$tertiary10",
-        outline: "$tertiary",
+      bg: "$indigo10",
+      outline: "none",
+      xl: {
+        bg: "$primary10",
+        outline: "$primary",
       },
       lg: {
         bg: "$secondary10",
         outline: "$secondary",
       },
-      xl: {
-        bg: "$primary10",
-        outline: "$primary",
+      md: {
+        bg: "$tertiary10",
+        outline: "$tertiary",
       },
     },
   },
@@ -76,12 +78,12 @@ const BaseSection = styled(
     h: "$80",
     width: `calc(100vw - ${token.size.$120})`,
     bg: {
-      sm: "$magenta1",
-      md: "$amber1",
-      lg: "$forest1",
-      xl: "$aqua1",
-      dark: "$primary4",
       base: "$tertiary3",
+      dark: "$primary4",
+      xl: "$aqua1",
+      lg: "$forest1",
+      md: "$amber1",
+      sm: "$magenta1",
     },
     color: "$tertiaryText3",
     m: "$8",
@@ -126,25 +128,22 @@ const NuiSection = styled(
   {
     h: "$320",
     mx: "$56",
-    sm: {
-      color: "$magentaText1",
-    },
-    md: {
-      color: "$amberText1",
-    },
-    lg: {
-      color: "$forestText1",
-    },
     xl: {
       color: "$aquaText1",
       mx: "$24",
     },
+    lg: {
+      color: "$forestText1",
+    },
+    md: {
+      color: "$amberText1",
+    },
+    sm: {
+      color: "$magentaText1",
+    },
     dark: {
       outlineWidth: "$widthBase",
       color: "$aquaText1",
-    },
-    "!touch": {
-      bg: "$aqua4",
     },
     lowMotion: {
       animation: "none",
@@ -161,10 +160,11 @@ const NuiSection = styled(
       },
       success: {
         bg: "$success3",
-        linearGradient: `${token.color.$success3}, ${token.color.$success1}`,
+        // linearGradient: `${token.color.$success3}, ${token.color.$success1}`,
         color: "$successText3",
         ":interact": {
-          linearGradient: `${token.color.$success9}, ${token.color.$success6}`,
+          bg: "$tertiary9",
+          // linearGradient: `${token.color.$success9}, ${token.color.$success6}`,
           color: "$tertiaryText9",
           border: "none",
           outlineColor: "$tertiaryMax",
@@ -174,16 +174,16 @@ const NuiSection = styled(
         bg: "$warning3",
         color: "$warningText3",
         px: {
-          sm: "$12",
-          md: "$16",
-          lg: "$24",
           base: "$40",
+          lg: "$24",
+          md: "$16",
+          sm: "$12",
         },
         ":interact": {
           bg: "$warning9",
           color: "$warningText9",
           borderColor: "transparent",
-          outlineColor: "$tertiaryMax",
+          outlineColor: token.color.$warning9,
           outlineWidth: "$widthMax",
         },
       },
@@ -240,9 +240,9 @@ const GridBox = styled(
     ":last": {
       bg: {
         base: "$magenta9",
-        md: "$grass9",
-        lg: "$indigo9",
         xl: "$plum9",
+        lg: "$indigo9",
+        md: "$grass9",
       },
       color: "$magentaText9",
     },
@@ -271,6 +271,7 @@ const Sample: NextPage = () => {
   return (
     <Column.Article
       css={{
+        flex: "1",
         p: {
           base: "$80",
           md: "$40",
@@ -309,7 +310,7 @@ const Sample: NextPage = () => {
       <SubHeading.H4 css={{ typo: "$minorHeading" }}>Minor Heading</SubHeading.H4>
       <Text css={{ typo: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
       <Text css={{ typo: "$caption" }}>Caption</Text>
-      {<SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>}
+      <SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>
       <Tertiary
         style={{
           lineHeight: "200px",
@@ -318,7 +319,23 @@ const Sample: NextPage = () => {
         Testing 3-level composition
         <Box.Span css={{ float: "left", mr: "$12" }}>{arrow}</Box.Span>
       </Tertiary>
-      <NuiSection isChunky kind="success" ref={ref} tabIndex={0} css={{ fontSize: "$36" }}>
+      <NuiSection
+        isChunky
+        kind="success"
+        ref={ref}
+        tabIndex={0}
+        css={{
+          fontSize: "$36",
+          md: {
+            bg: "$primary9",
+            color: "$primaryText9",
+          },
+          "!md": {
+            bg: "$secondary9",
+            color: "$secondaryText9",
+          },
+        }}
+      >
         NUI-powered sample box
       </NuiSection>
       <NuiSection as="aside" kind="warning" tabIndex={0} css={{ h: "$200" }}>

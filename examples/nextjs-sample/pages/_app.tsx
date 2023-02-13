@@ -2,8 +2,7 @@ import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
 import App from "next/app"
 import "@withneutron/quarks/styles"
-import { Grid, QuarksProvider } from "@withneutron/quarks-react"
-import { token } from "@withneutron/quarks"
+import { Column, QuarksProvider } from "@withneutron/quarks-react"
 import { AppHeader } from "../components/AppHeader"
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -20,16 +19,17 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Neutron UI — Sample Next.js App</title>
         <meta name="description" content="Sample Next.js app, using NeutronUI" />
       </Head>
-      <Grid.Main
+      <Column.Main
         css={{
-          gtRows: `${token.row.$80} 1fr`,
           h: "100vh",
           w: "100%",
         }}
       >
         <AppHeader />
-        <Component {...props} />
-      </Grid.Main>
+        <Column css={{ flex: "1" }}>
+          <Component {...props} />
+        </Column>
+      </Column.Main>
     </QuarksProvider>
   )
 }
