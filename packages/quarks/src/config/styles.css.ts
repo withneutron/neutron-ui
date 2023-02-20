@@ -291,6 +291,32 @@ if (animation.keyframes) {
   })
 }
 
+// CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
+/** Generate vars and classes for custom props */
+const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
+  const cssVar = varHash.var
+  const className = classHash.name
+  template = template ?? ((v: string) => v)
+  globalStyle(getSelector(className), {
+    [prop]: template(cssVar.ref),
+  })
+  return { varName: cssVar.name, className }
+})
+
+/** Generate CSS props that are _pseudo class based_, for custom var props */
+const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys) =>
+  generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
+    const cssVar = varHash.var
+    const className = classHash.name
+    template = template ?? ((v: string) => v)
+    globalStyle(getSelector(className, pseudoClass), {
+      [prop]: template(cssVar.ref),
+    })
+    return { varName: cssVar.name, className }
+  }, keys)
+
+const customVarPropsPC = generatePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
+
 // SCALED PROPS ///////////////////////////////////////////////////////////////////////////////////
 /** Generate CSS props that are based on scales */
 const scaledProps = generateScaledPropsCss(scales, (value: CssRule) => {
@@ -328,32 +354,6 @@ const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: s
     return className
   }, keys)
 )
-
-// CUSTOM VAR PROPS ///////////////////////////////////////////////////////////////////////////////
-/** Generate vars and classes for custom props */
-const customVarProps = generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
-  const cssVar = varHash.var
-  const className = classHash.name
-  template = template ?? ((v: string) => v)
-  globalStyle(getSelector(className), {
-    [prop]: template(cssVar.ref),
-  })
-  return { varName: cssVar.name, className }
-})
-
-/** Generate CSS props that are _pseudo class based_, for custom var props */
-const pseudoClassCustomVarPropGenerator = (pseudoClass: string, keys: FilterKeys) =>
-  generateCustomVarPropsCss((prop: CssPropKey, template?: (value: string) => string) => {
-    const cssVar = varHash.var
-    const className = classHash.name
-    template = template ?? ((v: string) => v)
-    globalStyle(getSelector(className, pseudoClass), {
-      [prop]: template(cssVar.ref),
-    })
-    return { varName: cssVar.name, className }
-  }, keys)
-
-const customVarPropsPC = generatePseudoClassCss<typeof customVarProps>(pseudoClassCustomVarPropGenerator)
 
 // PROP MAPS //////////////////////////////////////////////////////////////////////////////////////
 export const scaledPropMap = {

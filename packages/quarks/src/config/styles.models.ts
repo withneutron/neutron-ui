@@ -1,25 +1,9 @@
-import { Shared, NotShared } from "../shared/models"
+import { Shared, NotShared, CoreCustomValues } from "../shared/models"
 import { conditionsMap } from "./conditions"
 import { CssPropKey, CustomVarPropHints, CustomVarPropValue, WithMappedProps } from "./props"
 import { CSS } from "./styles.css"
 
 export const BASE = "base"
-
-type CustomVarHint = "<Any valid CSS>"
-type CoreStaticKeys = "initial" | "inherit" | "unset" | "revert" | "revert-layer"
-
-type CssValuePrefix = "." | "-" | "+" | "#"
-type BroadCssValueString = string | number
-// This is a hacky way to get a union-friendly string that doesn't wipe out static string values from a union
-type CustomString =
-  | `${number}`
-  | `${number}${string}`
-  | `${string & CssValuePrefix}${string}`
-  | `${BroadCssValueString} ${BroadCssValueString}`
-  | `(${BroadCssValueString})`
-  | `(${BroadCssValueString})${BroadCssValueString}`
-  | `${BroadCssValueString}(${BroadCssValueString})`
-  | `${BroadCssValueString}(${BroadCssValueString})${BroadCssValueString}`
 
 type MapObject = {
   [key in CssPropKey]?: { [k: string | number]: unknown }
@@ -33,8 +17,8 @@ export type CssFromMap<M extends MapObject> = WithMappedProps<{
 }>
 
 export type CssFromCustomVars<M extends CustomVarObject> = WithMappedProps<
-  & { [key in Shared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomVarPropHints[key] | CustomString }
-  & { [key in NotShared<M, CustomVarPropHints>]?: CustomVarHint | CoreStaticKeys | CustomString }
+  & { [key in Shared<M, CustomVarPropHints>]?: CustomVarPropHints[key] | CoreCustomValues }
+  & { [key in NotShared<M, CustomVarPropHints>]?: CoreCustomValues }
 >
 
 // Merge CSS //
