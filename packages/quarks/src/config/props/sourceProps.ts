@@ -6,8 +6,63 @@
  * props (and the classes we generate for them) get shorter hashes.
  */
 
+/** Complex shorthand properties */
+const complexShorthandProps = {
+  animation: true,
+  background: true,
+  border: true,
+  borderBlockEnd: true,
+  borderBlockStart: true,
+  borderBottom: true,
+  borderColor: true,
+  borderInlineEnd: true,
+  borderInlineStart: true,
+  borderLeft: true,
+  borderRadius: true,
+  borderRight: true,
+  borderStyle: true,
+  borderTop: true,
+  borderWidth: true,
+  columnRule: true,
+  columns: true,
+  flex: true,
+  font: true,
+  gap: true,
+  grid: true,
+  gridArea: true,
+  gridColumn: true,
+  gridRow: true,
+  gridTemplate: true,
+  listStyle: true,
+  outline: true,
+  textDecoration: true,
+  transition: true,
+
+  /** Not complex
+  all: true,
+  margin: true,
+  overflow: true,
+  padding: true,
+  */
+
+  /** Nice-to-have
+  placeContent: true,
+  placeItems: true,
+  placeSelf: true,
+  */
+
+  /** Unsupported
+  containIntrinsicSize: true,
+  flexFlow: true,
+  offset: true,
+  scrollTimeline: true,
+  */
+} as const
+
 /** Props for which we generate CSS classes — so no mapped/alias props */
 export const sourceClassedProps = {
+  ...complexShorthandProps,
+
   display: true,
 
   inlineSize: true,
@@ -30,7 +85,6 @@ export const sourceClassedProps = {
   position: true,
 
   backgroundColor: true,
-  background: true,
   backgroundImage: true,
 
   insetBlockStart: true,
@@ -40,28 +94,23 @@ export const sourceClassedProps = {
 
   color: true,
 
-  font: true,
   fontFamily: true,
   fontSize: true,
   fontWeight: true,
   fontStyle: true,
   typo: true,
 
-  borderBlockStart: true,
   borderBlockStartColor: true,
   borderBlockStartStyle: true,
   borderBlockStartWidth: true,
-  borderBlockEnd: true,
   borderBlockEndColor: true,
   borderBlockEndStyle: true,
   borderBlockEndWidth: true,
 
-  borderInlineStart: true,
   borderInlineStartColor: true,
   borderInlineStartStyle: true,
   borderInlineStartWidth: true,
 
-  borderInlineEnd: true,
   borderInlineEndColor: true,
   borderInlineEndStyle: true,
   borderInlineEndWidth: true,
@@ -71,6 +120,8 @@ export const sourceClassedProps = {
   borderEndStartRadius: true,
   borderEndEndRadius: true,
 
+  borderImage: true,
+
   opacity: true,
   visibility: true,
 
@@ -78,7 +129,6 @@ export const sourceClassedProps = {
   overflowX: true,
   overflowY: true,
 
-  outline: true,
   outlineColor: true,
   outlineOffset: true,
   outlineStyle: true,
@@ -87,10 +137,6 @@ export const sourceClassedProps = {
   backgroundPosition: true,
 
   zIndex: true,
-
-  transition: true,
-
-  transform: true,
 
   textAlign: true,
   verticalAlign: true,
@@ -102,7 +148,6 @@ export const sourceClassedProps = {
 
   cursor: true,
 
-  flex: true,
   flexBasis: true,
   flexDirection: true,
   flexFlow: true,
@@ -113,17 +158,16 @@ export const sourceClassedProps = {
   rowGap: true,
   columnGap: true,
 
-  gridArea: true,
   gridAutoRows: true,
   gridAutoColumns: true,
   gridAutoFlow: true,
-  gridRow: true,
-  gridColumn: true,
-  gridTemplate: true, // UTIL: gt // Check for line-breaks; throw error if they're found (only row/col syntax supported)
-  // NOTE: Only join if BOTH are set, below, because it's inefficient to set `none/{COLS}` for just columns
-  gridTemplateRows: true, // UTIL: gtRows // If BOTH rows + cols are set, then JOIN into gt
-  gridTemplateColumns: true, // UTIL: gtColumns // If BOTH rows + cols are set, then JOIN into gt
   gridTemplateAreas: true, // UTIL: gtAreas
+  gridTemplateColumns: true, // UTIL: gtColumns
+  gridTemplateRows: true, // UTIL: gtRows
+  gridRowStart: true,
+  gridColumnStart: true,
+  gridRowEnd: true,
+  gridColumnEnd: true,
 
   linearGradient: true,
   radialGradient: true,
@@ -132,8 +176,6 @@ export const sourceClassedProps = {
   whiteSpace: true,
 
   pointerEvents: true,
-
-  animation: true,
 
   lineHeight: true,
 
@@ -144,7 +186,6 @@ export const sourceClassedProps = {
 
   float: true,
 
-  listStyle: true,
   listStyleImage: true,
   listStylePosition: true,
   listStyleType: true,
@@ -153,8 +194,8 @@ export const sourceClassedProps = {
 
   textOverflow: true,
   textTransform: true,
-  textDecoration: true,
   textUnderlineOffset: true,
+  textEmphasis: true,
 
   letterSpacing: true,
   wordSpacing: true,
@@ -166,6 +207,7 @@ export const sourceClassedProps = {
 
   mask: true,
 
+  transform: true,
   transformOrigin: true,
 
   borderCollapse: true,
@@ -187,14 +229,18 @@ export const sourceClassedProps = {
 
   boxSizing: true,
 
-  borderImage: true,
-
   caretColor: true,
   columnRuleColor: true,
+  columnRuleStyle: true,
+  columnRuleWidth: true,
+  columnCount: true,
+  columnWidth: true,
 
   scrollBehavior: true,
   scrollSnapAlign: true,
   scrollSnapType: true,
+  scrollMargin: true,
+  scrollPadding: true,
 
   writingMode: true,
 
@@ -223,11 +269,9 @@ export const sourceClassedProps = {
 
   // "transformStyle": true,
 
-  // "textEmphasis": true,
   // "textIndent": true,
   // "textOrientation": true,
 
-  // "grid": true, // UNSUPPORTED
   // "gridColumnEnd": true, // Skip
   // "gridColumnStart": true, // Skip
   // "gridRowEnd": true, // Skip
@@ -281,16 +325,18 @@ export const sourceProps = {
   radiusBottomLeft: true,
   radiusBottomRight: true,
 
+  inset: true,
+
   z: true,
 
   h: true,
   w: true,
   size: true,
 
-  gt: true,
-  gtAreas: true,
-  gtColumns: true,
-  gtRows: true,
+  gt: true, // gridTemplate
+  gtAreas: true, // gridTemplateAreas
+  gtColumns: true, // gridTemplateColumns
+  gtRows: true, // gridTemplateRows
 
   typography: true,
 
@@ -319,11 +365,6 @@ export const sourceProps = {
   left: true,
   right: true,
 
-  border: true,
-  borderColor: true,
-  borderStyle: true,
-  borderWidth: true,
-
   borderBlock: true,
   borderBlockColor: true,
   borderBlockStyle: true,
@@ -334,33 +375,26 @@ export const sourceProps = {
   borderInlineStyle: true,
   borderInlineWidth: true,
 
-  borderTop: true,
   borderTopColor: true,
   borderTopStyle: true,
   borderTopWidth: true,
 
-  borderBottom: true,
   borderBottomColor: true,
   borderBottomStyle: true,
   borderBottomWidth: true,
 
-  borderLeft: true,
   borderLeftColor: true,
   borderLeftStyle: true,
   borderLeftWidth: true,
 
-  borderRight: true,
   borderRightColor: true,
   borderRightStyle: true,
   borderRightWidth: true,
 
-  borderRadius: true,
   borderTopLeftRadius: true,
   borderTopRightRadius: true,
   borderBottomLeftRadius: true,
   borderBottomRightRadius: true,
-
-  gap: true, // SPREAD into `rowGap` & `columnGap`
 
   wordWrap: true, // Alias for "overflowWrap"
 
@@ -370,11 +404,13 @@ export const sourceProps = {
   ...sourceClassedProps,
 } as const
 
-type ClassedKeys = keyof typeof sourceClassedProps
+export type ComplexShorthandProp = keyof typeof complexShorthandProps
+
+type ClassedProp = keyof typeof sourceClassedProps
 
 /** Maps (classed) source props to numeric IDs */
-export const sourcePropsIdMap = {} as { [k in ClassedKeys]: number }
+export const sourcePropsIdMap = {} as { [k in ClassedProp]: number }
 
 Object.keys(sourceProps).forEach((prop, id) => {
-  sourcePropsIdMap[prop as ClassedKeys] = id
+  sourcePropsIdMap[prop as ClassedProp] = id
 })
