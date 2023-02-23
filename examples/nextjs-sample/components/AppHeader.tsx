@@ -14,6 +14,7 @@ export function AppHeader() {
         boxShadow: "$low",
         px: "$40",
         py: "$12",
+        minHeight: "$80",
         alignItems: "center",
         justifyContent: "space-between",
         gap: "$16",
@@ -35,6 +36,11 @@ export function AppHeader() {
           <FlexListItem>
             <Anchor as={Link} href="/kitchen-sink">
               Kitchen Sink
+            </Anchor>
+          </FlexListItem>
+          <FlexListItem>
+            <Anchor as={Link} href="/shorthands">
+              Shorthands
             </Anchor>
           </FlexListItem>
         </FlexList>

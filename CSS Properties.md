@@ -502,10 +502,11 @@ const props = [
 ];
 
 ```
-----
 
+---
 
 # GRID TEMPLATE
+
 - Look at what Tailwind does for grid cols, and provide some predefined classes like that as well: https://tailwindcss.com/docs/grid-template-columns
 - Not sure if the rows one is that helpful, though; I wonder if anyone ever uses it: https://tailwindcss.com/docs/grid-template-rows
 - Hmmm... need to think about how we would handle states like hover, focus, focus-within, active, and disabled.
