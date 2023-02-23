@@ -6,6 +6,7 @@ import {
   HTMLAttributes,
   JSXElementConstructor,
   memo,
+  ReactElement,
   useEffect,
   useMemo,
   useRef,
@@ -50,20 +51,22 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     const variantCss = useVariants(mainProps, hasVariants, variantKeys, variantsDefinition)
 
     const isIntrinsic = typeof component === "string"
+    const isStyledComponent = !!(component as any).isStyledComponent
     const Element = useMemo(
-      () => (isIntrinsic ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>)),
+      () =>
+        !isStyledComponent ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>),
       [polyAs]
     )
 
-    const { styleManager: innerStyleManger, ...styleProps } = useMemo(
-      () => style(css, conditions, variantCss, propsCss, styleName, styleManager, { className, index, length }),
-      [conditions, variantCss, propsCss, styleManager, className, index, length]
-    )
-    const innerProps = {} as typeof props
+    const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
+      className,
+      index,
+      length,
+      isIntrinsic,
+      isStyledComponent,
+    })
 
-    if (!isIntrinsic) {
-      innerProps.styleManager = innerStyleManger
-    }
+    if (conditions.debug) useMemo(() => ({ debug: styleProps.debug }), [styleProps])
 
     if (hasVariants && hasVariantKeys) {
       variantKeys.forEach(key => {
@@ -83,10 +86,12 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       }
     }, [])
 
-    return <Element as={isIntrinsic ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} {...innerProps} />
+    return <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
   }
   styledComponent.displayName = styleName
-  return memo(forwardRef(styledComponent)) as any as typeof styledComponent
+  const outputComponent = memo(forwardRef(styledComponent)) as any as typeof styledComponent
+  ;(outputComponent as any).isStyledComponent = true
+  return outputComponent
 }
 
 /** Used to create styling primitives, like `Row`, `Column`, etc.

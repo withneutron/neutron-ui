@@ -73,14 +73,19 @@ export class StyleManager {
 
   private index: number | undefined
   private length: number | undefined
+  private isIntrinsic = false
+  private isStyledComponent = false
+  isActive = true
 
   constructor(conditions: Conditions, name?: string, props?: StyleMangerProps) {
-    const { className, index, length } = props ?? {}
+    const { className, index, length, isIntrinsic, isStyledComponent } = props ?? {}
     this.conditions = conditions
     this.setName(name)
     this.baseClassName = className ? `${className} ` : ""
     this.index = index
     this.length = length
+    this.isIntrinsic = !!isIntrinsic
+    this.isStyledComponent = !!isStyledComponent
   }
 
   private getDebugVarKey(className: string) {
@@ -166,7 +171,7 @@ export class StyleManager {
     this.variantName = name ? `V_${name}` : ""
   }
 
-  setNewStyle(conditions: Conditions, name?: string) {
+  setNewStyle(conditions: Conditions, name?: string, props?: StyleMangerProps) {
     if (this.isDebugMode) {
       // Make sure we sequence the debug info in the correct order
       this.prevStyle = this.style
@@ -174,6 +179,10 @@ export class StyleManager {
       this.prevDebugDict = this.debugDict
       this.debugDict = {}
     }
+
+    const { isIntrinsic, isStyledComponent } = props ?? {}
+    this.isIntrinsic = !!isIntrinsic
+    this.isStyledComponent = !!isStyledComponent
     this.conditions = conditions
     this.setName(name)
   }
@@ -264,6 +273,35 @@ export class StyleManager {
     }
   }
 
+  /** When we reach the end of any Quarks style composition, we can remove the style data from memory */
+  private clear() {
+    if (!this.isDebugMode) {
+      delete (this as any).prevDebugDict
+      delete (this as any).debugDict
+    }
+    delete (this as any).watchCategories
+    delete (this as any).classList
+    delete (this as any).classDict
+    delete (this as any).parentClassDicts
+    delete (this as any).styleVarsDict
+    delete (this as any).styleVars
+    delete (this as any).prevStyle
+    delete (this as any).style
+    delete (this as any).styleCount
+    delete (this as any).conditions
+    delete (this as any).name
+    delete (this as any).baseClassName
+    delete (this as any).variantName
+    delete (this as any).conditionName
+    delete (this as any).pseudoClassName
+    delete (this as any).overridesName
+    delete (this as any).index
+    delete (this as any).length
+    delete (this as any).isIntrinsic
+    delete (this as any).isStyledComponent
+    this.isActive = false
+  }
+
   compile() {
     // Any further usage of this class will be for nested composition
     this.parentClassDicts.push({
@@ -276,25 +314,27 @@ export class StyleManager {
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
     const className = `${this.baseClassName}${outputClass}`
-    const output: { className?: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
-      className: className ? className : undefined,
-      styleManager: this,
+    const output: { style: StyleObj; className?: string; styleManager?: StyleManager; key?: string; debug?: any } = {
       style: {},
+      className: className ? className : undefined,
+      debug: this.debugDict,
     }
 
-    // Generate debug info
-    output.key = this.compileDebugInfo()
+    if (!this.isIntrinsic) {
+      // Generate debug info
+      output.key = this.compileDebugInfo()
+    }
 
     // Generate inline styles
     if (this.styleCount > 0) {
-      if (this.isDebugMode) {
-        const style = { ...this.style, ...this.prevStyle }
-        output.style = { ...style }
-        output.style["--Variables"] = "▼"
-        Object.entries(this.styleVars).forEach(([key, value]) => (output.style[key] = value))
-      } else {
-        output.style = this.styleVars
-      }
+      output.style = this.styleVars
+    }
+
+    if (this.isStyledComponent) {
+      // Pass the StyleManager instance down to the styled component we're composing on top of
+      output.styleManager = this
+    } else {
+      this.clear()
     }
 
     return output
@@ -521,22 +561,22 @@ export class StyleManager {
       this.add(prop, result.className, pseudo, result.varName, result.value, originalProp, originalValue)
 
       // If this is a combo class with multiple props, make sure we avoid conflicts
-      if (result.props && result.props.length > 0) {
-        result.props.forEach(resultProp => {
-          const [comboProp, comboValue] = resultProp
-          // This won't actually override the combo prop, but will avoid conflicts
-          this.add(
-            comboProp as CssPropKey,
-            result.className,
-            pseudo ?? BASE,
-            result.varName,
-            result.value,
-            originalProp,
-            value
-          )
-          this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
-        })
-      }
+      // if (result.props && result.props.length > 0) {
+      //   result.props.forEach(resultProp => {
+      //     const [comboProp, comboValue] = resultProp
+      //     // This won't actually override the combo prop, but will avoid conflicts
+      //     this.add(
+      //       comboProp as CssPropKey,
+      //       result.className,
+      //       pseudo,
+      //       result.varName,
+      //       result.value,
+      //       originalProp,
+      //       originalValue
+      //     )
+      //     this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
+      //   })
+      // }
     }
   }
 
@@ -652,4 +692,6 @@ export type StyleMangerProps = {
   className?: string
   index?: number
   length?: number
+  isIntrinsic?: boolean
+  isStyledComponent?: boolean
 }
