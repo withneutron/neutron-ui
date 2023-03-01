@@ -545,7 +545,12 @@ export class StyleManager {
   /** Remove style from style manager */
   private removeStyle(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
     const propId = this.getPropId(prop)
-    this.classList.splice(this.classDict[pseudo][propId], 1)
+    const index = this.classDict[pseudo][propId]
+    if (index === -1) {
+      return
+    } else if (index !== undefined) {
+      this.classList.splice(index, 1)
+    }
     this.classDict[pseudo][propId] = -1
   }
 
@@ -559,32 +564,13 @@ export class StyleManager {
     const result = this.getStyle(prop, originalValue, pseudo)
     if (result) {
       this.add(prop, result.className, pseudo, result.varName, result.value, originalProp, originalValue)
-
-      // If this is a combo class with multiple props, make sure we avoid conflicts
-      // if (result.props && result.props.length > 0) {
-      //   result.props.forEach(resultProp => {
-      //     const [comboProp, comboValue] = resultProp
-      //     // This won't actually override the combo prop, but will avoid conflicts
-      //     this.add(
-      //       comboProp as CssPropKey,
-      //       result.className,
-      //       pseudo,
-      //       result.varName,
-      //       result.value,
-      //       originalProp,
-      //       originalValue
-      //     )
-      //     this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
-      //   })
-      // }
     }
   }
 
   private getStaticValue(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
     const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
     const staticProp = staticMap[prop as keyof typeof staticMap]
-    const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
-    return staticValue
+    return staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
   }
 
   /** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
@@ -611,9 +597,7 @@ export class StyleManager {
             scaledProp && aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
         }
       }
-      const mapProps = propScale.cssValueMapProps
-      const props = mapProps[value as keyof typeof mapProps] as CssPropKey[]
-      return scaledValue ? { className: scaledValue, props } : undefined
+      return scaledValue ? { className: scaledValue } : undefined
     }
 
     // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
