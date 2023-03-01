@@ -16,6 +16,7 @@ export type CssFromMap<M extends MapObject> = WithMappedProps<{
   [key in keyof M]?: keyof M[key]
 }>
 
+// prettier-ignore
 export type CssFromCustomVars<M extends CustomVarObject> = WithMappedProps<
   & { [key in Shared<M, CustomVarPropHints>]?: CustomVarPropHints[key] | CoreCustomValues }
   & { [key in NotShared<M, CustomVarPropHints>]?: CoreCustomValues }
@@ -44,6 +45,7 @@ export type Exclusive<
   C extends Record<string, unknown>
 > = Extract<NotShared<A, B>, NotShared<A, C>>
 
+// prettier-ignore
 export type MergedCssProps<A extends MapProps, B extends MapProps, C extends MapProps> =
   & { [prop in NestedShared<A, C, B>]?: A[prop] | C[prop] | B[prop] }
   & { [prop in NestedShared<C, A, B>]?: A[prop] | C[prop] | B[prop] }

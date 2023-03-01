@@ -339,8 +339,11 @@ export const valueMappers = {
 type MapType = typeof mappedProps
 type MapKey = keyof MapType
 type MappedProps<K extends MapKey> = keyof ReturnType<MapType[K]>
-type MaybeCustomString<T, K extends MapKey | ComplexShorthandProp> = K extends ComplexShorthandProp ? T | CoreCustomValues : T
+type MaybeCustomString<T, K extends MapKey | ComplexShorthandProp> = K extends ComplexShorthandProp
+  ? T | CoreCustomValues
+  : T
 
+// prettier-ignore
 export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = 
   & T
   & { [key in Shared<MapType, OverrideScaledProp>]?: MaybeCustomString<OverrideScaledProp[key], key> }
