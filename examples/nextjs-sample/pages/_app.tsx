@@ -9,12 +9,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { locale, colorMode, isMobile, isDebugMode, ...props } = pageProps
 
   return (
-    <QuarksProvider
-      defaultColorMode={colorMode}
-      isMobile={isMobile}
-      isDebugMode={isDebugMode}
-      semanticColorOverrides={{ tertiary: { hue: 210, saturation: 12, isNeutral: true } }}
-    >
+    <QuarksProvider defaultColorMode={colorMode} isMobile={isMobile} isDebugMode={isDebugMode}>
       <Head>
         <title>Neutron UI — Sample Next.js App</title>
         <meta name="description" content="Sample Next.js app, using NeutronUI" />

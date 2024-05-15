@@ -386,6 +386,26 @@ export function generateStaticPropsCss<K extends FilterKeys>(generateClass: (val
       "backgroundRepeat",
       options("repeat-x", "repeat-y", "repeat", "space", "round", "no-repeat")
     ),
+
+    borderColor: values("borderColor", color),
+    borderImage: values("borderImage"),
+    borderRadius: values("borderRadius"),
+    borderStyle: values("borderStyle"),
+    borderWidth: values("borderWidth"),
+    columnRule: values("columnRule"),
+    columns: values("columns"),
+    flex: values("flex", options("1")),
+    gap: values("gap"),
+    grid: values("grid"),
+    gridArea: values("gridArea"),
+    gridColumn: values("gridColumn"),
+    gridRow: values("gridRow"),
+    gridTemplate: values("gridTemplate"),
+    mask: values("mask"),
+    scrollMargin: values("scrollMargin"),
+    scrollPadding: values("scrollPadding"),
+    textEmphasis: values("textEmphasis"),
+    transition: values("transition"),
   } as const
 
   if (keys) {

@@ -14,6 +14,8 @@ import {
   isCustomNthChild,
   getIndexErrorMessage,
   directionalProps,
+  complexShorthandMappedProps,
+  ComplexShorthandProp,
 } from "./props"
 import {
   token,
@@ -29,6 +31,7 @@ import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey, VariantCS
 import { conditionKeys, conditionsMap, ConditionCategories, ConditionCategory } from "./conditions"
 import { CssAlias, SCALED_ALIAS } from "./scales/scales.models"
 import { mapAliasToValue } from "./scales"
+import { THEME_PREFIX } from "./utils"
 
 /*************************************************************************************************
  * StyleManager Class Definition
@@ -70,14 +73,19 @@ export class StyleManager {
 
   private index: number | undefined
   private length: number | undefined
+  private isIntrinsic = false
+  private isStyledComponent = false
+  isActive = true
 
   constructor(conditions: Conditions, name?: string, props?: StyleMangerProps) {
-    const { className, index, length } = props ?? {}
+    const { className, index, length, isIntrinsic, isStyledComponent } = props ?? {}
     this.conditions = conditions
     this.setName(name)
     this.baseClassName = className ? `${className} ` : ""
     this.index = index
     this.length = length
+    this.isIntrinsic = !!isIntrinsic
+    this.isStyledComponent = !!isStyledComponent
   }
 
   private getDebugVarKey(className: string) {
@@ -163,7 +171,7 @@ export class StyleManager {
     this.variantName = name ? `V_${name}` : ""
   }
 
-  setNewStyle(conditions: Conditions, name?: string) {
+  setNewStyle(conditions: Conditions, name?: string, props?: StyleMangerProps) {
     if (this.isDebugMode) {
       // Make sure we sequence the debug info in the correct order
       this.prevStyle = this.style
@@ -171,6 +179,10 @@ export class StyleManager {
       this.prevDebugDict = this.debugDict
       this.debugDict = {}
     }
+
+    const { isIntrinsic, isStyledComponent } = props ?? {}
+    this.isIntrinsic = !!isIntrinsic
+    this.isStyledComponent = !!isStyledComponent
     this.conditions = conditions
     this.setName(name)
   }
@@ -183,15 +195,18 @@ export class StyleManager {
     return propId
   }
 
-  private getScaledProps(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
+  private getScaledProps<V extends string>(prop: CssPropKey, value: V, pseudo: PseudoCategoryKey = BASE) {
     const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
     const scaledProp = scaledMap ? scaledMap[prop as keyof typeof scaledMap] : undefined
     const scaleKey = scaledPropScale[prop as ScaledKey]
     const propScale = scales[scaleKey]
+    const scaledValue: string | undefined =
+      scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
     return {
       scaledProp,
       scaleKey,
       propScale,
+      scaledValue,
     }
   }
 
@@ -200,7 +215,7 @@ export class StyleManager {
     return this.watchCategories
   }
 
-  watchCondition(condition: InlineConditionKey) {
+  setWatchedCondition(condition: InlineConditionKey) {
     const category = ConditionCategories[condition as ConditionKey]
     if (category) {
       this.watchCategories[category] = true
@@ -226,6 +241,9 @@ export class StyleManager {
     if (hasParentConflict) return
 
     const index = this.classDict[pseudoClass][propId] ?? this.classList.length
+
+    // Skip it if a complex shorthand is overriding this specific prop
+    if (index === -1) return
 
     if (this.classDict[pseudoClass][propId] === undefined) {
       this.classList.push(className)
@@ -255,6 +273,35 @@ export class StyleManager {
     }
   }
 
+  /** When we reach the end of any Quarks style composition, we can remove the style data from memory */
+  private clear() {
+    if (!this.isDebugMode) {
+      delete (this as any).prevDebugDict
+      delete (this as any).debugDict
+    }
+    delete (this as any).watchCategories
+    delete (this as any).classList
+    delete (this as any).classDict
+    delete (this as any).parentClassDicts
+    delete (this as any).styleVarsDict
+    delete (this as any).styleVars
+    delete (this as any).prevStyle
+    delete (this as any).style
+    delete (this as any).styleCount
+    delete (this as any).conditions
+    delete (this as any).name
+    delete (this as any).baseClassName
+    delete (this as any).variantName
+    delete (this as any).conditionName
+    delete (this as any).pseudoClassName
+    delete (this as any).overridesName
+    delete (this as any).index
+    delete (this as any).length
+    delete (this as any).isIntrinsic
+    delete (this as any).isStyledComponent
+    this.isActive = false
+  }
+
   compile() {
     // Any further usage of this class will be for nested composition
     this.parentClassDicts.push({
@@ -267,25 +314,27 @@ export class StyleManager {
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
     const className = `${this.baseClassName}${outputClass}`
-    const output: { className?: string; styleManager: StyleManager; style: StyleObj; key?: string } = {
-      className: className ? className : undefined,
-      styleManager: this,
+    const output: { style: StyleObj; className?: string; styleManager?: StyleManager; key?: string; debug?: any } = {
       style: {},
+      className: className ? className : undefined,
+      debug: this.debugDict,
     }
 
-    // Generate debug info
-    output.key = this.compileDebugInfo()
+    if (!this.isIntrinsic) {
+      // Generate debug info
+      output.key = this.compileDebugInfo()
+    }
 
     // Generate inline styles
     if (this.styleCount > 0) {
-      if (this.isDebugMode) {
-        const style = { ...this.style, ...this.prevStyle }
-        output.style = { ...style }
-        output.style["--Variables"] = "▼"
-        Object.entries(this.styleVars).forEach(([key, value]) => (output.style[key] = value))
-      } else {
-        output.style = this.styleVars
-      }
+      output.style = this.styleVars
+    }
+
+    if (this.isStyledComponent) {
+      // Pass the StyleManager instance down to the styled component we're composing on top of
+      output.styleManager = this
+    } else {
+      this.clear()
     }
 
     return output
@@ -319,7 +368,7 @@ export class StyleManager {
       // If the prop is a condition, process its inner props, including its inner pseudo-classes
       if (conditionsMap[propName as ConditionKey]) {
         // Register that this style set depends on this condition being watched
-        this.watchCondition(propName as ConditionKey)
+        this.setWatchedCondition(propName as ConditionKey)
         // Skip if the condition is currently false
         if (!this.conditions[propName as ConditionKey]) continue
         // Otherwise, proceed
@@ -375,18 +424,20 @@ export class StyleManager {
     pseudo?: CombinedPseudoClassKey,
     originalProp?: CssPropKey
   ) {
+    let index = 0
+
     // Check first to see if we have an inline condition `object`!
     if (typeof value === "object") {
       // If inline conditions include a base value, process that first
       if (value[BASE] !== undefined) {
         this.processCssProp(prop, value[BASE] as InlineConditionValue, BASE, pseudo)
       }
-      let index = 0
+      index = 0
       for (; index < conditionKeys.length; index++) {
         const conditionKey = conditionKeys[index]
         const innerValue = value[conditionKey]
         if (innerValue !== undefined) {
-          this.watchCondition(conditionKey)
+          this.setWatchedCondition(conditionKey)
           if (this.conditions[conditionKey] === true) {
             this.conditionName = conditionKey.replace("!", "not-")
             this.processCssProp(prop, innerValue as InlineConditionValue, conditionKey as InlineConditionKey, pseudo)
@@ -400,7 +451,7 @@ export class StyleManager {
     let scaledOriginalProp: CssPropKey | undefined
 
     if (originalProp) {
-      const { propScale } = this.getScaledProps(originalProp, pseudo as PseudoCategoryKey)
+      const { propScale } = this.getScaledProps(originalProp, value, pseudo as PseudoCategoryKey)
       if (propScale?.aliasMap) {
         const scaledValue = mapAliasToValue(propScale.aliasMap, prop, value)
         if (scaledValue) {
@@ -417,22 +468,31 @@ export class StyleManager {
       value = directionalMapper(value, !!this.conditions.rtl)
     }
 
-    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
+    const complexShorthandMap = complexShorthandMappedProps[prop as ComplexShorthandProp]
+    let isPreGenValue = this.isPreGenValue(prop, value)
+    let hasCustomComplexShorthandValue = !isPreGenValue && !!complexShorthandMap
+
     // If it's a mapped prop, run its mapping func, and proceed with the result of that
+    const mapper = prop in mappedProps ? mappedProps[prop as keyof typeof mappedProps] : undefined
     if (mapper) {
       const innerProps = Object.entries(mapper(value))
-      let index = 0
+      index = 0
       for (; index < innerProps.length; index++) {
-        const [propName, propValue] = innerProps[index]
-        this.processCssProp(
-          propName as CssPropKey,
-          propValue,
-          condition,
-          pseudo,
-          scaledOriginalProp ?? originalProp ?? prop
-        )
+        const [propName, propValue] = innerProps[index] as [CssPropKey, string]
+
+        // Check if this is a pre-generated value
+        isPreGenValue = this.isPreGenValue(propName, propValue)
+
+        // Only remap if this is a pre-generated value, or it's not a complex shorthand prop!
+        if (isPreGenValue || !complexShorthandMap) {
+          this.processCssProp(propName, propValue, condition, pseudo, scaledOriginalProp ?? originalProp ?? prop)
+        } else {
+          hasCustomComplexShorthandValue = true
+        }
       }
-      return
+      if (!hasCustomComplexShorthandValue) {
+        return
+      }
     }
 
     // If there are any special mappers for this value, apply them now
@@ -441,9 +501,15 @@ export class StyleManager {
     if (pseudo) {
       const pseudos =
         pseudo in pseudoClassAliases ? pseudoClassAliases[pseudo as keyof typeof pseudoClassAliases] : [pseudo]
-      let index = 0
+      index = 0
       for (; index < pseudos.length; index++) {
         const pseudoKey = pseudos[index] as PseudoClassKey
+
+        // Process complex shorthands that have custom values
+        if (complexShorthandMap && hasCustomComplexShorthandValue) {
+          this.removeComplexShorthandStyles(complexShorthandMap, pseudoKey)
+        }
+
         this.pseudoClassName = StyleManager.sanitizePseudoKey(pseudoKey)
         this.addStyle(prop, value as string, pseudoKey, originalProp ?? prop)
         this.pseudoClassName = ""
@@ -451,43 +517,67 @@ export class StyleManager {
       return
     }
 
+    // Process complex shorthands that have custom values
+    if (complexShorthandMap && hasCustomComplexShorthandValue) {
+      this.removeComplexShorthandStyles(complexShorthandMap)
+    }
+
     this.addStyle(prop, value, undefined, originalProp ?? prop)
   }
 
-  /** Adds style to style manager */
-  private addStyle(prop: CssPropKey, value: string, pseudo?: PseudoClassKey, originalProp?: CssPropKey) {
-    const result = this.getStyle(prop, value, pseudo)
-    if (result) {
-      this.add(prop, result.className, pseudo ?? BASE, result.varName, result.value, originalProp, value)
+  private isPreGenValue(prop: CssPropKey, value: InlineConditionValue) {
+    // All theme tokens should be treated as pre-gen
+    if (typeof value !== "string" || value[0] === THEME_PREFIX) return true
 
-      // If this is a combo class with multiple props, make sure we avoid conflicts
-      if (result.props && result.props.length > 0) {
-        result.props.forEach(resultProp => {
-          const [comboProp, comboValue] = resultProp
-          // This won't actually override the combo prop, but will avoid conflicts
-          this.add(
-            comboProp as CssPropKey,
-            result.className,
-            pseudo ?? BASE,
-            result.varName,
-            result.value,
-            originalProp,
-            value
-          )
-          this.addDebugInfo(`${result.className}__${comboProp}`, comboValue)
-        })
-      }
+    const staticValue = this.getStaticValue(prop, value)
+    const { scaledValue } = this.getScaledProps(prop, value)
+    return !!staticValue || !!scaledValue
+  }
+
+  private removeComplexShorthandStyles(complexShorthandMap: CssPropKey[], pseudo?: PseudoClassKey) {
+    let index = 0
+    for (; index < complexShorthandMap.length; index++) {
+      const propName = complexShorthandMap[index]
+      this.removeStyle(propName, pseudo)
     }
   }
 
-  /** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
-  getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
+  /** Remove style from style manager */
+  private removeStyle(prop: CssPropKey, pseudo: PseudoCategoryKey = BASE) {
+    const propId = this.getPropId(prop)
+    const index = this.classDict[pseudo][propId]
+    if (index === -1) {
+      return
+    } else if (index !== undefined) {
+      this.classList.splice(index, 1)
+    }
+    this.classDict[pseudo][propId] = -1
+  }
+
+  /** Adds style to style manager */
+  private addStyle(
+    prop: CssPropKey,
+    originalValue: string,
+    pseudo: PseudoCategoryKey = BASE,
+    originalProp?: CssPropKey
+  ) {
+    const result = this.getStyle(prop, originalValue, pseudo)
+    if (result) {
+      this.add(prop, result.className, pseudo, result.varName, result.value, originalProp, originalValue)
+    }
+  }
+
+  private getStaticValue(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
     const staticMap = staticPropMap[pseudo as keyof typeof staticPropMap]
     const staticProp = staticMap[prop as keyof typeof staticMap]
-    const staticValue = staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
+    return staticProp && value in staticProp ? staticProp[value as keyof typeof staticProp] : undefined
+  }
 
-    const { scaledProp, scaleKey, propScale } = this.getScaledProps(prop, pseudo)
-    let scaledValue = scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
+  /** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
+  private getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
+    const staticValue = this.getStaticValue(prop, value, pseudo)
+    // eslint-disable-next-line prefer-const
+    let { scaledProp, scaleKey, propScale, scaledValue } = this.getScaledProps(prop, value, pseudo)
 
     if (staticValue) {
       return { className: staticValue }
@@ -507,9 +597,7 @@ export class StyleManager {
             scaledProp && aliasValue in scaledProp ? scaledProp[aliasValue as keyof typeof scaledProp] : undefined
         }
       }
-      const mapProps = propScale.cssValueMapProps
-      const props = mapProps[value as keyof typeof mapProps] as CssPropKey[]
-      return scaledValue ? { className: scaledValue, props } : undefined
+      return scaledValue ? { className: scaledValue } : undefined
     }
 
     // If value is scaled, but we ended up here, it could be filtered out of the scale (e.g., a non-core color)
@@ -588,4 +676,6 @@ export type StyleMangerProps = {
   className?: string
   index?: number
   length?: number
+  isIntrinsic?: boolean
+  isStyledComponent?: boolean
 }

@@ -16,13 +16,45 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
   }
 
   const props = {
-    background: value("background"), // Scaled color values get routed to `backgroundColor` instead
-    backgroundColor: value("backgroundColor"),
-    backgroundBlendMode: value("backgroundBlendMode"),
-    backgroundPosition: value("backgroundPosition"),
-    backgroundImage: value("backgroundImage"),
-    backgroundSize: value("backgroundSize"),
-    backgroundRepeat: value("backgroundRepeat"),
+    // Complex shorthand props come first
+    background: value("background"),
+
+    borderColor: value("borderColor"),
+    borderStyle: value("borderStyle"),
+    borderWidth: value("borderWidth"),
+    borderTop: value("borderTop"),
+    borderBottom: value("borderBottom"),
+    borderLeft: value("borderLeft"),
+    borderRight: value("borderRight"),
+    borderBlockStart: value("borderBlockStart"),
+    borderBlockEnd: value("borderBlockEnd"),
+    borderInlineStart: value("borderInlineStart"),
+    borderInlineEnd: value("borderInlineEnd"),
+
+    columnRule: value("columnRule"),
+    columnCount: value("columnCount"),
+    columnWidth: value("columnWidth"),
+
+    flex: value("flex"),
+
+    gridTemplate: value("gridTemplate"),
+    gridArea: value("gridArea"),
+    gridRow: value("gridRow"),
+    gridColumn: value("gridColumn"),
+
+    transition: value("transition"),
+
+    listStyle: value("listStyle"),
+
+    animation: value("animation"),
+    border: value("border"),
+    borderRadius: value("borderRadius"),
+    columns: value("columns"),
+    font: value("font"),
+    gap: value("gap"),
+    grid: value("grid"),
+    outline: value("outline"),
+    textDecoration: value("textDecoration"),
 
     // These are technically remapped, but we want the inline var assignment to only need to
     // include the actual gradient, not the type. This will keep those assignments shorter!
@@ -30,13 +62,14 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     radialGradient: value("backgroundImage", v => `radial-gradient(${v})`),
     conicGradient: value("backgroundImage", v => `conic-gradient(${v})`),
 
-    mask: value("mask"),
+    backgroundColor: value("backgroundColor"),
+    backgroundBlendMode: value("backgroundBlendMode"),
+    backgroundPosition: value("backgroundPosition"),
+    backgroundImage: value("backgroundImage"),
+    backgroundSize: value("backgroundSize"),
+    backgroundRepeat: value("backgroundRepeat"),
 
-    borderImage: value("borderImage"),
     borderSpacing: value("borderSpacing"),
-    borderColor: value("borderColor"),
-    borderStyle: value("borderStyle"),
-    borderWidth: value("borderWidth"),
     borderBlock: value("borderBlock"),
     borderBlockColor: value("borderBlockColor"),
     borderBlockStyle: value("borderBlockStyle"),
@@ -45,26 +78,19 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     borderInlineColor: value("borderInlineColor"),
     borderInlineStyle: value("borderInlineStyle"),
     borderInlineWidth: value("borderInlineWidth"),
-    borderTop: value("borderTop"),
     borderTopColor: value("borderTopColor"),
     borderTopStyle: value("borderTopStyle"),
     borderTopWidth: value("borderTopWidth"),
-    borderBottom: value("borderBottom"),
     borderBottomColor: value("borderBottomColor"),
     borderBottomStyle: value("borderBottomStyle"),
     borderBottomWidth: value("borderBottomWidth"),
-    borderLeft: value("borderLeft"),
     borderLeftColor: value("borderLeftColor"),
     borderLeftStyle: value("borderLeftStyle"),
     borderLeftWidth: value("borderLeftWidth"),
-    borderRight: value("borderRight"),
     borderRightColor: value("borderRightColor"),
     borderRightStyle: value("borderRightStyle"),
     borderRightWidth: value("borderRightWidth"),
-    borderBlockStart: value("borderBlockStart"),
-    borderBlockEnd: value("borderBlockEnd"),
-    borderInlineStart: value("borderInlineStart"),
-    borderInlineEnd: value("borderInlineEnd"),
+    borderImage: value("borderImage"),
 
     outlineColor: value("outlineColor"),
     outlineStyle: value("outlineStyle"),
@@ -76,6 +102,8 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
 
     caretColor: value("caretColor"),
     columnRuleColor: value("columnRuleColor"),
+    columnRuleStyle: value("columnRuleStyle"),
+    columnRuleWidth: value("columnRuleWidth"),
 
     fontSize: value("fontSize"),
     fontFamily: value("fontFamily"),
@@ -85,20 +113,19 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     textShadow: value("textShadow"),
     letterSpacing: value("letterSpacing"),
 
-    flex: value("flex"),
     flexGrow: value("flexGrow"),
     flexShrink: value("flexShrink"),
     flexBasis: value("flexBasis"),
 
-    gridTemplate: value("gridTemplate"),
     gridTemplateRows: value("gridTemplateRows"),
     gridTemplateColumns: value("gridTemplateColumns"),
     gridTemplateAreas: value("gridTemplateAreas"),
-    gridArea: value("gridArea"),
-    gridRow: value("gridRow"),
-    gridColumn: value("gridColumn"),
     gridAutoRows: value("gridAutoRows"),
     gridAutoColumns: value("gridAutoColumns"),
+    gridRowStart: value("gridRowStart"),
+    gridColumnStart: value("gridColumnStart"),
+    gridRowEnd: value("gridRowEnd"),
+    gridColumnEnd: value("gridColumnEnd"),
 
     transform: value("transform"),
     transformOrigin: value("transformOrigin"),
@@ -109,18 +136,22 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     animationName: value("animationName"),
     animationTimingFunction: value("animationTimingFunction"),
 
-    transition: value("transition"),
     transitionProperty: value("transitionProperty"),
     transitionDuration: value("transitionDuration"),
     transitionDelay: value("transitionDelay"),
     transitionTimingFunction: value("transitionTimingFunction"),
 
     opacity: value("opacity"),
+    mask: value("mask"),
 
-    listStyle: value("listStyle"),
     listStyleImage: value("listStyleImage"),
 
     filter: value("filter"),
+
+    scrollMargin: value("scrollMargin"),
+    scrollPadding: value("scrollPadding"),
+
+    textEmphasis: value("textEmphasis"),
 
     // Make sure all sizing-related properties can have custom values
     inlineSize: value("inlineSize"),

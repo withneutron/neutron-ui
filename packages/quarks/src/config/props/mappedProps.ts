@@ -1,6 +1,7 @@
-import { NotShared, Shared } from "../../shared/models"
+import { CoreCustomValues, NotShared, Shared } from "../../shared/models"
 import { OverrideScaledProp } from "../styles.css"
 import { CssPropKey } from "./props.models"
+import { ComplexShorthandProp } from "./sourceProps"
 
 type PropValue = string | number
 
@@ -103,6 +104,7 @@ export const mappedProps = {
   paddingRight: getPropMapper("paddingInlineEnd"),
   paddingTop: getPropMapper("paddingBlockStart"),
 
+  inset: getPropMapper("insetBlockEnd", "insetBlockStart", "insetInlineStart", "insetInlineEnd"),
   bottom: getPropMapper("insetBlockEnd"),
   top: getPropMapper("insetBlockStart"),
   left: getPropMapper("insetInlineStart"),
@@ -233,8 +235,92 @@ export const mappedProps = {
   ),
 } as const
 
+/** Maps complex shorthand props to the base props that they replace */
+export const complexShorthandMappedProps: Record<ComplexShorthandProp, CssPropKey[]> = {
+  // NOTE: Commented out props are currently unsupported
+  animation: [
+    "animationName",
+    "animationDuration",
+    "animationTimingFunction",
+    "animationDelay",
+    "animationIterationCount",
+    "animationDirection",
+    "animationFillMode",
+    "animationPlayState",
+  ],
+  background: [
+    "backgroundColor",
+    "backgroundImage",
+    "backgroundPosition",
+    "backgroundRepeat",
+    "backgroundSize",
+    // "backgroundAttachment",
+    // "backgroundClip",
+    // "backgroundOrigin",
+  ],
+
+  border: [
+    "borderBlockStartColor",
+    "borderBlockStartStyle",
+    "borderBlockStartWidth",
+    "borderBlockEndColor",
+    "borderBlockEndStyle",
+    "borderBlockEndWidth",
+    "borderInlineStartColor",
+    "borderInlineStartStyle",
+    "borderInlineStartWidth",
+    "borderInlineEndColor",
+    "borderInlineEndStyle",
+    "borderInlineEndWidth",
+  ],
+  borderColor: ["borderBlockStartColor", "borderBlockEndColor", "borderInlineStartColor", "borderInlineEndColor"],
+  borderStyle: ["borderBlockStartStyle", "borderBlockEndStyle", "borderInlineStartStyle", "borderInlineEndStyle"],
+  borderWidth: ["borderBlockStartWidth", "borderBlockEndWidth", "borderInlineStartWidth", "borderInlineEndWidth"],
+  borderBlockStart: ["borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"],
+  borderBlockEnd: ["borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"],
+  borderTop: ["borderBlockStartColor", "borderBlockStartStyle", "borderBlockStartWidth"],
+  borderBottom: ["borderBlockEndColor", "borderBlockEndStyle", "borderBlockEndWidth"],
+  borderInlineStart: ["borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"],
+  borderInlineEnd: ["borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"],
+  borderLeft: ["borderInlineStartColor", "borderInlineStartStyle", "borderInlineStartWidth"],
+  borderRight: ["borderInlineEndColor", "borderInlineEndStyle", "borderInlineEndWidth"],
+  borderRadius: ["borderStartStartRadius", "borderStartEndRadius", "borderEndStartRadius", "borderEndEndRadius"],
+  // borderImage: ["borderImageOutset", "borderImageRepeat", "borderImageSlice", "borderImageSource", "borderImageWidth"],
+
+  columnRule: ["columnRuleWidth", "columnRuleStyle", "columnRuleColor"],
+  columns: ["columnCount", "columnWidth"],
+  flex: ["flexGrow", "flexShrink", "flexBasis"],
+  font: [
+    "fontFamily",
+    "fontSize",
+    "fontStyle",
+    "fontWeight",
+    "lineHeight",
+    // "fontStretch",
+    // "fontVariant",
+  ],
+  gap: ["columnGap", "rowGap"],
+  grid: [
+    "gridAutoColumns",
+    "gridAutoFlow",
+    "gridAutoRows",
+    "gridTemplateAreas",
+    "gridTemplateColumns",
+    "gridTemplateRows",
+  ],
+  gridArea: ["gridRowStart", "gridColumnStart", "gridRowEnd", "gridColumnEnd"],
+  gridColumn: ["gridColumnEnd", "gridColumnStart"],
+  gridRow: ["gridRowStart", "gridRowEnd"],
+  gridTemplate: ["gridTemplateAreas", "gridTemplateColumns", "gridTemplateRows"],
+  listStyle: ["listStyleImage", "listStylePosition", "listStyleType"],
+  // mask: ["maskClip", "maskComposite", "maskImage", "maskMode", "maskOrigin", "maskPosition", "maskRepeat", "maskSize"],
+  outline: ["outlineColor", "outlineStyle", "outlineWidth"],
+  textDecoration: ["textDecorationColor", "textDecorationLine", "textDecorationStyle", "textDecorationThickness"],
+  transition: ["transitionDelay", "transitionDuration", "transitionProperty", "transitionTimingFunction"],
+}
+
 /*************************************************************************************************
- * VALUE MAPPERS
+ * HELPERS
  *************************************************************************************************/
 
 export const valueMappers = {
@@ -246,42 +332,6 @@ export const valueMappers = {
     return value
   },
 } as const
-/** 
-* THIS LOGIC SHOULD BE RUN IN THE CSS PROCESSOR, not here, because it should also apply to the
-* native prop, not just this util!
-*
-* gt: getPropMapper("gridTemplate"], v => {
-* }),
-* gtRows: getPropMapper(
-*   // If BOTH rows + cols are set, JOIN onto gridTemplate
-*   (_v, p) => {
-*     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-*     return ["gridTemplateRows"]
-*   },
-*   (v, p) => {
-*     const cols = p.gtRows || p.gridTemplateRows
-*     if (cols) return `${v} / ${cols}`
-*     return v
-*   }
-* ),
-* gtColumns: getPropMapper(
-*   // If BOTH rows + cols are set, JOIN onto gridTemplate
-*   (_v, p) => {
-*     if (p.gtRows || p.gridTemplateRows) return ["gridTemplate"]
-*     return ["gridTemplateColumns"]
-*   },
-*   (v, p) => {
-*     const rows = p.gtRows || p.gridTemplateRows
-*     if (rows) return `${rows} / ${v}`
-*     return v
-*   }
-* ),
-
-* These have custom classes that use --var in a "template", just like these string templates
-* linearGradient: getPropMapper("backgroundImage"], v => `linear-gradient(${v})`),
-* radialGradient: getPropMapper("backgroundImage"], v => `radial-gradient(${v})`),
-* conicGradient: getPropMapper("backgroundImage"], v => `conic-gradient(${v})`),
-*/
 
 /*************************************************************************************************
  * TYPES
@@ -289,7 +339,12 @@ export const valueMappers = {
 type MapType = typeof mappedProps
 type MapKey = keyof MapType
 type MappedProps<K extends MapKey> = keyof ReturnType<MapType[K]>
+type MaybeCustomString<T, K extends MapKey | ComplexShorthandProp> = K extends ComplexShorthandProp
+  ? T | CoreCustomValues
+  : T
 
-export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = T & {
-  [key in Shared<MapType, OverrideScaledProp>]?: OverrideScaledProp[key]
-} & { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }
+// prettier-ignore
+export type WithMappedProps<T extends Partial<Record<CssPropKey, any>>> = 
+  & T
+  & { [key in Shared<MapType, OverrideScaledProp>]?: MaybeCustomString<OverrideScaledProp[key], key> }
+  & { [key in NotShared<MapType, OverrideScaledProp>]?: T[Extract<keyof T, MappedProps<key>>] }

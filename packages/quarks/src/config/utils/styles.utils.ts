@@ -55,8 +55,10 @@ export function style(
   manager?: StyleManager,
   props?: StyleMangerProps
 ) {
+  if (manager && !manager.isActive) return { debug: {} }
+
   if (manager) {
-    manager.setNewStyle(conditions, styleName)
+    manager.setNewStyle(conditions, styleName, props)
   } else {
     manager = new StyleManager(conditions, styleName, props)
   }

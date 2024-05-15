@@ -49,21 +49,26 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     // Get any variants that are valid, based on our incoming mainProps
     const variantCss = useVariants(mainProps, hasVariants, variantKeys, variantsDefinition)
 
+    const hasStyleManager = !!styleManager
     const isIntrinsic = typeof component === "string"
+    const isStyledComponent = !!(component as any).isStyledComponent
     const Element = useMemo(
-      () => (isIntrinsic ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>)),
+      () =>
+        !isStyledComponent ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>),
       [polyAs]
     )
 
-    const { styleManager: innerStyleManger, ...styleProps } = useMemo(
-      () => style(css, conditions, variantCss, propsCss, styleName, styleManager, { className, index, length }),
-      [conditions, variantCss, propsCss, styleManager, className, index, length]
-    )
-    const innerProps = {} as typeof props
+    const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
+      className,
+      index,
+      length,
+      isIntrinsic,
+      isStyledComponent,
+    })
 
-    if (!isIntrinsic) {
-      innerProps.styleManager = innerStyleManger
-    }
+    // Because this is memoized, it can be seen in react-devtools
+    useMemo(() => ({ debug: styleProps.debug }), [styleProps])
+    delete styleProps.debug
 
     if (hasVariants && hasVariantKeys) {
       variantKeys.forEach(key => {
@@ -72,7 +77,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     }
 
     useEffect(() => {
-      if (mainProps.style && !styleManager) {
+      if (mainProps.style && !hasStyleManager) {
         const isStringPolyAs = typeof polyAs === "string" && polyAs
         const polySuffix = isStringPolyAs && isSemantic ? `.${capitalizeFirstLetter(polyAs)}` : ""
         const polyTail = isStringPolyAs && !isSemantic ? ` (as ${polyAs})` : ""
@@ -81,12 +86,14 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
           `${prefix} does not support direct usage of the \`style\` prop. Please use the \`css\` prop for inline styling`
         )
       }
-    }, [])
+    }, [mainProps.style, hasStyleManager, polyAs, isSemantic])
 
-    return <Element as={isIntrinsic ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} {...innerProps} />
+    return <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
   }
   styledComponent.displayName = styleName
-  return memo(forwardRef(styledComponent)) as any as typeof styledComponent
+  const outputComponent = memo(forwardRef(styledComponent)) as any as typeof styledComponent
+  ;(outputComponent as any).isStyledComponent = true
+  return outputComponent
 }
 
 /** Used to create styling primitives, like `Row`, `Column`, etc.
