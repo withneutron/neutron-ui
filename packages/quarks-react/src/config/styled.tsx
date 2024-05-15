@@ -67,6 +67,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       isStyledComponent,
     })
 
+    // Because this is memoized, it can be seen in react-devtools
     useMemo(() => ({ debug: styleProps.debug }), [styleProps])
     delete styleProps.debug
 
