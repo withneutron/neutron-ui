@@ -5339,6 +5339,20 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
+"@withneutron/quarks-react@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@withneutron/quarks-react/-/quarks-react-0.0.12.tgz#325d870c7244352d4c54a2977a83ed1fe5594091"
+  integrity sha512-Pp8QeI9VYUYB9bIyoAxyYr/nLP21LpjscrNjjGTJKt0ynC2MHO6z/Le8KiibhJA96AKsGqrHKc+3+r5FyfEuUw==
+  dependencies:
+    "@withneutron/quarks" "^0.0.12"
+    react "17.0.2"
+    react-dom "17.0.2"
+
+"@withneutron/quarks@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@withneutron/quarks/-/quarks-0.0.12.tgz#9147e685ba49b124af8ba0ed7403829cba594967"
+  integrity sha512-e9zsM09yA93mHh5HRjnAaMYlt46v8J0lAALMTpIK7VJNOKfaYoNzORRlLW1WAtFQV74kgzQJEs/15YMM1aYfdw==
+
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
   resolved "https://registry.npmjs.org/@xtuc/ieee754/-/ieee754-1.2.0.tgz"
