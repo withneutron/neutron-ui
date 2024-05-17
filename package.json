@@ -1,6 +1,6 @@
 {
   "name": "neutron-ui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A highly accessible and easily customizable UI library.",
   "main": "index.js",
   "repository": "https://github.com/withneutron/neutron-ui.git",
