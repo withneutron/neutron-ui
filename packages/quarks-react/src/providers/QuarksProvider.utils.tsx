@@ -31,7 +31,7 @@ type ResponsiveConditionsState = {
 
 type ResponsiveConditionAction = {
   width: number
-  overrides?: BreakpointOverrides | Record<string, unknown>
+  overrides?: BreakpointOverrides | Record<string, any>
 }
 
 function responsiveConditionsReducer<S extends ResponsiveConditionsState, A extends ResponsiveConditionAction>(
@@ -39,11 +39,11 @@ function responsiveConditionsReducer<S extends ResponsiveConditionsState, A exte
   action: A
 ) {
   const { overrides = {}, width } = action
-  const xs = width <= (overrides.xs ? overrides.xs : observerConditionsMap.xs)
-  const sm = width <= (overrides.sm ? overrides.sm : observerConditionsMap.sm)
-  const md = width <= (overrides.md ? overrides.md : observerConditionsMap.md)
-  const lg = width <= (overrides.lg ? overrides.lg : observerConditionsMap.lg)
-  const xl = width <= (overrides.xl ? overrides.xl : observerConditionsMap.xl)
+  const xs = width <= (Number.isFinite(overrides.xs) ? overrides.xs : observerConditionsMap.xs)
+  const sm = width <= (Number.isFinite(overrides.sm) ? overrides.sm : observerConditionsMap.sm)
+  const md = width <= (Number.isFinite(overrides.md) ? overrides.md : observerConditionsMap.md)
+  const lg = width <= (Number.isFinite(overrides.lg) ? overrides.lg : observerConditionsMap.lg)
+  const xl = width <= (Number.isFinite(overrides.xl) ? overrides.xl : observerConditionsMap.xl)
   const newState = {
     xs: state.xs,
     sm: state.sm,

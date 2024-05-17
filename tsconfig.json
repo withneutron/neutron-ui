@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es5",
     "module": "esnext",
     "jsx": "react-jsx",
-    "lib": ["dom", "esnext", "dom.iterable"],
+    "lib": ["es6", "dom", "esnext", "dom.iterable"],
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "declaration": true,
