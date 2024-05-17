@@ -313,10 +313,18 @@ export class StyleManager {
 
     // Compile our data into an output object
     const outputClass = this.classList.join(" ")
-    const className = `${this.baseClassName}${outputClass}`
-    const output: { style: StyleObj; className?: string; styleManager?: StyleManager; key?: string; debug?: any } = {
+    const className = !this.baseClassName && !outputClass ? undefined : `${this.baseClassName}${outputClass}`
+    const output: {
+      style: StyleObj
+      className?: string
+      class?: string
+      styleManager?: StyleManager
+      key?: string
+      debug?: any
+    } = {
       style: {},
-      className: className ? className : undefined,
+      className,
+      class: className,
       debug: this.debugDict,
     }
 

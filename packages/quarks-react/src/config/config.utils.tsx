@@ -26,6 +26,9 @@ function getSemantic<T extends StyledComponent>(Comp: T, as: keyof JSX.Intrinsic
         })
       }
 
+      // TODO: Figure out a way to do this _NOT_ using `defaultProps`.
+      // ERROR: Support for defaultProps will be removed from function components
+      // in a future major release. Use JavaScript default parameters instead.
       if (prop === "defaultProps") {
         return { as, isSemantic: true }
       }
