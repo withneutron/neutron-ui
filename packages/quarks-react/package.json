@@ -1,6 +1,6 @@
 {
   "name": "@withneutron/quarks-react",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A small, but mighty, (React) styling library for modern app development",
   "main": "dist/quarks-react.js",
@@ -38,6 +38,7 @@
     "watch": "vite build --watch",
     "build:lib": "yarn build",
     "watch:lib": "yarn watch",
+    "version": "changeset version",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
