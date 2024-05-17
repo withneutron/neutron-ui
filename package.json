@@ -57,9 +57,9 @@
     "cypress": "start-server-and-test 'yarn run dev' http-get://localhost:3000 'yarn run cy:run'",
     "version": "changeset version && yarn",
     "release": "yarn build && changeset publish",
+    "publish": "yarn release",
     "size": "yarn build && size-limit",
     "storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook",
-    "publish:lib": "lerna publish --registry=https://npm.pkg.github.com/"
+    "build:storybook": "build-storybook"
   }
 }
