@@ -1,6 +1,6 @@
 import path from "path"
 import { defineConfig } from "vite"
-import dts from "vite-dts"
+import dts from "vite-plugin-dts"
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin"
 
 export default defineConfig({
