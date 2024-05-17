@@ -1,5 +1,0 @@
-export * from "./remixIcons.models"
-export * from "./remixIconsFill.models"
-export * from "./remixIconsLine.models"
-export * from "./theme.models"
-export * from "./models"
