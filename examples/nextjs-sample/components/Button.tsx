@@ -1,7 +1,7 @@
 import { styled } from "@withneutron/quarks-react"
 
 // TS Error caused by use of `npm link`
-// @ts-ignore: TS2742
+// @ts-ignore: TS4023
 export const Button = styled(
   "button",
   {
