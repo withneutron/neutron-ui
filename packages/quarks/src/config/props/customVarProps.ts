@@ -92,6 +92,8 @@ export function generateCustomVarPropsCss<K extends FilterKeys>(
     borderRightWidth: value("borderRightWidth"),
     borderImage: value("borderImage"),
 
+    boxShadow: value("boxShadow"),
+
     outlineColor: value("outlineColor"),
     outlineStyle: value("outlineStyle"),
     outlineWidth: value("outlineWidth"),
