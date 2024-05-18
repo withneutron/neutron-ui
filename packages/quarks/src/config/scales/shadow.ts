@@ -5,29 +5,22 @@ import { getCssMapFromVars, getPropsFromCssMap, getThemePropsFromCssMap } from "
 /** Generator function for `shadow` theme scale */
 export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
   // LIGHT MODE SHADOWS
-  const low = { ...hash.var, value: `0px 1px 1.5px hsl(${color.shadowBase.ref} / .18)` } as const
+  const low = { ...hash.var, value: getLowShadow(color.shadowBase.ref) } as const
   const medium = {
     ...hash.var,
-    value: `0px 1.8px 2.7px hsl(${color.shadowBase.ref} / .08),
-0px 5.1px 7.7px hsl(${color.shadowBase.ref} / .16)`,
+    value: getMediumShadow(color.shadowBase.ref),
   } as const
   const high = {
     ...hash.var,
-    value: `0px 3.7px 5.6px hsl(${color.shadowBase.ref} / .03),
-0px 8px 12px hsl(${color.shadowBase.ref} / .05),
-0px 17px 25.5px hsl(${color.shadowBase.ref} / .12)`,
+    value: getHighShadow(color.shadowBase.ref),
   } as const
   const highSoft = {
     ...hash.var,
-    value: `0px 3.7px 5.6px hsl(${color.shadowBase.ref} / .01),
-0px 8px 12px hsl(${color.shadowBase.ref} / .02),
-0px 17px 25.5px hsl(${color.shadowBase.ref} / .04)`,
+    value: getHighSoftShadow(color.shadowBase.ref),
   } as const
   const highHeavy = {
     ...hash.var,
-    value: `0px 5px 20px hsl(${color.shadowBase.ref} / .04),
-0px 10px 50px hsl(${color.shadowBase.ref} / .08),
-0px 20px 100px hsl(${color.shadowBase.ref} / .16)`,
+    value: getHighHeavyShadow(color.shadowBase.ref),
   } as const
 
   const vars = {
@@ -73,4 +66,28 @@ export function getShadow<T extends ColorVars>(hash: CharHash, color: T) {
     cssValueMap,
     cssValueMapProps: getPropsFromCssMap(cssValueMap),
   } as ThemeScale<typeof vars, typeof themeProps, typeof cssValueMap>
+}
+
+// UTILS //
+export function getLowShadow<C extends string>(color: C) {
+  return `0px 1px 1.5px hsl(${color} / .18)` as const
+}
+export function getMediumShadow<C extends string>(color: C) {
+  return `0px 1.8px 2.7px hsl(${color} / .08),
+0px 5.1px 7.7px hsl(${color} / .16)` as const
+}
+export function getHighShadow<C extends string>(color: C) {
+  return `0px 3.7px 5.6px hsl(${color} / .03),
+0px 8px 12px hsl(${color} / .05),
+0px 17px 25.5px hsl(${color} / .12)` as const
+}
+export function getHighSoftShadow<C extends string>(color: C) {
+  return `0px 3.7px 5.6px hsl(${color} / .01),
+0px 8px 12px hsl(${color} / .02),
+0px 17px 25.5px hsl(${color} / .04)` as const
+}
+export function getHighHeavyShadow<C extends string>(color: C) {
+  return `0px 5px 20px hsl(${color} / .04),
+0px 10px 50px hsl(${color} / .08),
+0px 20px 100px hsl(${color} / .16)` as const
 }
