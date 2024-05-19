@@ -79,7 +79,9 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
     systemColorTimer.current = setTimeout(() => {
       setColorMode(systemColorMode)
     }, 50)
-    return () => systemColorTimer.current && clearTimeout(systemColorTimer.current)
+    return () => {
+      systemColorTimer.current && clearTimeout(systemColorTimer.current)
+    }
   }, [systemColorMode])
 
   return (
