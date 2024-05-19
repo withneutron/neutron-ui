@@ -11,7 +11,7 @@ export function useAnimation(
   const [isVisible, setIsVisible] = useState(shouldBeVisible)
 
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>node_modules/@withneutron/quarks-react/src/providers/QuarksProvider.tsx
+    let timeout: ReturnType<typeof setTimeout>
     if (!shouldBeVisible) {
       setAnimation(hideAnimation)
       timeout = setTimeout(() => setIsVisible(false), hideDelay)
