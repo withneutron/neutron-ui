@@ -58,7 +58,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       [polyAs]
     )
 
-    const styleProps = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
+    const { debug, ...styleProps } = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
       className,
       index,
       length,
@@ -66,9 +66,8 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       isStyledComponent,
     })
 
-    // Because this is memoized, it can be seen in react-devtools
-    useMemo(() => ({ debug: styleProps.debug }), [styleProps])
-    delete styleProps.debug
+    // @ts-ignore
+    delete styleProps.key
 
     if (hasVariants && hasVariantKeys) {
       variantKeys.forEach(key => {
@@ -88,12 +87,22 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       }
     }, [mainProps.style, hasStyleManager, polyAs, isSemantic])
 
-    return <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
+    return (
+      <>
+        {conditions.debug && <Debug debug={debug} />}
+        <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
+      </>
+    )
   }
   styledComponent.displayName = styleName
   const outputComponent = memo(forwardRef(styledComponent)) as any as typeof styledComponent
   ;(outputComponent as any).isStyledComponent = true
   return outputComponent
+}
+
+// @ts-ignore
+function Debug({ debug }: { debug: Record<string, any> }) {
+  return null
 }
 
 /** Used to create styling primitives, like `Row`, `Column`, etc.

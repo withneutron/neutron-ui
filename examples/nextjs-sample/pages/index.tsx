@@ -100,6 +100,7 @@ const Doodad = styled("li", {
   listStyle: "none",
   typo: "$subHeading",
 })
+Doodad.displayName = "Doodad"
 
 const colorKey = {
   0: "primary",
