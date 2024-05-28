@@ -3,7 +3,8 @@ import { useMemo, useEffect } from "react"
 import { getRefElement, isSSR } from "../shared/utils"
 
 const DEFAULT_OPTIONS: ResizeObserverOptions = {
-  box: "device-pixel-content-box",
+  // TODO: Switch to "device-pixel-content-box", once it's supported in Safari.
+  box: "content-box",
 }
 
 export const useResizeObserver = (
@@ -31,11 +32,15 @@ export const useResizeObserver = (
         : null,
     [callback]
   )
-
   useEffect(() => {
     const element = getRefElement(target)
     if (observer && element) {
-      observer.observe(element, options)
+      try {
+        observer.observe(element, options)
+      } catch (error) {
+        console.warn("ResizeObserver Error", error)
+        return () => undefined
+      }
       return () => observer.disconnect()
     }
     return undefined
