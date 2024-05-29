@@ -7,13 +7,11 @@ import {
   JSXElementConstructor,
   memo,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react"
 import { useStyleConditions } from "../hooks"
 import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
-import { getSemanticUniversalPrimitive } from "./config.utils"
 import { ComponentType } from "../shared/models"
 
 /** Used to style any React component of basic HTML element */
@@ -50,24 +48,17 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     const variantCss = useVariants(mainProps, hasVariants, variantKeys, variantsDefinition)
 
     const hasStyleManager = !!styleManager
-    const isIntrinsic = typeof component === "string"
     const isStyledComponent = !!(component as any).isStyledComponent
-    const Element = useMemo(
-      () =>
-        !isStyledComponent ? (polyAs as FunctionComponent<any>) ?? component : (component as FunctionComponent<any>),
-      [polyAs]
-    )
+    const Element = !isStyledComponent
+      ? (polyAs as FunctionComponent<any>) ?? component
+      : (component as FunctionComponent<any>)
 
     const { debug, ...styleProps } = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
       className,
       index,
       length,
-      isIntrinsic,
       isStyledComponent,
     })
-
-    // @ts-ignore
-    delete styleProps.key
 
     if (hasVariants && hasVariantKeys) {
       variantKeys.forEach(key => {
@@ -103,20 +94,6 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
 // @ts-ignore
 function Debug({ styles }: { styles: Record<string, any> }) {
   return null
-}
-
-/** Used to create styling primitives, like `Row`, `Column`, etc.
- * The output component will include semantic HTML variants, such as `Component.Aside`. */
-export function styledPrimitive<C extends ComponentType, V extends Variants | undefined>(
-  component: C,
-  css: CSS,
-  variants?: string | V,
-  styleName?: string
-) {
-  styleName = typeof variants === "string" ? variants : styleName
-  const primitive =
-    typeof variants === "object" ? styled(component, css, variants, styleName) : styled(component, css, styleName)
-  return getSemanticUniversalPrimitive(primitive)
 }
 
 // HOOKS //////////////////////////////////////////////////////////////////////////////////////////

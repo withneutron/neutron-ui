@@ -274,13 +274,11 @@ export class StyleManager {
     const output: {
       style: StyleObj
       className?: string
-      class?: string
       styleManager?: StyleManager
       debug?: any
     } = {
       style: {},
       className,
-      class: className,
       debug: this.getDebugInfo(),
     }
 

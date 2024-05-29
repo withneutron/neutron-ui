@@ -35,10 +35,10 @@ const Home: NextPage = () => {
         }}
       >
         <Card as="article" css={{ gap: "$16" }}>
-          <Column.Header>
+          <Column as="header">
             <Heading>Your Personalized List</Heading>
             <SubHeading css={{ fontWeight: "$500" }}>Of Cool Doodads</SubHeading>
-          </Column.Header>
+          </Column>
 
           <Grid as="ul" css={{ gap: "$16", gtColumns: "$fit120", gridAutoRows: "$120", m: "$0", p: "$0" }}>
             {Array(36)
@@ -52,12 +52,14 @@ const Home: NextPage = () => {
         </Card>
 
         <Card as="aside" css={{ gap: "$16", minHeight: "$320" }}>
-          <Row.Header css={{ gap: "$16", justifyContent: "space-between", alignItems: "center" }}>
-            <SubHeading.H3 flat>Filtering By</SubHeading.H3>
+          <Row as="header" css={{ gap: "$16", justifyContent: "space-between", alignItems: "center" }}>
+            <SubHeading as="h3" flat>
+              Filtering By
+            </SubHeading>
             <Button variant="ghost" size="minimal" onClick={() => setIsFiltersPanelVisible(true)}>
               Edit
             </Button>
-          </Row.Header>
+          </Row>
           <List column>
             {filters.map(filter => (
               <ListItem key={filter}>{filter}</ListItem>
@@ -90,17 +92,20 @@ const Card = styled(
   "Card"
 )
 
-const Doodad = styled("li", {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  bg: "$tertiary3",
-  radius: "$4",
-  listStyle: "none",
-  typo: "$subHeading",
-})
-Doodad.displayName = "Doodad"
+const Doodad = styled(
+  "li",
+  {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    bg: "$tertiary3",
+    radius: "$4",
+    listStyle: "none",
+    typo: "$subHeading",
+  },
+  "Doodad"
+)
 
 const colorKey = {
   0: "primary",

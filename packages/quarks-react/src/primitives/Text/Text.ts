@@ -1,5 +1,4 @@
 import { styled } from "../../config"
-import { getSemanticTextPrimitive } from "../../config"
 
 const TEXT_STYLES = {
   fontSize: "$p",
@@ -9,4 +8,4 @@ const TEXT_STYLES = {
 
 export const getTextStyles = () => TEXT_STYLES
 
-export const Text = getSemanticTextPrimitive(styled("p", getTextStyles(), "Text"))
+export const Text = styled("p", getTextStyles(), "Text")

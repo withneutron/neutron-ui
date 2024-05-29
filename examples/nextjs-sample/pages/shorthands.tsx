@@ -60,7 +60,8 @@ const Tertiary = styled(
 
 const Sample: NextPage = () => {
   return (
-    <Column.Article
+    <Column
+      as="article"
       css={{
         flex: "1",
         p: {
@@ -79,7 +80,7 @@ const Sample: NextPage = () => {
       <Tertiary isVariant theme="plum">
         Testing 3-level composition
       </Tertiary>
-    </Column.Article>
+    </Column>
   )
 }
 export default Sample

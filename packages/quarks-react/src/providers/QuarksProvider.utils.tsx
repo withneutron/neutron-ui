@@ -1,5 +1,5 @@
 import type { Reducer } from "react"
-import { useReducer, useState } from "react"
+import { useCallback, useReducer, useState } from "react"
 import { useMediaQuery } from "../hooks/useMediaQuery"
 import {
   ColorMode,
@@ -11,7 +11,7 @@ import {
 } from "@withneutron/quarks"
 import { useMutationObserver } from "../hooks/useMutationObserver"
 import { isSSR } from "../shared/utils"
-import { useResizeObserver } from "../hooks/useResizeObserver"
+import { ResizeObserverCallback, useResizeObserver } from "../hooks/useResizeObserver"
 
 const DEFAULT_RESPONSIVE_CONDITIONS = {
   xs: false,
@@ -90,9 +90,10 @@ export function useContextConditions(
     Reducer<ResponsiveConditionsState, ResponsiveConditionAction>
   >(responsiveConditionsReducer, DEFAULT_RESPONSIVE_CONDITIONS)
 
-  useResizeObserver(isSSR ? null : document.documentElement, ([{ width }]) => {
+  const resizer: ResizeObserverCallback = useCallback(([{ width }]) => {
     setResponsiveConditions({ overrides, width })
-  })
+  }, [])
+  useResizeObserver(isSSR ? null : document.documentElement, resizer)
 
   // Track media queries
   const hightContrast = useMediaQuery(queryConditionsMap.hightContrast, false)
@@ -106,19 +107,16 @@ export function useContextConditions(
   const [direction, setDirection] = useState<Direction>(
     isSSR ? "ltr" : document.documentElement.dir === "rtl" ? "rtl" : "ltr"
   )
-  useMutationObserver(
-    isSSR ? null : document.documentElement,
-    mutations => {
-      mutations.forEach(mutation => {
-        const dir = ((mutation.target as HTMLElement).dir ?? "ltr") as Direction
-        setDirection(dir)
-      })
-    },
-    {
-      attributes: true,
-      attributeFilter: ["dir"],
-    }
-  )
+  const mutator: MutationCallback = useCallback(mutations => {
+    mutations.forEach(mutation => {
+      const dir = ((mutation.target as HTMLElement).dir ?? "ltr") as Direction
+      setDirection(dir)
+    })
+  }, [])
+  useMutationObserver(isSSR ? null : document.documentElement, mutator, {
+    attributes: true,
+    attributeFilter: ["dir"],
+  })
 
   return mapConditions(
     {

@@ -8,7 +8,8 @@ import { SunIcon } from "./SunIcon"
 export function AppHeader() {
   const { isDark, toggleColorMode } = useColors()
   return (
-    <Row.Header
+    <Row
+      as="header"
       css={{
         bg: "$min",
         boxShadow: "$low",
@@ -26,7 +27,7 @@ export function AppHeader() {
       }}
     >
       <Logo />
-      <Row.Nav css={{ gap: "$32", alignItems: "center" }}>
+      <Row as="nav" css={{ gap: "$32", alignItems: "center" }}>
         <FlexList css={{ gap: "$24" }}>
           <FlexListItem>
             <Anchor as={Link} href="/">
@@ -56,8 +57,8 @@ export function AppHeader() {
         >
           {isDark ? <SunIcon /> : <MoonIcon />}
         </Button>
-      </Row.Nav>
-    </Row.Header>
+      </Row>
+    </Row>
   )
 }
 AppHeader.displayName = "AppHeader"

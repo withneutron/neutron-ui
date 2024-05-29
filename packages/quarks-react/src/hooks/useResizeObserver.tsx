@@ -7,13 +7,15 @@ const DEFAULT_OPTIONS: ResizeObserverOptions = {
   box: "content-box",
 }
 
+export type ResizeObserverCallback = (
+  size: Array<{ height: number; width: number }>,
+  entries: ResizeObserverEntry[],
+  observer: ResizeObserver
+) => void
+
 export const useResizeObserver = (
   target: RefObject<Element> | Element | null,
-  callback: (
-    size: Array<{ height: number; width: number }>,
-    entries: ResizeObserverEntry[],
-    observer: ResizeObserver
-  ) => void,
+  callback: ResizeObserverCallback,
   options: ResizeObserverOptions = DEFAULT_OPTIONS
 ): void => {
   const observer = useMemo(

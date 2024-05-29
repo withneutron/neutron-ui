@@ -14,7 +14,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Neutron UI — Sample Next.js App</title>
         <meta name="description" content="Sample Next.js app, using NeutronUI" />
       </Head>
-      <Column.Main
+      <Column
+        as="main"
         css={{
           h: "100vh",
           w: "100%",
@@ -24,7 +25,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Column css={{ flex: "1" }}>
           <Component {...props} />
         </Column>
-      </Column.Main>
+      </Column>
     </QuarksProvider>
   )
 }
