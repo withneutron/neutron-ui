@@ -47,8 +47,8 @@ export class StyleManager {
     // We always set this to true, to make sure changes in debug mode are applied
     [ConditionCategory.debug]: true,
   }
-  private prevDebugDict: Record<string, Record<string, string>> = {}
-  private debugDict: Record<string, Record<string, string>> = {}
+  private prevDebugDict: Debug[] = []
+  private debugDict: Debug = {}
   private classList: string[] = []
   private classDict: ClassDict = {
     [BASE]: {},
@@ -59,8 +59,6 @@ export class StyleManager {
   private parentClassDicts: ClassDict[] = []
   private styleVarsDict: Record<string, string> = {}
   private styleVars: StyleObj = {}
-  private prevStyle: StyleObj = {}
-  private style: StyleObj = {}
   private styleCount = 0
 
   private conditions: Conditions
@@ -73,27 +71,17 @@ export class StyleManager {
 
   private index: number | undefined
   private length: number | undefined
-  private isIntrinsic = false
   private isStyledComponent = false
   isActive = true
 
   constructor(conditions: Conditions, name?: string, props?: StyleMangerProps) {
-    const { className, index, length, isIntrinsic, isStyledComponent } = props ?? {}
+    const { className, index, length, isStyledComponent } = props ?? {}
     this.conditions = conditions
     this.setName(name)
     this.baseClassName = className ? `${className} ` : ""
     this.index = index
     this.length = length
-    this.isIntrinsic = !!isIntrinsic
     this.isStyledComponent = !!isStyledComponent
-  }
-
-  private getDebugVarKey(className: string) {
-    return `--${className}`
-  }
-
-  private getDebugClassVarKey(className: string) {
-    return this.getDebugVarKey(`-${className}`)
   }
 
   private get isDebugMode() {
@@ -106,9 +94,9 @@ export class StyleManager {
     if (this.overridesName) scope.push(this.overridesName)
     if (this.conditionName) scope.push(this.conditionName)
     if (this.pseudoClassName) scope.push(this.pseudoClassName)
-    const scopeName = scope.join("_")
+    const scopeName = scope.join(".")
     const suffix = scopeName.length < 4 ? "-" : ""
-    return this.getDebugVarKey(`${scopeName}${suffix}`)
+    return `${scopeName}${suffix}`
   }
 
   private addDebugInfo(className: string, originalProp: string, originalValue?: string) {
@@ -119,47 +107,24 @@ export class StyleManager {
     }
   }
 
-  private removeDebugClass(className: string) {
+  private getDebugInfo() {
     if (this.isDebugMode) {
-      delete this.prevStyle[this.getDebugClassVarKey(className)]
-    }
-  }
-
-  private compileDebugInfo() {
-    if (this.isDebugMode) {
-      let hash = ""
-      const debugDict = { ...this.debugDict, ...this.prevDebugDict }
+      const debug: Debug = {}
+      const debugDict = { ...this.debugDict, ...this.prevDebugDict.reduce((r, o) => ({ ...r, ...o }), {}) }
       const scopes = Object.entries(debugDict)
       scopes.forEach(([scope, debugData]) => {
-        hash += stringToHash(scope)
-        this.style[scope] = DEBUG_GROUP_VALUE
+        debug[scope] = {}
         const debugList = Object.entries(debugData)
         debugList.forEach(([debugClass, debugValue]) => {
-          hash += stringToHash(debugClass + debugValue)
           this.styleCount++
-          const debugKey = this.getDebugClassVarKey(debugClass)
-          if (this.style[debugKey]) {
-            delete this.style[debugKey]
+          if (debug[scope][debugClass]) {
+            delete debug[scope][debugClass]
           }
-          this.style[debugKey] = debugValue
+          debug[scope][debugClass] = debugValue
         })
       })
-      this.removeEmptyDebugGroups()
       // Returns a hashed key, to rerender when the debug info changes, but not when it doesn't
-      return `${this.name}-${hash}`
-    }
-  }
-
-  private removeEmptyDebugGroups() {
-    const entries = Object.entries(this.style)
-    const len = 0
-    let index = entries.length
-    for (; index >= len; index--) {
-      const [prevKey, prevValue] = entries[index - 1] ?? []
-      const [, value] = entries[index] ?? []
-      if (prevValue === DEBUG_GROUP_VALUE && (!value || value === DEBUG_GROUP_VALUE)) {
-        delete this.style[prevKey]
-      }
+      return debug
     }
   }
 
@@ -168,20 +133,17 @@ export class StyleManager {
   }
 
   private setVariantName(name?: string) {
-    this.variantName = name ? `V_${name}` : ""
+    this.variantName = name ? `VAR_${name}` : ""
   }
 
   setNewStyle(conditions: Conditions, name?: string, props?: StyleMangerProps) {
     if (this.isDebugMode) {
       // Make sure we sequence the debug info in the correct order
-      this.prevStyle = this.style
-      this.style = {}
-      this.prevDebugDict = this.debugDict
+      this.prevDebugDict.push(this.debugDict)
       this.debugDict = {}
     }
 
-    const { isIntrinsic, isStyledComponent } = props ?? {}
-    this.isIntrinsic = !!isIntrinsic
+    const { isStyledComponent } = props ?? {}
     this.isStyledComponent = !!isStyledComponent
     this.conditions = conditions
     this.setName(name)
@@ -250,9 +212,6 @@ export class StyleManager {
     } else {
       // Clear out old style that is getting overwritten, if need be
       const oldClassName = this.classList[index]
-      if (oldClassName) {
-        this.removeDebugClass(oldClassName)
-      }
       const oldStyleVar = this.styleVarsDict[oldClassName]
       if (oldStyleVar) {
         delete this.styleVars[oldStyleVar]
@@ -285,7 +244,6 @@ export class StyleManager {
     delete (this as any).parentClassDicts
     delete (this as any).styleVarsDict
     delete (this as any).styleVars
-    delete (this as any).prevStyle
     delete (this as any).style
     delete (this as any).styleCount
     delete (this as any).conditions
@@ -297,7 +255,6 @@ export class StyleManager {
     delete (this as any).overridesName
     delete (this as any).index
     delete (this as any).length
-    delete (this as any).isIntrinsic
     delete (this as any).isStyledComponent
     this.isActive = false
   }
@@ -319,18 +276,12 @@ export class StyleManager {
       className?: string
       class?: string
       styleManager?: StyleManager
-      key?: string
       debug?: any
     } = {
       style: {},
       className,
       class: className,
-      debug: this.debugDict,
-    }
-
-    if (!this.isIntrinsic) {
-      // Generate debug info
-      output.key = this.compileDebugInfo()
+      debug: this.getDebugInfo(),
     }
 
     // Generate inline styles
@@ -638,29 +589,16 @@ export class StyleManager {
 /*************************************************************************************************
  * UTILS
  *************************************************************************************************/
-const DEBUG_GROUP_VALUE = "▼"
-
 let styleId = 0
 function getStyleName() {
   styleId++
   return `style-${styleId}`
 }
 
-function stringToHash(source: string) {
-  const length = source.length
-  let hash = 0
-  if (length > 0) {
-    let index = 0
-    for (index = 0; index < length; index++) {
-      hash += source.charCodeAt(index)
-    }
-  }
-  return hash
-}
-
 /*************************************************************************************************
  * TYPES
  *************************************************************************************************/
+type Debug = Record<string, Record<string, string>>
 type PseudoClassKey = keyof typeof pseudoClasses
 type CombinedPseudoClassKey = keyof typeof combinedPseudoClasses
 type PseudoCategoryKey = PseudoClassKey | typeof BASE
@@ -684,6 +622,5 @@ export type StyleMangerProps = {
   className?: string
   index?: number
   length?: number
-  isIntrinsic?: boolean
   isStyledComponent?: boolean
 }

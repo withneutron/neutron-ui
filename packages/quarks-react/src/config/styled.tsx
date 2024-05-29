@@ -89,7 +89,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
 
     return (
       <>
-        {conditions.debug && <Debug debug={debug} />}
+        {conditions.debug && <Debug styles={debug} />}
         <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
       </>
     )
@@ -101,7 +101,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
 }
 
 // @ts-ignore
-function Debug({ debug }: { debug: Record<string, any> }) {
+function Debug({ styles }: { styles: Record<string, any> }) {
   return null
 }
 

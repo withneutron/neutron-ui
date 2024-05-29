@@ -6,11 +6,18 @@ import { styled, Column } from "@withneutron/quarks-react"
 const Base = styled(
   "section",
   {
+    bg: "$tertiary5",
     color: "$secondaryText10",
     textDecorationColor: "$errorColor",
     textDecorationLine: "$highlightType",
     textDecorationStyle: "$strikeStyle",
     textDecorationThickness: "$altThickness",
+    p: "$40",
+    radius: "$6",
+    ":active": {
+      bg: "$primary5",
+      outline: "$secondaryMax",
+    },
   },
   "Base"
 )
@@ -21,12 +28,32 @@ const Secondary = styled(
     fontSize: "$21",
     fontWeight: "$500",
   },
+  {
+    isVariant: {
+      true: {
+        bg: "$indigo5",
+        border: "$primaryMax",
+      },
+    },
+    theme: {
+      plum: {
+        ":active": {
+          bg: "$plum9",
+          color: "$plumText9",
+          outline: "$secondaryMax",
+        },
+      },
+    },
+  },
   "Secondary"
 )
 const Tertiary = styled(
   Secondary,
   {
     textDecoration: "green wavy underline",
+    "!xs": {
+      bg: "$secondary5",
+    },
   },
   "Tertiary"
 )
@@ -49,7 +76,9 @@ const Sample: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Tertiary>Testing 3-level composition</Tertiary>
+      <Tertiary isVariant theme="plum">
+        Testing 3-level composition
+      </Tertiary>
     </Column.Article>
   )
 }
