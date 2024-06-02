@@ -93,7 +93,7 @@ const textDecoration = getTextDecoration(varHash, color.vars)
 const shadow = getShadow(varHash, color.vars)
 const animation = getAnimation(varHash, keyframeHash)
 
-export const scales = {
+const scales = {
   animation,
   border,
   color,
@@ -115,10 +115,105 @@ export const scales = {
   zIndex,
 } as const
 
-// GLOBAL STYLES //////////////////////////////////////////////////////////////////////////////////
-// Export the theme
-export const themeClass = "nui"
+export const managerScales = {
+  animation: {
+    aliasMap: animation.aliasMap,
+    cssAliasMap: animation.cssAliasMap,
+    themeProps: animation.themeProps,
+  },
+  border: {
+    aliasMap: border.aliasMap,
+    cssAliasMap: border.cssAliasMap,
+    themeProps: border.themeProps,
+  },
+  color: {
+    aliasMap: color.aliasMap,
+    cssAliasMap: color.cssAliasMap,
+    themeProps: color.themeProps,
+  },
+  column: {
+    aliasMap: column.aliasMap,
+    cssAliasMap: column.cssAliasMap,
+    themeProps: column.themeProps,
+  },
+  font: {
+    aliasMap: font.aliasMap,
+    cssAliasMap: font.cssAliasMap,
+    themeProps: font.themeProps,
+  },
+  fontFamily: {
+    aliasMap: fontFamily.aliasMap,
+    cssAliasMap: fontFamily.cssAliasMap,
+    themeProps: fontFamily.themeProps,
+  },
+  fontSize: {
+    aliasMap: fontSize.aliasMap,
+    cssAliasMap: fontSize.cssAliasMap,
+    themeProps: fontSize.themeProps,
+  },
+  fontWeight: {
+    aliasMap: fontWeight.aliasMap,
+    cssAliasMap: fontWeight.cssAliasMap,
+    themeProps: fontWeight.themeProps,
+  },
+  lineHeight: {
+    aliasMap: lineHeight.aliasMap,
+    cssAliasMap: lineHeight.cssAliasMap,
+    themeProps: lineHeight.themeProps,
+  },
+  outline: {
+    aliasMap: outline.aliasMap,
+    cssAliasMap: outline.cssAliasMap,
+    themeProps: outline.themeProps,
+  },
+  radius: {
+    aliasMap: radius.aliasMap,
+    cssAliasMap: radius.cssAliasMap,
+    themeProps: radius.themeProps,
+  },
+  row: {
+    aliasMap: row.aliasMap,
+    cssAliasMap: row.cssAliasMap,
+    themeProps: row.themeProps,
+  },
+  shadow: {
+    aliasMap: shadow.aliasMap,
+    cssAliasMap: shadow.cssAliasMap,
+    themeProps: shadow.themeProps,
+  },
+  size: {
+    aliasMap: size.aliasMap,
+    cssAliasMap: size.cssAliasMap,
+    themeProps: size.themeProps,
+  },
+  space: {
+    aliasMap: space.aliasMap,
+    cssAliasMap: space.cssAliasMap,
+    themeProps: space.themeProps,
+  },
+  textDecoration: {
+    aliasMap: textDecoration.aliasMap,
+    cssAliasMap: textDecoration.cssAliasMap,
+    themeProps: textDecoration.themeProps,
+  },
+  typoSpace: {
+    aliasMap: typoSpace.aliasMap,
+    cssAliasMap: typoSpace.cssAliasMap,
+    themeProps: typoSpace.themeProps,
+  },
+  typo: {
+    aliasMap: typo.aliasMap,
+    cssAliasMap: typo.cssAliasMap,
+    themeProps: typo.themeProps,
+  },
+  zIndex: {
+    aliasMap: zIndex.aliasMap,
+    cssAliasMap: zIndex.cssAliasMap,
+    themeProps: zIndex.themeProps,
+  },
+} as const
 
+// GLOBAL STYLES //////////////////////////////////////////////////////////////////////////////////
 // Function that generates the styles
 globalStyle("html, body", {
   margin: 0,
@@ -157,6 +252,9 @@ globalStyle("body, a, p, li, strong, em, b, i, button", {
 })
 globalStyle("button", {
   fontFamily: fontFamily.vars.button.ref,
+})
+globalStyle("button:focus", {
+  outline: "none",
 })
 globalStyle("pre, code", {
   fontFamily: fontFamily.vars.code.ref,

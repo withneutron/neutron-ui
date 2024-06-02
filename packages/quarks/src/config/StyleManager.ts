@@ -24,7 +24,7 @@ import {
   customVarPropMap,
   scaledPropMap,
   staticPropMap,
-  scales,
+  managerScales,
   tokenToVarMap,
 } from "./styles.css"
 import { ConditionKey, BASE, InlineConditionValue, InlineConditionKey, VariantCSS } from "./styles.models"
@@ -72,7 +72,6 @@ export class StyleManager {
   private index: number | undefined
   private length: number | undefined
   private isStyledComponent = false
-  isActive = true
 
   constructor(conditions: Conditions, name?: string, props?: StyleMangerProps) {
     const { className, index, length, isStyledComponent } = props ?? {}
@@ -101,9 +100,10 @@ export class StyleManager {
 
   private addDebugInfo(className: string, originalProp: string, originalValue?: string) {
     if (this.isDebugMode) {
-      if (!this.debugDict[this.debugScope]) this.debugDict[this.debugScope] = {}
+      const scope = this.debugScope
+      if (!this.debugDict[scope]) this.debugDict[scope] = {}
       const value = originalValue ? `: ${originalValue}` : ""
-      this.debugDict[this.debugScope][className] = `${originalProp}${value}`
+      this.debugDict[scope][className] = `${originalProp}${value}`
     }
   }
 
@@ -116,7 +116,6 @@ export class StyleManager {
         debug[scope] = {}
         const debugList = Object.entries(debugData)
         debugList.forEach(([debugClass, debugValue]) => {
-          this.styleCount++
           if (debug[scope][debugClass]) {
             delete debug[scope][debugClass]
           }
@@ -161,7 +160,7 @@ export class StyleManager {
     const scaledMap = scaledPropMap[pseudo as keyof typeof scaledPropMap]
     const scaledProp = scaledMap ? scaledMap[prop as keyof typeof scaledMap] : undefined
     const scaleKey = scaledPropScale[prop as ScaledKey]
-    const propScale = scales[scaleKey]
+    const propScale = managerScales[scaleKey]
     const scaledValue: string | undefined =
       scaledProp && value in scaledProp ? scaledProp[value as keyof typeof scaledProp] : undefined
     return {
@@ -232,33 +231,6 @@ export class StyleManager {
     }
   }
 
-  /** When we reach the end of any Quarks style composition, we can remove the style data from memory */
-  private clear() {
-    if (!this.isDebugMode) {
-      delete (this as any).prevDebugDict
-      delete (this as any).debugDict
-    }
-    delete (this as any).watchCategories
-    delete (this as any).classList
-    delete (this as any).classDict
-    delete (this as any).parentClassDicts
-    delete (this as any).styleVarsDict
-    delete (this as any).styleVars
-    delete (this as any).style
-    delete (this as any).styleCount
-    delete (this as any).conditions
-    delete (this as any).name
-    delete (this as any).baseClassName
-    delete (this as any).variantName
-    delete (this as any).conditionName
-    delete (this as any).pseudoClassName
-    delete (this as any).overridesName
-    delete (this as any).index
-    delete (this as any).length
-    delete (this as any).isStyledComponent
-    this.isActive = false
-  }
-
   compile() {
     // Any further usage of this class will be for nested composition
     this.parentClassDicts.push({
@@ -274,11 +246,13 @@ export class StyleManager {
     const output: {
       style: StyleObj
       className?: string
+      class?: string
       styleManager?: StyleManager
       debug?: any
     } = {
       style: {},
       className,
+      class: className,
       debug: this.getDebugInfo(),
     }
 
@@ -290,8 +264,6 @@ export class StyleManager {
     if (this.isStyledComponent) {
       // Pass the StyleManager instance down to the styled component we're composing on top of
       output.styleManager = this
-    } else {
-      this.clear()
     }
 
     return output
@@ -533,12 +505,12 @@ export class StyleManager {
   /** Returns a style from our utility class system, based on a prop, value, and (optional) CSS pseudo-class */
   private getStyle(prop: CssPropKey, value: string, pseudo: PseudoCategoryKey = BASE) {
     const staticValue = this.getStaticValue(prop, value, pseudo)
-    // eslint-disable-next-line prefer-const
-    let { scaledProp, scaleKey, propScale, scaledValue } = this.getScaledProps(prop, value, pseudo)
-
     if (staticValue) {
       return { className: staticValue }
     }
+
+    // eslint-disable-next-line prefer-const
+    let { scaledProp, scaleKey, propScale, scaledValue } = this.getScaledProps(prop, value, pseudo)
 
     if (scaledValue) {
       // Check to see if this value is an alias

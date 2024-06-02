@@ -5,7 +5,6 @@ import {
   FunctionComponent,
   HTMLAttributes,
   JSXElementConstructor,
-  memo,
   useEffect,
   useRef,
   useState,
@@ -86,7 +85,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     )
   }
   styledComponent.displayName = styleName
-  const outputComponent = memo(forwardRef(styledComponent)) as any as typeof styledComponent
+  const outputComponent = forwardRef(styledComponent) as any as typeof styledComponent
   ;(outputComponent as any).isStyledComponent = true
   return outputComponent
 }

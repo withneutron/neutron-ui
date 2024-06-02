@@ -55,8 +55,6 @@ export function style(
   manager?: StyleManager,
   props?: StyleMangerProps
 ) {
-  if (manager && !manager.isActive) return { debug: {} }
-
   if (manager) {
     manager.setNewStyle(conditions, styleName, props)
   } else {
@@ -67,7 +65,7 @@ export function style(
   manager.processCss(css)
 
   // Process variants, if any.
-  if (variantCss) {
+  if (variantCss && variantCss.length > 0) {
     manager.processVariantCss(variantCss)
   }
 
