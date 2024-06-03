@@ -8,6 +8,7 @@ export default defineConfig({
     jsxInject: "import React from 'react'",
   },
   build: {
+    minify: true,
     emptyOutDir: false,
     reportCompressedSize: false,
     outDir: path.resolve(__dirname, "./dist"),

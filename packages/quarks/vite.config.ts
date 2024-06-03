@@ -5,6 +5,7 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin"
 
 export default defineConfig({
   build: {
+    minify: true,
     emptyOutDir: false,
     reportCompressedSize: false,
     outDir: path.resolve(__dirname, "./dist"),
