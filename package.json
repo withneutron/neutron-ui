@@ -23,7 +23,6 @@
     "babel-loader": "^9.1.3",
     "concurrently": "^8.2.2",
     "eslint-config-prettier": "9.1.0",
-    "lerna": "^8.1.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "storybook-builder-vite": "^0.1.21",
@@ -38,11 +37,17 @@
     "dev:cra": "yarn workspace cra-sample dev",
     "dev:astro": "yarn workspace astro-sample dev",
     "dev:next": "yarn workspace nextjs-sample dev",
+    "dev:perf:quarks": "yarn workspace performance-test-quarks dev",
+    "dev:perf:tailwind": "yarn workspace performance-test-tailwind dev",
+    "dev:perf:emotion": "yarn workspace performance-test-emotion dev",
     "dev:wos": "yarn workspace wos-challenge dev",
     "dev:remix": "yarn workspace remix-sample dev",
     "build:cra": "yarn workspace cra-sample build",
     "build:astro": "yarn workspace astro-sample build",
     "build:next": "yarn workspace nextjs-sample build",
+    "build:perf:quarks": "yarn workspace performance-test-quarks build",
+    "build:perf:tailwind": "yarn workspace performance-test-tailwind build",
+    "build:perf:emotion": "yarn workspace performance-test-emotion build",
     "build:wos": "yarn workspace wos-challenge build",
     "build:remix": "yarn workspace remix-sample build",
     "build": "yarn workspaces run build",
@@ -62,5 +67,14 @@
     "size": "yarn build && size-limit",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
+    "@typescript-eslint/scope-manager": "^7.11.0",
+    "@typescript-eslint/type-utils": "^7.11.0",
+    "@typescript-eslint/typescript-estree": "^7.11.0",
+    "@typescript-eslint/utils": "^7.11.0",
+    "@typescript-eslint/visitor-keys": "^7.11.0"
   }
 }
