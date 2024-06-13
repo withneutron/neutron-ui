@@ -4,12 +4,21 @@ function App() {
   return (
     <Wrapper>
       <Card>
-        <Heading as="h1">Performance Test</Heading>
+        <Heading as="h1">Performance Test: Emotion</Heading>
         <ColorGrid as="ul">
           {Array(36)
             .fill(0)
             .map((_, index) => (
               <Square key={index} style={getColors(index)}>
+                {index + 1}
+              </Square>
+            ))}
+        </ColorGrid>
+        <ColorGrid as="ul">
+          {Array(36)
+            .fill(0)
+            .map((_, index) => (
+              <Square key={index} style={getColors(35 - index)}>
                 {index + 1}
               </Square>
             ))}
@@ -38,6 +47,7 @@ const Card = emotionStyled.section({
   display: "flex",
   flexDirection: "column",
   padding: "40px",
+  gap: "40px",
   background: "#fff",
   borderRadius: "8px",
   boxShadow: `0px 1.8px 2.7px hsl(0 0% 0% / .08),

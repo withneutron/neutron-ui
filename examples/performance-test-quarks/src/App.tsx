@@ -8,12 +8,21 @@ function App() {
       <Wrapper>
         <Card>
           {/* <Column css={{ size: "$20", bg: "$amber9" }} /> */}
-          <Heading as="h1">Performance Test</Heading>
+          <Heading as="h1">Performance Test: Quarks</Heading>
           <ColorGrid as="ul">
             {Array(36)
               .fill(0)
               .map((_, index) => (
                 <Square key={index} css={getColors(index)}>
+                  {index + 1}
+                </Square>
+              ))}
+          </ColorGrid>
+          <ColorGrid as="ul">
+            {Array(36)
+              .fill(0)
+              .map((_, index) => (
+                <Square key={index} css={getColors(35 - index)}>
                   {index + 1}
                 </Square>
               ))}
@@ -32,10 +41,11 @@ const Card = styled(
   {
     p: "$40",
     bg: "$min",
+    gap: "$40",
     radius: "$8",
     boxShadow: "$medium",
   },
-  "Card"
+  "Card",
 )
 const ColorGrid = styled(
   Grid,
@@ -46,7 +56,7 @@ const ColorGrid = styled(
     mb: "$0",
     pl: "$0",
   },
-  "ColorGrid"
+  "ColorGrid",
 )
 const Square = styled(
   "li",
@@ -60,7 +70,7 @@ const Square = styled(
     listStyle: "none",
     typo: "$subHeading",
   },
-  "Square"
+  "Square",
 )
 
 const colorKey = {

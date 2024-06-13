@@ -16,13 +16,13 @@ export default defineConfig({
     sourcemap: true,
     // Reduce bloat from legacy polyfills.
     target: "esnext",
-    // rollupOptions: {
-    //   output: {
-    //     entryFileNames: `[name]` + hash + `.js`,
-    //     chunkFileNames: `[name]` + hash + `.js`,
-    //     assetFileNames: `[name]` + hash + `.[ext]`,
-    //   },
-    // },
+    rollupOptions: {
+      output: {
+        entryFileNames: `[name]` + hash + `.js`,
+        chunkFileNames: `[name]` + hash + `.js`,
+        assetFileNames: `[name]` + hash + `.[ext]`,
+      },
+    },
   },
   resolve: {
     preserveSymlinks: true,
