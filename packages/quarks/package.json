@@ -1,13 +1,14 @@
 {
   "name": "@withneutron/quarks",
   "version": "0.0.17",
+  "type": "module",
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "description": "A small, but mighty, styling library for modern app development",
   "main": "dist/quarks.js",
   "module": "dist/quarks.es.js",
   "jsnext:main": "dist/quarks.es.js",
-  "types": "dist/quarks.d.ts",
-  "typings": "dist/quarks.d.ts",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -24,7 +25,7 @@
     ".": {
       "import": "./dist/quarks.es.js",
       "require": "./dist/quarks.js",
-      "types": "./dist/quarks.d.ts"
+      "types": "./dist/index.d.ts"
     },
     "./styles": {
       "import": "./dist/quarks.css",
