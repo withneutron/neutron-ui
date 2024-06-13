@@ -1,5 +1,3 @@
-import { m as colorMatrix } from "./encodedColors.models"
-
 // CONSTANTS //////////////////////////////////////////////////////////////////////////////////////
 
 export const DEFAULT_COLOR_MODE = "light" as const
@@ -111,9 +109,6 @@ export const SEGMENT_SIZE = {
   valuePair: 2, // == a saturation value + a luminosity value
   value: 1, // == a single, ASCII-encoded value
 } as const
-
-/** Encoded matrix of luminance values per hue, per mode */
-export const COLOR_MATRIX = colorMatrix
 
 export const DECODE_DIFF = -26
 
@@ -236,7 +231,7 @@ function shiftHue(hue: number, shift: number) {
 
 function getColorPalettes(
   hue: number,
-  saturations: [number, number, number]
+  saturations: [number, number, number],
 ): [SemanticColors, SemanticColors, SemanticColors] {
   const colors: SemanticColors[] = []
   const isTealish = 110 <= hue && hue <= 208
@@ -300,7 +295,7 @@ function getColorPalettes(
 /** Get a set of 3 complementary color palettes, from one base hue */
 export function getComplementaryHues(
   hue: number,
-  saturations: [number, number, number] = DEFAULT_SATURATIONS
+  saturations: [number, number, number] = DEFAULT_SATURATIONS,
 ): [SemanticColors, SemanticColors, SemanticColors] {
   if (hue < 0 || hue > 360) {
     throw new Error("Parameter `hue` must be a number between 0 and 360")
@@ -312,7 +307,7 @@ export function getComplementaryHues(
 export function generatePaletteFromHue(
   hue: number,
   variant: 1 | 2 | 3 = 1,
-  saturations: [number, number, number] = DEFAULT_SATURATIONS
+  saturations: [number, number, number] = DEFAULT_SATURATIONS,
 ): SemanticColors {
   return getComplementaryHues(hue, saturations)[variant - 1]
 }

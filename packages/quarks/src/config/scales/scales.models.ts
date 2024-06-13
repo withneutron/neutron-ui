@@ -2,7 +2,7 @@ import { THEME_PREFIX, VarData } from "../utils"
 import { BodyFontFamily, HeadingFontFamily, CodeFontFamily } from "../../shared/models"
 import { ColorNumberKey, ColorPalette, ThemeColor } from "../../shared/models/colorGen.models"
 
-export const SCALED_ALIAS = "SCALED_ALIAS"
+export const SCALED_ALIAS = "@"
 
 export const STATIC_VALUE_PREFIX = "^"
 
@@ -132,7 +132,7 @@ export type ColorSetter<T = ScaleEntry> = (
   palette: ColorPalette<T>,
   value: string | number,
   numberKey?: ColorNumberKey,
-  isMapped?: boolean
+  isMapped?: boolean,
 ) => void
 
 export type KeyframeObject = Record<string, Record<string, string>>
@@ -143,7 +143,7 @@ export interface ThemeScale<
   T extends ThemeProps = ThemeProps,
   C extends CssValueMap = CssValueMap,
   A extends CssAliasMap<C> | Record<any, any> = Record<any, any>,
-  K extends Keyframes | Record<any, any> = Keyframes
+  K extends Keyframes | Record<any, any> = Keyframes,
 > {
   /** Used for theme definition and customization */
   vars: S

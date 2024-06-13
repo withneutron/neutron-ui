@@ -36,7 +36,7 @@ type ResponsiveConditionAction = {
 
 function responsiveConditionsReducer<S extends ResponsiveConditionsState, A extends ResponsiveConditionAction>(
   state: S,
-  action: A
+  action: A,
 ) {
   const { overrides = {}, width } = action
   const xs = width <= (overrides.xs ?? observerConditionsMap.xs)
@@ -81,7 +81,7 @@ export function useContextConditions(
   colorMode: ColorMode,
   isMobile = false,
   isDebugMode = false,
-  overrides: BreakpointOverrides | Record<string, unknown> = {}
+  overrides: BreakpointOverrides | Record<string, unknown> = {},
 ) {
   overrides = overrides ?? {}
 
@@ -105,7 +105,7 @@ export function useContextConditions(
 
   // Calculate locale (writing) direction
   const [direction, setDirection] = useState<Direction>(
-    isSSR ? "ltr" : document.documentElement.dir === "rtl" ? "rtl" : "ltr"
+    isSSR ? "ltr" : document.documentElement.dir === "rtl" ? "rtl" : "ltr",
   )
   const mutator: MutationCallback = useCallback(mutations => {
     mutations.forEach(mutation => {
@@ -134,6 +134,6 @@ export function useContextConditions(
     },
     colorMode,
     isDebugMode,
-    direction
+    direction,
   )
 }

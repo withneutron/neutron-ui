@@ -1,13 +1,12 @@
 import "@withneutron/quarks/styles"
 import { Column, Grid, Heading, QuarksProvider, styled } from "@withneutron/quarks-react"
-import { CSS } from "../../../packages/quarks/src"
+import { CSS } from "../../../packages/quarks/dist/config"
 
 function App() {
   return (
     <QuarksProvider isDebugMode defaultColorMode="light">
       <Wrapper>
         <Card>
-          {/* <Column css={{ size: "$20", bg: "$amber9" }} /> */}
           <Heading as="h1">Performance Test: Quarks</Heading>
           <ColorGrid as="ul">
             {Array(36)
