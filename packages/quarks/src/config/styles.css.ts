@@ -239,6 +239,14 @@ globalStyle("html", {
     },
   },
 })
+// Fix for Safari 16+ to properly set `rem` units
+globalStyle("html", {
+  "@supports": {
+    "(hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none)": {
+      fontSize: "1px",
+    },
+  },
+})
 globalStyle("*", {
   WebkitFontSmoothing: "antialiased",
   MozOsxFontSmoothing: "grayscale",
@@ -432,8 +440,8 @@ const scaledPropsPC = generatePseudoClassCss<typeof scaledProps>((pseudoClass: s
       globalStyle(getSelector(className, pseudoClass), value)
       return className
     },
-    keys
-  )
+    keys,
+  ),
 )
 
 // STATIC PROPS ///////////////////////////////////////////////////////////////////////////////////
@@ -450,7 +458,7 @@ const staticPropsPC = generatePseudoClassCss<typeof staticProps>((pseudoClass: s
     const className = classHash.name
     globalStyle(getSelector(className, pseudoClass), value)
     return className
-  }, keys)
+  }, keys),
 )
 
 // PROP MAPS //////////////////////////////////////////////////////////////////////////////////////
@@ -546,13 +554,16 @@ export const varMap = {} as Record<string, string | number>
 export const darkVarMap = {} as Record<string, string | number>
 
 function getTokensFromVars<V extends BaseVars>(vars: V, map = varMap) {
-  return Object.entries(vars).reduce((output, [key, { name, value }]) => {
-    output[addPrefix(key) as PrefixedKey<V>] = `var(${name})`
-    if (typeof value === "string") {
-      map[name] = value
-    }
-    return output
-  }, {} as { [k in PrefixedKey<V>]: string })
+  return Object.entries(vars).reduce(
+    (output, [key, { name, value }]) => {
+      output[addPrefix(key) as PrefixedKey<V>] = `var(${name})`
+      if (typeof value === "string") {
+        map[name] = value
+      }
+      return output
+    },
+    {} as { [k in PrefixedKey<V>]: string },
+  )
 }
 
 function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, aliases?: A) {
@@ -573,10 +584,13 @@ function getTokenToVarsMap<V extends BaseVars, A extends CssAliasMap>(vars: V, a
 }
 
 function getThemeProps<T extends ThemeProps>(props: T) {
-  return Object.entries(props).reduce((output, [key, value]) => {
-    output[key as keyof typeof output] = value
-    return output
-  }, {} as { [k in keyof T]: string })
+  return Object.entries(props).reduce(
+    (output, [key, value]) => {
+      output[key as keyof typeof output] = value
+      return output
+    },
+    {} as { [k in keyof T]: string },
+  )
 }
 
 /** Maps theme tokens to CSS variables that hold these token values */
@@ -654,9 +668,9 @@ export const tokenToVarMap = {
   zIndex: getTokenToVarsMap(zIndex.vars, zIndex.cssAliasMap),
 } as const
 
-function getTokenToValuesMap<G extends keyof typeof tokenToVarMap, M extends typeof tokenToVarMap[G]>(
+function getTokenToValuesMap<G extends keyof typeof tokenToVarMap, M extends (typeof tokenToVarMap)[G]>(
   _group: G,
-  tokenMap: M
+  tokenMap: M,
 ) {
   const output = {} as { [k in keyof M]: string }
   Object.entries(tokenMap).forEach(([token, varName]) => {
