@@ -57,13 +57,11 @@
     ]
   },
   "peerDependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "dependencies": {
-    "@withneutron/quarks": "^0.0.19",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@withneutron/quarks": "^0.0.19"
   },
   "devDependencies": {
     "@types/node": "20.12.12",

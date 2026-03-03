@@ -4,9 +4,6 @@ import dts from "vite-plugin-dts"
 import pkg from "./package.json"
 
 export default defineConfig({
-  esbuild: {
-    jsxInject: "import React from 'react'",
-  },
   build: {
     minify: true,
     emptyOutDir: false,
@@ -18,7 +15,10 @@ export default defineConfig({
       fileName: format => (format === "cjs" ? "quarks-react.js" : `quarks-react.${format}.js`),
     },
     rollupOptions: {
-      external: Object.keys(pkg.peerDependencies),
+      external: (id: string) =>
+        Object.keys(pkg.peerDependencies).some(
+          (dep) => id === dep || id.startsWith(dep + "/")
+        ),
       output: {
         assetFileNames: ({ name }: Record<string, any>) => {
           if (name === "style.css") return "quarks-react.css"
