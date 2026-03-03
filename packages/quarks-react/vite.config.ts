@@ -41,5 +41,12 @@ export default defineConfig({
   ssr: {
     noExternal: true,
   },
-  plugins: [dts()],
+  plugins: [
+    dts({
+      beforeWriteFile: (filePath, content) => ({
+        filePath,
+        content: content.replace(/packages\/quarks\/dist[^'")]*/g, "@withneutron/quarks"),
+      }),
+    }),
+  ],
 })
