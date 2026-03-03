@@ -33,7 +33,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     ref?: ForwardedRef<R>
   ): JSX.Element | null
   function styledComponent<R>(
-    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: any } & BaseStyledProps<V>,
+    props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: ComponentType } & BaseStyledProps<V>,
     ref?: ForwardedRef<R>
   ): JSX.Element | null
   function styledComponent<R>(
