@@ -35,11 +35,6 @@ export function AppHeader() {
             </Link>
           </FlexListItem>
           <FlexListItem>
-            <Link as={NextLink} href="/kitchen-sink">
-              Kitchen Sink
-            </Link>
-          </FlexListItem>
-          <FlexListItem>
             <Link as={NextLink} href="/shorthands">
               Shorthands
             </Link>

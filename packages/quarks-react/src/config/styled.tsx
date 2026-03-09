@@ -5,12 +5,11 @@ import {
   FunctionComponent,
   HTMLAttributes,
   JSXElementConstructor,
-  useEffect,
   useRef,
   useState,
 } from "react"
 import { useConditions } from "../hooks"
-import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
+import { CSS, VariantCSS, style, StyleManager } from "@withneutron/quarks"
 import { ComponentType } from "../shared/models"
 
 /** Used to style any React component of basic HTML element */

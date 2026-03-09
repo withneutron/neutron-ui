@@ -303,8 +303,6 @@ export class StyleManager {
 			output.styleManager = this;
 		}
 
-		console.log("@@@ output", output);
-
 		return output;
 	}
 

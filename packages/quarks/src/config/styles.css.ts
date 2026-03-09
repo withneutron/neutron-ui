@@ -476,10 +476,6 @@ export const staticPropMap = {
 }
 
 // OUTPUT STATS ///////////////////////////////////////////////////////////////////////////////////
-console.log("---- Generated CSS ----")
-console.log(String(classHash.count).padStart(5, " "), "classes.")
-console.log(String(varHash.count).padStart(5, " "), "variables.")
-console.log(String(keyframeHash.count).padStart(5, " "), "keyframe animations.")
 /*************************************************************************************************
  * TYPE GENERATION
  *************************************************************************************************/

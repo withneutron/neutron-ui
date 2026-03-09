@@ -41,7 +41,7 @@ const Section = styled(
     radius: "$8",
     boxShadow: "$low",
     p: "$24",
-    gap: "$16",
+    gap: "$24",
   },
   "Section"
 )
@@ -55,6 +55,14 @@ const SectionTitle = styled(
     pb: "$8",
   },
   "SectionTitle"
+)
+
+const SubSection = styled(
+  Column,
+  {
+    gap: "$8",
+  },
+  "SubSection"
 )
 
 const Badge = styled(
@@ -222,50 +230,60 @@ function LayoutSection() {
     <Section>
       <SectionTitle as="h3">Layout</SectionTitle>
 
-      <Text css={{ fontWeight: "$600" }}>Box</Text>
-      <Box css={{ bg: "$tertiary3", p: "$16", radius: "$4" }}>
-        <Text>A simple Box container.</Text>
-      </Box>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Box</SubHeading>
+        <Box css={{ bg: "$tertiary3", p: "$16", radius: "$4" }}>
+          <Text>A simple Box container.</Text>
+        </Box>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Row</Text>
-      <Row css={{ gap: "$8" }}>
-        <Badge tone="primary">Item 1</Badge>
-        <Badge tone="secondary">Item 2</Badge>
-        <Badge tone="success">Item 3</Badge>
-      </Row>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Row</SubHeading>
+        <Row css={{ gap: "$8" }}>
+          <Badge tone="primary">Item 1</Badge>
+          <Badge tone="secondary">Item 2</Badge>
+          <Badge tone="success">Item 3</Badge>
+        </Row>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Column</Text>
-      <Column css={{ gap: "$4" }}>
-        <Badge tone="warning">Stacked A</Badge>
-        <Badge tone="error">Stacked B</Badge>
-        <Badge>Stacked C</Badge>
-      </Column>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Column</SubHeading>
+        <Column css={{ gap: "$4" }}>
+          <Badge tone="warning">Stacked A</Badge>
+          <Badge tone="error">Stacked B</Badge>
+          <Badge>Stacked C</Badge>
+        </Column>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Grid (columns + gap)</Text>
-      <Grid columns={3} gap="$12">
-        {Array.from({ length: 6 }, (_, i) => (
-          <Box
-            key={i}
-            css={{
-              bg: i % 2 === 0 ? "$primary3" : "$secondary3",
-              color: i % 2 === 0 ? "$primaryText3" : "$secondaryText3",
-              p: "$12",
-              radius: "$4",
-              textAlign: "center",
-              fontWeight: "$500",
-            }}
-          >
-            {i + 1}
-          </Box>
-        ))}
-      </Grid>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Grid (columns + gap)</SubHeading>
+        <Grid columns={3} gap="$12">
+          {Array.from({ length: 6 }, (_, i) => (
+            <Box
+              key={i}
+              css={{
+                bg: i % 2 === 0 ? "$primary3" : "$secondary3",
+                color: i % 2 === 0 ? "$primaryText3" : "$secondaryText3",
+                p: "$12",
+                radius: "$4",
+                textAlign: "center",
+                fontWeight: "$500",
+              }}
+            >
+              {i + 1}
+            </Box>
+          ))}
+        </Grid>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Image</Text>
-      <Image
-        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop"
-        alt="Mountain landscape"
-        css={{ radius: "$6", maxHeight: "$200", objectFit: "cover", w: "100%" }}
-      />
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Image</SubHeading>
+        <Image
+          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop"
+          alt="Mountain landscape"
+          css={{ radius: "$6", maxHeight: "$200", objectFit: "cover", w: "100%" }}
+        />
+      </SubSection>
     </Section>
   )
 }
@@ -280,47 +298,55 @@ function InteractiveSection() {
     <Section>
       <SectionTitle as="h3">Interactive</SectionTitle>
 
-      <Text css={{ fontWeight: "$600" }}>Pressable — hover / pressed / focused states</Text>
-      <Row css={{ gap: "$12", flexWrap: "wrap" }}>
-        <InteractiveBox onClick={() => setPressCount(c => c + 1)}>
-          Press me ({pressCount})
-        </InteractiveBox>
-        <InteractiveBox
-          css={{
-            bg: "$secondary3",
-            color: "$secondaryText3",
-            ":hover": { bg: "$secondary9", color: "$secondaryText9" },
-            ":active": { bg: "$secondary10", color: "$secondaryText10" },
-            ":focus-visible": { outline: "$secondaryMax", bg: "$secondary3" },
-          }}
-        >
-          Secondary style
-        </InteractiveBox>
-      </Row>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Pressable — hover / pressed / focused states</SubHeading>
+        <Row css={{ gap: "$12", flexWrap: "wrap" }}>
+          <InteractiveBox onClick={() => setPressCount(c => c + 1)}>
+            Press me ({pressCount})
+          </InteractiveBox>
+          <InteractiveBox
+            css={{
+              bg: "$secondary3",
+              color: "$secondaryText3",
+              ":hover": { bg: "$secondary9", color: "$secondaryText9" },
+              ":active": { bg: "$secondary10", color: "$secondaryText10" },
+              ":focus-visible": { outline: "$secondaryMax", bg: "$secondary3" },
+            }}
+          >
+            Secondary style
+          </InteractiveBox>
+        </Row>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Link</Text>
-      <Row css={{ gap: "$16" }}>
-        <Link href="https://github.com" css={{ color: "$primary9", ":hover": { color: "$primary10" } }}>
-          External link
-        </Link>
-        <Link as={NextLink} href="/" css={{ color: "$secondary9", ":hover": { color: "$secondary10" } }}>
-          Internal link (as NextLink)
-        </Link>
-      </Row>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Link</SubHeading>
+        <Row css={{ gap: "$16" }}>
+          <Link href="https://github.com" css={{ color: "$primary9", ":hover": { color: "$primary10" } }}>
+            External link
+          </Link>
+          <Link as={NextLink} href="/" css={{ color: "$secondary9", ":hover": { color: "$secondary10" } }}>
+            Internal link (as NextLink)
+          </Link>
+        </Row>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>Styled variants</Text>
-      <Row css={{ gap: "$8", flexWrap: "wrap" }}>
-        <Button>Default</Button>
-        <Button variant="solid">Solid</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button variant="subtle">Subtle</Button>
-      </Row>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>Styled variants</SubHeading>
+        <Row css={{ gap: "$8", flexWrap: "wrap" }}>
+          <Button>Default</Button>
+          <Button variant="solid">Solid</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="subtle">Subtle</Button>
+        </Row>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>css prop override</Text>
-      <Button css={{ bg: "$success9", color: "$successText9", borderColor: "transparent" }}>
-        Custom via css
-      </Button>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>css prop override</SubHeading>
+        <Button css={{ bg: "$success9", color: "$successText9", borderColor: "transparent" }}>
+          Custom via css
+        </Button>
+      </SubSection>
     </Section>
   )
 }
@@ -335,30 +361,36 @@ function ListSection() {
     <Section>
       <SectionTitle as="h3">Lists</SectionTitle>
 
-      <Text css={{ fontWeight: "$600" }}>List (ul) — nth-child styling</Text>
-      <List column>
-        {items.map((item, i) => (
-          <NthChildItem key={i} index={i} length={items.length}>
-            {item}
-          </NthChildItem>
-        ))}
-      </List>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>List (ul) — nth-child styling</SubHeading>
+        <List column>
+          {items.map((item, i) => (
+            <NthChildItem key={i} index={i} length={items.length}>
+              {item}
+            </NthChildItem>
+          ))}
+        </List>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>OList (ol)</Text>
-      <OList column>
-        <ListItem>Ordered item one</ListItem>
-        <ListItem>Ordered item two</ListItem>
-        <ListItem>Ordered item three</ListItem>
-      </OList>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>OList (ol)</SubHeading>
+        <OList column>
+          <ListItem>Ordered item one</ListItem>
+          <ListItem>Ordered item two</ListItem>
+          <ListItem>Ordered item three</ListItem>
+        </OList>
+      </SubSection>
 
-      <Text css={{ fontWeight: "$600" }}>FlexList + FlexListItem</Text>
-      <FlexList css={{ gap: "$12", flexWrap: "wrap" }}>
-        {["React", "TypeScript", "vanilla-extract", "quarks"].map(tag => (
-          <FlexListItem key={tag}>
-            <Badge tone="primary">{tag}</Badge>
-          </FlexListItem>
-        ))}
-      </FlexList>
+      <SubSection>
+        <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>FlexList + FlexListItem</SubHeading>
+        <FlexList css={{ gap: "$12", flexWrap: "wrap" }}>
+          {["React", "TypeScript", "vanilla-extract", "quarks"].map(tag => (
+            <FlexListItem key={tag}>
+              <Badge tone="primary">{tag}</Badge>
+            </FlexListItem>
+          ))}
+        </FlexList>
+      </SubSection>
     </Section>
   )
 }
@@ -444,7 +476,7 @@ function HooksDashboard() {
       <Grid columns={2} gap="$16" css={{ md: { gtColumns: "$1" } }}>
         {/* useColorMode */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useColorMode</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useColorMode</SubHeading>
           <Row css={{ gap: "$8", alignItems: "center" }}>
             <StatusDot active={isDark} />
             <Text>Mode: {colorMode}</Text>
@@ -456,7 +488,7 @@ function HooksDashboard() {
 
         {/* useConditions */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useConditions</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useConditions</SubHeading>
           <Row css={{ gap: "$4", flexWrap: "wrap" }}>
             {activeBreakpoints.length > 0 ? (
               activeBreakpoints.map(bp => (
@@ -478,7 +510,7 @@ function HooksDashboard() {
 
         {/* useTokens */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useTokens</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useTokens</SubHeading>
           <Text css={{ typo: "$caption" }}>
             tokenValue exposes resolved CSS variable references for all {Object.keys(tokenValue).length} scale categories.
           </Text>
@@ -492,7 +524,7 @@ function HooksDashboard() {
 
         {/* useRTL */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useRTL</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useRTL</SubHeading>
           <Text>
             Direction: <Badge tone="primary">{direction}</Badge>
           </Text>
@@ -500,7 +532,7 @@ function HooksDashboard() {
 
         {/* useMediaQuery */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useMediaQuery</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useMediaQuery</SubHeading>
           <Row css={{ gap: "$8", alignItems: "center" }}>
             <StatusDot active={prefersReducedMotion} />
             <Text>prefers-reduced-motion: {String(prefersReducedMotion)}</Text>
@@ -509,7 +541,7 @@ function HooksDashboard() {
 
         {/* useTransition */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useTransition</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useTransition</SubHeading>
           <Button size="minimal" onClick={() => setShowBanner(v => !v)}>
             {showBanner ? "Hide" : "Show"} Banner
           </Button>
@@ -525,7 +557,7 @@ function HooksDashboard() {
 
         {/* useLayout */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useLayout</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useLayout</SubHeading>
           <Box ref={layoutRef} css={{ bg: "$tertiary4", p: "$12", radius: "$4", resize: "horizontal", overflow: "auto" }}>
             <Text css={{ typo: "$caption" }}>
               Resize me — {Math.round(layoutSize.width)}px x {Math.round(layoutSize.height)}px
@@ -535,7 +567,7 @@ function HooksDashboard() {
 
         {/* useMutationObserver */}
         <Column css={{ gap: "$8", p: "$16", bg: "$tertiary2", radius: "$6" }}>
-          <Text css={{ fontWeight: "$600" }}>useMutationObserver</Text>
+          <SubHeading as="h4" css={{ typo: "$body", fontWeight: "$600" }}>useMutationObserver</SubHeading>
           <Box ref={mutationRef} css={{ bg: "$tertiary4", p: "$12", radius: "$4" }}>
             <Text css={{ typo: "$caption" }}>Observed element</Text>
           </Box>
