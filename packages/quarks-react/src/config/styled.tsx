@@ -67,22 +67,14 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
       })
     }
 
-    useEffect(() => {
-      if (mainProps.style && !hasStyleManager) {
-        const isStringPolyAs = typeof polyAs === "string" && polyAs
-        const polySuffix = isStringPolyAs && isSemantic ? `.${capitalizeFirstLetter(polyAs)}` : ""
-        const polyTail = isStringPolyAs && !isSemantic ? ` (as ${polyAs})` : ""
-        const prefix = styleName ? `Component \`${styleName}${polySuffix}\`${polyTail}` : "Component"
-        console.warn(
-          `${prefix} does not support direct usage of the \`style\` prop. Please use the \`css\` prop for inline styling`
-        )
-      }
-    }, [mainProps.style, hasStyleManager, polyAs, isSemantic])
+    // Merge user's style prop into quarks style output (user styles win)
+    const { style: userStyle, ...restProps } = mainProps
+    const mergedStyle = userStyle ? { ...styleProps.style, ...userStyle } : styleProps.style
 
     return (
       <>
         {conditions.debug && <Debug styles={debug} />}
-        <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...mainProps} {...styleProps} />
+        <Element as={!isStyledComponent ? undefined : polyAs} ref={ref} {...restProps} {...styleProps} style={mergedStyle} />
       </>
     )
   }
