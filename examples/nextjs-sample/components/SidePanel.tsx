@@ -70,7 +70,7 @@ export function SidePanel(props: SidePanelProps) {
           >
             Apply Filters
           </Button>
-        </Row.Footer>
+        </Row>
       </Panel>
     </Box>
   )
