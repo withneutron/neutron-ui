@@ -4687,20 +4687,6 @@
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.4.27.tgz"
   integrity sha512-DL3NmY2OFlqmYYrzp39yi3LDkKxa5vZVwxWdQ3rG0ekuWscHraeIbnI8t+aZK7qhYqEqWKTUdijadunb9pnrgA==
 
-"@withneutron/quarks-react@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.npmjs.org/@withneutron/quarks-react/-/quarks-react-0.0.19.tgz"
-  integrity sha512-iiLd7UF4lXlsa0kro3N17fj9JuXPk5OgklZ8ChuYhva5NTUqnwsJK7o+26+/PSfrHBBF+qecrIhKG7V5d6RpNw==
-  dependencies:
-    "@withneutron/quarks" "^0.0.19"
-    react "18.3.1"
-    react-dom "18.3.1"
-
-"@withneutron/quarks@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.npmjs.org/@withneutron/quarks/-/quarks-0.0.19.tgz"
-  integrity sha512-t08ujWuXRFaOgKUYZT07P0EgBtRb+Qm1kdShvCN1oIHY0LC67UiFefwnJ5SfHhBeqTS+h6bzct5S7+yQzFtEBg==
-
 "@xmldom/xmldom@^0.8.8":
   version "0.8.11"
   resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.11.tgz"
