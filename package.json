@@ -24,12 +24,12 @@
     "@storybook/addon-links": "^8.1.1",
     "@storybook/react": "^8.1.1",
     "@storybook/testing-library": "^0.2.1",
-    "@types/react": "^18.3.2",
+    "@types/react": "^19.1.0",
     "babel-loader": "^9.1.3",
     "concurrently": "^8.2.2",
     "eslint-config-prettier": "9.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "storybook-builder-vite": "^0.1.21",
     "vite": "^5.2.11",
     "vite-dts": "^1.0.4"
@@ -40,6 +40,7 @@
   "scripts": {
     "dev:cra": "yarn workspace cra-sample dev",
     "dev:astro": "yarn workspace astro-sample dev",
+    "dev:expo": "yarn workspace expo-sample start",
     "dev:next": "yarn workspace nextjs-sample dev",
     "dev:perf:quarks": "yarn workspace performance-test-quarks dev",
     "dev:perf:tailwind": "yarn workspace performance-test-tailwind dev",
