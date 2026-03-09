@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { SafeAreaView, View, Text as RNText, Pressable as RNPressable } from "react-native"
+import { Animated, SafeAreaView, View, Text as RNText, Pressable as RNPressable } from "react-native"
 import {
   QuarksProvider,
   styled,
@@ -239,11 +239,13 @@ function HooksDemo() {
       </Button>
 
       {fade.mounted && (
-        <FadeBox style={fade.style}>
-          <FadeBoxText>
-            Fading {fade.active ? "in" : "out"}
-          </FadeBoxText>
-        </FadeBox>
+        <Animated.View style={fade.style}>
+          <FadeBox>
+            <FadeBoxText>
+              Fading {fade.active ? "in" : "out"}
+            </FadeBoxText>
+          </FadeBox>
+        </Animated.View>
       )}
     </View>
   )

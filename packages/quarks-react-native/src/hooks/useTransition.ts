@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react"
+import { Animated } from "react-native"
 
 interface TransitionResult {
   active: boolean
   mounted: boolean
-  style: Record<string, any>
+  style: { opacity: Animated.Value }
 }
 
 interface TransitionOptions {
@@ -13,28 +14,32 @@ interface TransitionOptions {
 
 export function useTransition(visible: boolean, options?: TransitionOptions): TransitionResult {
   const [mounted, setMounted] = useState(visible)
-  const [active, setActive] = useState(visible)
-  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const opacity = useRef(new Animated.Value(visible ? 1 : 0)).current
+  const enterDuration = options?.enter ?? 200
+  const exitDuration = options?.exit ?? 200
 
   useEffect(() => {
-    if (exitTimer.current) clearTimeout(exitTimer.current)
-
     if (visible) {
       setMounted(true)
-      setTimeout(() => setActive(true), 0)
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: enterDuration,
+        useNativeDriver: true,
+      }).start()
     } else {
-      setActive(false)
-      const delay = options?.exit ?? 200
-      exitTimer.current = setTimeout(() => setMounted(false), delay)
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: exitDuration,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) setMounted(false)
+      })
     }
-    return () => {
-      if (exitTimer.current) clearTimeout(exitTimer.current)
-    }
-  }, [visible, options?.exit])
+  }, [visible, enterDuration, exitDuration])
 
   return {
-    active,
+    active: visible,
     mounted,
-    style: { opacity: active ? 1 : 0 },
+    style: { opacity },
   }
 }

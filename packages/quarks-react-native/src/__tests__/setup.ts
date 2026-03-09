@@ -7,6 +7,16 @@ vi.mock("react-native", () => ({
   Pressable: "Pressable",
   Image: "Image",
   ScrollView: "ScrollView",
+  Animated: {
+    Value: class AnimatedValue {
+      _value: number
+      constructor(v: number) { this._value = v }
+    },
+    timing: (_value: any, _config: any) => ({
+      start: (cb?: any) => cb?.({ finished: true }),
+    }),
+    View: "Animated.View",
+  },
   Dimensions: {
     get: () => ({ width: 375, height: 812 }),
     addEventListener: vi.fn(() => ({ remove: vi.fn() })),

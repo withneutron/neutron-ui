@@ -1,6 +1,6 @@
-import { Children, cloneElement, forwardRef, useState, useCallback } from "react"
+import { forwardRef, useState, useCallback } from "react"
 import { View, Text as RNText, Pressable as RNPressable, Image as RNImage, ScrollView as RNScrollView, Linking } from "react-native"
-import type { LayoutChangeEvent } from "react-native"
+import type { LayoutChangeEvent, ViewStyle } from "react-native"
 import { styled } from "../config/styled"
 
 /** Basic layout container — maps to RN View */
@@ -50,21 +50,27 @@ export const ScrollView = styled(RNScrollView, {}, "ScrollView")
 /** Grid layout */
 const GridBase = styled(View, { flexDirection: "row", flexWrap: "wrap" }, "Grid")
 
-export const Grid = forwardRef<View, any>(({ columns = 2, gap = 0, children, ...props }, ref) => {
+export const Grid = forwardRef<View, any>(({ columns = 2, gap = 0, children, style, ...props }, ref) => {
   const [containerWidth, setContainerWidth] = useState(0)
   const childWidth = containerWidth > 0 ? (containerWidth - gap * (columns - 1)) / columns : 0
   const onLayout = (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width)
 
+  const kids = Array.isArray(children) ? children : children ? [children] : []
+
   return (
-    <GridBase {...props} ref={ref} onLayout={onLayout}>
-      {containerWidth > 0 && Children.map(children, (child, i) => {
+    <GridBase {...props} ref={ref} style={style} onLayout={onLayout}>
+      {containerWidth > 0 && kids.map((child, i) => {
         if (!child || typeof child !== "object") return child
-        return cloneElement(child as any, {
-          style: [
-            (child as any).props?.style,
-            { width: childWidth, marginLeft: i % columns !== 0 ? gap : 0, marginBottom: gap },
-          ],
-        })
+        const cellStyle: ViewStyle = {
+          width: childWidth,
+          marginLeft: i % columns !== 0 ? gap : 0,
+          marginBottom: gap,
+        }
+        return (
+          <View key={(child as any).key ?? i} style={cellStyle}>
+            {child}
+          </View>
+        )
       })}
     </GridBase>
   )
