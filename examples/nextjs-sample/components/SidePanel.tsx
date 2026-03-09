@@ -53,11 +53,11 @@ export function SidePanel(props: SidePanelProps) {
           left: "$0",
         }}
       >
-        <Row.Header>
+        <Row as="header">
           <SubHeading>Filters</SubHeading>
-        </Row.Header>
+        </Row>
         <Column css={{ flex: "1" }}>{props.children}</Column>
-        <Row.Footer css={{ gap: "$16", justifyContent: "end" }}>
+        <Row as="footer" css={{ gap: "$16", justifyContent: "end" }}>
           <Button variant="ghost" onClick={props.onClose}>
             Cancel
           </Button>
