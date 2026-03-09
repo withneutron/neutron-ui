@@ -207,7 +207,7 @@ function HooksDemo() {
   const direction = useRTL("RTL", "LTR")
   const isWide = useMediaQuery("(min-width: 600px)", false)
   const [showFade, setShowFade] = useState(false)
-  const fade = useTransition(showFade, { enter: 200, exit: 200 })
+  const fade = useTransition(showFade, { enter: 300, exit: 300 })
 
   const activeConditions = Object.entries(conditions)
     .filter(([, v]) => v)
