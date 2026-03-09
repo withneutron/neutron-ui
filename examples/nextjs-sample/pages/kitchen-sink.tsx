@@ -160,11 +160,9 @@ const NuiSection = styled(
       },
       success: {
         bg: "$success3",
-        // linearGradient: `${token.color.$success3}, ${token.color.$success1}`,
         color: "$successText3",
         ":interact": {
           bg: "$tertiary9",
-          // linearGradient: `${token.color.$success9}, ${token.color.$success6}`,
           color: "$tertiaryText9",
           border: "none",
           outlineColor: "$tertiaryMax",
@@ -269,7 +267,8 @@ const Sample: NextPage = () => {
   }, [])
 
   return (
-    <Column.Article
+    <Column
+      as="article"
       css={{
         flex: "1",
         p: {
@@ -288,7 +287,8 @@ const Sample: NextPage = () => {
         <meta name="description" content="Sample of various NeutronUI components" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Row.Header
+      <Row
+        as="header"
         css={{
           gap: "$8",
         }}
@@ -300,14 +300,14 @@ const Sample: NextPage = () => {
         <MediaQueryName css={{ display: { md: "inline-block", sm: "none" } }}>Medium (md)</MediaQueryName>
         <MediaQueryName css={{ display: { sm: "inline-block", xs: "none" } }}>Small (sm)</MediaQueryName>
         <MediaQueryName css={{ display: { xs: "inline-block" } }}>Extra Small (xs)</MediaQueryName>
-      </Row.Header>
+      </Row>
 
       <header>
         <Heading css={{ typo: "$mainHeading", animation: "$flashSize", width: "max-content" }}>Main Heading</Heading>
-        <Heading.H2>Heading</Heading.H2>
+        <Heading as="h2">Heading</Heading>
       </header>
-      <SubHeading.H3 css={{ animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>Sub-Heading</SubHeading.H3>
-      <SubHeading.H4 css={{ typo: "$minorHeading" }}>Minor Heading</SubHeading.H4>
+      <SubHeading as="h3" css={{ animation: cycle % 2 ? "$slideOutTop" : "$slideInTop" }}>Sub-Heading</SubHeading>
+      <SubHeading as="h4" css={{ typo: "$minorHeading" }}>Minor Heading</SubHeading>
       <Text css={{ typo: "$body", animation: "$bounceUp", textDecoration: "$highlightError" }}>Body</Text>
       <Text css={{ typo: "$caption" }}>Caption</Text>
       <SampleBox isVisible={cycle % 2 === 1}>Sample box</SampleBox>
@@ -317,7 +317,7 @@ const Sample: NextPage = () => {
         }}
       >
         Testing 3-level composition
-        <Box.Span css={{ float: "left", mr: "$12" }}>{arrow}</Box.Span>
+        <Box as="span" css={{ float: "left", mr: "$12" }}>{arrow}</Box>
       </Tertiary>
       <NuiSection
         isChunky
@@ -348,7 +348,7 @@ const Sample: NextPage = () => {
           </GridBox>
         ))}
       </SampleGrid>
-    </Column.Article>
+    </Column>
   )
 }
 
@@ -371,7 +371,8 @@ function SampleBox(props: SampleBoxProps) {
         w: "100%",
       }}
     >
-      <Box.Aside
+      <Box
+        as="aside"
         ref={(element: HTMLDivElement) => {
           console.debug("@@@ element", element)
         }}
@@ -389,7 +390,7 @@ function SampleBox(props: SampleBoxProps) {
         }}
       >
         {props.children}
-      </Box.Aside>
+      </Box>
     </Row>
   )
 }
