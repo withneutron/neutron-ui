@@ -7,10 +7,15 @@
   "author": "Lucas Castro <lucas.castro@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "examples/*"
+    ],
+    "nohoist": [
+      "expo-sample/**"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.24.5",
     "@storybook/addon-actions": "^8.1.1",
@@ -30,8 +35,7 @@
     "vite-dts": "^1.0.4"
   },
   "resolutions": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@babel/helper-create-class-features-plugin": "^7.28.6"
   },
   "scripts": {
     "dev:cra": "yarn workspace cra-sample dev",
@@ -76,5 +80,6 @@
     "@typescript-eslint/typescript-estree": "^7.11.0",
     "@typescript-eslint/utils": "^7.11.0",
     "@typescript-eslint/visitor-keys": "^7.11.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

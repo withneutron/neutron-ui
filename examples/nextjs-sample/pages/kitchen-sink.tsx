@@ -10,7 +10,7 @@ import {
   Text,
   Grid,
   Row,
-  useAnimation,
+  useTransition,
   useRTL,
 } from "@withneutron/quarks-react"
 import { token } from "@withneutron/quarks"
@@ -360,11 +360,11 @@ interface SampleBoxProps {
 }
 
 function SampleBox(props: SampleBoxProps) {
-  const { animation, isVisible } = useAnimation("$slideOutBottom", "$slideInBottom", props.isVisible)
-  return !isVisible ? null : (
+  const transition = useTransition(!!props.isVisible)
+  return !transition.mounted ? null : (
     <Row
+      style={transition.style}
       css={{
-        animation,
         position: "fixed",
         bottom: "$24",
         justifyContent: "center",

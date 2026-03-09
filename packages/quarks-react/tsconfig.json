@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.d.ts", "**/examples/**/*.*", "../../**/examples/**/*.*", "examples"],
+  "exclude": ["node_modules", "build", "scripts", "dist", "dist/**/*", "**/*.spec.ts", "**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "**/*.d.ts", "**/examples/**/*.*", "../../**/examples/**/*.*", "examples"],
   "include": ["manualTypes.d.ts", "src"],
   "compilerOptions": {
     "outDir": "dist",

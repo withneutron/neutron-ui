@@ -1,12 +1,12 @@
-import { useColors, Row, FlexList, FlexListItem, Anchor } from "@withneutron/quarks-react"
-import Link from "next/link"
+import { useColorMode, Row, FlexList, FlexListItem, Link } from "@withneutron/quarks-react"
+import NextLink from "next/link"
 import { Button } from "./Button"
 import Logo from "./Logo"
 import { MoonIcon } from "./MoonIcon"
 import { SunIcon } from "./SunIcon"
 
 export function AppHeader() {
-  const { isDark, toggleColorMode } = useColors()
+  const { isDark, toggleColorMode } = useColorMode()
   return (
     <Row
       as="header"
@@ -30,19 +30,24 @@ export function AppHeader() {
       <Row as="nav" css={{ gap: "$32", alignItems: "center" }}>
         <FlexList css={{ gap: "$24" }}>
           <FlexListItem>
-            <Anchor as={Link} href="/">
+            <Link as={NextLink} href="/">
               Home
-            </Anchor>
+            </Link>
           </FlexListItem>
           <FlexListItem>
-            <Anchor as={Link} href="/kitchen-sink">
+            <Link as={NextLink} href="/kitchen-sink">
               Kitchen Sink
-            </Anchor>
+            </Link>
           </FlexListItem>
           <FlexListItem>
-            <Anchor as={Link} href="/shorthands">
+            <Link as={NextLink} href="/shorthands">
               Shorthands
-            </Anchor>
+            </Link>
+          </FlexListItem>
+          <FlexListItem>
+            <Link as={NextLink} href="/showcase">
+              Showcase
+            </Link>
           </FlexListItem>
         </FlexList>
         <Button

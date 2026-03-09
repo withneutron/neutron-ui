@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { CssConditionsContext } from "../providers/QuarksProvider"
 
-export function useStyleConditions() {
+export function useConditions() {
   const conditions = useContext(CssConditionsContext)
   return conditions
 }

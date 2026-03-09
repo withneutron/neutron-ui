@@ -41,7 +41,8 @@
     "watch:lib": "yarn watch",
     "version": "changeset version",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "husky": {
     "hooks": {
@@ -64,6 +65,9 @@
     "@withneutron/quarks": "^0.0.20"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "20.12.12",
     "@types/react": "18.3.2",
     "@typescript-eslint/eslint-plugin": "7.9.0",
@@ -72,12 +76,14 @@
     "eslint-config-prettier": "9.x",
     "eslint-plugin-react": "7.x",
     "husky": "9.0.11",
+    "jsdom": "^25.0.1",
     "lint-staged": "15.2.2",
     "prettier": "3.x",
     "pretty-quick": "4.x",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
-    "vite-plugin-dts": "^3.9.1"
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^3.2.4"
   },
   "gitHead": "47e86debbe2a27414f30c763abea6593c95fd140"
 }

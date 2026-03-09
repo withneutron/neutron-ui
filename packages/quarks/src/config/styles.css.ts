@@ -672,12 +672,13 @@ function getTokenToValuesMap<G extends keyof typeof tokenToVarMap, M extends (ty
   _group: G,
   tokenMap: M,
 ) {
-  const output = {} as { [k in keyof M]: string }
-  Object.entries(tokenMap).forEach(([token, varName]) => {
-    output[token as keyof typeof output] = String(varMap[varName])
-    return output
-  })
-  return output
+  return Object.entries(tokenMap).reduce(
+    (acc, [token, varName]) => {
+      acc[token as keyof typeof acc] = String(varMap[varName])
+      return acc
+    },
+    {} as { [k in keyof M]: string },
+  )
 }
 
 export const tokenValue = {

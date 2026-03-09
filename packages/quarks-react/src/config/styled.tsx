@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react"
-import { useStyleConditions } from "../hooks"
+import { useConditions } from "../hooks"
 import { CSS, VariantCSS, style, StyleManager, capitalizeFirstLetter } from "@withneutron/quarks"
 import { ComponentType } from "../shared/models"
 
@@ -40,7 +40,7 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     props: HTMLAttributes<C> & StylelessComponentProps<C> & { as?: ComponentType } & BaseStyledProps<V>,
     ref?: ForwardedRef<R>
   ) {
-    const conditions = useStyleConditions()
+    const conditions = useConditions()
     const { as: polyAs, css: propsCss, styleManager, isSemantic, className, index, length, ...mainProps } = props
 
     // Get any variants that are valid, based on our incoming mainProps
@@ -51,6 +51,8 @@ export function styled<C extends ComponentType, V extends Variants | undefined>(
     const Element = !isStyledComponent
       ? (polyAs as FunctionComponent<any>) ?? component
       : (component as FunctionComponent<any>)
+
+    if (hasStyleManager) styleManager.useClassName()
 
     const { debug, ...styleProps } = style(css, conditions, variantCss, propsCss, styleName, styleManager, {
       className,

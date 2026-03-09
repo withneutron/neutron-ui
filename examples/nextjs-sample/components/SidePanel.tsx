@@ -1,4 +1,4 @@
-import { styled, Box, Column, Row, useAnimation, SubHeading } from "@withneutron/quarks-react"
+import { styled, Box, Column, Row, useTransition, SubHeading } from "@withneutron/quarks-react"
 import { Button } from "../components/Button"
 import { ReactNode, useEffect } from "react"
 
@@ -11,12 +11,8 @@ interface SidePanelProps {
 
 export function SidePanel(props: SidePanelProps) {
   const { onClose, isVisible } = props
-  const { animation: bgAnimation, isVisible: isBgVisible } = useAnimation("$fadeOut", "$fadeIn", props.isVisible, 500)
-  const { animation: panelAnimation, isVisible: isPanelVisible } = useAnimation(
-    "$slideOutRight",
-    "$slideInLeft",
-    props.isVisible
-  )
+  const bg = useTransition(!!props.isVisible, { enter: 500, exit: 500 })
+  const panel = useTransition(!!props.isVisible)
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -33,29 +29,28 @@ export function SidePanel(props: SidePanelProps) {
     return () => document.removeEventListener("keydown", handleEsc, true)
   }, [onClose, isVisible])
 
-  return !isBgVisible || !isPanelVisible ? null : (
+  return !bg.mounted || !panel.mounted ? null : (
     <Box css={{ position: "fixed", top: "$0", bottom: "$0", left: "$0", right: "$0" }}>
       <Box
         onClick={props.onClose}
+        style={bg.style}
         css={{
           bg: "$maxAlpha5",
           size: "100%",
           position: "absolute",
-          animation: bgAnimation,
-          transitionDuration: ".5s",
           top: "$0",
           left: "$0",
         }}
       />
       <Panel
         as="aside"
+        style={panel.style}
         css={{
           maxWidth: "$480",
           w: "100%",
           h: "100%",
           position: "absolute",
           left: "$0",
-          animation: panelAnimation,
         }}
       >
         <Row.Header>

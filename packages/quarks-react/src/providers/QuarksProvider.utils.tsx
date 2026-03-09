@@ -11,7 +11,7 @@ import {
 } from "@withneutron/quarks"
 import { useMutationObserver } from "../hooks/useMutationObserver"
 import { isSSR } from "../shared/utils"
-import { ResizeObserverCallback, useResizeObserver } from "../hooks/useResizeObserver"
+import { useLayout } from "../hooks/useLayout"
 
 const DEFAULT_RESPONSIVE_CONDITIONS = {
   xs: false,
@@ -90,10 +90,10 @@ export function useContextConditions(
     Reducer<ResponsiveConditionsState, ResponsiveConditionAction>
   >(responsiveConditionsReducer, DEFAULT_RESPONSIVE_CONDITIONS)
 
-  const resizer: ResizeObserverCallback = useCallback(([{ width }]) => {
+  const resizer = useCallback(({ width }: { width: number; height: number }) => {
     setResponsiveConditions({ overrides, width })
   }, [])
-  useResizeObserver(isSSR ? null : document.documentElement, resizer)
+  useLayout(isSSR ? null : document.documentElement, resizer)
 
   // Track media queries
   const hightContrast = useMediaQuery(queryConditionsMap.hightContrast, false)

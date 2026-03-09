@@ -9,9 +9,9 @@ import {
   BreakpointOverrides,
   ThemeOverrides,
   SemanticColorOverrides,
-  tokenValue,
+  tokenValue as baseTokenValue,
 } from "@withneutron/quarks"
-import { useThemeStyle } from "../hooks"
+import { useThemeStyle } from "../hooks/useThemeStyle"
 import { useContextConditions } from "./QuarksProvider.utils"
 
 export const CssConditionsContext = createContext<Record<ConditionKeys, boolean>>(
@@ -28,7 +28,7 @@ export interface QuarksContextProps {
   setColorMode: (mode: ColorMode) => void
   toggleColorMode: () => void
   isTouchDevice: boolean
-  tokenValue: typeof tokenValue
+  tokenValue: typeof baseTokenValue
 }
 
 export const QuarksContext = createContext<QuarksContextProps>({
@@ -37,15 +37,14 @@ export const QuarksContext = createContext<QuarksContextProps>({
   setColorMode: () => undefined,
   toggleColorMode: () => undefined,
   isTouchDevice: false,
-  tokenValue,
+  tokenValue: baseTokenValue,
 })
 
 interface QuarksProviderProps {
   children: ReactNode
   defaultColorMode?: ColorMode
-  isMobile?: boolean
   isDebugMode?: boolean
-  queryOverrides?: BreakpointOverrides
+  breakpointOverrides?: BreakpointOverrides
   themeOverrides?: ThemeOverrides
   semanticColorOverrides?: SemanticColorOverrides
 }
@@ -54,9 +53,8 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
   const {
     children,
     defaultColorMode = DEFAULT_COLOR_MODE,
-    isMobile = false,
     isDebugMode = false,
-    queryOverrides,
+    breakpointOverrides,
     themeOverrides,
     semanticColorOverrides,
   } = props
@@ -64,7 +62,7 @@ export function QuarksProvider(props: QuarksProviderProps): ReactElement {
   const tokenValue = useThemeStyle(colorMode, themeOverrides, semanticColorOverrides)
 
   const systemColorMode = useMediaQuery<ColorMode>("(prefers-color-scheme: dark)", defaultColorMode, "dark", "light")
-  const conditions = useContextConditions(colorMode, isMobile, isDebugMode, queryOverrides)
+  const conditions = useContextConditions(colorMode, false, isDebugMode, breakpointOverrides)
   const isTouchDevice = conditions.touch
 
   const systemColorTimer = useRef<ReturnType<typeof setTimeout>>()

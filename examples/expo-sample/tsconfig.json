@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@withneutron/quarks": ["../../packages/quarks/src"],
+      "@withneutron/quarks-react-native": ["../../packages/quarks-react-native/src"]
+    }
+  }
+}

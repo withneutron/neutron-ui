@@ -1,0 +1,39 @@
+{
+  "name": "@withneutron/quarks-ui",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Unified cross-platform entry point for Quarks styling — auto-resolves web or native bindings",
+  "exports": {
+    ".": {
+      "react-native": {
+        "import": "./native.js",
+        "types": "./native.d.ts"
+      },
+      "default": {
+        "import": "./web.js",
+        "types": "./web.d.ts"
+      }
+    },
+    "./web": {
+      "import": "./web.js",
+      "types": "./web.d.ts"
+    },
+    "./native": {
+      "import": "./native.js",
+      "types": "./native.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@withneutron/quarks-react": "workspace:*",
+    "@withneutron/quarks-react-native": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@withneutron/quarks-react": {
+      "optional": true
+    },
+    "@withneutron/quarks-react-native": {
+      "optional": true
+    }
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}
