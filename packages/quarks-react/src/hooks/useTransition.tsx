@@ -13,7 +13,7 @@ interface TransitionResult {
 }
 
 export function useTransition(visible: boolean, options?: TransitionOptions): TransitionResult {
-  const { enter = 200, exit = 200 } = options ?? {}
+  const { enter = 300, exit = 300 } = options ?? {}
   const [mounted, setMounted] = useState(visible)
   const [active, setActive] = useState(visible)
   const exitTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -21,13 +21,15 @@ export function useTransition(visible: boolean, options?: TransitionOptions): Tr
 
   useEffect(() => {
     if (visible) {
-      // Mount first, then activate on next frame
+      // Mount at opacity 0, then double-rAF to ensure the browser
+      // paints the initial state before transitioning to opacity 1
       setMounted(true)
       enterFrame.current = requestAnimationFrame(() => {
-        setActive(true)
+        enterFrame.current = requestAnimationFrame(() => {
+          setActive(true)
+        })
       })
     } else {
-      // Deactivate first, then unmount after exit duration
       setActive(false)
       exitTimer.current = setTimeout(() => {
         setMounted(false)
